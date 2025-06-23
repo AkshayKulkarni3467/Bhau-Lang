@@ -9,12 +9,14 @@ bhau hai ahe x = 'c';
 bhau x = khara;
 bhau y = khota;
 
+12 23 33 3 4
+
 x+=y++z-  =i--i*=k/=j
 a>b<c!d!=e <= f >= j>>k <<l
 x&y || z |z &&   a &=o|=p^q^=r
 
 bhau main (){
-    bhau printf("welcome to marathi lang");
+    bhau printf("welcome to marathi lang\n");
 }
 
 
