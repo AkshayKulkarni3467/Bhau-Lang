@@ -32,4 +32,6 @@ int main(){
       print_token(da,i);
       // printf("%d , %p\n",i,da[i].where_firstchar);
    }
+
+   return 0;
 }

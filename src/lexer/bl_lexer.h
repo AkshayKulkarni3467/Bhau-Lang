@@ -1,6 +1,10 @@
 #ifndef INCLUDE_BL_LEXER_H
 #define INCLUDE_BL_LEXER_H
 
+/* todo
+Implement Arenas
+*/
+
 
 /*-----------------------------------------------------------------Includes*/
 #include <stdio.h>
@@ -15,6 +19,28 @@
 #define BHAU_LANG
 // #define BL_LEXER_SELF_TEST   // ---------------Undefine for self testing
 // maybe bhai lang, bro lang later
+
+/*----------------------------------------------------------Helper defines*/
+#define SET_DEFAULT_TOKEN(type) bl_set_token(tok,type,0,0,tok->where_firstchar,token_size(tok),lexer->current_line,lexer->current_column)
+#define SET_FLOAT_TOKEN(type,value) bl_set_token(tok,type,value,0,tok->where_firstchar,token_size(tok),lexer->current_line,lexer->current_column)
+#define SET_INT_TOKEN(type,value) bl_set_token(tok,type,0,value,tok->where_firstchar,token_size(tok),lexer->current_line,lexer->current_column)
+#define SET_STRING_TOKEN(type,str_ptr,str_len) bl_set_token(tok,type,0,0,str_ptr,str_len,lexer->current_line,lexer->current_column)
+#define UPDATE_CHAR_PTR() (character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]))
+
+
+
+#define SET_SIMPLE_TOKEN(type) \
+    tok->where_firstchar = lexer->parse_point; \
+    bl_forward(lexer, 1); \
+    tok->where_lastchar = lexer->parse_point; \
+   SET_DEFAULT_TOKEN(type)
+
+#define SET_COMPOUND_TOKEN(type,len) \
+   tok->where_firstchar = lexer->parse_point; \
+   bl_forward(lexer,len); \
+   tok->where_lastchar = lexer->parse_point; \
+   SET_DEFAULT_TOKEN(type)
+
 
 /*-----------------------------------------------for debugging*/
 #define BL_IDENTIFIERS
@@ -76,6 +102,8 @@ enum KEYWORD_TYPES {
    BL_GRTEQ,
    BL_LOGAND,
    BL_LOGOR,
+   BL_COMMENT,
+   BL_MULCOMMENT,
    #endif //BL_OPERATORS
 
    BL_UNIMPLEMENTED,
@@ -122,13 +150,15 @@ static int is_alpha(char c);
 static int is_digit(char c);
 static int is_alnum(char c);
 static int is_whitespace(char c);
+static int is_newline(char c);
 
 static int token_size(bl_token *t);
 static char bl_peek_token(bl_lexer *l,int num);
 static char bl_peek_prev_token(bl_lexer *l,int num);
+static void bl_set_token(bl_token* tok, enum KEYWORD_TYPES label,double real_number, long int_number, char* string, int string_len, int line_number, int line_offset);
 
-static void bl_forward(bl_lexer *lexer);
-static void bl_backward(bl_lexer *lexer);
+static void bl_forward(bl_lexer *lexer,int num);
+static void bl_backward(bl_lexer *lexer, int num);
 static void bl_remove_whitespace(bl_lexer *l);
 static void bl_next_step(bl_lexer *l);
 
@@ -150,21 +180,15 @@ bl_token *bl_tokenize(bl_lexer *lexer){
    if (*character && *character && (is_alpha(*character) || *character == '_'))
    {
       tok->where_firstchar = lexer->parse_point;
-      tok->string = lexer->parse_point;
-      bl_forward(lexer);
+      bl_forward(lexer,1);
       while(*character && (is_alnum(*character) || *character == '_' || *character == '$')){
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         bl_forward(lexer);
+         UPDATE_CHAR_PTR();
+         bl_forward(lexer,1);
 
       }
-      bl_backward(lexer);
-      tok->token = BL_IDENTIFIER;
-      tok->real_number = 0;
-      tok->int_number = 0;
+      bl_backward(lexer,1);
       tok->where_lastchar = lexer->parse_point;
-      tok->string_len = token_size(tok);
-      tok->loc.line_number = lexer->current_line;
-      tok->loc.line_offset = lexer->current_column;
+      SET_DEFAULT_TOKEN(BL_IDENTIFIER);
    }
    /*DIGITS*/
    else if
@@ -172,44 +196,36 @@ bl_token *bl_tokenize(bl_lexer *lexer){
    {
       char buf[64];
       tok->where_firstchar = lexer->parse_point;
-      tok->string = tok->where_firstchar;
-      while(*character && (
+      while(*character && 
          (*character >= '0' && *character <= '9')
-      )){
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         bl_forward(lexer);
+         ){
+         UPDATE_CHAR_PTR();
+         bl_forward(lexer,1);
       }
-      bl_backward(lexer);
+      bl_backward(lexer,1);
       if(*(lexer->parse_point) == '.'){
-         bl_forward(lexer);
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
+         bl_forward(lexer,1);
+         UPDATE_CHAR_PTR();
          while(*character && (*character >= '0' && *character <= '9')){
-            character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-            bl_forward(lexer);
+            UPDATE_CHAR_PTR();
+            bl_forward(lexer,1);
          }
-         bl_backward(lexer);
+         bl_backward(lexer,1);
          tok->where_lastchar = lexer->parse_point;
 
          int len = token_size(tok);
          memcpy(buf, tok->where_firstchar, len);
          buf[len] = '\0';
-         tok->real_number = strtod(buf, NULL);
-         tok->token = BL_FLOAT;
-         tok->int_number = 0;
-         tok->string = tok->where_firstchar;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
+
+         SET_FLOAT_TOKEN(BL_FLOAT,strtod(buf,NULL));
 
       }else{
          tok->where_lastchar = lexer->parse_point;
          int len = token_size(tok);
          memcpy(buf, tok->where_firstchar, len);
          buf[len] = '\0';
-         tok->int_number = strtol(buf, NULL, 10);
-         tok->token = BL_INT;
-         tok->real_number = 0;  
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
+
+         SET_INT_TOKEN(BL_INT,strtol(buf,NULL,10));
       }      
    }
    /*STRINGS*/
@@ -217,31 +233,28 @@ bl_token *bl_tokenize(bl_lexer *lexer){
    (*character && *character == '"')
    {
       tok->where_firstchar = lexer->parse_point;  
-      bl_forward(lexer);  
+      bl_forward(lexer,1);  
       char *start = lexer->parse_point;
 
       while (lexer->parse_point < lexer->eof && *lexer->parse_point != '"') {
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         bl_forward(lexer);
+         UPDATE_CHAR_PTR();
+         bl_forward(lexer,1);
+         if(*lexer->parse_point == '\\'){
+            bl_forward(lexer,2);
+         }
       }
       int str_len = lexer->parse_point - start;
       if (lexer->parse_point < lexer->eof) {
-         bl_forward(lexer); 
+         bl_forward(lexer,1); 
       }
 
       tok->where_lastchar = lexer->parse_point;
-      tok->int_number = 0;
-      tok->real_number = 0;
-      tok->token = BL_STRING;
-      tok->loc.line_number = lexer->current_line;
-      tok->loc.line_offset = lexer->current_column;
-
 
       if (lexer->string_storage_len >= str_len + 1){
          memcpy(lexer->string_storage, start, str_len);
          lexer->string_storage[str_len] = '\0';
-         tok->string = lexer->string_storage;
-         tok->string_len = str_len;
+
+         SET_STRING_TOKEN(BL_STRING,lexer->string_storage,str_len);
 
          lexer->string_storage += str_len + 1;
          lexer->string_storage_len -= str_len + 1;
@@ -250,568 +263,168 @@ bl_token *bl_tokenize(bl_lexer *lexer){
          tok->string = NULL;
          tok->string_len = 0;
       }
-
-
-
-
    }
    /*CHARS*/
    else if
    (*character && *character == '\'')
    {
       tok->where_firstchar = lexer->parse_point;
-      bl_forward(lexer);
-      bl_forward(lexer);
-      bl_forward(lexer);
-      character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-      tok->int_number = 0;
-      tok->real_number = 0;
+      bl_forward(lexer,3);
       tok->where_lastchar = lexer->parse_point;
-      tok->token = BL_CHAR;
-      tok->string = tok->where_firstchar;
-      tok->loc.line_number = lexer->current_line;
-      tok->loc.line_offset = lexer->current_column;
+      
+      SET_DEFAULT_TOKEN(BL_CHAR);
    }
    else 
    
    #endif //BL_IDENTIFIERS
    
-   #ifdef BL_SYMBOLS
-
    /*SEMICOLON*/
    if 
-   (*character && *character == ';')
-   {
-      tok->where_firstchar = lexer->parse_point;
-      bl_forward(lexer);
-      character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-      tok->where_lastchar = lexer->parse_point;
-      tok->token = BL_SEMICOLON;
-      tok->string = tok->where_firstchar;
-      tok->int_number = 0;
-      tok->real_number = 0;
-      tok->loc.line_number = lexer->current_line;
-      tok->loc.line_offset = lexer->current_column;
-   }
-   /*RBRACE*/
-   else if(*character && *character == '{')
-   {
-      tok->where_firstchar = lexer->parse_point;
-      bl_forward(lexer);
-      character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-      tok->where_lastchar = lexer->parse_point;
-      tok->token = BL_LBRACE;
-      tok->string = tok->where_firstchar;
-      tok->int_number = 0;
-      tok->real_number = 0;
-      tok->loc.line_number = lexer->current_line;
-      tok->loc.line_offset = lexer->current_column;
-   }
-   /*LBRACE*/
-   else if(*character && *character == '}')
-   {
-      tok->where_firstchar = lexer->parse_point;
-      bl_forward(lexer);
-      character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-      tok->where_lastchar = lexer->parse_point;
-      tok->token = BL_RBRACE;
-      tok->string = tok->where_firstchar;
-      tok->int_number = 0;
-      tok->real_number = 0;
-      tok->loc.line_number = lexer->current_line;
-      tok->loc.line_offset = lexer->current_column;
-   }
-   /*LBRACK*/
-   else if(*character && *character == '[')
-   {
-      tok->where_firstchar = lexer->parse_point;
-      bl_forward(lexer);
-      character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-      tok->where_lastchar = lexer->parse_point;
-      tok->token = BL_LBRACK;
-      tok->string = tok->where_firstchar;
-      tok->int_number = 0;
-      tok->real_number = 0;
-      tok->loc.line_number = lexer->current_line;
-      tok->loc.line_offset = lexer->current_column;
-   }
-   /*RBRAC*/
-   else if(*character && *character == ']')
-   {
-      tok->where_firstchar = lexer->parse_point;
-      bl_forward(lexer);
-      character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-      tok->where_lastchar = lexer->parse_point;
-      tok->token = BL_RBRACK;
-      tok->string = tok->where_firstchar;
-      tok->int_number = 0;
-      tok->real_number = 0;
-      tok->loc.line_number = lexer->current_line;
-      tok->loc.line_offset = lexer->current_column;
-   }
-   /*LPAREN*/
-   else if(*character && *character == '(')
-   {
-      tok->where_firstchar = lexer->parse_point;
-      bl_forward(lexer);
-      character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-      tok->where_lastchar = lexer->parse_point;
-      tok->token = BL_LPAREN;
-      tok->string = tok->where_firstchar;
-      tok->int_number = 0;
-      tok->real_number = 0;
-      tok->loc.line_number = lexer->current_line;
-      tok->loc.line_offset = lexer->current_column;
-   }
-   /*RPAREN*/
-   else if(*character && *character == ')')
-   {
-      tok->where_firstchar = lexer->parse_point;
-      bl_forward(lexer);
-      character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-      tok->where_lastchar = lexer->parse_point;
-      tok->token = BL_RPAREN;
-      tok->string = tok->where_firstchar;
-      tok->int_number = 0;
-      tok->real_number = 0;
-      tok->loc.line_number = lexer->current_line;
-      tok->loc.line_offset = lexer->current_column;
-   }
-   /*COMMA*/
-   else if(*character && *character == ',')
-   {
-      tok->where_firstchar = lexer->parse_point;
-      bl_forward(lexer);
-      character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-      tok->where_lastchar = lexer->parse_point;
-      tok->token = BL_COMMA;
-      tok->string = tok->where_firstchar;
-      tok->int_number = 0;
-      tok->real_number = 0;
-      tok->loc.line_number = lexer->current_line;
-      tok->loc.line_offset = lexer->current_column;
+   (*character){
+      switch (*character){
+         #ifdef BL_SYMBOLS
+
+         case ';' : SET_SIMPLE_TOKEN(BL_SEMICOLON); break;
+         case '{' : SET_SIMPLE_TOKEN(BL_LBRACE); break;
+         case '}' : SET_SIMPLE_TOKEN(BL_RBRACE); break;
+         case '[' : SET_SIMPLE_TOKEN(BL_LBRACK); break;
+         case ']' : SET_SIMPLE_TOKEN(BL_RBRACK); break;
+         case '(' : SET_SIMPLE_TOKEN(BL_LPAREN); break;
+         case ')' : SET_SIMPLE_TOKEN(BL_RPAREN); break;
+         case ',' : SET_SIMPLE_TOKEN(BL_COMMA); break;
+
+         #endif //BL_SYMBOLS
+
+         #ifdef BL_OPERATORS
+         char suff;
+         case '=':
+            suff = bl_peek_token(lexer,1);
+            switch(suff){
+               case '=': SET_COMPOUND_TOKEN(BL_ISEQUALCOND,2); break;
+               default : SET_SIMPLE_TOKEN(BL_EQUAL); break;
+            }
+            break;
+
+         case '!': 
+            suff = bl_peek_token(lexer,1);
+            switch(suff){
+               case '=': SET_COMPOUND_TOKEN(BL_NOTEQ,2); break;
+               default : SET_SIMPLE_TOKEN(BL_NOT); break;
+            }
+            break;
+
+         case '+':
+            suff = bl_peek_token(lexer,1);
+            switch(suff){
+               case '=': SET_COMPOUND_TOKEN(BL_ADDEQ,2); break;
+               case '+': SET_COMPOUND_TOKEN(BL_INC,2); break;
+               default : SET_SIMPLE_TOKEN(BL_ADDBINOP); break;
+            }
+            break;
+
+         case '-':
+            suff = bl_peek_token(lexer,1);
+            switch(suff){
+               case '-' : SET_COMPOUND_TOKEN(BL_DEC,2); break;
+               case '=' : SET_COMPOUND_TOKEN(BL_SUBEQ,2); break;
+               default  : SET_SIMPLE_TOKEN(BL_SUBBINOP); break;
+            }
+            break;
+         case '*':
+            suff = bl_peek_token(lexer,1);
+            switch(suff){
+               case '=' : SET_COMPOUND_TOKEN(BL_MULTEQ,2); break;
+               default  : SET_SIMPLE_TOKEN(BL_MULTBINOP); break;
+            }
+            break;
+         case '/':
+            suff = bl_peek_token(lexer,1);
+            switch(suff){
+               case '=' : SET_COMPOUND_TOKEN(BL_DIVEQ,2); break;
+               case '/' : 
+                  tok->where_firstchar = lexer->parse_point;
+                  while(!is_newline(*character)){
+                     UPDATE_CHAR_PTR();
+                     bl_forward(lexer,1);
+                  }
+                  // printf("%c  ",*character);
+                  bl_backward(lexer,1);
+                  UPDATE_CHAR_PTR();
+                  tok->where_lastchar = lexer->parse_point;
+                  SET_DEFAULT_TOKEN(BL_COMMENT);
+                  break;
+
+               case '*' : 
+                  tok->where_firstchar = lexer->parse_point;
+                  bl_forward(lexer,2);
+                  while((*character != '*') && (*(lexer->parse_point) != '/')){
+                     UPDATE_CHAR_PTR();
+                     bl_forward(lexer,1);
+                  }
+                  bl_forward(lexer,1);
+                  UPDATE_CHAR_PTR();
+                  tok->where_lastchar = lexer->parse_point;
+                  SET_DEFAULT_TOKEN(BL_MULCOMMENT);
+                  break;
+
+               default  : SET_SIMPLE_TOKEN(BL_DIVBINOP); break;
+            }
+            break;
+
+         case '&':
+            suff = bl_peek_token(lexer,1);
+            switch(suff){
+               case '=' : SET_COMPOUND_TOKEN(BL_ANDEQ,2); break;
+               case '&' : SET_COMPOUND_TOKEN(BL_LOGAND,2); break;
+               default  : SET_SIMPLE_TOKEN(BL_AND); break;
+            }
+            break;
+         
+         case '|':
+            suff = bl_peek_token(lexer,1);
+            switch(suff){
+               case '=' : SET_COMPOUND_TOKEN(BL_OREQ,2); break;
+               case '|' : SET_COMPOUND_TOKEN(BL_LOGOR,2); break;
+               default  : SET_SIMPLE_TOKEN(BL_OR); break;
+            }
+            break;
+
+         case '^':
+            suff = bl_peek_token(lexer,1);
+            switch(suff){
+               case '=' : SET_COMPOUND_TOKEN(BL_XOREQ,2); break;
+               default  : SET_SIMPLE_TOKEN(BL_XOR); break;
+            }
+            break;
+
+         case '<':
+            suff = bl_peek_token(lexer,1);
+            switch(suff){
+               case '=' : SET_COMPOUND_TOKEN(BL_LESSEQ,2); break;
+               case '<' : SET_COMPOUND_TOKEN(BL_LSHIFT,2); break;
+               default  : SET_SIMPLE_TOKEN(BL_LESSTHAN); break;
+            }
+            break;
+
+         case '>':
+            suff = bl_peek_token(lexer,1);
+            switch(suff){
+               case '=' : SET_COMPOUND_TOKEN(BL_GRTEQ,2); break;
+               case '>' : SET_COMPOUND_TOKEN(BL_RSHIFT,2); break;
+               default  : SET_SIMPLE_TOKEN(BL_GRTTHAN); break;
+            }
+            break;
+
+         #endif //BL_OPERATORS
+
+         default: SET_SIMPLE_TOKEN(BL_UNIMPLEMENTED); break;
+
+         
+      }
+   }else {
+      SET_SIMPLE_TOKEN(BL_EOF);
    }
    
-   else 
-   
-   #endif //BL_SYMBOLS
-   
-
-   #ifdef BL_OPERATORS
-   /*EQUAL, ISEQUAL*/
-   if (*character && *character == '=')
-   {
-      char suff = bl_peek_token(lexer,1);
-      if(suff != '=')
-      {
-         tok->where_firstchar = lexer->parse_point;
-         bl_forward(lexer);
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->where_lastchar = lexer->parse_point;
-         tok->token = BL_EQUAL;
-         tok->string = tok->where_firstchar;
-         tok->int_number = 0;
-         tok->real_number = 0;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }
-      else
-      {
-         tok->where_firstchar = lexer->parse_point;
-         bl_forward(lexer);
-         bl_forward(lexer);
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->where_lastchar = lexer->parse_point;
-         tok->token = BL_ISEQUALCOND;
-         tok->string = tok->where_firstchar;
-         tok->int_number = 0;
-         tok->real_number = 0;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }
-
-   }
-      /*NOT, NOTEQ*/
-   else if(*character == '!'){
-      char suff = bl_peek_token(lexer,1);
-      tok->where_firstchar = lexer->parse_point;
-      if(suff == '='){
-         bl_forward(lexer);
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_NOTEQ;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }
-      else{
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_NOT;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }
-   }
-
-   /*ADDBINOP, ADDEQ, INC*/
-   else if(*character == '+')
-   {
-      tok->where_firstchar = lexer->parse_point;
-      char suff = bl_peek_token(lexer,1);
-      if(suff == '='){
-         bl_forward(lexer);
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_ADDEQ;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }
-      else if(suff == '+'){
-         bl_forward(lexer);
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_INC;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }
-      else{
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_ADDBINOP;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }
-   }
-   /*SUBBINOP, SUBEQ, DEC*/
-   else if(*character == '-')
-   {
-      tok->where_firstchar = lexer->parse_point;
-      char suff = bl_peek_token(lexer,1);
-      if(suff == '='){
-         bl_forward(lexer);
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_SUBEQ;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }
-      else if(suff == '-'){
-         bl_forward(lexer);
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_DEC;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }
-      else{
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_SUBBINOP;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }
-   }
-   /*MULTBINOP, MULTEQ*/
-   else if(*character == '*')
-   {
-      tok->where_firstchar = lexer->parse_point;
-      char suff = bl_peek_token(lexer,1);
-      if(suff == '='){
-         bl_forward(lexer);
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_MULTEQ;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }else{
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_MULTBINOP;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }
-   }
-   /*DIVBINOP, DIVEQ*/
-   else if(*character == '/')
-   {
-      tok->where_firstchar = lexer->parse_point;
-      char suff = bl_peek_token(lexer,1);
-      if(suff == '='){
-         bl_forward(lexer);
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_DIVEQ;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }else{
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_DIVBINOP;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }
-   }
-
-   /*LESSTHAN, LESSTHANEQ, LSHIFT*/
-   else if(*character == '<'){
-      char suff = bl_peek_token(lexer,1);
-      tok->where_firstchar = lexer->parse_point;
-      if(suff == '='){
-         bl_forward(lexer);
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_LESSEQ;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }else if(suff == '<'){
-         bl_forward(lexer);
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_LSHIFT;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }else{
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_LESSTHAN;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }
-   }
-   /*GRTTHAN, GRTTHANEQ, RSHIFT*/
-   else if(*character == '>'){
-      char suff = bl_peek_token(lexer,1);
-      tok->where_firstchar = lexer->parse_point;
-      if(suff == '='){
-         bl_forward(lexer);
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_GRTEQ;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }else if(suff == '>'){
-         bl_forward(lexer);
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_RSHIFT;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }else{
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_GRTTHAN;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }
-   }
-   /*BITWISE OR, OREQ, LOGICAL OR*/
-   else if(*character == '|'){
-      char suff = bl_peek_token(lexer,1);
-      tok->where_firstchar = lexer->parse_point;
-      if(suff == '='){
-         bl_forward(lexer);
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_OREQ;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }else if(suff == '|'){
-         bl_forward(lexer);
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_LOGOR;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }else{
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_OR;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }
-   }
-   /*BITWISE AND, ANDEQ, LOGICAL AND*/
-   else if(*character == '&'){
-      char suff = bl_peek_token(lexer,1);
-      tok->where_firstchar = lexer->parse_point;
-      if(suff == '='){
-         bl_forward(lexer);
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_ANDEQ;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }else if(suff == '&'){
-         bl_forward(lexer);
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_LOGAND;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }else{
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_AND;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }
-   }
-   /*BITWISE XOR, XOREQ*/
-   else if(*character == '^'){
-      char suff = bl_peek_token(lexer,1);
-      tok->where_firstchar = lexer->parse_point;
-      if(suff == '='){
-         bl_forward(lexer);
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_XOREQ;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }else{
-         bl_forward(lexer);
-         tok->where_lastchar = lexer->parse_point;
-         character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-         tok->token = BL_XOR;
-         tok->real_number = 0;
-         tok->int_number = 0;
-         tok->string = lexer->parse_point;
-         tok->loc.line_number = lexer->current_line;
-         tok->loc.line_offset = lexer->current_column;
-      }
-   }
-   
-   /*EOF*/
-   else 
-   
-   #endif //BL_OPERATORS
-
-   if(!(*character)){
-      tok->where_firstchar = lexer->parse_point;
-      bl_forward(lexer);
-      tok->where_lastchar = lexer->parse_point;
-      character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-      tok->token = BL_EOF;
-      tok->real_number = 0;
-      tok->int_number = 0;
-      tok->string = lexer->parse_point;
-      tok->loc.line_number = lexer->current_line;
-      tok->loc.line_offset = lexer->current_column;
-   }
-   /*UNIMPLEMENTED TOKEN*/
-   else
-   {
-      tok->where_firstchar = lexer->parse_point;
-      bl_forward(lexer);
-      tok->where_lastchar = lexer->parse_point;
-      character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-      tok->token = BL_UNIMPLEMENTED;
-      tok->real_number = 0;
-      tok->int_number = 0;
-      tok->string = lexer->parse_point;
-      tok->loc.line_number = lexer->current_line;
-      tok->loc.line_offset = lexer->current_column;
-   }
-   
-
    return tok;
 
 }
@@ -869,7 +482,11 @@ static int is_alnum(char c){
 
 
 static int is_whitespace(char c){
-   return (c == ' ') || (c == '\n') || (c == '\r');
+   return (c == ' ');
+}
+
+static int is_newline(char c){
+   return (c == '\n') || (c == '\r');
 }
 
 static int token_size(bl_token *t){
@@ -882,7 +499,7 @@ static char bl_peek_token(bl_lexer *l,int num){
    char character;
    do{
       character = l->input_stream[l->parse_point - l->input_stream + number];
-      while(is_whitespace(character)){
+      while(is_whitespace(character) && is_newline(character)){
          character = l->input_stream[l->parse_point - l->input_stream + ++number];
       }
       count++;
@@ -897,7 +514,7 @@ static char bl_peek_prev_token(bl_lexer *l,int num){
    char character;
    do{
       character = l->input_stream[l->parse_point - l->input_stream - number];
-      while(is_whitespace(character)){
+      while(is_whitespace(character) && is_newline(character)){
          character = l->input_stream[l->parse_point - l->input_stream - ++number];
       }
       count++;
@@ -908,19 +525,39 @@ static char bl_peek_prev_token(bl_lexer *l,int num){
    return character;
 }
 
-static void bl_forward(bl_lexer *lexer){
-   if (*lexer->parse_point == '\n') {
-      lexer->current_line++;
-      lexer->current_column = 1;
-   } else {
-      lexer->current_column++;
-   }
-   lexer->parse_point++;
+
+static void bl_set_token(bl_token* tok,enum KEYWORD_TYPES label, double real_number, long int_number, char* string, int string_len, int line_number, int line_offset){
+   tok->token = label;
+   tok->real_number = real_number;
+   tok->int_number = int_number;
+   tok->string = string;
+   tok->string_len = string_len;
+   tok->loc.line_number = line_number;
+   tok->loc.line_offset = line_offset;
 }
 
-static void bl_backward(bl_lexer *lexer){
-   lexer->current_column--;
-   lexer->parse_point--;
+
+static void bl_forward(bl_lexer *lexer,int num){
+   int count = 0;
+   while(count < num){
+      if (*lexer->parse_point == '\n') {
+         lexer->current_line++;
+         lexer->current_column = 1;
+      } else {
+         lexer->current_column++;
+      }
+      lexer->parse_point++;
+      count++;
+   }
+}
+
+static void bl_backward(bl_lexer *lexer,int num){
+   int count = 0;
+   while(count<num){
+      lexer->current_column--;
+      lexer->parse_point--;
+      count++;
+   }
 }
 
 void bl_lexer_init(bl_lexer *lexer, const char *input_stream, const char *input_stream_end, char *string_store, int store_length){
@@ -1053,6 +690,10 @@ char *print_keyword(enum KEYWORD_TYPES var){
          return "BL_LOGAND";
       case BL_LOGOR:
          return "BL_LOGOR";
+      case BL_COMMENT:
+         return "BL_COMMENT";
+      case BL_MULCOMMENT:
+         return "BL_MULCOMMENT";
       #endif //BL_OPERATORS
 
       default:
@@ -1072,10 +713,10 @@ void print_token(bl_token* da, int i){
       start++;
    }
    if((tok.token != BL_UNIMPLEMENTED)){
-      printf(",        %s          lin %d col %d",print_keyword(tok.token), tok.loc.line_number, tok.loc.line_offset);
+      printf("        %s          lin %d col %d",print_keyword(tok.token), tok.loc.line_number, tok.loc.line_offset);
       printf("\n");
    }else{
-      printf(", ----  %s           KEYWORD",print_keyword(tok.token));
+      printf("  ----  %s           KEYWORD",print_keyword(tok.token));
       printf("\n");
    }
 
