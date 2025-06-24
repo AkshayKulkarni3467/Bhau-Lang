@@ -11,6 +11,7 @@ Implement Arenas
 #include <stdlib.h>
 #include <string.h>
 #include "dynarray.h"
+#include "arena.h"
 /*-------------------------------------------------------------------------*/
 
 
@@ -121,6 +122,7 @@ typedef struct
    int   string_storage_len;
    int current_line;
    int current_column;
+   bl_arena arena;
 } bl_lexer;
 
 typedef struct
@@ -146,34 +148,34 @@ typedef struct
 
 
 /*--------------------------------------------------------Helper functions*/
-static int is_alpha(char c);
-static int is_digit(char c);
-static int is_alnum(char c);
-static int is_whitespace(char c);
-static int is_newline(char c);
+static inline int is_alpha(char c);
+static inline int is_digit(char c);
+static inline int is_alnum(char c);
+static inline int is_whitespace(char c);
+static inline int is_newline(char c);
 
-static int token_size(bl_token *t);
-static char bl_peek_token(bl_lexer *l,int num);
-static char bl_peek_prev_token(bl_lexer *l,int num);
-static void bl_set_token(bl_token* tok, enum KEYWORD_TYPES label,double real_number, long int_number, char* string, int string_len, int line_number, int line_offset);
+static inline int token_size(bl_token *t);
+static inline char bl_peek_token(bl_lexer *l,int num);
+static inline char bl_peek_prev_token(bl_lexer *l,int num);
+static inline void bl_set_token(bl_token* tok, enum KEYWORD_TYPES label,double real_number, long int_number, char* string, int string_len, int line_number, int line_offset);
 
-static void bl_forward(bl_lexer *lexer,int num);
-static void bl_backward(bl_lexer *lexer, int num);
-static void bl_remove_whitespace(bl_lexer *l);
-static void bl_next_step(bl_lexer *l);
+static inline void bl_forward(bl_lexer *lexer,int num);
+static inline void bl_backward(bl_lexer *lexer, int num);
+static inline void bl_remove_whitespace(bl_lexer *l);
+static inline void bl_next_step(bl_lexer *l);
 
-char *print_keyword(enum KEYWORD_TYPES var);
-void print_token(bl_token* da, int i);
+static inline char *print_keyword(enum KEYWORD_TYPES var);
+static inline void print_token(bl_token* da, int i);
 
 
 /*---------------------------------------------------------Init functions*/
-void bl_lexer_init(bl_lexer *lexer, const char *input_stream, const char *input_stream_end, char *string_store, int store_length);
+static inline void bl_lexer_init(bl_lexer *lexer, const char *input_stream, const char *input_stream_end, char *string_store, int store_length);
 
 
 /*------------------------------------------------------Tokenize function*/
 bl_token *bl_tokenize(bl_lexer *lexer){
    char* character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-   bl_token *tok = malloc(sizeof(bl_token));
+   bl_token *tok = (bl_token *)arena_alloc(&(lexer->arena), sizeof(bl_token));
 
   #ifdef BL_IDENTIFIERS
 
@@ -568,6 +570,7 @@ void bl_lexer_init(bl_lexer *lexer, const char *input_stream, const char *input_
    lexer->string_storage_len = store_length;
    lexer->current_line = 1;
    lexer->current_column = 1;
+   arena_init(&(lexer->arena));
 }
 
 
