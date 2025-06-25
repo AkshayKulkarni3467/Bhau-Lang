@@ -1,5 +1,5 @@
-#ifndef INCLUDE_BL_LEXER_H
-#define INCLUDE_BL_LEXER_H
+#ifndef INCLUDE_BL_TOKENIZER_H
+#define INCLUDE_BL_TOKENIZER_H
 
 
 /*-----------------------------------------------------------------Includes*/
@@ -14,6 +14,7 @@
 
 #include "bl_dynarray.h"
 #include "bl_arena.h"
+#include "bl_langkeywords.h"
 /*-------------------------------------------------------------------------*/
 
 
@@ -180,13 +181,17 @@ static inline void bl_lexer_print(const bl_lexer *l);
 static inline void bl_lexer_peek_context(const bl_lexer *l, int chars_around);
 static inline void bl_lexer_print_remaining(const bl_lexer *l);
 static inline void bl_token_verify_arena(const bl_token *tok, const bl_arena *arena);
-static inline void bl_token_list_filter(bl_token *tokens, size_t count, long type);
-
+static inline bl_token* bl_token_list_filter(bl_token *tokens,size_t count, enum KEYWORD_TYPES type);
+static inline void bl_token_list_revfilter(bl_token *tokens, bl_token* temp_arr,size_t count, enum KEYWORD_TYPES type);
+static inline bl_token* bl_token_list_filter_multiple(bl_token* tokens,size_t token_count,enum KEYWORD_TYPES* keyword_arr,size_t keyword_count);
 
 
 
 #endif //BL_DEBUG
 
+static inline char * bl_token_get_str(bl_token token,char* buf);
+static inline enum KEYWORD_TYPES bl_token_get_type(bl_token token);
+static inline void flood_token(bl_token* token);
 static inline bl_token* bl_token_list_preprocess(bl_token* token_list);
 static inline bl_token* bl_tokenize_file(char* filename,bl_arena* arena);
 
@@ -601,7 +606,7 @@ char *keyword_enum_to_str(enum KEYWORD_TYPES var){
       #ifdef BL_IDENTIFIERS
 
       case BL_IDENTIFIER:
-         return "BL_IDENTIFIER";
+         return "BL_IDENTIFIER";      
       case BL_INT:
          return "BL_INT";
       case BL_FLOAT:
@@ -652,19 +657,19 @@ char *keyword_enum_to_str(enum KEYWORD_TYPES var){
       case BL_DIVBINOP:
          return "BL_DIVBINOP";
       case BL_ADDEQ:
-         return "BL_ADDEQ";
+         return "BL_ADDEQ";          
       case BL_SUBEQ:
-         return "BL_SUBEQ";
+         return "BL_SUBEQ";           
       case BL_MULTEQ:
-         return "BL_MULTEQ";
+         return "BL_MULTEQ";          
       case BL_DIVEQ:
-         return "BL_DIVEQ";
+         return "BL_DIVEQ";           
       case BL_INC:
-         return "BL_INC";
+         return "BL_INC";            
       case BL_DEC:
-         return "BL_DEC";
+         return "BL_DEC";             
       case BL_LSHIFT:
-         return "BL_LSHIFT";
+         return "BL_LSHIFT"; 
       case BL_RSHIFT:
          return "BL_RSHIFT";
       case BL_AND:
@@ -674,11 +679,11 @@ char *keyword_enum_to_str(enum KEYWORD_TYPES var){
       case BL_XOR:
          return "BL_XOR";
       case BL_ANDEQ:
-         return "BL_ANDEQ";
+         return "BL_ANDEQ";           
       case BL_OREQ:
-         return "BL_OREQ";
+         return "BL_OREQ";            
       case BL_XOREQ:
-         return "BL_XOREQ";
+         return "BL_XOREQ";          
       case BL_NOT:
          return "BL_NOT";
       case BL_LESSTHAN:
@@ -686,21 +691,57 @@ char *keyword_enum_to_str(enum KEYWORD_TYPES var){
       case BL_GRTTHAN:
          return "BL_GRTTHAN";
       case BL_NOTEQ:
-         return "BL_NOTEQ";
+         return "BL_NOTEQ";          
       case BL_LESSEQ:
-         return "BL_LESSEQ";
+         return "BL_LESSEQ";          
       case BL_GRTEQ:
-         return "BL_GRTEQ";
+         return "BL_GRTEQ";           
       case BL_LOGAND:
-         return "BL_LOGAND";
+         return "BL_LOGAND";          
       case BL_LOGOR:
-         return "BL_LOGOR";
+         return "BL_LOGOR";           
       case BL_COMMENT:
-         return "BL_COMMENT";
+         return "BL_COMMENT"; 
       case BL_MULCOMMENT:
          return "BL_MULCOMMENT";
       #endif //BL_OPERATORS
 
+      case BL_KW_BYE_BHAU:
+         return "BL_KW_BYE_BHAU";
+      case BL_KW_HI_BHAU:
+         return "BL_KW_HI_BHAU";
+      case BL_KW_BHAU_HAI_AHE:
+         return "BL_KW_BHAU_HAI_AHE";
+      case BL_KW_BHAU_JAR:
+         return "BL_KW_BHAU_JAR";
+      case BL_KW_BHAU_TAR:
+         return "case BL_KW_BHAU_TAR";
+      case BL_KW_BHAU_NAHITAR:
+         return "BL_KW_BHAU_NAHITAR";
+      case BL_KW_BHAU_JOPARENT:
+         return "case BL_KW_BHAU_JOPARENT";
+      case BL_KW_BHAU_SATAT:
+         return "case BL_KW_BHAU_SATAT";
+      case BL_KW_BHAU_LAKSHAT_THEV:
+         return "BL_KW_BHAU_LAKSHAT_THEV";
+      case BL_KW_BHAU_PARAT_DE:
+         return "KW_BHAU_PARAT_DE";
+      case BL_KW_BHAU_CHUNAV:
+         return "case BL_KW_BHAU_CHUNAV";
+      case BL_KW_BHAU_THAMB:
+         return "BL_KW_BHAU_THAMB";
+      case BL_KW_BHAU_CHALU_RHA:
+         return "BL_KW_BHAU_CHALU_RHA";
+      case BL_KW_BHAU_RAHUDET:
+         return "BL_KW_BHAU_RAHUDET";
+      case BL_KW_BHAU_KHARA:
+         return "BL_KW_BHAU_KHARA";
+      case BL_KW_BHAU_KHOTA:
+         return "BL_KW_BHAU_KHOTA";
+      case BL_KW_BHAU_BAHERUN_GHE:
+         return "BL_KW_BHAU_BAHERUN_GHE";
+      case BL_KW_BHAU_MAIN:
+         return "BL_KW_BHAU_MAIN";
       default:
          return "<<UNKNOWN TOKEN>>";
 
@@ -733,7 +774,7 @@ static inline void bl_token_print(const bl_token *tok) {
 
 static inline void bl_token_list_print(bl_token *tokens, size_t count) {
     for (size_t i = 0; i < count; ++i) {
-        printf("$ Token %zu:\n", i);
+        printf("$ Token :%s:\n", keyword_enum_to_str(tokens[i].token));
         bl_token_print(&tokens[i]);
     }
 }
@@ -805,16 +846,51 @@ static inline void bl_token_verify_arena(const bl_token *tok, const bl_arena *ar
 
 }
 
-static inline void bl_token_list_filter(bl_token *tokens, size_t count, long type) {
+static inline bl_token* bl_token_list_filter(bl_token *tokens,size_t count,enum KEYWORD_TYPES type) {
+    bl_token* temp_arr = dynarray_create(bl_token);
     for (size_t i = 0; i < count; ++i) {
         if (tokens[i].token == type) {
-            printf("🔎 [%zu] ", i);
-            bl_token_print(&tokens[i]);
+            // printf("🔎 [%zu] ", i);
+            // bl_token_print(&tokens[i]);
+            dynarray_push(temp_arr,tokens[i], bl_token);
         }
     }
+    return temp_arr;
+}
+
+static inline void bl_token_list_revfilter(bl_token *tokens, bl_token* temp_arr,size_t count, enum KEYWORD_TYPES type){
+   for (size_t i = 0; i < count; ++i){
+      if(tokens[i].token != type){
+         dynarray_push(temp_arr,tokens[i],bl_token);
+      }
+   }
+}
+
+static inline bl_token* bl_token_list_filter_multiple(bl_token* tokens,size_t token_count,enum KEYWORD_TYPES* keyword_arr,size_t keyword_count){
+   bl_token* temp_arr = dynarray_create(bl_token);
+   for (size_t i = 0; i< token_count; ++i){
+      for(size_t j = 0; j< keyword_count; ++j){
+         if(tokens[i].token == keyword_arr[j]){
+            dynarray_push(temp_arr,tokens[i],bl_token);
+         }
+      }
+   }
+   return temp_arr;
 }
 
 #endif
+
+
+char* bl_token_get_str(bl_token tok, char* buf) {
+    memcpy(buf, tok.where_firstchar, tok.string_len);
+    buf[tok.string_len] = '\0';
+    return buf;
+}
+
+static inline enum KEYWORD_TYPES bl_token_get_type(bl_token token){
+   return token.token;
+
+}
 
 /*-----------------------------------any preprocessing steps required for tokens list*/
 static inline bl_token* bl_token_list_preprocess(bl_token* token_list){
@@ -824,8 +900,8 @@ static inline bl_token* bl_token_list_preprocess(bl_token* token_list){
 
 static inline bl_token* bl_tokenize_file(char* filename,bl_arena* arena){
    FILE *f = fopen(filename,"rb");
-   char *text = (char*)arena_alloc(arena,1<<12);
-   int len = f ? fread(text, 1, 1<<12, f) : -1;
+   char *text = (char*)arena_alloc(arena,1<<10);
+   int len = f ? fread(text, 1, 1<<10, f) : -1;
 
    bl_lexer l;
    bl_token *da = dynarray_create(bl_token);
@@ -836,14 +912,14 @@ static inline bl_token* bl_tokenize_file(char* filename,bl_arena* arena){
    }
    fclose(f);
 
-   char* string_store = (char *)arena_alloc(arena,1<<12);
-   int string_store_len = 1<<12;
+   char* string_store = (char *)arena_alloc(arena,1<<10);
+   int string_store_len = 1<<10;
    bl_lexer_init(&l,arena,text,text+len,string_store, string_store_len);
 
    do{
    tok = bl_tokenize(&l);
 
-   bl_token_print(tok);      
+   // bl_token_print(tok);      
    bl_next_step(&l);
    dynarray_push(da,*tok,bl_token);
 
@@ -855,4 +931,4 @@ static inline bl_token* bl_tokenize_file(char* filename,bl_arena* arena){
 }
 
 
-#endif //BL_LEXER_H
+#endif //INCLUDE_BL_TOKENIZER_H

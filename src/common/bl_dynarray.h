@@ -42,6 +42,7 @@ enum {
     DYNARRAY_FIELDS
 };
 
+
 static inline void *_dynarray_create(size_t cap, size_t stride, bl_arena *arena) {
     size_t header_size = DYNARRAY_FIELDS * sizeof(size_t);
     size_t total = header_size + cap * stride;
@@ -108,3 +109,4 @@ static inline void *_dynarray_push(void *arr, void *xptr) {
 }
 
 #endif // DYNARRAY
+

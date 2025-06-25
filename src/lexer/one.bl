@@ -1,12 +1,24 @@
-hi bhau
+hi bhau 
 
-// are bhau
-x+y
-"hell\"o world\n"
+bhau baherun ghe printf;
+
+bhau hai ahe x = 4;
+bhau hai ahe y = 5;
+
+bhau main(){
+    bhau joparent(x > 0){
+        bhau jar(x == 1){
+            printf("Hello first\n");
+        }
+        bhau nahitar(x == 2){
+            printf("Hello two\n");
+        }
+        bhau tar(x == 3){
+            printf("Hello three");
+        }
+        x--;
+    }
+}
+
+
 bye bhau
-a
-
-/* hello    
-this is a 
-multiilne comment*/
-345.678

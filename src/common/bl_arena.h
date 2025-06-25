@@ -7,7 +7,7 @@
 #include <string.h>
 
 #ifndef ARENA_BLOCK_SIZE
-#define ARENA_BLOCK_SIZE 4096
+#define ARENA_BLOCK_SIZE 1024
 #endif
 
 
