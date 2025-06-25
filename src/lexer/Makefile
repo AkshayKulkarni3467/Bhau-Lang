@@ -1,10 +1,10 @@
 CC = gcc
 
-lexer : dynarray.h arena.h bl_lexer.c
+lexer : bl_dynarray.h bl_arena.h bl_tokenizer.c
 	$(CC) bl_lexer.c -o lexer
 	./lexer
 
-test : dynarray.h bl_lexer.h arena.h test.c
+test : bl_dynarray.h bl_tokenizer.h bl_arena.h test.c
 	$(CC) test.c -o test
 	./test
 

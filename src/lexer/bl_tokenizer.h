@@ -1,17 +1,19 @@
 #ifndef INCLUDE_BL_LEXER_H
 #define INCLUDE_BL_LEXER_H
 
-/* todo
-Implement Arenas
-*/
-
 
 /*-----------------------------------------------------------------Includes*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "dynarray.h"
-#include "arena.h"
+#include <stdint.h> 
+#include <ctype.h>
+#include <assert.h>
+#include <inttypes.h>
+
+
+#include "bl_dynarray.h"
+#include "bl_arena.h"
 /*-------------------------------------------------------------------------*/
 
 
@@ -19,6 +21,7 @@ Implement Arenas
 
 #define BHAU_LANG
 // #define BL_LEXER_SELF_TEST   // ---------------Undefine for self testing
+#define BL_DEBUG
 // maybe bhai lang, bro lang later
 
 /*----------------------------------------------------------Helper defines*/
@@ -122,7 +125,7 @@ typedef struct
    int   string_storage_len;
    int current_line;
    int current_column;
-   bl_arena arena;
+   bl_arena* arena;
 } bl_lexer;
 
 typedef struct
@@ -154,6 +157,7 @@ static inline int is_alnum(char c);
 static inline int is_whitespace(char c);
 static inline int is_newline(char c);
 
+static inline char *keyword_enum_to_str(enum KEYWORD_TYPES var);
 static inline int token_size(bl_token *t);
 static inline char bl_peek_token(bl_lexer *l,int num);
 static inline char bl_peek_prev_token(bl_lexer *l,int num);
@@ -164,18 +168,38 @@ static inline void bl_backward(bl_lexer *lexer, int num);
 static inline void bl_remove_whitespace(bl_lexer *l);
 static inline void bl_next_step(bl_lexer *l);
 
-static inline char *print_keyword(enum KEYWORD_TYPES var);
-static inline void print_token(bl_token* da, int i);
+#ifdef BL_DEBUG
+
+
+static inline void bl_token_print(const bl_token *tok);
+static inline void bl_token_list_print(bl_token *tokens, size_t count);
+static inline void bl_token_dump_raw(const bl_token *tok);
+static inline void bl_token_debug_string(const bl_token *tok, char *buf, size_t bufsize);
+
+static inline void bl_lexer_print(const bl_lexer *l);
+static inline void bl_lexer_peek_context(const bl_lexer *l, int chars_around);
+static inline void bl_lexer_print_remaining(const bl_lexer *l);
+static inline void bl_token_verify_arena(const bl_token *tok, const bl_arena *arena);
+static inline void bl_token_list_filter(bl_token *tokens, size_t count, long type);
+
+
+
+
+#endif //BL_DEBUG
+
+static inline bl_token* bl_token_list_preprocess(bl_token* token_list);
+static inline bl_token* bl_tokenize_file(char* filename,bl_arena* arena);
+
 
 
 /*---------------------------------------------------------Init functions*/
-static inline void bl_lexer_init(bl_lexer *lexer, const char *input_stream, const char *input_stream_end, char *string_store, int store_length);
+static inline void bl_lexer_init(bl_lexer *lexer, bl_arena* arena,const char *input_stream, const char *input_stream_end, char *string_store, int store_length);
 
 
 /*------------------------------------------------------Tokenize function*/
 bl_token *bl_tokenize(bl_lexer *lexer){
    char* character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
-   bl_token *tok = (bl_token *)arena_alloc(&(lexer->arena), sizeof(bl_token));
+   bl_token *tok = (bl_token *)arena_alloc(lexer->arena, sizeof(bl_token));
 
   #ifdef BL_IDENTIFIERS
 
@@ -437,33 +461,10 @@ bl_token *bl_tokenize(bl_lexer *lexer){
 
 int main(){
 
-   FILE *f = fopen("one.bl", "rb");
-   char *text = (char*)malloc(1 << 20);
-   int len = f ? fread(text, 1, 1<<20, f) : -1;
+   bl_arena* arena = (bl_arena*)malloc(sizeof(bl_arena));
+   arena_init(arena);
 
-   bl_lexer l;
-   bl_token *da = dynarray_create(bl_token);
-   bl_token *tok;
-
-   if (len < 0) {
-      fprintf(stderr, "Error opening file\n");
-      return 1;
-   }
-   fclose(f);
-
-   char* string_store = (char *)malloc(1<<20);
-   int string_store_len = 1<<20;
-   bl_lexer_init(&l,text,text+len,string_store, string_store_len);
-   do{
-      tok = bl_tokenize(&l);
-      bl_next_step(&l);
-      dynarray_push(da,*tok);
-   }while(tok->token != (long)BL_EOF);
-
-   for(int i = 0; i < dynarray_length(da);i++){ 
-      print_token(da,i);
-      // printf("%d , %p\n",i,da[i].where_firstchar);
-   }
+   bl_tokenize_file("one.bl",arena);
 
 }
 
@@ -562,7 +563,7 @@ static void bl_backward(bl_lexer *lexer,int num){
    }
 }
 
-void bl_lexer_init(bl_lexer *lexer, const char *input_stream, const char *input_stream_end, char *string_store, int store_length){
+void bl_lexer_init(bl_lexer *lexer, bl_arena* arena,const char *input_stream, const char *input_stream_end, char *string_store, int store_length){
    lexer->input_stream = (char *)input_stream;
    lexer->parse_point = (char *)input_stream;
    lexer->eof = (char *)input_stream_end;
@@ -570,7 +571,7 @@ void bl_lexer_init(bl_lexer *lexer, const char *input_stream, const char *input_
    lexer->string_storage_len = store_length;
    lexer->current_line = 1;
    lexer->current_column = 1;
-   arena_init(&(lexer->arena));
+   lexer->arena = arena;
 }
 
 
@@ -592,8 +593,9 @@ static void bl_next_step(bl_lexer *l){
    bl_remove_whitespace(l);
 }
 
+#ifdef BL_DEBUG
 
-char *print_keyword(enum KEYWORD_TYPES var){
+char *keyword_enum_to_str(enum KEYWORD_TYPES var){
    switch(var){
 
       #ifdef BL_IDENTIFIERS
@@ -707,22 +709,149 @@ char *print_keyword(enum KEYWORD_TYPES var){
 }
 
 
+static inline void bl_token_print(const bl_token *tok) {
+    printf("$ Token {\n");
+    printf("   type          : %ld\n", tok->token);
+    printf("   location      : line %d, offset %d\n", tok->loc.line_number, tok->loc.line_offset);
+    printf("   chars         : '%.*s'\n",
+           (int)(tok->where_lastchar - tok->where_firstchar),
+           tok->where_firstchar);
 
-void print_token(bl_token* da, int i){
-   bl_token tok = da[i];
-   char *start = tok.where_firstchar;
-   while(start < tok.where_lastchar){
-      printf("%c",*start);
-      start++;
-   }
-   if((tok.token != BL_UNIMPLEMENTED)){
-      printf("        %s          lin %d col %d",print_keyword(tok.token), tok.loc.line_number, tok.loc.line_offset);
-      printf("\n");
-   }else{
-      printf("  ----  %s           KEYWORD",print_keyword(tok.token));
-      printf("\n");
-   }
+    if (tok->string) {
+        printf("   string value  : \"%.*s\" (len=%d)\n", tok->string_len, tok->string, tok->string_len);
+    }
 
+    if (tok->token == BL_INT) {
+        printf("   int value     : %ld\n", tok->int_number);
+    } else if (tok->token == BL_FLOAT) {
+        printf("   float value   : %f\n", tok->real_number);
+    }
+
+    printf("}\n");
+    printf("\n");
+}
+
+static inline void bl_token_list_print(bl_token *tokens, size_t count) {
+    for (size_t i = 0; i < count; ++i) {
+        printf("$ Token %zu:\n", i);
+        bl_token_print(&tokens[i]);
+    }
+}
+
+static inline void bl_lexer_print(const bl_lexer *l) {
+    printf("$ Lexer State:\n");
+    printf("   input_stream      : %p\n", (void *)l->input_stream);
+    printf("   eof               : %p\n", (void *)l->eof);
+    printf("   parse_point       : %p\n", (void *)l->parse_point);
+    printf("   recent char      : '%c'\n", *(l->parse_point-1));
+    printf("   string_storage    : %p\n", (void *)l->string_storage);
+    printf("   string_store_len  : %d\n", l->string_storage_len);
+    printf("   current line      : %d\n", l->current_line);
+    printf("   current column    : %d\n", l->current_column);
+    printf("   arena             : %p\n", (void *)l->arena);
+    printf("\n");
+}
+
+
+static inline void bl_token_dump_raw(const bl_token *tok) {
+    const unsigned char *bytes = (const unsigned char *)tok;
+    printf("$ Raw Token (%p):\n", (void *)tok);
+    for (size_t i = 0; i < sizeof(bl_token); ++i) {
+        printf("%02X ", bytes[i]);
+        if ((i + 1) % 8 == 0) printf("\n");
+    }
+    printf("\n");
+}
+
+static inline void bl_token_debug_string(const bl_token *tok, char *buf, size_t bufsize) {
+    snprintf(buf, bufsize,
+             "[%s] \"%.*s\" at line %d, col %d",
+             keyword_enum_to_str(tok->token),
+             (int)(tok->where_lastchar - tok->where_firstchar),
+             tok->where_firstchar,
+             tok->loc.line_number,
+             tok->loc.line_offset);
+}
+
+static inline void bl_lexer_peek_context(const bl_lexer *l, int chars_around) {
+    char *start = l->parse_point - (chars_around);
+    char *end = l->parse_point + (chars_around);
+
+    if (start < l->input_stream) start = l->input_stream;
+    if (end > l->eof) end = l->eof;
+
+    printf("$ Lexer context (around parse_point):\n  ");
+    for (char *p = start; p < end; p++) {
+        if (p == l->parse_point) printf("|");  // mark the parse point
+        putchar(isprint(*p) ? *p : '.');
+    }
+    printf("\n");
+}
+
+static inline void bl_lexer_print_remaining(const bl_lexer *l) {
+    printf("$ Remaining input:\n");
+    const char *p = l->parse_point;
+    while (p < l->eof) {
+        putchar(isprint(*p) ? *p : ' ');
+        p++;
+    }
+    printf("\n\n");
+}
+
+static inline void bl_token_verify_arena(const bl_token *tok, const bl_arena *arena) {
+    if (!pointer_in_arena(tok, arena)) {
+        printf("!! Token not in arena: %p\n",tok);
+    }
+
+}
+
+static inline void bl_token_list_filter(bl_token *tokens, size_t count, long type) {
+    for (size_t i = 0; i < count; ++i) {
+        if (tokens[i].token == type) {
+            printf("🔎 [%zu] ", i);
+            bl_token_print(&tokens[i]);
+        }
+    }
+}
+
+#endif
+
+/*-----------------------------------any preprocessing steps required for tokens list*/
+static inline bl_token* bl_token_list_preprocess(bl_token* token_list){
+   return token_list;
+}
+/*-----------------------------------------------------------------------------------*/
+
+static inline bl_token* bl_tokenize_file(char* filename,bl_arena* arena){
+   FILE *f = fopen(filename,"rb");
+   char *text = (char*)arena_alloc(arena,1<<12);
+   int len = f ? fread(text, 1, 1<<12, f) : -1;
+
+   bl_lexer l;
+   bl_token *da = dynarray_create(bl_token);
+   bl_token *tok;
+
+   if (len < 0) {
+      fprintf(stderr, "Error opening file\n");
+   }
+   fclose(f);
+
+   char* string_store = (char *)arena_alloc(arena,1<<12);
+   int string_store_len = 1<<12;
+   bl_lexer_init(&l,arena,text,text+len,string_store, string_store_len);
+
+   do{
+   tok = bl_tokenize(&l);
+
+   bl_token_print(tok);      
+   bl_next_step(&l);
+   dynarray_push(da,*tok,bl_token);
+
+   }while(tok->token != (long)BL_EOF);
+
+   da = bl_token_list_preprocess(da);
+
+   return da;
 }
 
 
