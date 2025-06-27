@@ -14,10 +14,10 @@
 #define MAX_KEYWORDS_LEN 3
 // #define BL_POSTPROCESS_TEST
 
-static inline bl_token* bl_postprocess_token_list(bl_token* arr);
-static inline bl_token* bl_postprocess_identifiers(bl_token* arr,bl_token* temp_arr);
+static inline bl_token* bl_postprocess_token_list(bl_token* arr,bl_arena* arena);
+static inline bl_token* bl_postprocess_identifiers(bl_token* arr,bl_token* temp_arr,bl_arena* arena);
 static inline bl_token* bhaulang_lexer(char* filename,bl_arena* arena);
-static inline void reduce_identifiers(bl_token* arr, bl_token* temp_arr);
+static inline void reduce_identifiers(bl_token* arr, bl_token* temp_arr,bl_arena* arena);
 
 
 #ifdef BL_POSTPROCESS_TEST
@@ -36,26 +36,26 @@ int main(){
 #endif
 
 static inline bl_token* bhaulang_lexer(char* filename,bl_arena* arena){
-    bl_token* arr = dynarray_create(bl_token);
+    bl_token* arr = dynarray_create_arena(bl_token,arena);
     arr = bl_tokenize_file(filename,arena);
-    arr = bl_postprocess_token_list(arr);
+    arr = bl_postprocess_token_list(arr,arena);
     return arr;
 }
 
 
-static inline bl_token* bl_postprocess_token_list(bl_token* arr){
+static inline bl_token* bl_postprocess_token_list(bl_token* arr,bl_arena *arena){
 
-    bl_token* temp_arr = bl_token_list_filter(arr,dynarray_length(arr),BL_IDENTIFIER);
-    bl_token* new_arr = bl_postprocess_identifiers(arr,temp_arr);
+    bl_token* temp_arr = bl_token_list_filter(arena,arr,dynarray_length(arr),BL_IDENTIFIER);
+    bl_token* new_arr = bl_postprocess_identifiers(arr,temp_arr,arena);
 
     return new_arr;
 }
 
-static inline bl_token* bl_postprocess_identifiers(bl_token* arr,bl_token* temp_arr){
+static inline bl_token* bl_postprocess_identifiers(bl_token* arr,bl_token* temp_arr,bl_arena* arena){
 
-    reduce_identifiers(arr,temp_arr);
+    reduce_identifiers(arr,temp_arr,arena);
 
-    bl_token* cleaned_arr = dynarray_create(bl_token);
+    bl_token* cleaned_arr = dynarray_create_arena(bl_token,arena);
 
     for(int i = 0; i < dynarray_length(arr); i++){
         if(arr[i].token != -1){
@@ -67,14 +67,14 @@ static inline bl_token* bl_postprocess_identifiers(bl_token* arr,bl_token* temp_
     return cleaned_arr;
 }
 
-void reduce_identifiers(bl_token *arr, bl_token *temp_arr)
+void reduce_identifiers(bl_token *arr, bl_token *temp_arr,bl_arena *arena)
 {
     int i = 0;
     int kw = 0;
     while (i < (size_t)dynarray_length(temp_arr))
     {
         int keyword_len = MAX_KEYWORDS_LEN;
-        char **bufs = malloc(keyword_len * sizeof(char *));
+        char **bufs = (char **)arena_alloc(arena,keyword_len * sizeof(char *));
         while (keyword_len > 0)
         {
             if(i+keyword_len > dynarray_length(temp_arr)){
@@ -86,7 +86,7 @@ void reduce_identifiers(bl_token *arr, bl_token *temp_arr)
 
             for (int j = 0; j < keyword_len; j++)
             {
-                bufs[j] = (char *)malloc(STRBUF_SZ);
+                bufs[j] = (char *)arena_alloc(arena,STRBUF_SZ);
             }
 
             char string_buf[256] = {0};
@@ -94,7 +94,7 @@ void reduce_identifiers(bl_token *arr, bl_token *temp_arr)
             {
                 if ((i) <= (int)dynarray_length(temp_arr))
                 {
-                    char **strings = (char **)malloc(keyword_len * sizeof(char *));
+                    char **strings = (char **)arena_alloc(arena,keyword_len * sizeof(char *));
                     for (int j = 0; j < keyword_len; j++)
                     {
                         strings[j] = bl_token_get_str(temp_arr[i + j], bufs[j]);
@@ -109,7 +109,6 @@ void reduce_identifiers(bl_token *arr, bl_token *temp_arr)
                     }
 
 
-                    free(strings);
 
                     kw = get_keyword_type(string_buf);
                     if (kw != -1)
@@ -149,7 +148,7 @@ void reduce_identifiers(bl_token *arr, bl_token *temp_arr)
                 {
                     if ((i + 1) < dynarray_length(temp_arr))
                     {
-                        char **strings = (char **)malloc(2 * sizeof(char *));
+                        char **strings = (char **)arena_alloc(arena,2 * sizeof(char *));
                         for (int j = 0; j < 2; j++)
                         {
                             strings[j] = bl_token_get_str(temp_arr[i + j], bufs[j]);
@@ -164,7 +163,6 @@ void reduce_identifiers(bl_token *arr, bl_token *temp_arr)
                             }
                         }
 
-                        free(strings);
 
                         int kw = get_keyword_type(string_buf);
                         if (kw != -1)
@@ -196,7 +194,6 @@ void reduce_identifiers(bl_token *arr, bl_token *temp_arr)
             }
             keyword_len--;
         }// while (keyword_len > 0) end
-        free(bufs);
         i++;
     } // while (i < (size_t)dynarray_length(temp_arr)) end;
 

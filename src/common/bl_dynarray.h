@@ -32,6 +32,7 @@
 #define dynarray_capacity(arr) _dynarray_field_get(arr, CAPACITY)
 #define dynarray_length(arr) _dynarray_field_get(arr, LENGTH)
 #define dynarray_stride(arr) _dynarray_field_get(arr, STRIDE)
+#define dynarray_copy(arr) _dynarray_copy(arr)
 
 enum {
     CAPACITY,
@@ -147,6 +148,26 @@ static inline void *_dynarray_push(void *arr, void *xptr) {
     memcpy((char *)arr + len * stride, xptr, stride);
     _dynarray_field_set(arr, LENGTH, len + 1);
     return arr;
+}
+
+static inline void* _dynarray_copy(void* arr) {
+    if (!arr) return NULL;
+
+    size_t cap = dynarray_capacity(arr);
+    size_t len = dynarray_length(arr);
+    size_t stride = dynarray_stride(arr);
+
+    // Allocate new heap-based dynarray
+    void* new_arr = _dynarray_create(cap, stride, NULL);
+    if (!new_arr) return NULL;
+
+    // Copy data
+    memcpy(new_arr, arr, len * stride);
+
+    // Set metadata
+    _dynarray_field_set(new_arr, LENGTH, len);
+
+    return new_arr;
 }
 
 #endif // DYNARRAY

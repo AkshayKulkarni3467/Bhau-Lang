@@ -21,6 +21,9 @@
 /*------------------------------------------------------------------Defines*/
 
 #define BHAU_LANG
+
+//WARN Taking maximum text file size as 64 KB
+#define TEXT_FILE_SIZE (1<<16) 
 // #define BL_LEXER_SELF_TEST   // ---------------Undefine for self testing
 #define BL_DEBUG
 // maybe bhai lang, bro lang later
@@ -181,9 +184,9 @@ static inline void bl_lexer_print(const bl_lexer *l);
 static inline void bl_lexer_peek_context(const bl_lexer *l, int chars_around);
 static inline void bl_lexer_print_remaining(const bl_lexer *l);
 static inline void bl_token_verify_arena(const bl_token *tok, const bl_arena *arena);
-static inline bl_token* bl_token_list_filter(bl_token *tokens,size_t count, enum KEYWORD_TYPES type);
+static inline bl_token* bl_token_list_filter(bl_arena *arena,bl_token *tokens,size_t count, enum KEYWORD_TYPES type);
 static inline void bl_token_list_revfilter(bl_token *tokens, bl_token* temp_arr,size_t count, enum KEYWORD_TYPES type);
-static inline bl_token* bl_token_list_filter_multiple(bl_token* tokens,size_t token_count,enum KEYWORD_TYPES* keyword_arr,size_t keyword_count);
+static inline bl_token* bl_token_list_filter_multiple(bl_arena* arena,bl_token* tokens,size_t token_count,enum KEYWORD_TYPES* keyword_arr,size_t keyword_count);
 
 
 
@@ -302,8 +305,20 @@ bl_token *bl_tokenize(bl_lexer *lexer){
       tok->where_firstchar = lexer->parse_point;
       bl_forward(lexer,3);
       tok->where_lastchar = lexer->parse_point;
-      
-      SET_DEFAULT_TOKEN(BL_CHAR);
+      int str_len = 1;
+
+      if(lexer->string_storage_len >= str_len+1){
+         memcpy(lexer->string_storage,(tok->where_firstchar+1),str_len);
+         lexer->string_storage[str_len] = '\0';
+         SET_STRING_TOKEN(BL_CHAR,lexer->string_storage,str_len);
+
+         lexer->string_storage += str_len +1;
+         lexer->string_storage_len -= str_len +1;
+      }else{
+         fprintf(stderr, "String storage buffer overflow\n");
+         tok->string = NULL;
+         tok->string_len = 0;
+      }
    }
    else 
    
@@ -768,6 +783,7 @@ static inline void bl_token_print(const bl_token *tok) {
         printf("   float value   : %f\n", tok->real_number);
     }
 
+
     printf("}\n");
     printf("\n");
 }
@@ -823,7 +839,7 @@ static inline void bl_lexer_peek_context(const bl_lexer *l, int chars_around) {
 
     printf("$ Lexer context (around parse_point):\n  ");
     for (char *p = start; p < end; p++) {
-        if (p == l->parse_point) printf("|");  // mark the parse point
+        if (p == l->parse_point) printf("|");  
         putchar(isprint(*p) ? *p : '.');
     }
     printf("\n");
@@ -846,8 +862,8 @@ static inline void bl_token_verify_arena(const bl_token *tok, const bl_arena *ar
 
 }
 
-static inline bl_token* bl_token_list_filter(bl_token *tokens,size_t count,enum KEYWORD_TYPES type) {
-    bl_token* temp_arr = dynarray_create(bl_token);
+static inline bl_token* bl_token_list_filter(bl_arena* arena,bl_token *tokens,size_t count,enum KEYWORD_TYPES type) {
+    bl_token* temp_arr = dynarray_create_arena(bl_token,arena);
     for (size_t i = 0; i < count; ++i) {
         if (tokens[i].token == type) {
             // printf("🔎 [%zu] ", i);
@@ -866,8 +882,8 @@ static inline void bl_token_list_revfilter(bl_token *tokens, bl_token* temp_arr,
    }
 }
 
-static inline bl_token* bl_token_list_filter_multiple(bl_token* tokens,size_t token_count,enum KEYWORD_TYPES* keyword_arr,size_t keyword_count){
-   bl_token* temp_arr = dynarray_create(bl_token);
+static inline bl_token* bl_token_list_filter_multiple(bl_arena* arena,bl_token* tokens,size_t token_count,enum KEYWORD_TYPES* keyword_arr,size_t keyword_count){
+   bl_token* temp_arr = dynarray_create_arena(bl_token,arena);
    for (size_t i = 0; i< token_count; ++i){
       for(size_t j = 0; j< keyword_count; ++j){
          if(tokens[i].token == keyword_arr[j]){
@@ -902,10 +918,10 @@ static inline bl_token* bl_token_list_preprocess(bl_token* token_list){
 
 static inline bl_token* bl_tokenize_file(char* filename,bl_arena* arena){
    FILE *f = fopen(filename,"rb");
-   char *text = (char*)arena_alloc(arena,1<<10);
-   int len = f ? fread(text, 1, 1<<10, f) : -1;
+   char *text = (char*)arena_alloc(arena,TEXT_FILE_SIZE);
+   int len = f ? fread(text, 1, TEXT_FILE_SIZE, f) : -1;
 
-   bl_lexer l;
+   bl_lexer* l = (bl_lexer*)arena_alloc(arena,sizeof(bl_lexer));
    bl_token *da = dynarray_create_arena(bl_token,arena);
    bl_token *tok;
 
@@ -914,15 +930,15 @@ static inline bl_token* bl_tokenize_file(char* filename,bl_arena* arena){
    }
    fclose(f);
 
-   char* string_store = (char *)arena_alloc(arena,1<<10);
-   int string_store_len = 1<<10;
-   bl_lexer_init(&l,arena,text,text+len,string_store, string_store_len);
+   char* string_store = (char *)arena_alloc(arena,1<<13);
+   int string_store_len = 1<<13;
+   bl_lexer_init(l,arena,text,text+len,string_store, string_store_len);
 
    do{
-   tok = bl_tokenize(&l);
+   tok = bl_tokenize(l);
 
    // bl_token_print(tok);      
-   bl_next_step(&l);
+   bl_next_step(l);
    dynarray_push(da,*tok,bl_token);
 
    }while(tok->token != (long)BL_EOF);

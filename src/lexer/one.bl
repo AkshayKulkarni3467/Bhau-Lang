@@ -1,26 +1,115 @@
-hi bhau 
+hi bhau
 
+// Standard imports
 bhau baherun ghe printf;
+bhau baherun ghe scanf;
+bhau baherun ghe mathlib;
+bhau baherun ghe stringutils;
 
+// Variable declarations
+bhau hai ahe counter = 0;
+bhau hai ahe message = "Welcome to BhauLang!";
+bhau hai ahe x = 10;
+bhau hai ahe y = 20;
+bhau hai ahe z = 30;
+bhau hai ahe ch = 'a';
+bhau hai ahe flag = 1;
+bhau hai ahe pi = 3.1415;
+bhau hai ahe name = "Akshay Kulkarni";
 
+// Multiple functions
+bhau add(a, b){
+    return a + b;
+}
 
-bhau hai ahe x = 4;
-bhau hai ahe y = 5;
+bhau multiply(a, b){
+    return a * b;
+}
 
-bhau main(){
-    bhau joparent(x > 0){
-        bhau jar(x == 1){
-            printf("Hello first\n");
+bhau factorial(n){
+    bhau hai ahe result = 1;
+    bhau joparent(n > 1){
+        result = result * n;
+        n = n - 1;
+    }
+    return result;
+}
+
+bhau fib(n){
+    bhau jar(n <= 1){
+        return n;
+    }
+    return fib(n - 1) + fib(n - 2);
+}
+
+// Nested conditionals + loops
+bhau test_conditions(val){
+    bhau jar(val == 0){
+        printf("Zero\n");
+    }
+    bhau nahitar(val < 0) {
+        printf("Negative\n");
+    }
+    bhau tar(val > 0){
+        printf("Positive\n");
+    }
+
+}
+
+bhau loop_test(){
+    bhau hai ahe i = 0;
+    bhau joparent(i < 10){
+        bhau jar(i % 2 == 0){
+            printf("Even: ");
         }
-        bhau nahitar(x == 2){
-            printf("Hello two\n");
+        bhau tar(i % 2 != 0){
+            printf("Odd: ");
         }
-        bhau tar(x == 3){
-            printf("Hello three");
-        }
-        x--;
+        printf("i = ");
+        printf(i);
+        i++;
     }
 }
 
+bhau string_ops(){
+    bhau hai ahe s = "BhauLang!";
+    bhau hai ahe len = strlen(s);
+    printf("Length is: ");
+    printf(len);
+}
+
+// Large repetitive block
+bhau repeat_block(){
+    bhau hai ahe i = 0;
+    bhau joparent(i < 1000){
+        i++;
+        if (i % 100 == 0) {
+            printf("Checkpoint at ");
+            printf(i);
+        }
+    }
+}
+
+// Main function
+bhau main(){
+    printf(message);
+    printf("\n");
+
+    bhau hai ahe fact = factorial(5);
+    printf("Factorial: ");
+    printf(fact);
+
+    bhau hai ahe fib10 = fib(10);
+    printf("Fib(10): ");
+    printf(fib10);
+
+    test_conditions(-10);
+    test_conditions(0);
+    test_conditions(10);
+
+    loop_test();
+    string_ops();
+    repeat_block();
+}
 
 bye bhau
