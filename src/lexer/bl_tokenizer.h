@@ -906,7 +906,7 @@ static inline bl_token* bl_tokenize_file(char* filename,bl_arena* arena){
    int len = f ? fread(text, 1, 1<<10, f) : -1;
 
    bl_lexer l;
-   bl_token *da = dynarray_create(bl_token);
+   bl_token *da = dynarray_create_arena(bl_token,arena);
    bl_token *tok;
 
    if (len < 0) {

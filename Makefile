@@ -1,7 +1,8 @@
 CC = gcc
 CFLAGS_TOKENIZER = -Isrc/common
 CFLAGS_LEXER = -Isrc/keywords -Isrc/common
-CFLAGS_TEST = -Isrc/common -Isrc/keywords
+CFLAGS_TEST = -g -Isrc/common -Isrc/keywords
+CFLAGS_PARSER = -Isrc/lexer -Isrc/common -Isrc/keywords
 
 
 DYNARR = src/common/bl_dynarray.h
@@ -30,5 +31,9 @@ test : $(LEXER)
 	$(CC) $(CFLAGS_TEST) src/lexer/test.c -o src/lexer/test
 	./src/lexer/test
 
+make parser : $(LEXER)
+	$(CC) $(CFLAGS_PARSER) src/parser/parser.c -o src/parser/parser
+	./src/parser/parser
+
 clean : 
-	rm -rf test reducer lexer src/lexer/reducer src/lexer/test src/lexer/lexer
+	rm -rf test reducer lexer parser src/lexer/reducer src/lexer/test src/lexer/lexer src/parser/parser

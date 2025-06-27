@@ -6,8 +6,10 @@
 #include <stddef.h>
 #include <string.h>
 
+//WARN if using dynarray_create_arena(..) allocate a proper chunck in which the entire dynarray can fit
+//WARN there can be multiple error msgs due to multiple resizes in various funcs
 #ifndef ARENA_BLOCK_SIZE
-#define ARENA_BLOCK_SIZE 1024
+#define ARENA_BLOCK_SIZE 8232
 #endif
 
 
