@@ -157,14 +157,11 @@ static inline void* _dynarray_copy(void* arr) {
     size_t len = dynarray_length(arr);
     size_t stride = dynarray_stride(arr);
 
-    // Allocate new heap-based dynarray
     void* new_arr = _dynarray_create(cap, stride, NULL);
     if (!new_arr) return NULL;
 
-    // Copy data
     memcpy(new_arr, arr, len * stride);
 
-    // Set metadata
     _dynarray_field_set(new_arr, LENGTH, len);
 
     return new_arr;
