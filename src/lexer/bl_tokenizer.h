@@ -187,6 +187,7 @@ static inline void bl_token_verify_arena(const bl_token *tok, const bl_arena *ar
 static inline bl_token* bl_token_list_filter(bl_arena *arena,bl_token *tokens,size_t count, enum KEYWORD_TYPES type);
 static inline void bl_token_list_revfilter(bl_token *tokens, bl_token* temp_arr,size_t count, enum KEYWORD_TYPES type);
 static inline bl_token* bl_token_list_filter_multiple(bl_arena* arena,bl_token* tokens,size_t token_count,enum KEYWORD_TYPES* keyword_arr,size_t keyword_count);
+char* ptrs_to_string(const char* start, const char* end, bl_arena* arena);
 
 
 
@@ -757,6 +758,8 @@ char *keyword_enum_to_str(enum KEYWORD_TYPES var){
          return "BL_KW_BHAU_BAHERUN_GHE";
       case BL_KW_BHAU_MAIN:
          return "BL_KW_BHAU_MAIN";
+      case BL_KW_BHAU_NIVAD:
+         return "BL_KW_BHAU_NIVAD";
       default:
          return "<<UNKNOWN TOKEN>>";
 
@@ -892,6 +895,14 @@ static inline bl_token* bl_token_list_filter_multiple(bl_arena* arena,bl_token* 
       }
    }
    return temp_arr;
+}
+
+char* ptrs_to_string(const char* start, const char* end, bl_arena* arena){
+    size_t len = end - start;
+    char* str = (char *)arena_alloc(arena, len + 1); 
+    memcpy(str, start, len);
+    str[len] = '\0';
+    return str;
 }
 
 

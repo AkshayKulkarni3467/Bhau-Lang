@@ -2,23 +2,23 @@
 
 ## Program Structure
 
-#### [prog] -> [prolog] ([func] | [extern] | [assign])* [main] ([stmt] | [func])* [epilog] 
+#### [prog] -> [prolog] ([func] | [extern] | [assign])* [main] [epilog] <!-- Maybe add ([stmt] | [func])* after [main]-->
 #### [prolog]   -> \<entry> 
 #### [epilog]   -> \<exit> 
-#### [main]     -> \<main> [stmt]* 
-#### [stmt] -> [assign] | [cond] | [loop] | [func] | [extern] | [return]
+#### [main]     -> \<main> {[stmt]*} 
+#### [stmt] -> [assign] ; | [cond] | [loop] | [func] | [extern] ; | [return] ; | [expr] ; 
 
 
 ## Statements
 
-#### [assign] -> \<let> [identifier] = ([literal] | [expr] | [identifier])
-#### [return] -> \<return> [values]
-#### [extern] -> \<extern> [identifier]
+#### [assign] -> \<let> [identifier] = [expr] | [identifier] = [expr]
+#### [return] -> \<return> [values] 
+#### [extern] -> \<extern> [identifier] 
 
 ### Conditionals
 
 #### [cond] -> [if-else] | [switch]
-#### [if-else] -> \<if> [rel] [stmt] (\<else if> [rel] [stmt]+ )* | \<else> [stmt]
+#### [if-else] -> \<if> ([rel]) {[stmt]} (\<else if> ([rel]) {[stmt]+} )* | (\<else> {[stmt]})?
 #### [switch] -> \<switch> ( [values] ) { (\<case> [literals] : [stmt]* )* \<default> : [stmt]*  }
 
 ### Loops
@@ -27,20 +27,21 @@
 
 ### Functions
 
-#### [func] -> \<function> [identifier] ([values]) { [stmt]+  [return] }
+#### [func] -> \<function> [identifier] (([values] (, [values])*)?) { [stmt]\*  [return]? }
 
 ## Values and Expressions
 
-#### [values] -> [identifier] | [literal] | [expr]
 #### [rel] -> [expr] [relops] [expr]
-#### [expr] -> [expr] [binops] [expr] | [lunaryops] [expr] | [expr] [runaryops] | [identifier] | [literal]
+#### [expr] -> [expr] [binops] [expr] | [lunaryops] [expr] | [expr] [runaryops] | [identifier] | [cliteral] | | [identifier] ([expr]?)
 
 ## Terminals
 
 ### Identifiers and Literals
 
 #### [identifier] -> (a-z|A-Z)+(a-z|A-Z|0-9|_|$)+
-#### [literal] -> int | float | string | char | [bool]
+#### [literal] -> [cliteral] | [rliteral]
+#### [cliteral] -> int | float
+#### [rliteral] -> string | char | [bool]
 #### [bool] -> \<true> | \<false>
 
 ### Operators
@@ -71,3 +72,4 @@
 | `<true>`     | `BL_KW_BHAU_KHARA`         | true                |
 | `<false>`    | `BL_KW_BHAU_KHOTA`         | false               |
 | `<extern>`   | `BL_KW_BHAU_EXTERN`        | external decl       |
+| `<case>`     | `BL_KW_BHAU_NIVAD`         | case                |

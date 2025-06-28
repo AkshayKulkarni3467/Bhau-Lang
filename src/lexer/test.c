@@ -3,8 +3,6 @@
 
 #include "bl_lexer.h"
 
-
-
 int main(){
 
    bl_arena* arena = (bl_arena*)malloc(sizeof(bl_arena));

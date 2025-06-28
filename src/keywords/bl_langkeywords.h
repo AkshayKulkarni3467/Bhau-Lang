@@ -41,6 +41,7 @@ typedef enum {
 
     /*Switch*/                          
     BL_KW_BHAU_CHUNAV,
+    BL_KW_BHAU_NIVAD,
 
     /*Break*/                           
     BL_KW_BHAU_THAMB,
@@ -71,7 +72,7 @@ typedef enum {
 
 
 static inline LangKeywordType get_keyword_type(char* keyword);
-static inline const char *keyword_to_string(LangKeywordType type);
+static inline char *keyword_to_string(LangKeywordType type);
 static inline bool is_keyword(const char *str);
 
 
@@ -105,7 +106,8 @@ static inline LangKeywordType get_keyword_type(char* keyword){
     if(strcmp(keyword,"khara") == 0)             return BL_KW_BHAU_KHARA;
     if(strcmp(keyword,"khota") == 0)             return BL_KW_BHAU_KHOTA;
     if(strcmp(keyword,"bhau baherun ghe") == 0)  return BL_KW_BHAU_BAHERUN_GHE;
-    if(strcmp(keyword,"bhau main") == 0)         return BL_KW_BHAU_MAIN;
+    if(strcmp(keyword,"bhau ithun chalu") == 0)         return BL_KW_BHAU_MAIN;
+    if(strcmp(keyword,"bhau nivad") == 0)        return BL_KW_BHAU_NIVAD;
 
 
     #endif
@@ -130,6 +132,7 @@ static inline LangKeywordType get_keyword_type(char* keyword){
     if(strcmp(keyword,"unreal") == 0)                       return BL_KW_BHAU_KHOTA;
     if(strcmp(keyword,"bro take out") == 0)                 return BL_KW_BHAU_BAHERUN_GHE;
     if(strcmp(keyword,"bro main") == 0)                     return BL_KW_BHAU_MAIN;
+    if(strcmp(keyword,"bro option") == 0)                   return BL_KW_BHAU_NIVAD;
 
     #endif
 
@@ -152,6 +155,7 @@ static inline LangKeywordType get_keyword_type(char* keyword){
     if(strcmp(keyword,"na bhai") == 0)            return BL_KW_BHAU_KHOTA;
     if(strcmp(keyword,"bhai baharse le") == 0)    return BL_KW_BHAU_BAHERUN_GHE;
     if(strcmp(keyword,"bhai main") == 0)          return BL_KW_BHAU_MAIN;
+    if(strcmp(keyword,"bhai chun") == 0)          return BL_KW_BHAU_NIVAD;
     #endif
 
     #ifdef BL_CUSTOM_KEYWORDS
@@ -173,13 +177,14 @@ static inline LangKeywordType get_keyword_type(char* keyword){
     if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_KHOTA;       //false
     if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_BAHERUN_GHE; //extern
     if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_MAIN;        //main 
+    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_NIVAD;       //case
     #endif
     
     return -1;
 
 }
 
-static inline const char *keyword_to_string(LangKeywordType type) {
+static inline char *keyword_to_string(LangKeywordType type) {
     switch (type) {
 
 
@@ -202,7 +207,8 @@ static inline const char *keyword_to_string(LangKeywordType type) {
         case BL_KW_BHAU_KHARA:         return "bhau khara";
         case BL_KW_BHAU_KHOTA:         return "bhau khota";
         case BL_KW_BHAU_BAHERUN_GHE:   return "bhau baherun ghe";
-        case BL_KW_BHAU_MAIN:          return "bhau main";
+        case BL_KW_BHAU_MAIN:          return "bhau ithun chalu";
+        case BL_KW_BHAU_NIVAD:         return "bhau nivad";
 
         #endif
 
@@ -226,6 +232,7 @@ static inline const char *keyword_to_string(LangKeywordType type) {
         case BL_KW_BHAU_KHOTA:         return "unreal";
         case BL_KW_BHAU_BAHERUN_GHE:   return "bro take out";
         case BL_KW_BHAU_MAIN:          return "bro main";
+        case BL_KW_BHAU_NIVAD:         return "bro option";
 
         #endif
 
@@ -250,6 +257,7 @@ static inline const char *keyword_to_string(LangKeywordType type) {
         case BL_KW_BHAU_KHOTA:         return "na bhai";
         case BL_KW_BHAU_BAHERUN_GHE:   return "bhai baharse le";
         case BL_KW_BHAU_MAIN:          return "bhai main";
+        case BL_KW_BHAU_NIVAD:         return "bhai chun";
 
         #endif
 
