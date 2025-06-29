@@ -1,6 +1,13 @@
 hi bhau
 
-bhau hai ahe y = 7;
-bhau hai ahe x = 5 + y;
+bhau hai ahe x = 7;
+bhau hai ahe z;
+
+z = x*x + 5 - (3*4)/4;
+
+bhau lakshat thev func(){
+    bhau hai ahe y;
+}
+
 
 bye bhau

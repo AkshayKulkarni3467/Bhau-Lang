@@ -20,13 +20,24 @@ typedef enum {
     AST_BINOP,
     AST_UNOP,
     AST_GROUP,
+    AST_FUNCTION,
 } ASTNodeType;
+
+
 
 
 typedef struct {
     ASTNodeType type;
     void* data;
 } AST_Node;
+
+typedef struct {
+    AST_Node* name;
+    AST_Node** params;
+    size_t param_count;
+    AST_Node** body;
+    size_t body_count;
+} AST_Function;
 
 typedef struct {
     AST_Node* lhs;
@@ -129,6 +140,7 @@ void print_ast_tree(AST_Node* node, int level, const char* prefix);
 
 AST_Node* parse_program(bl_parser* parser);
 AST_Node* parse_stmt(bl_parser* parser);
+AST_Node* parse_assign_decl(bl_parser* parser);
 AST_Node* parse_assign(bl_parser* parser);
 AST_Node* parse_extern(bl_parser* parser);
 AST_Node* parse_identifier(bl_parser* parser,bool check);
@@ -136,6 +148,8 @@ AST_Node* parse_primary(bl_parser* parser);
 AST_Node* parse_factor(bl_parser* parser);
 AST_Node* parse_binops(bl_parser* parser);
 AST_Node* parse_unops(bl_parser* parser);
+AST_Node* parse_function(bl_parser* parser);
+AST_Node* parse_param(bl_parser* parser);
 
 
 AST_Node* parse_intliteral(bl_parser* parser);
@@ -271,12 +285,21 @@ AST_Node* parse_program(bl_parser* parser){
 
 AST_Node* parse_stmt(bl_parser* parser) {
     if(parse_match(parser,BL_KW_BHAU_HAI_AHE)){
-        AST_Node* ast = parse_assign(parser);
+        
+        AST_Node* ast = parse_assign_decl(parser);
         return ast;
     }else if(parse_match(parser,BL_KW_BHAU_BAHERUN_GHE)){
         AST_Node* ast = parse_extern(parser);
         return ast;
-    }else{
+    }else if(parse_match(parser,BL_IDENTIFIER)){
+        AST_Node* ast = parse_assign(parser);
+        return ast;
+    }else if(parse_match(parser,BL_KW_BHAU_LAKSHAT_THEV)){
+        AST_Node* ast = parse_function(parser);
+        parser->num_func--;
+        return ast;
+    }
+    else{
         print_parse_current_token(parser);
         bl_parse_error(parser,"ERROR ! Cannot jump to next stmt",1,10);
         return NULL;
@@ -298,8 +321,38 @@ AST_Node* parse_extern(bl_parser* parser){
     return ast;
 }
 
-
 AST_Node* parse_assign(bl_parser* parser){
+    AST_Node* ast1 = parse_identifier(parser,0);
+
+    null_error((void *)ast1,parser,12);
+    parse_advance(parser);
+    if(parse_match(parser,BL_EQUAL)){
+        parse_advance(parser);
+        AST_Node* ast2 = parse_binops(parser); 
+
+        null_error(ast2,parser,23);
+        parse_step_n_expect(parser,BL_SEMICOLON,"Expected", 19);
+
+        AST_Assign* assign = assign_type(parser,AST_Assign);
+
+        assign->lhs = ast1;
+        assign->rhs = ast2;
+        assign->type = AST_ASSIGN;
+
+        AST_Node* node = assign_type(parser,AST_Node);
+
+        
+        node->type = AST_ASSIGN;
+        node->data = assign;
+        return node;
+
+    }else{
+        bl_parse_error(parser,"Function calling not implemented",1,26);
+    }
+}
+
+
+AST_Node* parse_assign_decl(bl_parser* parser){
 
 
     parse_step_n_expect(parser,BL_IDENTIFIER,"Expected", 17);
@@ -312,30 +365,35 @@ AST_Node* parse_assign(bl_parser* parser){
     AST_Node* ast1 = parse_identifier(parser,1);
 
     null_error((void *)ast1,parser,12);
-    parse_step_n_expect(parser,BL_EQUAL,"Expected", 18);
 
     parse_advance(parser);
-    AST_Node* ast2 = parse_binops(parser); 
+    if(parse_match(parser,BL_EQUAL)){
+        parse_advance(parser);
+        AST_Node* ast2 = parse_binops(parser); 
 
-    null_error(ast2,parser,23);
-    print_parse_current_token(parser);
-    parse_step_n_expect(parser,BL_SEMICOLON,"Expected", 19);
+        null_error(ast2,parser,23);
+        parse_step_n_expect(parser,BL_SEMICOLON,"Expected", 19);
 
-    assign->lhs = ast1;
-    assign->rhs = ast2;
-    assign->type = AST_ASSIGN;
+        assign->lhs = ast1;
+        assign->rhs = ast2;
+        assign->type = AST_ASSIGN;
 
-    AST_Node* node = assign_type(parser,AST_Node);
+        AST_Node* node = assign_type(parser,AST_Node);
 
-    
-    node->type = AST_ASSIGN;
-    node->data = assign;
-    return node;
-    
+
+        node->type = AST_ASSIGN;
+        node->data = assign;
+        return node;
+    }else if(parse_match(parser,BL_SEMICOLON)){
+        return ast1;
+    }else{
+        bl_parse_error(parser,"Expected assignment or semicolon",1, 18);
+    }
+   
 }
 
-
-
+//TODO implement scoping
+//TODO need to check identifiers by scope; using parser->num_func
 AST_Node* parse_identifier(bl_parser* parser,bool check){
     AST_Identifier* ident = assign_type(parser,AST_Identifier);
     ident->name = get_name_from_parser(parser);
@@ -457,6 +515,60 @@ AST_Node* parse_primary(bl_parser* parser) {
 
     return NULL;
 }
+
+//TODO implement return check
+AST_Node* parse_function(bl_parser* parser){
+    parse_expect(parser,BL_KW_BHAU_LAKSHAT_THEV,"Expected :",27);
+    parser->num_func++;
+    AST_Function* func_ast = assign_type(parser,AST_Function);
+    parse_advance(parser);
+    parse_expect(parser,BL_IDENTIFIER,"Expected and identifier",28);
+    AST_Node* name = parse_identifier(parser,1);
+    func_ast->name;
+    func_ast->param_count = 0;
+    func_ast->body_count = 0;
+    parse_step_n_expect(parser,BL_LPAREN,"Expected :",28);
+    parse_advance(parser);
+    AST_Node** params = (AST_Node**)arena_alloc(parser->arena,1024*sizeof(AST_Node*));
+    while(!parse_match(parser,BL_RPAREN)){
+        params[func_ast->param_count] = parse_param(parser);
+        func_ast->param_count++;
+        bool x = parse_check_ahead(parser,BL_RPAREN,1);
+        if(!x){
+            parse_step_n_expect(parser,BL_COMMA,"Expected:",30);
+        }
+        parse_advance(parser);
+    }
+    func_ast->params = params;
+    parse_expect(parser,BL_RPAREN,"Expected :",29);
+    parse_step_n_expect(parser,BL_LBRACE,"Expected :",31);
+    AST_Node** stmts = (AST_Node**)arena_alloc(parser->arena,1024*sizeof(AST_Node*));
+    parse_advance(parser);
+    while(!parse_match(parser,BL_RBRACE)){
+        AST_Node* stmt = parse_stmt(parser);
+        stmts[func_ast->body_count] = stmt;
+        func_ast->body_count++;
+        parse_advance(parser);
+        if(!stmt){
+            printf("Error parsing statement\n");
+            return NULL;
+        }
+    }
+    func_ast->body = stmts;
+
+    AST_Node* node = assign_type(parser,AST_Node);
+    node->data = func_ast;
+    node->type = AST_FUNCTION;
+
+    return node;
+}
+
+//TODO implement parse_param
+AST_Node* parse_param(bl_parser* parser){
+
+}
+
+
 
 AST_Node* parse_stringliteral(bl_parser* parser){
     AST_StringLiteral* stringval = assign_type(parser,AST_StringLiteral);
@@ -752,10 +864,25 @@ void print_ast_tree(AST_Node* node, int level, const char* prefix) {
     switch (node->type) {
         case AST_PROGRAM: {
             ASTProgram* prog = (ASTProgram*)node->data;
-            printf("PROGRAM\n");
+            printf("PROGRAM START\n");
             for (size_t i = 0; i < prog->count; ++i) {
                 const char* child_prefix = (i == prog->count - 1) ? "└── " : "├── ";
                 print_ast_tree(prog->statements[i], level + 1, child_prefix);
+            }
+            break;
+        }
+
+        case AST_FUNCTION: {
+            AST_Function* func = (AST_Function*)node->data;
+            printf("FUNCTION ");
+            printf("(PARAMS : ");
+            for(size_t i = 0;i<func->param_count; ++i){
+                printf("%s ",func->params[i]);
+            }
+            printf(")\n");
+            for(size_t i = 0; i<func->body_count; ++i){
+                const char* child_prefix = (i == func->body_count - 1) ? "└── " : "├── ";
+                print_ast_tree(func->body[i],level+1,child_prefix);
             }
             break;
         }
@@ -767,6 +894,7 @@ void print_ast_tree(AST_Node* node, int level, const char* prefix) {
             print_ast_tree(assign->rhs, level + 1, "└── ");
             break;
         }
+        
 
         case AST_GROUP: {
             AST_Group* group = (AST_Group*)node->data;
