@@ -16,6 +16,10 @@ typedef enum {
     AST_FLOATLITERAL,
     AST_CHARLITERAL,
     AST_STRINGLITERAL,
+    AST_EXTERN,
+    AST_BINOP,
+    AST_UNOP,
+    AST_GROUP,
 } ASTNodeType;
 
 
@@ -25,10 +29,32 @@ typedef struct {
 } AST_Node;
 
 typedef struct {
+    AST_Node* lhs;
+    AST_Node* rhs;
+    enum KEYWORD_TYPES op;
+    ASTNodeType type;
+} AST_Binop;
+
+typedef struct {
+    AST_Node* node;
+    enum KEYWORD_TYPES op;
+    ASTNodeType type;
+} AST_Unop;
+
+typedef struct {
+    AST_Node* expr;
+} AST_Group;
+
+typedef struct {
     AST_Node** statements;
     size_t count;
     ASTNodeType type;
 } ASTProgram;
+
+typedef struct {
+    AST_Node* ident;
+    ASTNodeType type;
+} AST_Extern;
 
 
 typedef struct {
@@ -104,8 +130,12 @@ void print_ast_tree(AST_Node* node, int level, const char* prefix);
 AST_Node* parse_program(bl_parser* parser);
 AST_Node* parse_stmt(bl_parser* parser);
 AST_Node* parse_assign(bl_parser* parser);
-AST_Node* parse_identifier(bl_parser* parser);
+AST_Node* parse_extern(bl_parser* parser);
+AST_Node* parse_identifier(bl_parser* parser,bool check);
 AST_Node* parse_primary(bl_parser* parser);
+AST_Node* parse_factor(bl_parser* parser);
+AST_Node* parse_binops(bl_parser* parser);
+AST_Node* parse_unops(bl_parser* parser);
 
 
 AST_Node* parse_intliteral(bl_parser* parser);
@@ -125,6 +155,7 @@ bl_token parse_get_current(bl_parser* parser);
 enum KEYWORD_TYPES parse_get_current_tokenval(bl_parser* parser);
 bl_token* parse_peek(bl_parser* parser,int num);
 void parse_advance(bl_parser* parser);
+void parse_backstep(bl_parser* parser);
 bool parse_is_at_end(bl_parser* parser);
 bl_token* parse_previous(bl_parser* parser);
 
@@ -242,11 +273,29 @@ AST_Node* parse_stmt(bl_parser* parser) {
     if(parse_match(parser,BL_KW_BHAU_HAI_AHE)){
         AST_Node* ast = parse_assign(parser);
         return ast;
+    }else if(parse_match(parser,BL_KW_BHAU_BAHERUN_GHE)){
+        AST_Node* ast = parse_extern(parser);
+        return ast;
     }else{
         print_parse_current_token(parser);
         bl_parse_error(parser,"ERROR ! Cannot jump to next stmt",1,10);
         return NULL;
     }
+}
+
+AST_Node* parse_extern(bl_parser* parser){
+    parse_step_n_expect(parser,BL_IDENTIFIER,"Expected",24);
+    AST_Extern* ext = assign_type(parser,AST_Extern);
+    AST_Node* name = parse_identifier(parser,1);
+    parse_step_n_expect(parser,BL_SEMICOLON,"Expected",25);
+    ext->ident = name;
+    ext->type = AST_EXTERN;
+
+    AST_Node* ast = assign_type(parser,AST_Node);
+    ast->data = ext;
+    ast->type = AST_EXTERN;
+
+    return ast;
 }
 
 
@@ -259,22 +308,17 @@ AST_Node* parse_assign(bl_parser* parser){
 
     char* name = get_name_from_parser(parser);
 
-    if(!check_in_var_store(parser,name)){
-        parser->var_store[parser->var_count] = name;
-        parser->var_count++;
-    }else{
-        bl_parse_error(parser,"Identifier already declared in this scope",1,13);
-    }
 
-    AST_Node* ast1 = parse_identifier(parser);
+    AST_Node* ast1 = parse_identifier(parser,1);
 
     null_error((void *)ast1,parser,12);
     parse_step_n_expect(parser,BL_EQUAL,"Expected", 18);
 
     parse_advance(parser);
-    AST_Node* ast2 = parse_primary(parser); 
+    AST_Node* ast2 = parse_binops(parser); 
 
     null_error(ast2,parser,23);
+    print_parse_current_token(parser);
     parse_step_n_expect(parser,BL_SEMICOLON,"Expected", 19);
 
     assign->lhs = ast1;
@@ -292,14 +336,97 @@ AST_Node* parse_assign(bl_parser* parser){
 
 
 
-AST_Node* parse_identifier(bl_parser* parser){
+AST_Node* parse_identifier(bl_parser* parser,bool check){
     AST_Identifier* ident = assign_type(parser,AST_Identifier);
-    ident->name = ptrs_to_string(parser->current.where_firstchar,parser->current.where_lastchar,parser->arena);
+    ident->name = get_name_from_parser(parser);
     ident->type = AST_IDENTIFIER;
+    if(check == true){
+        if(!check_in_var_store(parser,ident->name)){
+            parser->var_store[parser->var_count] = ident->name;
+            parser->var_count++;
+        }else{
+            bl_parse_error(parser,"Identifier already declared in this scope",1,25);
+        }
+    }else{
+        if(!check_in_var_store(parser,ident->name)){
+            bl_parse_error(parser,"Identifier doesnt exist in this scope",1,26);
+        }
+    }
     AST_Node* ast = assign_type(parser,AST_Node);
     ast->data = ident;
     ast->type = AST_IDENTIFIER;
     return ast;
+}
+
+
+
+AST_Node* parse_binops(bl_parser* parser){
+    AST_Node* lhs = parse_factor(parser);
+    parse_advance(parser);
+    while(parse_match(parser,BL_ADDBINOP) || parse_match(parser,BL_SUBBINOP)){
+        enum KEYWORD_TYPES op = parser->current.token;
+        parse_advance(parser);
+        AST_Node* rhs = parse_factor(parser);
+
+        AST_Binop* binop = assign_type(parser,AST_Binop);
+        binop->lhs = lhs;
+        binop->rhs = rhs;
+        binop->op = op;
+        binop->type = AST_BINOP;
+
+        lhs = assign_type(parser,AST_Node);
+        lhs->data = binop;
+        lhs->type = AST_BINOP;
+        
+        parse_advance(parser);
+    }
+    parse_backstep(parser);
+    return lhs;
+}
+
+AST_Node* parse_factor(bl_parser* parser){
+    AST_Node* lhs = parse_unops(parser);
+    parse_advance(parser);
+    while((parse_match(parser,BL_MULTBINOP)) || (parse_match(parser,BL_DIVBINOP))){
+        enum KEYWORD_TYPES op = parser->current.token;
+        parse_advance(parser);
+        AST_Node* rhs = parse_unops(parser);
+
+        AST_Binop* binop = assign_type(parser,AST_Binop);
+        binop->lhs = lhs;
+        binop->rhs = rhs;
+        binop->op = op;
+        binop->type = AST_BINOP;
+
+        lhs = assign_type(parser,AST_Node);
+        lhs->data = binop;
+        lhs->type = AST_BINOP;
+
+        parse_advance(parser);
+    }
+    parse_backstep(parser);
+
+    return lhs;
+
+}
+
+AST_Node* parse_unops(bl_parser* parser){
+    while((parse_match(parser,BL_NOT)) || (parse_match(parser,BL_INC)) || (parse_match(parser,BL_DEC)) || (parse_match(parser,BL_SUBBINOP))){
+        enum KEYWORD_TYPES op = parser->current.token;
+        parse_advance(parser);
+
+        AST_Unop* unop = assign_type(parser,AST_Unop);
+        unop->node = parse_unops(parser);
+        unop->op = op;
+        unop->type = AST_UNOP;
+
+        AST_Node* node = assign_type(parser,AST_Node);
+        node->data = unop;
+        node->type = AST_UNOP;
+
+        return node;
+    }
+    return parse_primary(parser);
 }
 
 
@@ -310,7 +437,21 @@ AST_Node* parse_primary(bl_parser* parser) {
     if (parse_match(parser, BL_CHAR)) return parse_charliteral(parser);
     if (parse_match(parser, BL_STRING)) return parse_stringliteral(parser);
 
-    if (parse_match(parser, BL_IDENTIFIER)) return parse_identifier(parser); 
+    if (parse_match(parser, BL_IDENTIFIER)) return parse_identifier(parser,0); 
+
+    
+    if (parse_match(parser, BL_LPAREN)){
+        print_parse_current_token(parser);
+        parse_advance(parser);
+        AST_Node* expr = parse_binops(parser);
+        parse_step_n_expect(parser, BL_RPAREN, "Expected ')' after expression",1);
+        AST_Group* group = assign_type(parser,AST_Group);
+        group->expr = expr;
+        AST_Node* node = arena_alloc(parser->arena, sizeof(AST_Node));
+        node->type = AST_GROUP;
+        node->data = group;
+        return node;
+    }
 
     bl_parse_token_error(parser, "Expected expression", "", 1,1);
 
@@ -484,6 +625,13 @@ void parse_advance(bl_parser* parser){
     parser->line_offset = parser->tokens[parser->parse_point].loc.line_offset;
 }
 
+void parse_backstep(bl_parser* parser){
+    parser->parse_point--;
+    parser->current = parse_get_current(parser);
+    parser->line_number = parser->tokens[parser->parse_point].loc.line_number;
+    parser->line_offset = parser->tokens[parser->parse_point].loc.line_offset;
+}
+
 bool parse_is_at_end(bl_parser* parser){
     if(parser->current.token == BL_EOF){
         return true;
@@ -620,6 +768,20 @@ void print_ast_tree(AST_Node* node, int level, const char* prefix) {
             break;
         }
 
+        case AST_GROUP: {
+            AST_Group* group = (AST_Group*)node->data;
+            printf("GROUP\n");
+            print_ast_tree(group->expr,level+1,"└── ");
+            break;
+        }
+
+        case AST_EXTERN: {
+            AST_Extern* ext = (AST_Extern *)node->data;
+            printf("EXTERN\n");
+            print_ast_tree(ext->ident,level+1,"└── ");
+            break;
+        }
+
         case AST_INTLITERAL: {
             AST_IntLiteral* ilit = (AST_IntLiteral*)node->data;
             printf("INT_LITERAL: %d\n", ilit->value);
@@ -647,6 +809,21 @@ void print_ast_tree(AST_Node* node, int level, const char* prefix) {
         case AST_FLOATLITERAL: {
             AST_FloatLiteral* flit = (AST_FloatLiteral*)node->data;
             printf("FLOAT_LITERAL: %.2f\n", flit->value);
+            break;
+        }
+
+        case AST_BINOP: {
+            AST_Binop* bop = (AST_Binop*)node->data;
+            printf("BINOP: %s\n",keyword_enum_to_str(bop->op));
+            print_ast_tree(bop->lhs, level + 1, "├── ");
+            print_ast_tree(bop->rhs, level + 1, "└── ");
+            break;
+        }
+
+        case AST_UNOP: {
+            AST_Unop* uop = (AST_Unop*)node->data;
+            printf("UNARYOP: %s\n",keyword_enum_to_str(uop->op));
+            print_ast_tree(uop->node,level + 1, "└── ");
             break;
         }
 
