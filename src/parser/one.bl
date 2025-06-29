@@ -6,8 +6,15 @@ bhau hai ahe z;
 z = x*x + 5 - (3*4)/4;
 
 bhau lakshat thev func(){
-    bhau hai ahe y;
+    bhau hai ahe z;
 }
 
+bhau lakshat thev func2(){
+    bhau hai ahe z;
+    bhau hai ahe p;
+}
+
+bhau hai ahe y = 7;
+bhau hai ahe p;
 
 bye bhau
