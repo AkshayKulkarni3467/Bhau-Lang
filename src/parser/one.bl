@@ -1,20 +1,17 @@
 hi bhau
 
-bhau hai ahe x = 7;
-bhau hai ahe z;
+bhau baherun ghe printf;
 
-z = x*x + 5 - (3*4)/4;
-
-bhau lakshat thev func(){
-    bhau hai ahe z;
+bhau lakshat thev func(x,y){
+    bhau parat de x+y;
 }
 
-bhau lakshat thev func2(){
-    bhau hai ahe z;
-    bhau hai ahe p;
+bhau hai ahe x = 20;
+
+bhau ithun chalu{
+   x = func(1,2);
+   printf("%d",x);
 }
 
-bhau hai ahe y = 7;
-bhau hai ahe p;
 
 bye bhau
