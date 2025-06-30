@@ -72,6 +72,7 @@ enum KEYWORD_TYPES {
 
    #ifdef BL_SYMBOLS
    BL_SEMICOLON,
+   BL_COLON,
    BL_LPAREN,
    BL_RPAREN,
    BL_LBRACE,
@@ -332,6 +333,7 @@ bl_token *bl_tokenize(bl_lexer *lexer){
          #ifdef BL_SYMBOLS
 
          case ';' : SET_SIMPLE_TOKEN(BL_SEMICOLON); break;
+         case ':' : SET_SIMPLE_TOKEN(BL_COLON); break;
          case '{' : SET_SIMPLE_TOKEN(BL_LBRACE); break;
          case '}' : SET_SIMPLE_TOKEN(BL_RBRACE); break;
          case '[' : SET_SIMPLE_TOKEN(BL_LBRACK); break;
@@ -638,6 +640,8 @@ char *keyword_enum_to_str(enum KEYWORD_TYPES var){
 
       case BL_SEMICOLON:
          return "BL_SEMICOLON";
+      case BL_COLON:
+         return "BL_COLON";
       case BL_LPAREN:
          return "BL_LPAREN";
       case BL_RPAREN:
@@ -736,8 +740,6 @@ char *keyword_enum_to_str(enum KEYWORD_TYPES var){
          return "BL_KW_BHAU_NAHITAR";
       case BL_KW_BHAU_JOPARENT:
          return "case BL_KW_BHAU_JOPARENT";
-      case BL_KW_BHAU_SATAT:
-         return "case BL_KW_BHAU_SATAT";
       case BL_KW_BHAU_LAKSHAT_THEV:
          return "BL_KW_BHAU_LAKSHAT_THEV";
       case BL_KW_BHAU_PARAT_DE:

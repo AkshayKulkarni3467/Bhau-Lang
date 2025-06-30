@@ -2,16 +2,101 @@ hi bhau
 
 bhau baherun ghe printf;
 
-bhau lakshat thev func(x,y){
-    bhau parat de x+y;
+bhau lakshat thev get_rule(left, mid, right) {
+    bhau hai ahe result = 0;
+    bhau hai ahe code = left * 4 + mid * 2 + right;
+
+    bhau chunav(code){
+        bhau nivad 0: result = 0; bhau thamb;
+        bhau nivad 1: result = 1; bhau thamb;
+        bhau nivad 2: result = 1; bhau thamb;
+        bhau nivad 3: result = 1; bhau thamb;
+        bhau nivad 4: result = 0; bhau thamb;
+        bhau nivad 5: result = 1; bhau thamb;
+        bhau nivad 6: result = 1; bhau thamb;
+        bhau nivad 7: result = 0; bhau thamb;
+        bhau rahudet: result = 0; bhau thamb;
+    }
+
+    bhau parat de result;
 }
 
-bhau hai ahe x = 20;
+bhau ithun chalu {
+    // Tape cells (only 7 for this example)
+    bhau hai ahe c0 = 0;
+    bhau hai ahe c1 = 0;
+    bhau hai ahe c2 = 0;
+    bhau hai ahe c3 = 1;
+    bhau hai ahe c4 = 0;
+    bhau hai ahe c5 = 0;
+    bhau hai ahe c6 = 0;
 
-bhau ithun chalu{
-   x = func(1,2);
-   printf("%d",x);
+    // Temp cells
+    bhau hai ahe n0;
+    bhau hai ahe n1;
+    bhau hai ahe n2;
+    bhau hai ahe n3;
+    bhau hai ahe n4;
+    bhau hai ahe n5;
+    bhau hai ahe n6;
+
+    bhau hai ahe gen = 0;
+    bhau joparent(gen < 10){
+
+        // Print current tape
+        bhau jar(c0 == 1) {
+                printf("#");
+            }bhau tar {
+                printf(".");
+            }
+        bhau jar(c1 == 1) {
+                printf("#");
+            }bhau tar {
+                printf(".");
+            }
+        bhau jar(c2 == 1) {
+                printf("#");
+            }bhau tar {
+                printf(".");
+            }
+        bhau jar(c3 == 1) {
+                printf("#");
+            }bhau tar {
+                printf(".");
+            }
+        bhau jar(c4 == 1) {
+                printf("#");
+            }bhau tar {
+                printf(".");
+            }
+        bhau jar(c5 == 1) {
+                printf("#");
+            }bhau tar {
+                printf(".");
+            }
+        bhau jar(c6 == 1) {
+                printf("#");
+            }bhau tar {
+                printf(".");
+            }
+        printf("\n");
+
+        // Compute next gen
+        n0 = get_rule(0, c0, c1);
+        n1 = get_rule(c0, c1, c2);
+        n2 = get_rule(c1, c2, c3);
+        n3 = get_rule(c2, c3, c4);
+        n4 = get_rule(c3, c4, c5);
+        n5 = get_rule(c4, c5, c6);
+        n6 = get_rule(c5, c6, 0);
+
+        // Copy back
+        c0 = n0; c1 = n1; c2 = n2;
+        c3 = n3; c4 = n4; c5 = n5;
+        c6 = n6;
+
+        gen = gen + 1;
+    }
 }
-
 
 bye bhau

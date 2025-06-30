@@ -15,7 +15,7 @@ typedef enum {
 
     /*Defining variables*/    
     //WARN Need to be modified if KEYWORD_TYPES is modified in bl_tokenizer; Currently, BL_EOF is 300
-    BL_KW_BHAU_HAI_AHE = 301, 
+    BL_KW_BHAU_HAI_AHE = 302, 
 
     /*If-else control flow*/            
     BL_KW_BHAU_JAR,
@@ -26,8 +26,6 @@ typedef enum {
     /*While*/                          
     BL_KW_BHAU_JOPARENT, 
 
-    /*For*/                             
-    BL_KW_BHAU_SATAT,
 
     /*Function & Return*/               
     BL_KW_BHAU_LAKSHAT_THEV,
@@ -61,6 +59,10 @@ typedef enum {
 
     /*Main*/
     BL_KW_BHAU_MAIN,
+
+    /*Pointers*/
+    BL_KW_BHAU_PTR,
+    BL_KW_BHAU_REF,
     /*!TO IMPLEMENT : goto, data structs? */
 
 
@@ -94,7 +96,6 @@ static inline LangKeywordType get_keyword_type(char* keyword){
     if(strcmp(keyword,"bhau tar") == 0)          return BL_KW_BHAU_TAR;
     if(strcmp(keyword,"bhau nahitar") == 0)      return BL_KW_BHAU_NAHITAR;
     if(strcmp(keyword,"bhau joparent") == 0)     return BL_KW_BHAU_JOPARENT;
-    if(strcmp(keyword,"bhau satat") == 0)        return BL_KW_BHAU_SATAT;
     if(strcmp(keyword,"bhau lakshat thev") == 0) return BL_KW_BHAU_LAKSHAT_THEV;
     if(strcmp(keyword,"bhau parat de") == 0)     return BL_KW_BHAU_PARAT_DE;
     if(strcmp(keyword,"hi bhau") == 0)           return BL_KW_HI_BHAU;
@@ -106,8 +107,10 @@ static inline LangKeywordType get_keyword_type(char* keyword){
     if(strcmp(keyword,"khara") == 0)             return BL_KW_BHAU_KHARA;
     if(strcmp(keyword,"khota") == 0)             return BL_KW_BHAU_KHOTA;
     if(strcmp(keyword,"bhau baherun ghe") == 0)  return BL_KW_BHAU_BAHERUN_GHE;
-    if(strcmp(keyword,"bhau ithun chalu") == 0)         return BL_KW_BHAU_MAIN;
+    if(strcmp(keyword,"bhau ithun chalu") == 0)  return BL_KW_BHAU_MAIN;
     if(strcmp(keyword,"bhau nivad") == 0)        return BL_KW_BHAU_NIVAD;
+    if(strcmp(keyword,"ptr") == 0)               return BL_KW_BHAU_PTR;
+    if(strcmp(keyword,"ref") == 0)               return BL_KW_BHAU_REF;
 
 
     #endif
@@ -119,7 +122,6 @@ static inline LangKeywordType get_keyword_type(char* keyword){
     if(strcmp(keyword,"bro whatever") == 0)                 return BL_KW_BHAU_TAR;
     if(strcmp(keyword,"bro otherwise") == 0)                return BL_KW_BHAU_NAHITAR;
     if(strcmp(keyword,"bro when") == 0)                     return BL_KW_BHAU_JOPARENT;
-    if(strcmp(keyword,"bro spin") == 0)                     return BL_KW_BHAU_SATAT;
     if(strcmp(keyword,"bro lemme create") == 0)             return BL_KW_BHAU_LAKSHAT_THEV;
     if(strcmp(keyword,"bro return this") == 0)              return BL_KW_BHAU_PARAT_DE;
     if(strcmp(keyword,"hello bro") == 0)                    return BL_KW_HI_BHAU;
@@ -133,6 +135,8 @@ static inline LangKeywordType get_keyword_type(char* keyword){
     if(strcmp(keyword,"bro take out") == 0)                 return BL_KW_BHAU_BAHERUN_GHE;
     if(strcmp(keyword,"bro main") == 0)                     return BL_KW_BHAU_MAIN;
     if(strcmp(keyword,"bro option") == 0)                   return BL_KW_BHAU_NIVAD;
+    if(strcmp(keyword,"ptr") == 0)                          return BL_KW_BHAU_PTR;
+    if(strcmp(keyword,"ref") == 0)                          return BL_KW_BHAU_REF;
 
     #endif
 
@@ -142,7 +146,6 @@ static inline LangKeywordType get_keyword_type(char* keyword){
     if(strcmp(keyword,"warna bhai") == 0)         return BL_KW_BHAU_TAR;
     if(strcmp(keyword,"nahi to bhai") == 0)       return BL_KW_BHAU_NAHITAR;
     if(strcmp(keyword,"jab tak bhai") == 0)       return BL_KW_BHAU_JOPARENT;
-    if(strcmp(keyword,"bhai ghumte rhe") == 0)    return BL_KW_BHAU_SATAT;
     if(strcmp(keyword,"bhai yaad rak") == 0)      return BL_KW_BHAU_LAKSHAT_THEV;
     if(strcmp(keyword,"bhai wapis kar") == 0)     return BL_KW_BHAU_PARAT_DE;
     if(strcmp(keyword,"hi bhai") == 0)            return BL_KW_HI_BHAU;
@@ -156,6 +159,8 @@ static inline LangKeywordType get_keyword_type(char* keyword){
     if(strcmp(keyword,"bhai baharse le") == 0)    return BL_KW_BHAU_BAHERUN_GHE;
     if(strcmp(keyword,"bhai main") == 0)          return BL_KW_BHAU_MAIN;
     if(strcmp(keyword,"bhai chun") == 0)          return BL_KW_BHAU_NIVAD;
+    if(strcmp(keyword,"ptr") == 0)                return BL_KW_BHAU_PTR;
+    if(strcmp(keyword,"ref") == 0)                return BL_KW_BHAU_REF;
     #endif
 
     #ifdef BL_CUSTOM_KEYWORDS
@@ -164,7 +169,6 @@ static inline LangKeywordType get_keyword_type(char* keyword){
     if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_TAR;         //else (conditional)
     if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_NAHITAR;     //else if (conditional)
     if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_JOPARENT;    //loops (while)
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_SATAT;       //loops (for)
     if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_LAKSHAT_THEV;//function
     if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_PARAT_DE;    //return
     if(strcmp(keyword,"") == 0)   return BL_KW_HI_BHAU;          //entry
@@ -178,6 +182,8 @@ static inline LangKeywordType get_keyword_type(char* keyword){
     if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_BAHERUN_GHE; //extern
     if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_MAIN;        //main 
     if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_NIVAD;       //case
+    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_PTR;
+    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_REF;
     #endif
     
     return -1;
@@ -195,7 +201,6 @@ static inline char *keyword_to_string(LangKeywordType type) {
         case BL_KW_BHAU_TAR:           return "bhau tar";
         case BL_KW_BHAU_NAHITAR:       return "bhau nahitar";
         case BL_KW_BHAU_JOPARENT:      return "bhau joparent";
-        case BL_KW_BHAU_SATAT:         return "bhau satat";
         case BL_KW_BHAU_LAKSHAT_THEV:  return "bhau lakshat thev";
         case BL_KW_BHAU_PARAT_DE:      return "bhau parat de";
         case BL_KW_HI_BHAU:            return "hi bhau";
@@ -209,6 +214,8 @@ static inline char *keyword_to_string(LangKeywordType type) {
         case BL_KW_BHAU_BAHERUN_GHE:   return "bhau baherun ghe";
         case BL_KW_BHAU_MAIN:          return "bhau ithun chalu";
         case BL_KW_BHAU_NIVAD:         return "bhau nivad";
+        case BL_KW_BHAU_PTR:           return "ptr";
+        case BL_KW_BHAU_REF:           return "ref";
 
         #endif
 
@@ -219,7 +226,6 @@ static inline char *keyword_to_string(LangKeywordType type) {
         case BL_KW_BHAU_TAR:           return "bro whatever";
         case BL_KW_BHAU_NAHITAR:       return "bro otherwise";
         case BL_KW_BHAU_JOPARENT:      return "bro when";
-        case BL_KW_BHAU_SATAT:         return "bro spin";
         case BL_KW_BHAU_LAKSHAT_THEV:  return "bro lemme create";
         case BL_KW_BHAU_PARAT_DE:      return "bro return this";
         case BL_KW_HI_BHAU:            return "hello bro";
@@ -233,6 +239,8 @@ static inline char *keyword_to_string(LangKeywordType type) {
         case BL_KW_BHAU_BAHERUN_GHE:   return "bro take out";
         case BL_KW_BHAU_MAIN:          return "bro main";
         case BL_KW_BHAU_NIVAD:         return "bro option";
+        case BL_KW_BHAU_PTR:           return "ptr";
+        case BL_KW_BHAU_REF:           return "ref";
 
         #endif
 
@@ -244,7 +252,6 @@ static inline char *keyword_to_string(LangKeywordType type) {
         case BL_KW_BHAU_TAR:           return "warna bhai";
         case BL_KW_BHAU_NAHITAR:       return "nahi to bhai";
         case BL_KW_BHAU_JOPARENT:      return "jab tak bhai";
-        case BL_KW_BHAU_SATAT:         return "bhai ghumte rhe";
         case BL_KW_BHAU_LAKSHAT_THEV:  return "bhai yaad rak";
         case BL_KW_BHAU_PARAT_DE:      return "bhai wapis kar";
         case BL_KW_HI_BHAU:            return "hi bhai";
@@ -258,6 +265,8 @@ static inline char *keyword_to_string(LangKeywordType type) {
         case BL_KW_BHAU_BAHERUN_GHE:   return "bhai baharse le";
         case BL_KW_BHAU_MAIN:          return "bhai main";
         case BL_KW_BHAU_NIVAD:         return "bhai chun";
+        case BL_KW_BHAU_PTR:           return "ptr";
+        case BL_KW_BHAU_REF:           return "ref";
 
         #endif
 
@@ -268,7 +277,6 @@ static inline char *keyword_to_string(LangKeywordType type) {
         case BL_KW_BHAU_TAR:           return "";
         case BL_KW_BHAU_NAHITAR:       return "";
         case BL_KW_BHAU_JOPARENT:      return "";
-        case BL_KW_BHAU_SATAT:         return "";
         case BL_KW_BHAU_LAKSHAT_THEV:  return "";
         case BL_KW_BHAU_PARAT_DE:      return "";
         case BL_KW_HI_BHAU:            return "";
@@ -281,6 +289,8 @@ static inline char *keyword_to_string(LangKeywordType type) {
         case BL_KW_BHAU_KHOTA:         return "";
         case BL_KW_BHAU_BAHERUN_GHE:   return "";
         case BL_KW_BHAU_MAIN:          return "";
+        case BL_KW_BHAU_PTR:           return "";
+        case BL_KW_BHAU_REF:           return "";
 
         #endif
 
