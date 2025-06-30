@@ -24,8 +24,18 @@ typedef enum {
     AST_FUNCTION,
     AST_MAIN,
     AST_FUNCTIONCALL,
+    AST_IFELSE,
+    AST_BLOCK,
 } ASTNodeType;
 
+typedef enum {
+    SCOPE_GLOBAL,
+    SCOPE_FUNCTION,
+    SCOPE_MAIN,
+    SCOPE_IF,
+    SCOPE_WHILE,
+    SCOPE_BLOCK,
+} ScopeType;
 
 
 
@@ -34,6 +44,22 @@ typedef struct {
     void* data;
 } AST_Node;
 
+typedef struct{
+    AST_Node* condition;
+    AST_Node* then_block;
+    AST_Node* else_block;
+    ASTNodeType type;
+} AST_Ifelse;
+
+typedef struct {
+    AST_Node** body;
+    size_t body_count;
+    AST_Node* _return;
+    ASTNodeType type;
+} AST_Block;
+
+
+//TODO implement AST_Block in AST_Function
 typedef struct {
     AST_Node* name;
     AST_Node** params;
@@ -45,8 +71,7 @@ typedef struct {
 } AST_Function;
 
 typedef struct {
-    AST_Node** body;
-    size_t body_count;
+    AST_Node* block;
     ASTNodeType type;
 } AST_Main;
 
@@ -117,13 +142,13 @@ typedef struct {
 typedef struct Scope Scope;
 
 typedef struct Scope {
-    int scope_num;
+    int id;
     char* scope_name;
+    ScopeType type;
     Scope* scope_parent;
 } Scope;
 typedef struct {
     char* name;
-    int scope;
     Scope* scope_val;
     ASTNodeType type;
 } AST_Identifier;
@@ -152,10 +177,13 @@ typedef struct {
 
 
     bl_stack* scope_stack;
+    int scope_id;
+    int current_scope;
 
     bl_token current;
 
 } bl_parser;
+
 
 
 
@@ -174,7 +202,7 @@ AST_Node* parse_stmt(bl_parser* parser);
 AST_Node* parse_assign_decl(bl_parser* parser);
 AST_Node* parse_assign(bl_parser* parser);
 AST_Node* parse_extern(bl_parser* parser);
-AST_Node* parse_identifier(bl_parser* parser,bool check);
+AST_Node* parse_identifier(bl_parser* parser,bool check,int check_levels);
 AST_Node* parse_primary(bl_parser* parser);
 AST_Node* parse_factor(bl_parser* parser);
 AST_Node* parse_binops(bl_parser* parser);
@@ -189,6 +217,7 @@ AST_Node* parse_logor(bl_parser* parser);
 AST_Node* parse_assignment(bl_parser* parser);
 AST_Node* parse_expr(bl_parser* parser);
 AST_Node* parse_unops(bl_parser* parser);
+AST_Node* parse_block(bl_parser* parser);
 //TODO parse if-else, switch and loop
 AST_Node* parse_ifelse(bl_parser* parser);
 AST_Node* parse_switch(bl_parser* parser);
@@ -207,8 +236,9 @@ int get_int_value(bl_parser* parser);
 char get_char_value(bl_parser* parser);
 char* get_string_value(bl_parser* parser);
 float get_float_value(bl_parser* parser);
-bool check_in_var_store(bl_parser* parser, AST_Node* node);
+bool check_in_var_store(bl_parser* parser, AST_Node* node,int check_levels);
 bool parse_match_two(bl_parser* parser,enum KEYWORD_TYPES k1, enum KEYWORD_TYPES k2);
+bool uses_lhs_in_rhs(AST_Node* lhs, AST_Node* rhs);
 char* get_name_from_parser(bl_parser* parser);
 
 
@@ -260,6 +290,8 @@ void parser_init(bl_parser* parser, bl_arena* arena, bl_token* tokens){
     parser->line_offset = 0;
     parser->var_store = (AST_Node **)arena_alloc(arena,1024*sizeof(AST_Node*));
     parser->var_count = 0;
+    parser->scope_id = 0;
+    parser->current_scope = 0;
 
     parser->current = parser->tokens[parser->parse_point];
     parser->num_loop = 0;
@@ -271,9 +303,11 @@ void parser_init(bl_parser* parser, bl_arena* arena, bl_token* tokens){
 
     Scope* scope = assign_type(parser,Scope);
     scope->scope_name = "global";
-    scope->scope_num = 0;
     scope->scope_parent = NULL;
+    scope->type = SCOPE_GLOBAL;
+    scope->id = parser->scope_id;
     stack_push(parser->scope_stack,scope);
+    parser->current_scope = stack_size(parser->scope_stack);
     
     parser->errors = (ParseError*)arena_alloc(arena, sizeof(ParseError) * max_errors);
     parser->error_count = 0;
@@ -296,7 +330,7 @@ void parse_dump(bl_parser* parser,bl_arena* arena){
     printf("Line number        : %zu\n", parser->line_number);
     printf("Line offset        : %zu\n", parser->line_offset);
     printf("Inside loop depth  : %d\n", parser->num_loop);
-    printf("Inside function    : %d\n", temp_scope->scope_num);
+    printf("Inside function    : %d\n", temp_scope->id);
 
     printf("Parse errors count : %zu\n", parser->error_count);
     if (parser->error_count > 0) {
@@ -352,7 +386,9 @@ AST_Node* parse_stmt(bl_parser* parser) {
         return ast;
     }else if(parse_match(parser,BL_KW_BHAU_LAKSHAT_THEV)){
         AST_Node* ast = parse_function(parser);
-        stack_pop(parser->scope_stack);
+        return ast;
+    }else if(parse_match(parser,BL_KW_BHAU_JAR)){
+        AST_Node* ast = parse_ifelse(parser);
         return ast;
     }else if(parse_match(parser,BL_KW_BHAU_MAIN)){
         AST_Node* ast = parse_main(parser);
@@ -367,7 +403,7 @@ AST_Node* parse_stmt(bl_parser* parser) {
 AST_Node* parse_extern(bl_parser* parser){
     parse_step_n_expect(parser,BL_IDENTIFIER,"Expected",24);
     AST_Extern* ext = assign_type(parser,AST_Extern);
-    AST_Node* name = parse_identifier(parser,1);
+    AST_Node* name = parse_identifier(parser,1,0);
     parse_step_n_expect(parser,BL_SEMICOLON,"Expected",25);
     ext->ident = name;
     ext->type = AST_EXTERN;
@@ -380,7 +416,7 @@ AST_Node* parse_extern(bl_parser* parser){
 }
 
 AST_Node* parse_assign(bl_parser* parser){
-    AST_Node* ast1 = parse_identifier(parser,0);
+    AST_Node* ast1 = parse_identifier(parser,0,1);
 
     null_error((void *)ast1,parser,12);
     parse_advance(parser);
@@ -412,7 +448,7 @@ AST_Node* parse_assign(bl_parser* parser){
         funcall->type = AST_FUNCTIONCALL;
         funcall->args_count = 0;
         parse_backstep(parser);
-        funcall->name = parse_identifier(parser,0);  
+        funcall->name = parse_identifier(parser,0,1);  
         parse_advance(parser);
 
         AST_Node** args = (AST_Node**)arena_alloc(parser->arena,sizeof(AST_Node*)*30);
@@ -463,7 +499,7 @@ AST_Node* parse_assign_decl(bl_parser* parser){
     char* name = get_name_from_parser(parser);
 
 
-    AST_Node* ast1 = parse_identifier(parser,1);
+    AST_Node* ast1 = parse_identifier(parser,1,0);
 
     null_error((void *)ast1,parser,12);
 
@@ -471,6 +507,9 @@ AST_Node* parse_assign_decl(bl_parser* parser){
     if(parse_match(parser,BL_EQUAL)){
         parse_advance(parser);
         AST_Node* ast2 = parse_expr(parser); 
+        if(uses_lhs_in_rhs(ast1,ast2)){
+            bl_parse_error(parser,"Recursive assignment: variable used in its own initializer",1,50);
+        }
 
         null_error(ast2,parser,23);
         parse_step_n_expect(parser,BL_SEMICOLON,"Expected", 19);
@@ -493,7 +532,9 @@ AST_Node* parse_assign_decl(bl_parser* parser){
    
 }
 
-AST_Node* parse_identifier(bl_parser* parser,bool check){
+//REF second arg : 0->check if declared in scope, 1->check if not declared and add
+//REF third arg : 0->dont check from current to global scope, 1-> check from current to global scope
+AST_Node* parse_identifier(bl_parser* parser,bool check,int check_levels){
     AST_Identifier* ident = assign_type(parser,AST_Identifier);
     ident->name = get_name_from_parser(parser);
     ident->scope_val = stack_peek(parser->scope_stack);
@@ -503,16 +544,16 @@ AST_Node* parse_identifier(bl_parser* parser,bool check){
     ast->data = ident;
     ast->type = AST_IDENTIFIER;
 
-    //REF 0->check if declared in scope, 1->check if not declared and add
+    
     if(check == 1){
-        if(!check_in_var_store(parser,ast)){
+        if(!check_in_var_store(parser,ast,check_levels)){
             parser->var_store[parser->var_count] = ast;
             parser->var_count++;
         }else{
             bl_parse_error(parser,"Identifier already declared in this scope",1,25);
         }
     }else if(check == 0){
-        if(!check_in_var_store(parser,ast)){
+        if(!check_in_var_store(parser,ast,check_levels)){
             bl_parse_error(parser,"Identifier doesnt exist in this scope",1,26);
         }
     }
@@ -850,7 +891,7 @@ AST_Node* parse_primary(bl_parser* parser) {
 
     if (parse_match(parser, BL_IDENTIFIER)){
         if(parse_check_ahead(parser,BL_LPAREN,1)){
-            AST_Node* func_name = parse_identifier(parser,0);
+            AST_Node* func_name = parse_identifier(parser,0,1);
             parse_advance(parser);
             parse_advance(parser); 
             AST_Node** args = (AST_Node**)arena_alloc(parser->arena,30*sizeof(AST_Node*));
@@ -876,7 +917,7 @@ AST_Node* parse_primary(bl_parser* parser) {
             return node;
 
         }else{
-            return parse_identifier(parser,0);
+            return parse_identifier(parser,0,1);
         }
     }
 
@@ -905,38 +946,155 @@ AST_Node* parse_main(bl_parser* parser){
     }
     AST_Main* main_ast = assign_type(parser,AST_Main);
 
+    parser->scope_id++;
     Scope* scope_val = assign_type(parser,Scope);
     Scope* prev_scope = assign_type(parser,Scope);
     prev_scope = stack_peek(parser->scope_stack);
     scope_val->scope_name = "main";
-    scope_val->scope_num = prev_scope->scope_num+1;
     scope_val->scope_parent=prev_scope;
-    stack_push(parser->scope_stack,scope_val);
 
-    parse_step_n_expect(parser,BL_LBRACE,"Expected :",35);
-    AST_Node** stmts = (AST_Node**)arena_alloc(parser->arena,1024*sizeof(AST_Node*));
+    scope_val->id = parser->scope_id;
+    scope_val->type = SCOPE_MAIN;
+
+    stack_push(parser->scope_stack,scope_val);
+    parser->current_scope = stack_size(parser->scope_stack);
+
+    AST_Node* block_node = assign_type(parser,AST_Node);
+    parse_step_n_expect(parser,BL_LBRACE,"Expected:",49);
+    block_node = parse_block(parser);
+    main_ast->block = block_node;
+    main_ast->type = AST_MAIN;
+
+    AST_Node* node = assign_type(parser,AST_Node);
+    node->data = main_ast;
+    node->type = AST_MAIN;
+    stack_pop(parser->scope_stack);
+    parser->current_scope = stack_size(parser->scope_stack);
+    return node;
+
+}
+
+AST_Node* parse_ifelse(bl_parser* parser){
+    if(stack_size(parser->scope_stack) < 2){
+        bl_parse_error(parser,"Cannot run conditionals globally",1,39);
+    }
+    parse_step_n_expect(parser,BL_LPAREN,"Expected:",40);
     parse_advance(parser);
 
-    while(!parse_match(parser,BL_RBRACE)){
+
+    AST_Node* cond_expr = parse_expr(parser);
+
+    parser->scope_id++;
+
+    Scope* scope_val = assign_type(parser,Scope);
+    Scope* prev_scope = assign_type(parser,Scope);
+    prev_scope = stack_peek(parser->scope_stack);
+
+
+    scope_val->id = parser->scope_id;
+    scope_val->type = SCOPE_IF;
+    scope_val->scope_name = NULL;
+    scope_val->scope_parent=prev_scope;
+    stack_push(parser->scope_stack,scope_val);
+    parser->current_scope = stack_size(parser->scope_stack);
+
+    parse_step_n_expect(parser,BL_RPAREN,"Expected:",41);
+    parse_step_n_expect(parser,BL_LBRACE,"Expected:",42);
+
+    AST_Ifelse* cond = assign_type(parser,AST_Ifelse);
+    cond->type = AST_IFELSE;
+    cond->condition = cond_expr;
+
+    AST_Node* then_node = assign_type(parser,AST_Node);
+    then_node = parse_block(parser);
+    cond->then_block = then_node;
+    stack_pop(parser->scope_stack);
+    parser->current_scope = stack_size(parser->scope_stack);
+
+    if(parse_check_ahead(parser,BL_KW_BHAU_NAHITAR,1) || parse_check_ahead(parser,BL_KW_BHAU_TAR,1)){
+        parse_advance(parser);
+    }
+    if(parse_match(parser,BL_KW_BHAU_NAHITAR)){
+        cond->else_block = parse_ifelse(parser);
+    }else if(parse_match(parser,BL_KW_BHAU_TAR)){
+        parse_advance(parser);
+        parser->scope_id++;
+        Scope* scope_val = assign_type(parser,Scope);
+        Scope* prev_scope = assign_type(parser,Scope);
+        prev_scope = stack_peek(parser->scope_stack);
+
+        scope_val->id = parser->scope_id;
+        scope_val->type = SCOPE_IF;
+        scope_val->scope_name = NULL;
+        scope_val->scope_parent=prev_scope;
+        stack_push(parser->scope_stack,scope_val);
+        parser->current_scope = stack_size(parser->scope_stack);
+
+        AST_Node* else_node = assign_type(parser,AST_Node);
+        else_node = parse_block(parser);
+
+        cond->else_block = else_node;
+        stack_pop(parser->scope_stack);
+        parser->current_scope = stack_size(parser->scope_stack);
+
+    }else{
+        cond->else_block = NULL;
+    }
+
+    AST_Node* ifelse_node  = assign_type(parser,AST_Node);
+    ifelse_node->data = cond;
+    ifelse_node->type = AST_IFELSE;
+
+    return ifelse_node;
+
+}
+
+AST_Node* parse_block(bl_parser* parser){
+    parse_expect(parser,BL_LBRACE,"Expected :",31);
+
+    AST_Block* block = assign_type(parser,AST_Block);
+    
+    AST_Node** stmts = (AST_Node**)arena_alloc(parser->arena,1024*sizeof(AST_Node*));
+    parse_advance(parser);
+    while(!parse_match_two(parser,BL_RBRACE,BL_KW_BHAU_PARAT_DE)){
         AST_Node* stmt = parse_stmt(parser);
-        stmts[main_ast->body_count] = stmt;
-        main_ast->body_count++;
+        stmts[block->body_count] = stmt;
+        block->body_count++;
         parse_advance(parser);
         if(!stmt){
             printf("Error parsing statement\n");
             return NULL;
         }
     }
-    main_ast->body = stmts;
-    main_ast->type = AST_MAIN;
+    if(parse_match(parser,BL_RBRACE)){
+        block->body = stmts;
+        block->type = AST_BLOCK;
 
-    AST_Node* node = assign_type(parser,AST_Node);
-    node->data = main_ast;
-    node->type = AST_MAIN;
+        AST_Node* node = assign_type(parser,AST_Node);
+        node->data = block;
+        node->type = AST_BLOCK;
 
-    return node;
+        return node;
+    }else if(parse_match(parser,BL_KW_BHAU_PARAT_DE)){
+        parse_advance(parser);
+        AST_Node* retnode = assign_type(parser,AST_Node);
+        retnode = parse_expr(parser);
 
+        parse_step_n_expect(parser,BL_SEMICOLON,"Expected:",52);
+        parse_step_n_expect(parser,BL_RBRACE,"Expected:",54);
+        block->body = stmts;
+        block->type = AST_BLOCK;
+        block->_return = retnode;
+
+        AST_Node* node = assign_type(parser,AST_Node);
+        node->data = block;
+        node->type = AST_BLOCK;
+        return node;
+    }else{
+        bl_parse_error(parser,"Expected return or `}`",1,51);
+    }
 }
+
 AST_Node* parse_function(bl_parser* parser){
     parse_expect(parser,BL_KW_BHAU_LAKSHAT_THEV,"Expected :",27);
     if(stack_size(parser->scope_stack) > 1){
@@ -945,7 +1103,7 @@ AST_Node* parse_function(bl_parser* parser){
     AST_Function* func_ast = assign_type(parser,AST_Function);
     parse_advance(parser);
     parse_expect(parser,BL_IDENTIFIER,"Expected and identifier",28);
-    AST_Node* name = parse_identifier(parser,1);
+    AST_Node* name = parse_identifier(parser,1,0);
     AST_Identifier* name_val = (AST_Identifier*)name->data;
     func_ast->name = name;
     func_ast->param_count = 0;
@@ -953,13 +1111,19 @@ AST_Node* parse_function(bl_parser* parser){
     parse_step_n_expect(parser,BL_LPAREN,"Expected :",28);
     parse_advance(parser);
 
+
+    parser->scope_id++;
     Scope* scope_val = assign_type(parser,Scope);
     Scope* prev_scope = assign_type(parser,Scope);
     prev_scope = stack_peek(parser->scope_stack);
     scope_val->scope_name = name_val->name;
-    scope_val->scope_num = prev_scope->scope_num+1;
     scope_val->scope_parent=prev_scope;
+
+    scope_val->id = parser->scope_id;
+    scope_val->type = SCOPE_FUNCTION;
+
     stack_push(parser->scope_stack,scope_val);
+    parser->current_scope = stack_size(parser->scope_stack);
 
     AST_Node** params = (AST_Node**)arena_alloc(parser->arena,1024*sizeof(AST_Node*));
     while(!parse_match(parser,BL_RPAREN)){
@@ -974,6 +1138,7 @@ AST_Node* parse_function(bl_parser* parser){
     func_ast->params = params;
     parse_expect(parser,BL_RPAREN,"Expected :",29);
     parse_step_n_expect(parser,BL_LBRACE,"Expected :",31);
+    
     AST_Node** stmts = (AST_Node**)arena_alloc(parser->arena,1024*sizeof(AST_Node*));
     parse_advance(parser);
     while(!parse_match_two(parser,BL_RBRACE,BL_KW_BHAU_PARAT_DE)){
@@ -994,6 +1159,8 @@ AST_Node* parse_function(bl_parser* parser){
         AST_Node* node = assign_type(parser,AST_Node);
         node->data = func_ast;
         node->type = AST_FUNCTION;
+        stack_pop(parser->scope_stack);
+        parser->current_scope = stack_size(parser->scope_stack);
 
         return node;
     }else if(parse_match(parser,BL_KW_BHAU_PARAT_DE)){
@@ -1010,6 +1177,8 @@ AST_Node* parse_function(bl_parser* parser){
         AST_Node* node = assign_type(parser,AST_Node);
         node->data = func_ast;
         node->type = AST_FUNCTION;
+        stack_pop(parser->scope_stack);
+        parser->current_scope = stack_size(parser->scope_stack);
 
         return node;
 
@@ -1019,7 +1188,7 @@ AST_Node* parse_function(bl_parser* parser){
 }
 
 AST_Node* parse_param(bl_parser* parser){
-    AST_Node* ast = parse_identifier(parser,1);
+    AST_Node* ast = parse_identifier(parser,1,0);
 }
 
 bool parse_match_two(bl_parser* parser,enum KEYWORD_TYPES k1, enum KEYWORD_TYPES k2){
@@ -1107,25 +1276,23 @@ char* get_name_from_parser(bl_parser* parser){
     return ptrs_to_string(parser->current.where_firstchar,parser->current.where_lastchar,parser->arena);
 }
 
-bool check_in_var_store(bl_parser* parser, AST_Node* node){
+bool check_in_var_store(bl_parser* parser, AST_Node* node,int check_levels){
     AST_Identifier* ident = (AST_Identifier*)node->data;
     char* node_name = ident->name;
 
-    Scope* current_scope = stack_peek(parser->scope_stack);
+    Scope* current_scope = ident->scope_val;
 
-    while (current_scope != NULL) {
+    do {
         for (int i = 0; i < parser->var_count; i++) {
             AST_Identifier* var = (AST_Identifier*)parser->var_store[i]->data;
-
-            if (strcmp(var->name, node_name) == 0 &&
-                var->scope_val->scope_num == current_scope->scope_num &&
-                strcmp(var->scope_val->scope_name, current_scope->scope_name) == 0) {
+            char* str2 = var->name;
+            if ((var->scope_val->id == current_scope->id) && (strcmp(node_name, str2) == 0)) {
                 return true;
             }
         }
 
         current_scope = current_scope->scope_parent;
-    }
+    } while ((current_scope != NULL) && (check_levels == 1));
 
     return false;
 }
@@ -1301,6 +1468,34 @@ void bl_parse_token_error(bl_parser* parser,char* err_msg,char* keyword,int _bre
     }
 }
 
+bool uses_lhs_in_rhs(AST_Node* lhs, AST_Node* rhs) {
+    if (!lhs || !rhs) return false;
+
+    if (lhs->type != AST_IDENTIFIER) return false;
+
+    AST_Identifier* lhs_id = (AST_Identifier*)lhs->data;
+
+
+    if (rhs->type == AST_IDENTIFIER) {
+        AST_Identifier* rhs_id = (AST_Identifier*)rhs->data;
+        return strcmp(lhs_id->name, rhs_id->name) == 0;
+    }
+    else if (rhs->type == AST_BINOP) {
+        AST_Binop* bin = (AST_Binop*)rhs->data;
+        return uses_lhs_in_rhs(lhs, bin->lhs) || uses_lhs_in_rhs(lhs, bin->rhs);
+    }
+    else if (rhs->type == AST_UNOP) {
+        AST_Unop* un = (AST_Unop*)rhs->data;
+        return uses_lhs_in_rhs(lhs, un->node);
+    }
+    else if (rhs->type == AST_GROUP) {
+        AST_Group* group = (AST_Group*)rhs->data;
+        return uses_lhs_in_rhs(lhs, group->expr);
+    }
+
+    return false;
+}
+
 void print_parse_current_token(bl_parser* parser){
     printf("Current token   : %s\n",keyword_enum_to_str(parser->current.token));
 }
@@ -1364,12 +1559,30 @@ void print_ast_tree(AST_Node* node, int level, const char* prefix) {
         case AST_MAIN:
             AST_Main* main_func = (AST_Main*)node->data;
             printf("MAIN FUNCTION:\n");
-            for(size_t i = 0; i<main_func->body_count; ++i){
-                const char* child_prefix = (i == main_func->body_count - 1) ? "└── " : "├── ";
-                print_ast_tree(main_func->body[i],level+1,child_prefix);
-            }
+            print_ast_tree(main_func->block,level+1,"└── ");
             break;
 
+        case AST_IFELSE:
+            printf("IF_ELSE:\n");
+            AST_Ifelse* ifblock = (AST_Ifelse*)node->data;
+            printf("CONDITION:\n");
+            print_ast_tree(ifblock->condition,level+1,"└── ");
+            printf("IF BLOCK:\n");
+            print_ast_tree(ifblock->then_block,level+1,"└── ");
+            printf("ELSE BLOCK:\n");
+            print_ast_tree(ifblock->else_block,level+1,"└── ");
+            break;
+
+        case AST_BLOCK:
+            printf("BLOCK:\n");
+            AST_Block* block = (AST_Block*)node->data;
+            for(size_t i = 0;i<block->body_count;i++){
+                const char* child_prefix = (i == block->body_count -1)? "└── " : "├── ";
+                print_ast_tree(block->body[i],level+1,child_prefix);
+            }
+            printf("RETURN:\n");
+            print_ast_tree(block->_return,level,"└── ");
+            break;
         case AST_FUNCTIONCALL:
             AST_FunctionCall* funcall = (AST_FunctionCall*)node->data;
             AST_Identifier* funcall_name = (AST_Identifier*)funcall->name->data;
@@ -1411,7 +1624,7 @@ void print_ast_tree(AST_Node* node, int level, const char* prefix) {
 
         case AST_IDENTIFIER: {
             AST_Identifier* id = (AST_Identifier*)node->data;
-            printf("IDENTIFIER: %s (SCOPE : %s )\n", id->name ? id->name : "(null)",id->scope_val->scope_name);
+            printf("IDENTIFIER: %s (SCOPE : %s id : %d )\n", id->name ? id->name : "(null)",id->scope_val->scope_name,id->scope_val->id);
             break;
         }
 
