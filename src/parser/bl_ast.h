@@ -2,6 +2,7 @@
 #define BL_AST_H
 
 #include <stdio.h>
+#include <string.h>
 #include "bl_lexer.h"
 
 
@@ -9,6 +10,8 @@
 #define C_NODE    "\033[1;36m"
 #define C_LABEL   "\033[0;33m"
 #define C_VALUE   "\033[0;32m"
+
+int ast_id_counter = 0;
 
 typedef enum {
     SCOPE_GLOBAL,
@@ -399,8 +402,8 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
             printf(C_NODE "CASE" C_RESET "\n");
             print_indent(next_prefix, false); printf("VALUE\n");
             print_ast_tree(_case->value, next_prefix, false);
-            for (int i = 0; i < _case->body_count; ++i) {
-                print_ast_tree(_case->body[i], next_prefix, i == _case->body_count - 1);
+            for (int i = 0; i < (int)_case->body_count; ++i) {
+                print_ast_tree(_case->body[i], next_prefix, i == (int)_case->body_count - 1);
             }
             break;
         }
@@ -408,8 +411,8 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
         case AST_DEFAULT: {
             AST_SwitchCase* def = (AST_SwitchCase*)node->data;
             printf(C_NODE "DEFAULT" C_RESET "\n");
-            for (int i = 0; i < def->body_count; ++i) {
-                print_ast_tree(def->body[i], next_prefix, i == def->body_count - 1);
+            for (int i = 0; i < (int)def->body_count; ++i) {
+                print_ast_tree(def->body[i], next_prefix, i == (int)def->body_count - 1);
             }
             break;
         }
@@ -445,8 +448,8 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
             AST_FunctionCall* call = (AST_FunctionCall*)node->data;
             AST_Identifier* name = (AST_Identifier*)call->name->data;
             printf(C_NODE "FUNCTION CALL: %s" C_RESET "\n", name->name);
-            for (size_t i = 0; i < call->args_count; ++i) {
-                print_ast_tree(call->args[i], next_prefix, i == call->args_count - 1);
+            for (size_t i = 0; i < (size_t)call->args_count; ++i) {
+                print_ast_tree(call->args[i], next_prefix, i == (size_t)call->args_count - 1);
             }
             break;
         }
@@ -526,5 +529,173 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
         }
     }
 }
+
+
+//REF Produces an image of AST using graphviz, you can install it using `sudo apt install graphviz`, than execute the command `dot -Tpng example.dot -o ast.png`
+
+
+void print_ast_dot_node(FILE* out, AST_Node* node, int parent_id) {
+    if (!node) return;
+
+    int current_id = ast_id_counter++;
+
+    switch (node->type) {
+        case AST_PROGRAM: {
+            fprintf(out, "  node%d [label=\"PROGRAM\"]\n", current_id);
+            ASTProgram* prog = (ASTProgram*)node->data;
+            for (size_t i = 0; i < prog->count; ++i)
+                print_ast_dot_node(out, prog->statements[i], current_id);
+            break;
+        }
+        case AST_FUNCTION: {
+            AST_Function* func = (AST_Function*)node->data;
+            AST_Identifier* fid = (AST_Identifier*)func->name->data;
+            fprintf(out, "  node%d [label=\"FUNCTION: %s\"]\n", current_id, fid->name);
+            for (size_t i = 0; i < func->param_count; ++i)
+                print_ast_dot_node(out, func->params[i], current_id);
+            print_ast_dot_node(out, func->block, current_id);
+            break;
+        }
+        case AST_MAIN: {
+            fprintf(out, "  node%d [label=\"MAIN\"]\n", current_id);
+            AST_Main* main = (AST_Main*)node->data;
+            print_ast_dot_node(out, main->block, current_id);
+            break;
+        }
+        case AST_LOOP: {
+            fprintf(out, "  node%d [label=\"WHILE\"]\n", current_id);
+            AST_Loop* loop = (AST_Loop*)node->data;
+            print_ast_dot_node(out, loop->expr, current_id);
+            print_ast_dot_node(out, loop->block, current_id);
+            break;
+        }
+        case AST_SWITCH: {
+            fprintf(out, "  node%d [label=\"SWITCH\"]\n", current_id);
+            AST_Switch* sw = (AST_Switch*)node->data;
+            print_ast_dot_node(out, sw->expr, current_id);
+            for (size_t i = 0; i < sw->case_count; ++i)
+                print_ast_dot_node(out, sw->cases[i], current_id);
+            print_ast_dot_node(out, sw->default_case, current_id);
+            break;
+        }
+        case AST_CASE:
+        case AST_DEFAULT: {
+            const char* label = node->type == AST_CASE ? "CASE" : "DEFAULT";
+            fprintf(out, "  node%d [label=\"%s\"]\n", current_id, label);
+            AST_SwitchCase* cs = (AST_SwitchCase*)node->data;
+            if (node->type == AST_CASE)
+                print_ast_dot_node(out, cs->value, current_id);
+            for (int i = 0; i < (int)cs->body_count; ++i)
+                print_ast_dot_node(out, cs->body[i], current_id);
+            break;
+        }
+        case AST_IFELSE: {
+            fprintf(out, "  node%d [label=\"IF_ELSE\"]\n", current_id);
+            AST_Ifelse* ie = (AST_Ifelse*)node->data;
+            print_ast_dot_node(out, ie->condition, current_id);
+            print_ast_dot_node(out, ie->then_block, current_id);
+            print_ast_dot_node(out, ie->else_block, current_id);
+            break;
+        }
+        case AST_RETURN: {
+            fprintf(out, "  node%d [label=\"RETURN\"]\n", current_id);
+            AST_Return* ret = (AST_Return*)node->data;
+            print_ast_dot_node(out, ret->expr, current_id);
+            break;
+        }
+        case AST_ASSIGN: {
+            AST_Assign* asg = (AST_Assign*)node->data;
+            fprintf(out, "  node%d [label=\"ASSIGN: %s\"]\n", current_id, keyword_enum_to_str(asg->op));
+            print_ast_dot_node(out, asg->lhs, current_id);
+            print_ast_dot_node(out, asg->rhs, current_id);
+            break;
+        }
+        case AST_BINOP: {
+            AST_Binop* bop = (AST_Binop*)node->data;
+            fprintf(out, "  node%d [label=\"BINOP: %s\"]\n", current_id, keyword_enum_to_str(bop->op));
+            print_ast_dot_node(out, bop->lhs, current_id);
+            print_ast_dot_node(out, bop->rhs, current_id);
+            break;
+        }
+        case AST_UNOP: {
+            AST_Unop* uop = (AST_Unop*)node->data;
+            fprintf(out, "  node%d [label=\"UNOP: %s\"]\n", current_id, keyword_enum_to_str(uop->op));
+            print_ast_dot_node(out, uop->node, current_id);
+            break;
+        }
+        case AST_FUNCTIONCALL: {
+            AST_FunctionCall* call = (AST_FunctionCall*)node->data;
+            AST_Identifier* id = (AST_Identifier*)call->name->data;
+            fprintf(out, "  node%d [label=\"CALL: %s\"]\n", current_id, id->name);
+            for (size_t i = 0; i < (size_t)call->args_count; ++i)
+                print_ast_dot_node(out, call->args[i], current_id);
+            break;
+        }
+        case AST_BLOCK: {
+            fprintf(out, "  node%d [label=\"BLOCK\"]\n", current_id);
+            AST_Block* blk = (AST_Block*)node->data;
+            for (size_t i = 0; i < blk->body_count; ++i)
+                print_ast_dot_node(out, blk->body[i], current_id);
+            break;
+        }
+        case AST_IDENTIFIER: {
+            AST_Identifier* id = (AST_Identifier*)node->data;
+            fprintf(out, "  node%d [label=\"IDENT: %s\"]\n", current_id, id->name);
+            break;
+        }
+        case AST_INTLITERAL: {
+            AST_IntLiteral* ilit = (AST_IntLiteral*)node->data;
+            fprintf(out, "  node%d [label=\"INT: %d\"]\n", current_id, ilit->value);
+            break;
+        }
+        case AST_STRINGLITERAL: {
+            AST_StringLiteral* slit = (AST_StringLiteral*)node->data;
+            fprintf(out, "  node%d [label=\"STRING: %s\"]\n", current_id, slit->value);
+            break;
+        }
+        case AST_EXTERN: {
+            fprintf(out, "  node%d [label=\"EXTERN\"]\n", current_id);
+            AST_Extern* ext = (AST_Extern*)node->data;
+            print_ast_dot_node(out, ext->ident, current_id);
+            break;
+        }
+        case AST_BREAK: {
+            fprintf(out, "  node%d [label=\"BREAK\"]\n", current_id);
+            break;
+        }
+        case AST_COMMENT: {
+            fprintf(out, "  node%d [label=\"// COMMENT\"]\n", current_id);
+            break;
+        }
+        case AST_GROUP: {
+            fprintf(out, "  node%d [label=\"GROUP\"]\n", current_id);
+            AST_Group* group = (AST_Group*)node->data;
+            print_ast_dot_node(out, group->expr, current_id);
+            break;
+        }
+        default: {
+            fprintf(out, "  node%d [label=\"UNKNOWN\"]\n", current_id);
+            break;
+        }
+    }
+
+    if (parent_id != -1) {
+        fprintf(out, "  node%d -> node%d;\n", parent_id, current_id);
+    }
+}
+
+void generate_ast_dot(AST_Node* root, const char* filename) {
+    FILE* out = fopen(filename, "w");
+    if (!out) {
+        perror("Could not open output DOT file");
+        return;
+    }
+    fprintf(out, "digraph AST {\n  node [shape=box, style=filled, fillcolor=lightblue];\n");
+    ast_id_counter = 0;
+    print_ast_dot_node(out, root, -1);
+    fprintf(out, "}\n");
+    fclose(out);
+}
+
 
 #endif

@@ -1,0 +1,116 @@
+digraph AST {
+  node [shape=box, style=filled, fillcolor=lightblue];
+  node0 [label="PROGRAM"]
+  node1 [label="EXTERN"]
+  node2 [label="IDENT: printf"]
+  node1 -> node2;
+  node0 -> node1;
+  node3 [label="ASSIGN: BL_EQUAL"]
+  node4 [label="IDENT: x"]
+  node3 -> node4;
+  node5 [label="INT: 10"]
+  node3 -> node5;
+  node0 -> node3;
+  node6 [label="ASSIGN: BL_EQUAL"]
+  node7 [label="IDENT: y"]
+  node6 -> node7;
+  node8 [label="INT: 5"]
+  node6 -> node8;
+  node0 -> node6;
+  node9 [label="MAIN"]
+  node10 [label="BLOCK"]
+  node11 [label="ASSIGN: BL_EQUAL"]
+  node12 [label="IDENT: result"]
+  node11 -> node12;
+  node13 [label="BINOP: BL_ADDBINOP"]
+  node14 [label="IDENT: x"]
+  node13 -> node14;
+  node15 [label="BINOP: BL_MULTBINOP"]
+  node16 [label="IDENT: y"]
+  node15 -> node16;
+  node17 [label="INT: 2"]
+  node15 -> node17;
+  node13 -> node15;
+  node11 -> node13;
+  node10 -> node11;
+  node18 [label="IF_ELSE"]
+  node19 [label="BINOP: BL_GRTTHAN"]
+  node20 [label="IDENT: result"]
+  node19 -> node20;
+  node21 [label="INT: 10"]
+  node19 -> node21;
+  node18 -> node19;
+  node22 [label="BLOCK"]
+  node23 [label="CALL: printf"]
+  node24 [label="STRING: Greater than 10"]
+  node23 -> node24;
+  node22 -> node23;
+  node18 -> node22;
+  node25 [label="BLOCK"]
+  node26 [label="CALL: printf"]
+  node27 [label="STRING: Less or equal to 10"]
+  node26 -> node27;
+  node25 -> node26;
+  node18 -> node25;
+  node10 -> node18;
+  node28 [label="WHILE"]
+  node29 [label="BINOP: BL_GRTTHAN"]
+  node30 [label="IDENT: y"]
+  node29 -> node30;
+  node31 [label="INT: 0"]
+  node29 -> node31;
+  node28 -> node29;
+  node32 [label="BLOCK"]
+  node33 [label="CALL: printf"]
+  node34 [label="STRING: Looping\n"]
+  node33 -> node34;
+  node32 -> node33;
+  node35 [label="ASSIGN: BL_EQUAL"]
+  node36 [label="IDENT: y"]
+  node35 -> node36;
+  node37 [label="BINOP: BL_SUBBINOP"]
+  node38 [label="IDENT: y"]
+  node37 -> node38;
+  node39 [label="INT: 1"]
+  node37 -> node39;
+  node35 -> node37;
+  node32 -> node35;
+  node28 -> node32;
+  node10 -> node28;
+  node40 [label="SWITCH"]
+  node41 [label="IDENT: x"]
+  node40 -> node41;
+  node42 [label="CASE"]
+  node43 [label="INT: 5"]
+  node42 -> node43;
+  node44 [label="CALL: printf"]
+  node45 [label="STRING: It is five"]
+  node44 -> node45;
+  node42 -> node44;
+  node46 [label="BREAK"]
+  node42 -> node46;
+  node40 -> node42;
+  node47 [label="CASE"]
+  node48 [label="INT: 10"]
+  node47 -> node48;
+  node49 [label="CALL: printf"]
+  node50 [label="STRING: It is ten"]
+  node49 -> node50;
+  node47 -> node49;
+  node51 [label="BREAK"]
+  node47 -> node51;
+  node40 -> node47;
+  node52 [label="DEFAULT"]
+  node53 [label="CALL: printf"]
+  node54 [label="STRING: Default case"]
+  node53 -> node54;
+  node52 -> node53;
+  node40 -> node52;
+  node10 -> node40;
+  node55 [label="RETURN"]
+  node56 [label="IDENT: result"]
+  node55 -> node56;
+  node10 -> node55;
+  node9 -> node10;
+  node0 -> node9;
+}

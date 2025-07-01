@@ -1,8 +1,8 @@
 CC = gcc
-CFLAGS_TOKENIZER = -Isrc/common
-CFLAGS_LEXER = -Isrc/keywords -Isrc/common
-CFLAGS_TEST = -g -Isrc/common -Isrc/keywords
-CFLAGS_PARSER = -Isrc/lexer -Isrc/common -Isrc/keywords
+CFLAGS_TOKENIZER = -Wall -Wextra -Isrc/common
+CFLAGS_LEXER = -Wall -Wextra -Isrc/keywords -Isrc/common
+CFLAGS_TEST = -Wall -Wextra -g -Isrc/common -Isrc/keywords
+CFLAGS_PARSER = -Wall -Wextra -Isrc/lexer -Isrc/common -Isrc/keywords
 
 
 DYNARR = src/common/bl_dynarray.h

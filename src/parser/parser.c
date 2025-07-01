@@ -8,8 +8,6 @@
 
 #define BL_PARSER_TEST
 
-//TODO bhau hai ahe x,y,z; & bhau hai ahe x = y = z = 10;
-//TODO no break; in a function; (if scope has name, cant use break)
 
 #define assign_type(parser,type) (type*)arena_alloc(parser->arena,sizeof(type));
 #define assign_arr_type(parser,type,capacity) (type**)arena_alloc(parser->arena, sizeof(type*) * capacity);
@@ -59,21 +57,22 @@ AST_Node* parse_stmt(bl_parser* parser);
 AST_Node* parse_assign_decl(bl_parser* parser);
 AST_Node* parse_assign(bl_parser* parser);
 AST_Node* parse_extern(bl_parser* parser);
-AST_Node* parse_identifier(bl_parser* parser,bool check,int check_levels);
-AST_Node* parse_primary(bl_parser* parser);
-AST_Node* parse_factor(bl_parser* parser);
-AST_Node* parse_binops(bl_parser* parser);
-AST_Node* parse_shift(bl_parser* parser);
-AST_Node* parse_relational(bl_parser* parser);
-AST_Node* parse_equal(bl_parser* parser);
-AST_Node* parse_and(bl_parser* parser);
-AST_Node* parse_or(bl_parser* parser);
-AST_Node* parse_xor(bl_parser* parser);
-AST_Node* parse_logand(bl_parser* parser);
-AST_Node* parse_logor(bl_parser* parser);
-AST_Node* parse_assignment(bl_parser* parser);
-AST_Node* parse_expr(bl_parser* parser);
-AST_Node* parse_unops(bl_parser* parser);
+AST_Node* parse_identifier(bl_parser* parser,bool check,bool check_levels);
+AST_Node* parse_primary(bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_factor(bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_binops(bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_shift(bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_relational(bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_equal(bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_and(bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_or(bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_xor(bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_logand(bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_logor(bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_assignment(bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels);
+AST_Node* parse_bitwise_assignment(bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels);
+AST_Node* parse_expr(bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels);
+AST_Node* parse_unops(bl_parser* parser,bool check, bool check_levels);
 AST_Node* parse_block(bl_parser* parser);
 AST_Node* parse_ifelse(bl_parser* parser);
 AST_Node* parse_switch(bl_parser* parser);
@@ -104,8 +103,9 @@ bool parse_match(bl_parser* parser, enum KEYWORD_TYPES type);
 bool parse_check_ahead(bl_parser* parser, enum KEYWORD_TYPES type, int num);
 bool parse_expect(bl_parser* parser,enum KEYWORD_TYPES type, char* errmsg,int err_code);
 bool parse_step_n_expect(bl_parser* parser, enum KEYWORD_TYPES type,char* errmsg, int err_code);
-bool check_in_var_store(bl_parser* parser, AST_Node* node,int check_levels);
+bool check_in_var_store(bl_parser* parser, AST_Node* node,bool check_levels);
 bool uses_lhs_in_rhs(AST_Node* lhs, AST_Node* rhs);
+bool current_scope_has_name(bl_parser* parser);
 
 void bl_check_prolog(bl_parser* parser);
 void bl_check_epilog(bl_parser* parser);
@@ -199,7 +199,7 @@ void parse_dump(bl_parser* parser,bl_arena* arena){
     if (parser->error_count > 0) {
         for (size_t i = 0; i < parser->error_count; ++i) {
             ParseError* e = &parser->errors[i];
-            printf("  ! Error [%zu:%zu] → %s\n", e->line, e->column, e->message);
+            printf("  ! Error [%zu:%zu] → %s\n", (size_t)e->line, (size_t)e->column, e->message);
         }
     }
 
@@ -218,7 +218,7 @@ AST_Node* parse_program(bl_parser* parser){
     parse_advance(parser);
     AST_Node** stmts = assign_arr_type(parser,AST_Node,1024);
     size_t stmt_count = 0;
-    while(!(parse_match(parser,BL_KW_BYE_BHAU))){
+    while(!(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BYE_BHAU))){
         AST_Node* stmt = parse_stmt(parser);
         parse_advance(parser);
         if(!stmt){
@@ -239,46 +239,46 @@ AST_Node* parse_program(bl_parser* parser){
 }
 
 AST_Node* parse_stmt(bl_parser* parser) {
-    if(parse_match(parser,BL_KW_BHAU_HAI_AHE)){
+    if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_HAI_AHE)){
         
         AST_Node* ast = parse_assign_decl(parser);
         return ast;
-    }else if(parse_match(parser,BL_KW_BHAU_BAHERUN_GHE)){
+    }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_BAHERUN_GHE)){
         AST_Node* ast = parse_extern(parser);
         return ast;
     }else if(parse_match(parser,BL_IDENTIFIER) || 
-        parse_match(parser,BL_KW_BHAU_PTR) || 
-        parse_match(parser,BL_KW_BHAU_REF)){
+        parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_PTR) || 
+        parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_REF)){
         AST_Node* ast = parse_assign(parser);
         return ast;
-    }else if(parse_match(parser,BL_KW_BHAU_LAKSHAT_THEV)){
+    }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_LAKSHAT_THEV)){
         AST_Node* ast = parse_function(parser);
         return ast;
-    }else if(parse_match(parser,BL_KW_BHAU_JAR)){
+    }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_JAR)){
         AST_Node* ast = parse_ifelse(parser);
         return ast;
-    }else if(parse_match(parser,BL_KW_BHAU_MAIN)){
+    }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_MAIN)){
         AST_Node* ast = parse_main(parser);
         return ast;
-    }else if(parse_match(parser,BL_KW_BHAU_CHUNAV)){
+    }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_CHUNAV)){
         AST_Node* ast = parse_switch(parser);
         return ast;
-    }else if(parse_match(parser,BL_KW_BHAU_JOPARENT)){
+    }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_JOPARENT)){
         AST_Node* ast = parse_loop(parser);
         return ast;
-    }else if(parse_match(parser,BL_KW_BHAU_THAMB)){
+    }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_THAMB)){
         AST_Node* ast = parse_break(parser);
         return ast;
-    }else if(parse_match(parser,BL_KW_BHAU_CHALU_RHA)){
+    }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_CHALU_RHA)){
         AST_Node* ast = parse_continue(parser);
         return ast;
-    }else if(parse_match(parser,BL_KW_BHAU_PARAT_DE)){
+    }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_PARAT_DE)){
         AST_Node* ast = parse_return(parser);
         return ast;
-    }else if(parse_match(parser,BL_COMMENT)){
+    }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_COMMENT)){
         AST_Node* ast = make_node(parser,NULL,AST_COMMENT);
         return ast;
-    }else if(parse_match(parser,BL_MULCOMMENT)){
+    }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_MULCOMMENT)){
         AST_Node* ast = make_node(parser,NULL,AST_MULCOMMENT);
         return ast;
     }else{
@@ -291,7 +291,7 @@ AST_Node* parse_stmt(bl_parser* parser) {
 AST_Node* parse_extern(bl_parser* parser){
     parse_step_n_expect(parser,BL_IDENTIFIER,"Expected",24);
     AST_Extern* ext = assign_type(parser,AST_Extern);
-    AST_Node* name = parse_identifier(parser,1,0);
+    AST_Node* name = parse_identifier(parser,true, false);
     parse_step_n_expect(parser,BL_SEMICOLON,"Expected",25);
     ext->ident = name;
     ext->type = AST_EXTERN;
@@ -302,7 +302,7 @@ AST_Node* parse_extern(bl_parser* parser){
 
 AST_Node* parse_assign(bl_parser* parser){
     AST_Node* ast1 = assign_type(parser,AST_Node);
-    ast1 = parse_expr(parser);
+    ast1 = parse_expr(parser,BL_IDENTIFIER,false,true);
     parse_step_n_expect(parser,BL_SEMICOLON,"Expected:",19);
     return ast1;
 }
@@ -310,115 +310,16 @@ AST_Node* parse_assign(bl_parser* parser){
 
 
 AST_Node* parse_assign_decl(bl_parser* parser){
-
     AST_Node* ast1 = assign_type(parser,AST_Node);
-    AST_Assign* assign = assign_type(parser,AST_Assign);
-    if(parse_check_ahead(parser, BL_IDENTIFIER,1)){
-        parse_advance(parser);
-        ast1 = parse_identifier(parser,1,0);
-
-        null_error((void *)ast1,parser,1,12);
-    }else if(parse_check_ahead(parser,BL_KW_BHAU_PTR,1)){
-        AST_Node* node = NULL;
-        parse_advance(parser);
-        while (parse_match(parser, BL_KW_BHAU_PTR)){
-            AST_Unop* uop = assign_type(parser, AST_Unop);
-            uop->op = BL_KW_BHAU_PTR;
-
-            AST_Node* uop_node = make_node(parser,uop,AST_UNOP);
-
-            if (node) {
-                uop->node = node;
-            }
-            node = uop_node;
-            parse_advance(parser);
-        }
-        parse_expect(parser,BL_IDENTIFIER,"Expected:",81);
-        AST_Node* ident_node = parse_identifier(parser,1,0);
-
-        AST_Unop* bottom = (AST_Unop*)node->data;
-
-        while (bottom->node && bottom->node->type == AST_UNOP) {
-            bottom = (AST_Unop*)bottom->node->data;
-        }
-
-        bottom->node = ident_node;
-        bottom->type = AST_UNOP;
-
-        AST_Node* uop_node = make_node(parser,(AST_Unop*)node->data,AST_UNOP);
-        ast1 = uop_node;
-    }
-    //References like C++?
-    // else if(parse_check_ahead(parser,BL_KW_BHAU_REF,1)){
-    //     AST_Node* node = NULL;
-    //     parse_advance(parser);
-
-    //     while (parse_match(parser, BL_KW_BHAU_REF)){
-    //         AST_Unop* uop = assign_type(parser, AST_Unop);
-    //         uop->op = BL_KW_BHAU_REF;
-
-    //         AST_Node* uop_node = assign_type(parser, AST_Node);
-    //         uop_node->type = AST_UNOP;
-    //         uop_node->data = uop;
-
-    //         if (node) {
-    //             uop->node = node;
-    //         }
-    //         node = uop_node;
-    //         parse_advance(parser);
-    //     }
-    //     parse_expect(parser,BL_IDENTIFIER,"Expected:",81);
-    //     AST_Node* ident_node = assign_type(parser,AST_Node);
-    //     ident_node = parse_identifier(parser,1,0);
-    
-    //     AST_Unop* bottom = (AST_Unop*)node->data;
-
-    //     while (bottom->node && bottom->node->type == AST_UNOP) {
-    //         bottom = (AST_Unop*)bottom->node->data;
-    //     }
-
-    //     bottom->node = ident_node;
-    //     bottom->type = AST_UNOP;
-
-    //     AST_Node* uop_node = assign_type(parser,AST_Node);
-    //     uop_node->data = (AST_Unop*)node->data;
-    //     uop_node->type = AST_UNOP;
-
-    //     ast1 = uop_node;
-    // }
-    else{
-        bl_parse_error(parser,"Expected Identifier or ptr",1,80);
-    }
-
     parse_advance(parser);
-    if(parse_match(parser,BL_EQUAL)){
-        assign->op = BL_EQUAL;
-        parse_advance(parser);
-        AST_Node* ast2 = parse_expr(parser); 
-        if(uses_lhs_in_rhs(ast1,ast2)){
-            bl_parse_error(parser,"Recursive assignment: variable used in its own initializer",1,50);
-        }
-
-        null_error(ast2,parser,1,23);
-        parse_step_n_expect(parser,BL_SEMICOLON,"Expected", 19);
-
-        assign->lhs = ast1;
-        assign->rhs = ast2;
-        assign->type = AST_ASSIGN;
-
-        AST_Node* node = make_node(parser,assign,AST_ASSIGN);
-        return node;
-    }else if(parse_match(parser,BL_SEMICOLON)){
-        return ast1;
-    }else{
-        bl_parse_error(parser,"Expected assignment or semicolon",1, 18);
-    }
-   
+    ast1 = parse_expr(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_HAI_AHE,true,false);
+    parse_step_n_expect(parser,(enum KEYWORD_TYPES)BL_SEMICOLON,"Expected:",10);
+    return ast1;   
 }
 
 //REF second arg : 0->check if declared in scope, 1->check if not declared and add
 //REF third arg : 0->dont check from current to global scope, 1-> check from current to global scope
-AST_Node* parse_identifier(bl_parser* parser,bool check,int check_levels){
+AST_Node* parse_identifier(bl_parser* parser,bool check,bool check_levels){
     AST_Identifier* ident = assign_type(parser,AST_Identifier);
     ident->name = get_name_from_parser(parser);
     if(is_keyword(ident->name)){
@@ -429,14 +330,14 @@ AST_Node* parse_identifier(bl_parser* parser,bool check,int check_levels){
 
     AST_Node* ast = make_node(parser,ident,AST_IDENTIFIER);
     
-    if(check == 1){
+    if(check == true){
         if(!check_in_var_store(parser,ast,check_levels)){
             parser->var_store[parser->var_count] = ast;
             parser->var_count++;
         }else{
             bl_parse_error(parser,"Identifier already declared in this scope",1,25);
         }
-    }else if(check == 0){
+    }else if(check == false){
         if(!check_in_var_store(parser,ast,check_levels)){
             bl_parse_error(parser,"Identifier doesnt exist in this scope",1,26);
         }
@@ -444,12 +345,24 @@ AST_Node* parse_identifier(bl_parser* parser,bool check,int check_levels){
     return ast;
 }
 
+bool current_scope_has_name(bl_parser* parser){
+    Scope* scope = stack_peek(parser->scope_stack);
+    if(scope->scope_name == NULL){
+        return false;
+    }else{
+        return true;
+    }   
+}
+
 AST_Node* parse_break(bl_parser* parser) {
     if(stack_size(parser->scope_stack) < 2){
         bl_parse_error(parser,"Cannot `break` in global scope",1,65);
     }
-    parse_expect(parser, BL_KW_BHAU_THAMB, "Expected:", 1);
-    parse_step_n_expect(parser,BL_SEMICOLON,"Expected:",62);
+    if(current_scope_has_name(parser)){
+        bl_parse_error(parser,"Cannot `break` from a function",1,10);
+    }
+    parse_expect(parser, (enum KEYWORD_TYPES)BL_KW_BHAU_THAMB, "Expected:", 1);
+    parse_step_n_expect(parser,(enum KEYWORD_TYPES)BL_SEMICOLON,"Expected:",62);
 
     AST_Node* node = make_node(parser,NULL,AST_BREAK);
     return node;
@@ -459,8 +372,8 @@ AST_Node* parse_continue(bl_parser* parser){
     if(stack_size(parser->scope_stack) < 2){
         bl_parse_error(parser,"Cannot `continue` in global scope",1,64);
     }
-    parse_expect(parser,BL_KW_BHAU_CHALU_RHA,"Expected",1);
-    parse_step_n_expect(parser,BL_SEMICOLON,"Expected:",63);
+    parse_expect(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_CHALU_RHA,"Expected",1);
+    parse_step_n_expect(parser,(enum KEYWORD_TYPES)BL_SEMICOLON,"Expected:",63);
 
     AST_Node* node = make_node(parser,NULL,AST_CONTINUE);
     return node;
@@ -472,7 +385,7 @@ AST_Node* parse_return(bl_parser* parser){
     }
     parse_advance(parser);
     AST_Return* retnode = assign_type(parser,AST_Return);
-    retnode->expr = parse_expr(parser);
+    retnode->expr = parse_expr(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_PARAT_DE,false,true);
     retnode->type = AST_RETURN;
 
     AST_Node* node = make_node(parser,retnode,AST_RETURN);
@@ -502,13 +415,13 @@ AST_Node* parse_switch(bl_parser* parser){
     if(stack_size(parser->scope_stack)<2){
         bl_parse_error(parser,"Switch cannot be used globally",1,51);
     }
-    parse_expect(parser, BL_KW_BHAU_CHUNAV, "Expected:", 52);
+    parse_expect(parser, (enum KEYWORD_TYPES)BL_KW_BHAU_CHUNAV, "Expected:", 52);
 
     bl_increase_scope(parser,NULL,SCOPE_SWITCH);
 
     parse_step_n_expect(parser,BL_LPAREN,"Expected:",53);
     parse_advance(parser);  
-    AST_Node* expr = parse_expr(parser);
+    AST_Node* expr = parse_expr(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_CHUNAV,false,true);
     parse_step_n_expect(parser, BL_RPAREN, "Expected:", 54);
     parse_step_n_expect(parser,BL_LBRACE,"Expected:",55);
 
@@ -517,18 +430,18 @@ AST_Node* parse_switch(bl_parser* parser){
     AST_Node* default_case = NULL;
 
     parse_advance(parser);
-    while(!parse_match(parser,BL_RBRACE)){
-        if(parse_match(parser,BL_KW_BHAU_NIVAD)){
+    while(!parse_match(parser,(enum KEYWORD_TYPES)BL_RBRACE)){
+        if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_NIVAD)){
             parse_advance(parser);
-            AST_Node* case_val = parse_expr(parser);
+            AST_Node* case_val = parse_expr(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_NIVAD,false,true);
             parse_step_n_expect(parser,BL_COLON,"Expected:",56);
             AST_Node** stmts = assign_arr_type(parser,AST_Node,100);
             size_t stmt_count = 0;
 
             parse_advance(parser);
-            while (!parse_match(parser, BL_KW_BHAU_NIVAD) &&
-                    !parse_match(parser, BL_KW_BHAU_RAHUDET) &&
-                    !parse_match(parser, BL_RBRACE)){
+            while (!parse_match(parser, (enum KEYWORD_TYPES)BL_KW_BHAU_NIVAD) &&
+                    !parse_match(parser, (enum KEYWORD_TYPES)BL_KW_BHAU_RAHUDET) &&
+                    !parse_match(parser, (enum KEYWORD_TYPES)BL_RBRACE)){
                 stmts[stmt_count++] = parse_stmt(parser);
                 parse_advance(parser);
             }
@@ -541,8 +454,8 @@ AST_Node* parse_switch(bl_parser* parser){
             AST_Node* case_node = make_node(parser,_case,AST_CASE);
 
             cases[case_count++] = case_node;  
-        }else if(parse_match(parser,BL_KW_BHAU_RAHUDET)){
-            parse_step_n_expect(parser,BL_COLON,"Expected:",56);
+        }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_RAHUDET)){
+            parse_step_n_expect(parser,(enum KEYWORD_TYPES)BL_COLON,"Expected:",56);
             AST_Node** stmts = assign_arr_type(parser,AST_Node,100);
             size_t stmt_count = 0;
 
@@ -582,15 +495,42 @@ AST_Node* parse_switch(bl_parser* parser){
 
 }
 
-AST_Node* parse_expr(bl_parser* parser){
-    AST_Node* lhs = parse_assignment(parser);
+//WARN recursive assignment is only works if a single variable is assigned (Eg: bhau hai ahe x = x + 1 : works; bhau hai ahe x = y = x+1 doesnt)
+
+AST_Node* parse_expr(bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels){
+    if(type == (enum KEYWORD_TYPES)BL_KW_BHAU_HAI_AHE){
+        AST_Node* lhs = parse_bitwise_assignment(parser,type,check,check_levels);
+        parse_advance(parser);
+        while(parse_match(parser,BL_COMMA)){
+            enum KEYWORD_TYPES op =parser->current.token;
+            parse_advance(parser);
+            AST_Node* rhs = parse_expr(parser,type,true,false);
+
+            AST_Assign* expr = assign_type(parser,AST_Assign);
+            expr->lhs = lhs;
+            expr->rhs = rhs;
+            expr->op = op;
+            expr->type = AST_ASSIGN;
+
+            AST_Node* node = make_node(parser,expr,AST_ASSIGN);
+            return node;
+        }
+        parse_backstep(parser);
+        return lhs;
+    }else{
+        return parse_bitwise_assignment(parser,type,check,check_levels);
+    }
+}
+
+AST_Node* parse_bitwise_assignment(bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels){
+    AST_Node* lhs = parse_assignment(parser,type,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_XOREQ) || 
         parse_match(parser,BL_OREQ)    || 
         parse_match(parser,BL_ANDEQ    )){
         enum KEYWORD_TYPES op = parser->current.token;
         parse_advance(parser);
-        AST_Node* rhs = parse_expr(parser);
+        AST_Node* rhs = parse_bitwise_assignment(parser,type,false,true);
 
         AST_Assign* expr = assign_type(parser,AST_Assign);
         expr->lhs = lhs;
@@ -605,24 +545,64 @@ AST_Node* parse_expr(bl_parser* parser){
     return lhs;
 }
 
-AST_Node* parse_assignment(bl_parser* parser){
-    AST_Node* lhs = parse_logor(parser);
+bool semicolon_up_ahead(bl_parser* parser){
+    size_t parse_storage = parser->parse_point;
+
+    while(!(parse_match(parser,(enum KEYWORD_TYPES)BL_EQUAL) || 
+        parse_match(parser,(enum KEYWORD_TYPES)BL_SEMICOLON) || 
+        parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BYE_BHAU))){
+        parser->parse_point++;
+    }
+    if(parse_match(parser,(enum KEYWORD_TYPES)BL_EQUAL)){
+        parser->parse_point = parse_storage;
+        return false;
+    }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_SEMICOLON)){
+        parser->parse_point = parse_storage;
+        return true;
+    }else{
+        parser->parse_point = parse_storage;
+        bl_parse_error(parser,"Expected: `;`",1,10);
+    }
+    return NULL;
+}
+
+
+AST_Node* parse_assignment(bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels){
+    AST_Node* lhs = parse_logor(parser,check,check_levels);
     parse_advance(parser);
-    while(parse_match(parser,BL_ADDEQ) || 
-        parse_match(parser,BL_SUBEQ)   || 
-        parse_match(parser,BL_MULTEQ)  || 
-        parse_match(parser,BL_DIVEQ)   ||
-        parse_match(parser,BL_EQUAL)){
+    while(parse_match(parser,(enum KEYWORD_TYPES)BL_ADDEQ) || 
+        parse_match(parser,(enum KEYWORD_TYPES)BL_SUBEQ)   || 
+        parse_match(parser,(enum KEYWORD_TYPES)BL_MULTEQ)  || 
+        parse_match(parser,(enum KEYWORD_TYPES)BL_DIVEQ)   ||
+        parse_match(parser,(enum KEYWORD_TYPES)BL_EQUAL)){
         enum KEYWORD_TYPES op = parser->current.token;
         parse_advance(parser);
-        AST_Node* rhs = parse_assignment(parser);
-
         AST_Assign* assign = assign_type(parser,AST_Assign);
-        assign->lhs = lhs;
-        assign->rhs = rhs;
-        assign->op = op;
-        assign->type = AST_ASSIGN;
+        if(type == (enum KEYWORD_TYPES)BL_KW_BHAU_HAI_AHE){
+            if(!semicolon_up_ahead(parser)){
+                AST_Node* rhs = parse_assignment(parser,type,true,false);
+                assign->lhs = lhs;
+                assign->rhs = rhs;
+                assign->op = op;
+                assign->type = AST_ASSIGN;
+            }else{
+                AST_Node* rhs = parse_assignment(parser,type,false,true);
+                assign->lhs = lhs;
+                assign->rhs = rhs;
+                assign->op = op;
+                assign->type = AST_ASSIGN;
+            }
 
+        }else{
+            AST_Node* rhs = parse_assignment(parser,type,false,true);
+            assign->lhs = lhs;
+            assign->rhs = rhs;
+            assign->op = op;
+            assign->type = AST_ASSIGN;
+        }
+        if(uses_lhs_in_rhs(assign->lhs,assign->rhs) && type == (enum KEYWORD_TYPES)BL_KW_BHAU_HAI_AHE){
+            bl_parse_error(parser,"Recursive Assignment!",1,10);
+        }
         AST_Node* node = make_node(parser,assign,AST_ASSIGN);
         return node;
     }
@@ -632,13 +612,13 @@ AST_Node* parse_assignment(bl_parser* parser){
 }
 
 
-AST_Node* parse_logor(bl_parser* parser){
-    AST_Node* lhs = parse_logand(parser);
+AST_Node* parse_logor(bl_parser* parser,bool check, bool check_levels){
+    AST_Node* lhs = parse_logand(parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_LOGOR)){
         enum KEYWORD_TYPES op = parser->current.token;
         parse_advance(parser);
-        AST_Node* rhs = parse_logand(parser);
+        AST_Node* rhs = parse_logand(parser,check,check_levels);
 
         AST_Binop* logor = assign_type(parser,AST_Binop);
         logor->lhs = lhs;
@@ -654,13 +634,13 @@ AST_Node* parse_logor(bl_parser* parser){
     return lhs;
 }
 
-AST_Node* parse_logand(bl_parser* parser){
-    AST_Node* lhs = parse_xor(parser);
+AST_Node* parse_logand(bl_parser* parser,bool check, bool check_levels){
+    AST_Node* lhs = parse_xor(parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_LOGAND)){
         enum KEYWORD_TYPES op = parser->current.token;
         parse_advance(parser);
-        AST_Node* rhs = parse_xor(parser);
+        AST_Node* rhs = parse_xor(parser,check,check_levels);
 
         AST_Binop* logand = assign_type(parser,AST_Binop);
         logand->lhs = lhs;
@@ -676,13 +656,13 @@ AST_Node* parse_logand(bl_parser* parser){
     return lhs;
 }
 
-AST_Node* parse_xor(bl_parser* parser){
-    AST_Node* lhs = parse_or(parser);
+AST_Node* parse_xor(bl_parser* parser,bool check, bool check_levels){
+    AST_Node* lhs = parse_or(parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_XOR)){
         enum KEYWORD_TYPES op = parser->current.token;
         parse_advance(parser);
-        AST_Node* rhs = parse_or(parser);
+        AST_Node* rhs = parse_or(parser,check,check_levels);
 
         AST_Binop* xor = assign_type(parser,AST_Binop);
         xor->lhs = lhs;
@@ -698,13 +678,13 @@ AST_Node* parse_xor(bl_parser* parser){
     return lhs;
 }
 
-AST_Node* parse_or(bl_parser* parser){
-    AST_Node* lhs = parse_and(parser);
+AST_Node* parse_or(bl_parser* parser,bool check, bool check_levels){
+    AST_Node* lhs = parse_and(parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_OR)){
         enum KEYWORD_TYPES op = parser->current.token;
         parse_advance(parser);
-        AST_Node* rhs = parse_and(parser);
+        AST_Node* rhs = parse_and(parser,check,check_levels);
 
         AST_Binop* or = assign_type(parser,AST_Binop);
         or->lhs = lhs;
@@ -720,13 +700,13 @@ AST_Node* parse_or(bl_parser* parser){
     return lhs;
 }
 
-AST_Node* parse_and(bl_parser* parser){
-    AST_Node* lhs = parse_equal(parser);
+AST_Node* parse_and(bl_parser* parser,bool check, bool check_levels){
+    AST_Node* lhs = parse_equal(parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_AND)){
         enum KEYWORD_TYPES op = parser->current.token;
         parse_advance(parser);
-        AST_Node* rhs = parse_equal(parser);
+        AST_Node* rhs = parse_equal(parser,check,check_levels);
 
         AST_Binop* and = assign_type(parser,AST_Binop);
         and->lhs = lhs;
@@ -741,13 +721,13 @@ AST_Node* parse_and(bl_parser* parser){
     return lhs;
 }
 
-AST_Node* parse_equal(bl_parser* parser){
-    AST_Node* lhs = parse_relational(parser);
+AST_Node* parse_equal(bl_parser* parser,bool check, bool check_levels){
+    AST_Node* lhs = parse_relational(parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_ISEQUALCOND) || parse_match(parser,BL_NOTEQ)){
         enum KEYWORD_TYPES op = parser->current.token;
         parse_advance(parser);
-        AST_Node* rhs = parse_relational(parser);
+        AST_Node* rhs = parse_relational(parser,check,check_levels);
 
         AST_Binop* eq = assign_type(parser,AST_Binop);
         eq->lhs = lhs;
@@ -763,13 +743,13 @@ AST_Node* parse_equal(bl_parser* parser){
     return lhs;
 }
 
-AST_Node* parse_relational(bl_parser* parser){
-    AST_Node* lhs = parse_shift(parser);
+AST_Node* parse_relational(bl_parser* parser,bool check, bool check_levels){
+    AST_Node* lhs = parse_shift(parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_LESSEQ) || parse_match(parser,BL_LESSTHAN) || parse_match(parser,BL_GRTEQ) || parse_match(parser,BL_GRTTHAN)){
         enum KEYWORD_TYPES op = parser->current.token;
         parse_advance(parser);
-        AST_Node* rhs = parse_shift(parser);
+        AST_Node* rhs = parse_shift(parser,check,check_levels);
 
         AST_Binop* relation = assign_type(parser,AST_Binop);
         relation->lhs = lhs;
@@ -785,13 +765,13 @@ AST_Node* parse_relational(bl_parser* parser){
     return lhs;
 }
 
-AST_Node* parse_shift(bl_parser* parser){
-    AST_Node* lhs = parse_binops(parser);
+AST_Node* parse_shift(bl_parser* parser,bool check, bool check_levels){
+    AST_Node* lhs = parse_binops(parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_LSHIFT) || parse_match(parser,BL_RSHIFT)){
         enum KEYWORD_TYPES op = parser->current.token;
         parse_advance(parser);
-        AST_Node* rhs = parse_binops(parser);
+        AST_Node* rhs = parse_binops(parser,check,check_levels);
 
         AST_Binop* shift = assign_type(parser,AST_Binop);
         shift->lhs = lhs;
@@ -806,13 +786,13 @@ AST_Node* parse_shift(bl_parser* parser){
     return lhs;
 }
 
-AST_Node* parse_binops(bl_parser* parser){
-    AST_Node* lhs = parse_factor(parser);
+AST_Node* parse_binops(bl_parser* parser,bool check, bool check_levels){
+    AST_Node* lhs = parse_factor(parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_ADDBINOP) || parse_match(parser,BL_SUBBINOP)){
         enum KEYWORD_TYPES op = parser->current.token;
         parse_advance(parser);
-        AST_Node* rhs = parse_factor(parser);
+        AST_Node* rhs = parse_factor(parser,check,check_levels);
 
         AST_Binop* binop = assign_type(parser,AST_Binop);
         binop->lhs = lhs;
@@ -827,13 +807,13 @@ AST_Node* parse_binops(bl_parser* parser){
     return lhs;
 }
 
-AST_Node* parse_factor(bl_parser* parser){
-    AST_Node* lhs = parse_unops(parser);
+AST_Node* parse_factor(bl_parser* parser,bool check, bool check_levels){
+    AST_Node* lhs = parse_unops(parser,check,check_levels);
     parse_advance(parser);
     while((parse_match(parser,BL_MULTBINOP)) || (parse_match(parser,BL_DIVBINOP))){
         enum KEYWORD_TYPES op = parser->current.token;
         parse_advance(parser);
-        AST_Node* rhs = parse_unops(parser);
+        AST_Node* rhs = parse_unops(parser,check,check_levels);
 
         AST_Binop* binop = assign_type(parser,AST_Binop);
         binop->lhs = lhs;
@@ -850,44 +830,44 @@ AST_Node* parse_factor(bl_parser* parser){
 }
 
 //WARN Postfix operations not implemented
-AST_Node* parse_unops(bl_parser* parser){
-    while((parse_match(parser,BL_NOT)) || (parse_match(parser,BL_INC)) || 
-    (parse_match(parser,BL_DEC)) || (parse_match(parser,BL_SUBBINOP))  ||
-    (parse_match(parser,BL_KW_BHAU_PTR)) || (parse_match(parser,BL_KW_BHAU_REF))){
+AST_Node* parse_unops(bl_parser* parser,bool check, bool check_levels){
+    while((parse_match(parser,(enum KEYWORD_TYPES)BL_NOT)) || (parse_match(parser,(enum KEYWORD_TYPES)BL_INC)) || 
+    (parse_match(parser,(enum KEYWORD_TYPES)BL_DEC)) || (parse_match(parser,(enum KEYWORD_TYPES)BL_SUBBINOP))  ||
+    (parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_PTR)) || (parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_REF))){
         enum KEYWORD_TYPES op = parser->current.token;
         parse_advance(parser);
 
         AST_Unop* unop = assign_type(parser,AST_Unop);
-        unop->node = parse_unops(parser);
+        unop->node = parse_unops(parser,check,check_levels);
         unop->op = op;
         unop->type = AST_UNOP;
 
         AST_Node* node = make_node(parser,unop,AST_UNOP);
         return node;
     }
-    return parse_primary(parser);
+    return parse_primary(parser,check,check_levels);
 }
 
-AST_Node* parse_primary(bl_parser* parser) {
-    if (parse_match(parser, BL_INT)) return parse_intliteral(parser);
-    if (parse_match(parser, BL_FLOAT)) return parse_floatliteral(parser);
-    if (parse_match(parser, BL_CHAR)) return parse_charliteral(parser);
-    if (parse_match(parser, BL_STRING)) return parse_stringliteral(parser);
-    if (parse_match(parser, BL_KW_BHAU_KHARA) || parse_match(parser,BL_KW_BHAU_KHOTA)) return parse_boolliteral(parser);
+AST_Node* parse_primary(bl_parser* parser,bool check, bool check_levels) {
+    if (parse_match(parser, (enum KEYWORD_TYPES)BL_INT)) return parse_intliteral(parser);
+    if (parse_match(parser, (enum KEYWORD_TYPES)BL_FLOAT)) return parse_floatliteral(parser);
+    if (parse_match(parser, (enum KEYWORD_TYPES)BL_CHAR)) return parse_charliteral(parser);
+    if (parse_match(parser, (enum KEYWORD_TYPES)BL_STRING)) return parse_stringliteral(parser);
+    if (parse_match(parser, (enum KEYWORD_TYPES)BL_KW_BHAU_KHARA) || parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_KHOTA)) return parse_boolliteral(parser);
 
-    if (parse_match(parser, BL_IDENTIFIER)){
-        if(parse_check_ahead(parser,BL_LPAREN,1)){
-            AST_Node* func_name = parse_identifier(parser,0,1);
+    if (parse_match(parser, (enum KEYWORD_TYPES)BL_IDENTIFIER)){
+        if(parse_check_ahead(parser,(enum KEYWORD_TYPES)BL_LPAREN,1)){
+            AST_Node* func_name = parse_identifier(parser,check,check_levels);
             parse_advance(parser);
             parse_advance(parser); 
             AST_Node** args = assign_arr_type(parser,AST_Node,100);
             size_t arg_count = 0;
 
-            while(!parse_match(parser,BL_RPAREN)){
-                args[arg_count] = parse_expr(parser);
+            while(!parse_match(parser,(enum KEYWORD_TYPES)BL_RPAREN)){
+                args[arg_count] = parse_expr(parser,(enum KEYWORD_TYPES)BL_IDENTIFIER,false,true);
                 arg_count +=1;
-                if(!parse_check_ahead(parser,BL_RPAREN,1)){
-                    parse_step_n_expect(parser,BL_COMMA,"Expected:",38);
+                if(!parse_check_ahead(parser,(enum KEYWORD_TYPES)BL_RPAREN,1)){
+                    parse_step_n_expect(parser,(enum KEYWORD_TYPES)BL_COMMA,"Expected:",38);
                 }
                 parse_advance(parser);
             }
@@ -901,15 +881,15 @@ AST_Node* parse_primary(bl_parser* parser) {
             return node;
 
         }else{
-            return parse_identifier(parser,0,1);
+            return parse_identifier(parser,check,check_levels);
         }
     }
 
     
-    if (parse_match(parser, BL_LPAREN)){
+    if (parse_match(parser, (enum KEYWORD_TYPES)BL_LPAREN)){
         parse_advance(parser);
-        AST_Node* expr = parse_expr(parser);
-        parse_step_n_expect(parser, BL_RPAREN, "Expected ')' after expression",1);
+        AST_Node* expr = parse_expr(parser,(enum KEYWORD_TYPES)BL_IDENTIFIER,check,check_levels);
+        parse_step_n_expect(parser, (enum KEYWORD_TYPES)BL_RPAREN, "Expected ')' after expression",1);
         AST_Group* group = assign_type(parser,AST_Group);
         group->expr = expr;
         AST_Node* node = make_node(parser,group,AST_GROUP);
@@ -922,7 +902,7 @@ AST_Node* parse_primary(bl_parser* parser) {
 }
 
 AST_Node* parse_main(bl_parser* parser){
-    parse_expect(parser,BL_KW_BHAU_MAIN,"Expected:",35);
+    parse_expect(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_MAIN,"Expected:",35);
     if(stack_size(parser->scope_stack) > 1){
         bl_parse_error(parser,"Cannot declare function inside a scope",1,34);
     }
@@ -930,7 +910,7 @@ AST_Node* parse_main(bl_parser* parser){
 
     bl_increase_scope(parser,"main",SCOPE_MAIN);
 
-    parse_step_n_expect(parser,BL_LBRACE,"Expected:",49);
+    parse_step_n_expect(parser,(enum KEYWORD_TYPES)BL_LBRACE,"Expected:",49);
     AST_Node* block_node = parse_block(parser);
     main_ast->block = block_node;
     main_ast->type = AST_MAIN;
@@ -947,16 +927,16 @@ AST_Node* parse_ifelse(bl_parser* parser){
     if(stack_size(parser->scope_stack) < 2){
         bl_parse_error(parser,"Cannot run conditionals globally",1,39);
     }
-    parse_step_n_expect(parser,BL_LPAREN,"Expected:",40);
+    parse_step_n_expect(parser,(enum KEYWORD_TYPES)BL_LPAREN,"Expected:",40);
     parse_advance(parser);
 
 
-    AST_Node* cond_expr = parse_expr(parser);
+    AST_Node* cond_expr = parse_expr(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_JAR,false,true);
 
     bl_increase_scope(parser,NULL,SCOPE_IF);
 
-    parse_step_n_expect(parser,BL_RPAREN,"Expected:",41);
-    parse_step_n_expect(parser,BL_LBRACE,"Expected:",42);
+    parse_step_n_expect(parser,(enum KEYWORD_TYPES)BL_RPAREN,"Expected:",41);
+    parse_step_n_expect(parser,(enum KEYWORD_TYPES)BL_LBRACE,"Expected:",42);
 
     AST_Ifelse* cond = assign_type(parser,AST_Ifelse);
     cond->type = AST_IFELSE;
@@ -968,12 +948,12 @@ AST_Node* parse_ifelse(bl_parser* parser){
     
     bl_decrease_scope(parser);
 
-    if(parse_check_ahead(parser,BL_KW_BHAU_NAHITAR,1) || parse_check_ahead(parser,BL_KW_BHAU_TAR,1)){
+    if(parse_check_ahead(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_NAHITAR,1) || parse_check_ahead(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_TAR,1)){
         parse_advance(parser);
     }
-    if(parse_match(parser,BL_KW_BHAU_NAHITAR)){
+    if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_NAHITAR)){
         cond->else_block = parse_ifelse(parser);
-    }else if(parse_match(parser,BL_KW_BHAU_TAR)){
+    }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_TAR)){
         parse_advance(parser);
 
         bl_increase_scope(parser,NULL,SCOPE_IF);
@@ -1019,17 +999,18 @@ AST_Node* parse_block(bl_parser* parser){
     }else{
         bl_parse_error(parser,"Expected return or `}`",1,51);
     }
+    return NULL;
 }
 
 AST_Node* parse_loop(bl_parser* parser){
     if(stack_size(parser->scope_stack) < 2){
         bl_parse_error(parser,"Loops cannot be declared globally",1,60);
     }
-    parse_step_n_expect(parser,BL_LPAREN,"Expected:",61);
+    parse_step_n_expect(parser,(enum KEYWORD_TYPES)BL_LPAREN,"Expected:",61);
     parse_advance(parser);
-    AST_Node* expr = parse_expr(parser);
-    parse_step_n_expect(parser,BL_RPAREN,"Expected:",62);
-    parse_step_n_expect(parser,BL_LBRACE,"Expected:",63);
+    AST_Node* expr = parse_expr(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_JOPARENT,false,true);
+    parse_step_n_expect(parser,(enum KEYWORD_TYPES)BL_RPAREN,"Expected:",62);
+    parse_step_n_expect(parser,(enum KEYWORD_TYPES)BL_LBRACE,"Expected:",63);
 
     bl_increase_scope(parser,NULL,SCOPE_WHILE);
 
@@ -1046,14 +1027,14 @@ AST_Node* parse_loop(bl_parser* parser){
 }
 
 AST_Node* parse_function(bl_parser* parser){
-    parse_expect(parser,BL_KW_BHAU_LAKSHAT_THEV,"Expected :",27);
+    parse_expect(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_LAKSHAT_THEV,"Expected :",27);
     if(stack_size(parser->scope_stack) > 1){
         bl_parse_error(parser,"Cannot declare function inside a scope",1,34);
     }
     AST_Function* func_ast = assign_type(parser,AST_Function);
     parse_advance(parser);
     parse_expect(parser,BL_IDENTIFIER,"Expected and identifier",28);
-    AST_Node* name = parse_identifier(parser,1,0);
+    AST_Node* name = parse_identifier(parser,true, false);
     AST_Identifier* name_val = (AST_Identifier*)name->data;
     func_ast->name = name;
     func_ast->param_count = 0;
@@ -1086,7 +1067,8 @@ AST_Node* parse_function(bl_parser* parser){
 }
 
 AST_Node* parse_param(bl_parser* parser){
-    AST_Node* ast = parse_identifier(parser,1,0);
+    AST_Node* ast = parse_identifier(parser,true,false);
+    return ast;
 }
 
 AST_Node* parse_stringliteral(bl_parser* parser){
@@ -1140,6 +1122,7 @@ int get_int_value(bl_parser* parser){
     }else{
         bl_parse_token_error(parser,"Expected","Integer",1,2);
     }
+    return 0;
 }
 
 bool get_bool_value(bl_parser* parser){
@@ -1150,6 +1133,7 @@ bool get_bool_value(bl_parser* parser){
     }else{
         bl_parse_token_error(parser,"Expected","Boolean",1,2);
     }
+    return NULL;
 }
 
 float get_float_value(bl_parser* parser){
@@ -1158,6 +1142,7 @@ float get_float_value(bl_parser* parser){
     }else{
         bl_parse_token_error(parser,"Expected","Float",1,3);
     }
+    return 0.0;
 }
 
 char* get_string_value(bl_parser* parser){
@@ -1166,6 +1151,7 @@ char* get_string_value(bl_parser* parser){
     }else{
         bl_parse_token_error(parser,"Expected","String",1,4);
     }
+    return NULL;
 }
 
 char get_char_value(bl_parser* parser){
@@ -1174,20 +1160,22 @@ char get_char_value(bl_parser* parser){
     }else{
         bl_parse_token_error(parser,"Expected","Char",1,5);
     }
+    return '0';
 }
 
 char* get_name_from_parser(bl_parser* parser){
     return ptrs_to_string(parser->current.where_firstchar,parser->current.where_lastchar,parser->arena);
 }
 
-bool check_in_var_store(bl_parser* parser, AST_Node* node,int check_levels){
+bool check_in_var_store(bl_parser* parser, AST_Node* node,bool check_levels){
     AST_Identifier* ident = (AST_Identifier*)node->data;
     char* node_name = ident->name;
 
     Scope* current_scope = ident->scope_val;
+    
 
     do {
-        for (int i = 0; i < parser->var_count; i++) {
+        for (int i = 0; i < (int)parser->var_count; i++) {
             AST_Identifier* var = (AST_Identifier*)parser->var_store[i]->data;
             char* str2 = var->name;
             if ((var->scope_val->id == current_scope->id) && (strcmp(node_name, str2) == 0)) {
@@ -1196,7 +1184,7 @@ bool check_in_var_store(bl_parser* parser, AST_Node* node,int check_levels){
         }
 
         current_scope = current_scope->scope_parent;
-    } while ((current_scope != NULL) && (check_levels == 1));
+    } while ((current_scope != NULL) && (check_levels == true));
 
     return false;
 }
@@ -1245,6 +1233,7 @@ bl_token* parse_peek(bl_parser* parser,int num){
     }else{
         bl_parse_error(parser,"ERROR ! File terminated, Cannot peek next token",1,16);
     }
+    return NULL;
 }
 
 void parse_advance(bl_parser* parser){
@@ -1319,7 +1308,7 @@ void bl_parse_token_error(bl_parser* parser,char* err_msg,char* keyword,int _bre
         parser->error_count++;
         exit(exit_code);
     }else{
-        snprintf(buf, 100, "WARNING! %s `%s`",err_msg);
+        snprintf(buf, 100, "WARNING! %s `%s`",err_msg,keyword);
         parser->errors[parser->error_count].line = parser->line_number;
         parser->errors[parser->error_count].column = parser->line_offset;
         parser->errors[parser->error_count].message = buf;

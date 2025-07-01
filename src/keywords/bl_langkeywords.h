@@ -300,7 +300,7 @@ static inline char *keyword_to_string(LangKeywordType type) {
 }
 
 static inline bool is_keyword(const char *str) {
-    return get_keyword_type((char *)str) != -1;
+    return (int)get_keyword_type((char *)str) != -1;
 }
 
 #endif //BL_LANGKEYWORDS_H

@@ -37,6 +37,7 @@
 
 
 
+
 #define SET_SIMPLE_TOKEN(type) \
     tok->where_firstchar = lexer->parse_point; \
     bl_forward(lexer, 1); \
@@ -115,6 +116,7 @@ enum KEYWORD_TYPES {
    BL_MULCOMMENT,
    #endif //BL_OPERATORS
 
+
    BL_UNIMPLEMENTED,
    BL_EOF,
 
@@ -162,7 +164,7 @@ static inline int is_alnum(char c);
 static inline int is_whitespace(char c);
 static inline int is_newline(char c);
 
-static inline char *keyword_enum_to_str(enum KEYWORD_TYPES var);
+static inline char *keyword_enum_to_str(int var);
 static inline int token_size(bl_token *t);
 static inline char bl_peek_token(bl_lexer *l,int num);
 static inline char bl_peek_prev_token(bl_lexer *l,int num);
@@ -196,7 +198,6 @@ char* ptrs_to_string(const char* start, const char* end, bl_arena* arena);
 
 static inline char * bl_token_get_str(bl_token token,char* buf);
 static inline enum KEYWORD_TYPES bl_token_get_type(bl_token token);
-static inline void flood_token(bl_token* token);
 static inline bl_token* bl_token_list_preprocess(bl_token* token_list);
 static inline bl_token* bl_tokenize_file(char* filename,bl_arena* arena);
 
@@ -618,7 +619,7 @@ static void bl_next_step(bl_lexer *l){
 
 #ifdef BL_DEBUG
 
-char *keyword_enum_to_str(enum KEYWORD_TYPES var){
+char *keyword_enum_to_str(int var){
    switch(var){
 
       #ifdef BL_IDENTIFIERS
@@ -936,7 +937,7 @@ static inline bl_token* bl_token_list_preprocess(bl_token* token_list){
 static inline bl_token* bl_tokenize_file(char* filename,bl_arena* arena){
    FILE *f = fopen(filename,"rb");
    char *text = (char*)arena_alloc(arena,TEXT_FILE_SIZE);
-   int len = f ? fread(text, 1, TEXT_FILE_SIZE, f) : -1;
+   int len =  f ? (int)fread(text, 1, TEXT_FILE_SIZE, f) : (int)-1;
 
    bl_lexer* l = (bl_lexer*)arena_alloc(arena,sizeof(bl_lexer));
    bl_token *da = dynarray_create_arena(bl_token,arena);

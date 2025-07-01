@@ -105,7 +105,7 @@ static inline void arena_print(const bl_arena *arena){
     int block_index = 0;
 
     while (block) {
-        printf("🧱 Block %d: used %zu / %zu bytes\n", block_index, block->used, ARENA_BLOCK_SIZE);
+        printf("🧱 Block %d: used %zu / %zu bytes\n", block_index, block->used, (size_t)ARENA_BLOCK_SIZE);
 
         for (size_t i = 0; i < block->used; i++) {
             unsigned char byte = block->memory[i];

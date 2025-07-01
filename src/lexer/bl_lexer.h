@@ -57,7 +57,7 @@ static inline bl_token* bl_postprocess_identifiers(bl_token* arr,bl_token* temp_
 
     bl_token* cleaned_arr = dynarray_create_arena(bl_token,arena);
 
-    for(int i = 0; i < dynarray_length(arr); i++){
+    for(int i = 0; i < (int)dynarray_length(arr); i++){
         if(arr[i].token != -1){
             dynarray_push(cleaned_arr,arr[i],bl_token);
         }
@@ -71,14 +71,14 @@ void reduce_identifiers(bl_token *arr, bl_token *temp_arr,bl_arena *arena)
 {
     int i = 0;
     int kw = 0;
-    while (i < (size_t)dynarray_length(temp_arr))
+    while (i < (int)dynarray_length(temp_arr))
     {
         int keyword_len = MAX_KEYWORDS_LEN;
         char **bufs = (char **)arena_alloc(arena,keyword_len * sizeof(char *));
         while (keyword_len > 0)
         {
-            if(i+keyword_len > dynarray_length(temp_arr)){
-                while(i+keyword_len > dynarray_length(temp_arr)){
+            if(i+keyword_len > (int)dynarray_length(temp_arr)){
+                while(i+keyword_len > (int)dynarray_length(temp_arr)){
                     keyword_len--;
                     }
                 }
@@ -119,7 +119,7 @@ void reduce_identifiers(bl_token *arr, bl_token *temp_arr,bl_arena *arena)
                         {
                             temp_arr[i + j].token = -1;
                         }
-                        for (int k = 0; k < dynarray_length(arr); k++)
+                        for (int k = 0; k < (int)dynarray_length(arr); k++)
                         {
                             if ((temp_arr[i].loc.line_number == arr[k].loc.line_number) && (temp_arr[i].loc.line_offset == arr[k].loc.line_offset))
                             {
@@ -146,7 +146,7 @@ void reduce_identifiers(bl_token *arr, bl_token *temp_arr,bl_arena *arena)
                 }
                 else
                 {
-                    if ((i + 1) < dynarray_length(temp_arr))
+                    if ((i + 1) < (int)dynarray_length(temp_arr))
                     {
                         char **strings = (char **)arena_alloc(arena,2 * sizeof(char *));
                         for (int j = 0; j < 2; j++)
@@ -172,7 +172,7 @@ void reduce_identifiers(bl_token *arr, bl_token *temp_arr,bl_arena *arena)
 
                             temp_arr[i + 1].token = -1;
 
-                            for (int j = 0; j < dynarray_length(arr); j++)
+                            for (int j = 0; j < (int)dynarray_length(arr); j++)
                             {
                                 if ((temp_arr[i].loc.line_number == arr[j].loc.line_number) && (temp_arr[i].loc.line_offset == arr[j].loc.line_offset))
                                 {

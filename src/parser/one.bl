@@ -1,89 +1,38 @@
 hi bhau
 
 bhau baherun ghe printf;
-bhau baherun ghe scanf;
 
-bhau lakshat thev sum(a, b) {
-    bhau hai ahe result = a + b;
+bhau hai ahe x = 10;
+bhau hai ahe y = 5;
 
-    // Multiple return paths
-    bhau jar (result > 100) {
-        bhau parat de 100;
-    } bhau tar {
-        bhau parat de result+=100;
-    }
-}
 
-bhau lakshat thev factorial(n) {
-    bhau jar (n == 0) {
-        bhau parat de 1;
-    } bhau tar {
-        bhau parat de n * factorial(n - 1);
-    }
-}
-
-// deeply nested ifs
-bhau lakshat thev deep(a, b, c) {
-    bhau hai ahe x = 0;
-    bhau jar (a > 0) {
-        bhau jar (b > 0) {
-            bhau jar (c > 0) {
-                x = a + b + c;
-            }
-        }
-    }
-    bhau parat de x;
-}
 
 bhau ithun chalu {
-    // variable decl
-    bhau hai ahe x = 10;
-    bhau hai ahe y = 0;
-    bhau hai ahe z;
+    bhau hai ahe result = x + y * 2;
 
-    // pointer chains
-    bhau hai ahe ptr ptr pp = ref x;
-    bhau hai ahe ptr p = ref x;
-    bhau hai ahe val = ptr p;
-
-    // calling functions
-    bhau hai ahe s = sum(50, 60);
-    bhau hai ahe f = factorial(5);
-    bhau hai ahe d = deep(1,2,3);
-
-    // switch with default at top
-    bhau hai ahe choice = 9;
-    bhau chunav(choice) {
-        bhau nivad 1: 
-            printf("one\n");
-            bhau thamb;
-        
-        bhau rahudet: 
-            printf("Default\n");
-            bhau thamb;
-        
+    bhau jar (result > 10) {
+        printf("Greater than 10");
+    } bhau tar {
+        printf("Less or equal to 10");
     }
 
-    // loop inside loop
-    bhau hai ahe i = 0;
-    bhau joparent(i < 2) {
-        bhau hai ahe j = 0;
-        bhau joparent(j < 2) {
-            printf("i=%d, j=%d\n", i, j);
-            j = j + 1;
-        }
-        i = i + 1;
+    bhau joparent (y > 0) {
+        printf("Looping\n");
+        y = y - 1;
     }
 
-    // invalid reference (for semantic error test)
-    // This should NOT crash parser, but can be flagged later
-    // bhau hai ahe ptr bad = ref undeclared;
+    bhau chunav(x) {
+        bhau nivad 5:
+            printf("It is five");
+            bhau thamb;
+        bhau nivad 10:
+            printf("It is ten");
+            bhau thamb;
+        bhau rahudet:
+            printf("Default case");
+    }
 
-    // return in middle of main
-    bhau parat de 42;
-
-    // unreachable code after return
-    x = x + 1;
+    bhau parat de result;
 }
 
 bye bhau
