@@ -6,7 +6,13 @@
 #include "bl_stack.h"
 #include "bl_ast.h"
 
+#define BL_PARSER_TEST
+
+//TODO bhau hai ahe x,y,z; & bhau hai ahe x = y = z = 10;
+//TODO no break; in a function; (if scope has name, cant use break)
+
 #define assign_type(parser,type) (type*)arena_alloc(parser->arena,sizeof(type));
+#define assign_arr_type(parser,type,capacity) (type**)arena_alloc(parser->arena, sizeof(type*) * capacity);
 
 
 
@@ -46,6 +52,7 @@ typedef struct {
 
 void parse_file(char* file_name,bl_arena* arena);
 void parser_init(bl_parser* parser, bl_arena* arena, bl_token* tokens);
+AST_Node* make_node(bl_parser* parser,void* ast, ASTNodeType type);
 
 AST_Node* parse_program(bl_parser* parser);
 AST_Node* parse_stmt(bl_parser* parser);
@@ -113,12 +120,18 @@ void bl_parse_token_error(bl_parser* parser,char* err_msg,char* keyword,int _bre
 void bl_parse_error(bl_parser* parser, char* err_msg, int _break,int exit_code);
 void null_error(void* ptr,bl_parser* parser,int _break,int err_code);
 
+
+
+#ifdef BL_PARSER_TEST
+
 int main(){
     bl_arena* arena = (bl_arena*)malloc(sizeof(bl_arena));
     arena_init(arena);
     parse_file("src/parser/one.bl",arena);
     return 0;
 }
+
+#endif
 
 AST_Node* bhaulang_parser(char* filename,bl_arena* arena){
     bl_token* da = bhaulang_lexer(filename,arena);
@@ -145,7 +158,7 @@ void parser_init(bl_parser* parser, bl_arena* arena, bl_token* tokens){
     parser->parse_point = 0;
     parser->line_number = 0;
     parser->line_offset = 0;
-    parser->var_store = (AST_Node **)arena_alloc(arena,1024*sizeof(AST_Node*));
+    parser->var_store = assign_arr_type(parser,AST_Node,1024)
     parser->var_count = 0;
     parser->scope_id = 0;
     parser->current_scope = 0;
@@ -155,7 +168,7 @@ void parser_init(bl_parser* parser, bl_arena* arena, bl_token* tokens){
 
     size_t max_errors = 8;
 
-    parser->scope_stack = (bl_stack*)arena_alloc(arena,sizeof(bl_stack));
+    parser->scope_stack = assign_type(parser,bl_stack);
     stack_init(parser->scope_stack,arena,100);
 
     bl_increase_scope(parser,"global",SCOPE_GLOBAL);
@@ -176,8 +189,7 @@ void parse_dump(bl_parser* parser,bl_arena* arena){
         printf("END OF FILE\n");
         printf("\n");
     }
-    Scope* temp_scope = assign_type(parser,Scope);
-    temp_scope = stack_peek(parser->scope_stack);
+    Scope* temp_scope = stack_peek(parser->scope_stack);
     printf("Line number        : %zu\n", parser->line_number);
     printf("Line offset        : %zu\n", parser->line_offset);
     printf("Inside loop depth  : %d\n", parser->num_loop);
@@ -194,12 +206,17 @@ void parse_dump(bl_parser* parser,bl_arena* arena){
     printf("\n");
 }
 
-
+AST_Node* make_node(bl_parser* parser,void* ast,ASTNodeType type){
+    AST_Node* node = assign_type(parser,AST_Node);
+    node->data = ast; 
+    node->type = type;
+    return node;
+}
 
 AST_Node* parse_program(bl_parser* parser){
     bl_check_prolog(parser);
     parse_advance(parser);
-    AST_Node** stmts = arena_alloc(parser->arena, sizeof(AST_Node*) * 1024);
+    AST_Node** stmts = assign_arr_type(parser,AST_Node,1024);
     size_t stmt_count = 0;
     while(!(parse_match(parser,BL_KW_BYE_BHAU))){
         AST_Node* stmt = parse_stmt(parser);
@@ -217,9 +234,7 @@ AST_Node* parse_program(bl_parser* parser){
     ast->count = stmt_count;
     ast->type = AST_PROGRAM;
 
-    AST_Node* node = assign_type(parser,AST_Node);
-    node->data = ast;
-    node->type = AST_PROGRAM;
+    AST_Node* node = make_node(parser,ast,AST_PROGRAM);
     return node;
 }
 
@@ -261,17 +276,13 @@ AST_Node* parse_stmt(bl_parser* parser) {
         AST_Node* ast = parse_return(parser);
         return ast;
     }else if(parse_match(parser,BL_COMMENT)){
-        AST_Node* ast = assign_type(parser,AST_Node);
-        ast->data = NULL;
-        ast->type = AST_COMMENT;
+        AST_Node* ast = make_node(parser,NULL,AST_COMMENT);
         return ast;
     }else if(parse_match(parser,BL_MULCOMMENT)){
-        AST_Node* ast = assign_type(parser,AST_Node);
-        ast->data = NULL;
-        ast->type = AST_MULCOMMENT;
+        AST_Node* ast = make_node(parser,NULL,AST_MULCOMMENT);
         return ast;
     }else{
-        bl_parse_error(parser,"ERROR ! Cannot jump to next stmt",1,10);
+        bl_parse_token_error(parser,"ERROR ! Cannot jump to next stmt,got",keyword_enum_to_str(parser->current.token),1,10);
         return NULL;
     }
 }
@@ -285,91 +296,17 @@ AST_Node* parse_extern(bl_parser* parser){
     ext->ident = name;
     ext->type = AST_EXTERN;
 
-    AST_Node* ast = assign_type(parser,AST_Node);
-    ast->data = ext;
-    ast->type = AST_EXTERN;
-
+    AST_Node* ast = make_node(parser,ext,AST_EXTERN);
     return ast;
 }
 
 AST_Node* parse_assign(bl_parser* parser){
     AST_Node* ast1 = assign_type(parser,AST_Node);
-    if(parse_match(parser,BL_KW_BHAU_PTR)){
-        ast1 = parse_expr(parser);
-    }else{
-        ast1 = parse_identifier(parser,0,1);
-    }
-    
-
-    null_error((void *)ast1,parser,1,12);
-    parse_advance(parser);
-    if(parse_match(parser,BL_EQUAL)){
-        parse_advance(parser);
-        AST_Node* ast2 = parse_expr(parser); 
-
-        null_error(ast2,parser,1,23);
-        parse_step_n_expect(parser,BL_SEMICOLON,"Expected", 19);
-
-        AST_Assign* assign = assign_type(parser,AST_Assign);
-
-        assign->lhs = ast1;
-        assign->rhs = ast2;
-        assign->type = AST_ASSIGN;
-
-        AST_Node* node = assign_type(parser,AST_Node);
-
-        
-        node->type = AST_ASSIGN;
-        node->data = assign;
-        return node;
-
-    }else if(parse_match(parser,BL_LPAREN)){
-        if(stack_size(parser->scope_stack) < 2){
-            bl_parse_error(parser,"Function must be called inside a scope",1,37);
-        }
-        AST_FunctionCall* funcall = assign_type(parser,AST_FunctionCall);
-        funcall->type = AST_FUNCTIONCALL;
-        funcall->args_count = 0;
-        parse_backstep(parser);
-        funcall->name = parse_identifier(parser,0,1);  
-        parse_advance(parser);
-
-        AST_Node** args = (AST_Node**)arena_alloc(parser->arena,sizeof(AST_Node*)*30);
-        parse_advance(parser);
-        while(!parse_match(parser,BL_RPAREN)){
-            AST_Node* n = assign_type(parser,AST_Node);
-            n = parse_expr(parser);
-            args[funcall->args_count] = n;
-            funcall->args_count++;
-            if(!parse_check_ahead(parser,BL_RPAREN,1)){
-                parse_step_n_expect(parser,BL_COMMA,"Expected:",36);
-            }
-            parse_advance(parser);
-        }
-        funcall->args = args;
-        parse_step_n_expect(parser,BL_SEMICOLON,"Expected:",37);
-
-        AST_Node* node = assign_type(parser,AST_Node);
-
-        
-        node->type = AST_FUNCTIONCALL;
-        node->data = funcall;
-        return node;
-    }
-    else if(parse_match(parser,BL_ADDEQ)  ||
-            parse_match(parser,BL_SUBEQ)  ||
-            parse_match(parser,BL_MULTEQ) ||
-            parse_match(parser,BL_DIVEQ)  ||
-            parse_match(parser,BL_ANDEQ)  ||
-            parse_match(parser,BL_OREQ)   ||
-            parse_match(parser,BL_XOREQ)){
-        AST_Node* node = assign_type(parser,AST_Node);
-        parse_backstep(parser);
-        node = parse_expr(parser);
-        parse_step_n_expect(parser,BL_SEMICOLON,"Expected:",38);
-        return node;
-    }
+    ast1 = parse_expr(parser);
+    parse_step_n_expect(parser,BL_SEMICOLON,"Expected:",19);
+    return ast1;
 }
+
 
 
 AST_Node* parse_assign_decl(bl_parser* parser){
@@ -388,9 +325,7 @@ AST_Node* parse_assign_decl(bl_parser* parser){
             AST_Unop* uop = assign_type(parser, AST_Unop);
             uop->op = BL_KW_BHAU_PTR;
 
-            AST_Node* uop_node = assign_type(parser, AST_Node);
-            uop_node->type = AST_UNOP;
-            uop_node->data = uop;
+            AST_Node* uop_node = make_node(parser,uop,AST_UNOP);
 
             if (node) {
                 uop->node = node;
@@ -399,8 +334,7 @@ AST_Node* parse_assign_decl(bl_parser* parser){
             parse_advance(parser);
         }
         parse_expect(parser,BL_IDENTIFIER,"Expected:",81);
-        AST_Node* ident_node = assign_type(parser,AST_Node);
-        ident_node = parse_identifier(parser,1,0);
+        AST_Node* ident_node = parse_identifier(parser,1,0);
 
         AST_Unop* bottom = (AST_Unop*)node->data;
 
@@ -411,10 +345,7 @@ AST_Node* parse_assign_decl(bl_parser* parser){
         bottom->node = ident_node;
         bottom->type = AST_UNOP;
 
-        AST_Node* uop_node = assign_type(parser,AST_Node);
-        uop_node->data = (AST_Unop*)node->data;
-        uop_node->type = AST_UNOP;
-
+        AST_Node* uop_node = make_node(parser,(AST_Unop*)node->data,AST_UNOP);
         ast1 = uop_node;
     }
     //References like C++?
@@ -461,6 +392,7 @@ AST_Node* parse_assign_decl(bl_parser* parser){
 
     parse_advance(parser);
     if(parse_match(parser,BL_EQUAL)){
+        assign->op = BL_EQUAL;
         parse_advance(parser);
         AST_Node* ast2 = parse_expr(parser); 
         if(uses_lhs_in_rhs(ast1,ast2)){
@@ -474,11 +406,7 @@ AST_Node* parse_assign_decl(bl_parser* parser){
         assign->rhs = ast2;
         assign->type = AST_ASSIGN;
 
-        AST_Node* node = assign_type(parser,AST_Node);
-
-
-        node->type = AST_ASSIGN;
-        node->data = assign;
+        AST_Node* node = make_node(parser,assign,AST_ASSIGN);
         return node;
     }else if(parse_match(parser,BL_SEMICOLON)){
         return ast1;
@@ -499,10 +427,7 @@ AST_Node* parse_identifier(bl_parser* parser,bool check,int check_levels){
     ident->scope_val = stack_peek(parser->scope_stack);
     ident->type = AST_IDENTIFIER;
 
-    AST_Node* ast = assign_type(parser,AST_Node);
-    ast->data = ident;
-    ast->type = AST_IDENTIFIER;
-
+    AST_Node* ast = make_node(parser,ident,AST_IDENTIFIER);
     
     if(check == 1){
         if(!check_in_var_store(parser,ast,check_levels)){
@@ -526,10 +451,7 @@ AST_Node* parse_break(bl_parser* parser) {
     parse_expect(parser, BL_KW_BHAU_THAMB, "Expected:", 1);
     parse_step_n_expect(parser,BL_SEMICOLON,"Expected:",62);
 
-    AST_Node* node = assign_type(parser,AST_Node);
-    node->type = AST_BREAK;
-    node->data = NULL;
-
+    AST_Node* node = make_node(parser,NULL,AST_BREAK);
     return node;
 }
 
@@ -540,9 +462,7 @@ AST_Node* parse_continue(bl_parser* parser){
     parse_expect(parser,BL_KW_BHAU_CHALU_RHA,"Expected",1);
     parse_step_n_expect(parser,BL_SEMICOLON,"Expected:",63);
 
-    AST_Node* node = assign_type(parser,AST_Node);
-    node->type = AST_CONTINUE;
-    node->data = NULL;
+    AST_Node* node = make_node(parser,NULL,AST_CONTINUE);
     return node;
 }
 
@@ -555,9 +475,7 @@ AST_Node* parse_return(bl_parser* parser){
     retnode->expr = parse_expr(parser);
     retnode->type = AST_RETURN;
 
-    AST_Node* node = assign_type(parser,AST_Node);
-    node->data = retnode;
-    node->type = AST_RETURN;
+    AST_Node* node = make_node(parser,retnode,AST_RETURN);
     parse_step_n_expect(parser,BL_SEMICOLON,"Expected:",52);
     return node;
 }
@@ -565,8 +483,7 @@ AST_Node* parse_return(bl_parser* parser){
 void bl_increase_scope(bl_parser* parser,char* scope_name,ScopeType type){
     parser->scope_id++;
     Scope* scope_val = assign_type(parser,Scope);
-    Scope* prev_scope = assign_type(parser,Scope);
-    prev_scope = stack_peek(parser->scope_stack);
+    Scope* prev_scope = stack_peek(parser->scope_stack);
     scope_val->scope_name = scope_name;
     scope_val->scope_parent = prev_scope;
     scope_val->id = parser->scope_id;
@@ -595,7 +512,7 @@ AST_Node* parse_switch(bl_parser* parser){
     parse_step_n_expect(parser, BL_RPAREN, "Expected:", 54);
     parse_step_n_expect(parser,BL_LBRACE,"Expected:",55);
 
-    AST_Node** cases = (AST_Node**)arena_alloc(parser->arena,sizeof(AST_Node*)*50);
+    AST_Node** cases = assign_arr_type(parser,AST_Node,100);
     size_t case_count = 0;
     AST_Node* default_case = NULL;
 
@@ -605,7 +522,7 @@ AST_Node* parse_switch(bl_parser* parser){
             parse_advance(parser);
             AST_Node* case_val = parse_expr(parser);
             parse_step_n_expect(parser,BL_COLON,"Expected:",56);
-            AST_Node** stmts = arena_alloc(parser->arena, sizeof(AST_Node*) * 50);
+            AST_Node** stmts = assign_arr_type(parser,AST_Node,100);
             size_t stmt_count = 0;
 
             parse_advance(parser);
@@ -621,14 +538,12 @@ AST_Node* parse_switch(bl_parser* parser){
             _case->body_count = stmt_count;  
             _case->type = AST_CASE;
 
-            AST_Node* case_node = assign_type(parser,AST_Node);
-            case_node->type = AST_CASE;
-            case_node->data = _case;
+            AST_Node* case_node = make_node(parser,_case,AST_CASE);
 
             cases[case_count++] = case_node;  
         }else if(parse_match(parser,BL_KW_BHAU_RAHUDET)){
             parse_step_n_expect(parser,BL_COLON,"Expected:",56);
-            AST_Node** stmts = arena_alloc(parser->arena, sizeof(AST_Node*) * 50);
+            AST_Node** stmts = assign_arr_type(parser,AST_Node,100);
             size_t stmt_count = 0;
 
             parse_advance(parser);
@@ -643,10 +558,7 @@ AST_Node* parse_switch(bl_parser* parser){
                 def->body_count = stmt_count;
                 def->type = AST_DEFAULT;
 
-                AST_Node* def_node = assign_type(parser,AST_Node);
-                def_node->type = AST_DEFAULT;
-                def_node->data = def;
-
+                AST_Node* def_node = make_node(parser,def,AST_DEFAULT);
                 default_case = def_node;
             }else{
                 bl_parse_error(parser,"Received unexpected token in default case",1,59);
@@ -664,12 +576,8 @@ AST_Node* parse_switch(bl_parser* parser){
     sw->default_case = default_case;
     sw->type = AST_SWITCH;
 
-    AST_Node* sw_node = assign_type(parser,AST_Node);
-    sw_node->type = AST_SWITCH;
-    sw_node->data = sw;
-
+    AST_Node* sw_node = make_node(parser,sw,AST_SWITCH);
     bl_decrease_scope(parser);
-
     return sw_node;
 
 }
@@ -690,14 +598,10 @@ AST_Node* parse_expr(bl_parser* parser){
         expr->op = op;
         expr->type = AST_ASSIGN;
 
-        AST_Node* node = assign_type(parser,AST_Node);
-        node->data = expr;
-        node->type = AST_ASSIGN;
-
+        AST_Node* node = make_node(parser,expr,AST_ASSIGN);
         return node;
     }
     parse_backstep(parser);
-
     return lhs;
 }
 
@@ -719,10 +623,7 @@ AST_Node* parse_assignment(bl_parser* parser){
         assign->op = op;
         assign->type = AST_ASSIGN;
 
-        AST_Node* node = assign_type(parser,AST_Node);
-        node->data = assign;
-        node->type = AST_ASSIGN;
-
+        AST_Node* node = make_node(parser,assign,AST_ASSIGN);
         return node;
     }
     parse_backstep(parser);
@@ -745,10 +646,7 @@ AST_Node* parse_logor(bl_parser* parser){
         logor->op = op;
         logor->type = AST_BINOP;
 
-        lhs = assign_type(parser,AST_Node);
-        lhs->data = logor;
-        lhs->type = AST_BINOP;
-
+        lhs = make_node(parser,logor,AST_BINOP);
         parse_advance(parser);
 
     }
@@ -770,10 +668,7 @@ AST_Node* parse_logand(bl_parser* parser){
         logand->op = op;
         logand->type = AST_BINOP;
 
-        lhs = assign_type(parser,AST_Node);
-        lhs->data = logand;
-        lhs->type = AST_BINOP;
-
+        lhs = make_node(parser,logand,AST_BINOP);
         parse_advance(parser);
 
     }
@@ -795,10 +690,7 @@ AST_Node* parse_xor(bl_parser* parser){
         xor->op = op;
         xor->type = AST_BINOP;
 
-        lhs = assign_type(parser,AST_Node);
-        lhs->data = xor;
-        lhs->type = AST_BINOP;
-
+        lhs = make_node(parser,xor,AST_BINOP);
         parse_advance(parser);
 
     }
@@ -820,10 +712,7 @@ AST_Node* parse_or(bl_parser* parser){
         or->op = op;
         or->type = AST_BINOP;
 
-        lhs = assign_type(parser,AST_Node);
-        lhs->data = or;
-        lhs->type = AST_BINOP;
-
+        lhs = make_node(parser,or,AST_BINOP);
         parse_advance(parser);
 
     }
@@ -845,10 +734,7 @@ AST_Node* parse_and(bl_parser* parser){
         and->op = op;
         and->type = AST_BINOP;
 
-        lhs = assign_type(parser,AST_Node);
-        lhs->data = and;
-        lhs->type = AST_BINOP;
-
+        lhs = make_node(parser,and,AST_BINOP);
         parse_advance(parser);
     }
     parse_backstep(parser);
@@ -869,10 +755,7 @@ AST_Node* parse_equal(bl_parser* parser){
         eq->op = op;
         eq->type = AST_BINOP;
 
-        lhs = assign_type(parser,AST_Node);
-        lhs->data = eq;
-        lhs->type = AST_BINOP;
-
+        lhs = make_node(parser,eq,AST_BINOP);
         parse_advance(parser);
     }
     parse_backstep(parser);
@@ -894,10 +777,7 @@ AST_Node* parse_relational(bl_parser* parser){
         relation->op = op;
         relation->type = AST_BINOP;
 
-        lhs = assign_type(parser,AST_Node);
-        lhs->data = relation;
-        lhs->type = AST_BINOP;
-
+        lhs = make_node(parser,relation,AST_BINOP);
         parse_advance(parser);
     }
 
@@ -919,10 +799,7 @@ AST_Node* parse_shift(bl_parser* parser){
         shift->op = op;
         shift->type = AST_BINOP;
 
-        lhs = assign_type(parser,AST_Node);
-        lhs->data = shift;
-        lhs->type = AST_BINOP;
-
+        lhs = make_node(parser,shift,AST_BINOP);
         parse_advance(parser);
     }
     parse_backstep(parser);
@@ -943,10 +820,7 @@ AST_Node* parse_binops(bl_parser* parser){
         binop->op = op;
         binop->type = AST_BINOP;
 
-        lhs = assign_type(parser,AST_Node);
-        lhs->data = binop;
-        lhs->type = AST_BINOP;
-        
+        lhs = make_node(parser,binop,AST_BINOP);    
         parse_advance(parser);
     }
     parse_backstep(parser);
@@ -966,11 +840,7 @@ AST_Node* parse_factor(bl_parser* parser){
         binop->rhs = rhs;
         binop->op = op;
         binop->type = AST_BINOP;
-
-        lhs = assign_type(parser,AST_Node);
-        lhs->data = binop;
-        lhs->type = AST_BINOP;
-
+        lhs = make_node(parser,binop,AST_BINOP);
         parse_advance(parser);
     }
     parse_backstep(parser);
@@ -992,10 +862,7 @@ AST_Node* parse_unops(bl_parser* parser){
         unop->op = op;
         unop->type = AST_UNOP;
 
-        AST_Node* node = assign_type(parser,AST_Node);
-        node->data = unop;
-        node->type = AST_UNOP;
-
+        AST_Node* node = make_node(parser,unop,AST_UNOP);
         return node;
     }
     return parse_primary(parser);
@@ -1013,7 +880,7 @@ AST_Node* parse_primary(bl_parser* parser) {
             AST_Node* func_name = parse_identifier(parser,0,1);
             parse_advance(parser);
             parse_advance(parser); 
-            AST_Node** args = (AST_Node**)arena_alloc(parser->arena,30*sizeof(AST_Node*));
+            AST_Node** args = assign_arr_type(parser,AST_Node,100);
             size_t arg_count = 0;
 
             while(!parse_match(parser,BL_RPAREN)){
@@ -1030,9 +897,7 @@ AST_Node* parse_primary(bl_parser* parser) {
             call->args_count = arg_count;
             call->type = AST_FUNCTIONCALL;
 
-            AST_Node* node = assign_type(parser,AST_Node);
-            node->type = AST_FUNCTIONCALL;
-            node->data = call;
+            AST_Node* node = make_node(parser,call,AST_FUNCTIONCALL);
             return node;
 
         }else{
@@ -1047,9 +912,7 @@ AST_Node* parse_primary(bl_parser* parser) {
         parse_step_n_expect(parser, BL_RPAREN, "Expected ')' after expression",1);
         AST_Group* group = assign_type(parser,AST_Group);
         group->expr = expr;
-        AST_Node* node = arena_alloc(parser->arena, sizeof(AST_Node));
-        node->type = AST_GROUP;
-        node->data = group;
+        AST_Node* node = make_node(parser,group,AST_GROUP);
         return node;
     }
 
@@ -1067,15 +930,12 @@ AST_Node* parse_main(bl_parser* parser){
 
     bl_increase_scope(parser,"main",SCOPE_MAIN);
 
-    AST_Node* block_node = assign_type(parser,AST_Node);
     parse_step_n_expect(parser,BL_LBRACE,"Expected:",49);
-    block_node = parse_block(parser);
+    AST_Node* block_node = parse_block(parser);
     main_ast->block = block_node;
     main_ast->type = AST_MAIN;
 
-    AST_Node* node = assign_type(parser,AST_Node);
-    node->data = main_ast;
-    node->type = AST_MAIN;
+    AST_Node* node = make_node(parser,main_ast,AST_MAIN);
     
     bl_decrease_scope(parser);
 
@@ -1118,8 +978,7 @@ AST_Node* parse_ifelse(bl_parser* parser){
 
         bl_increase_scope(parser,NULL,SCOPE_IF);
 
-        AST_Node* else_node = assign_type(parser,AST_Node);
-        else_node = parse_block(parser);
+        AST_Node* else_node = parse_block(parser);
 
         cond->else_block = else_node;
         
@@ -1129,10 +988,7 @@ AST_Node* parse_ifelse(bl_parser* parser){
         cond->else_block = NULL;
     }
 
-    AST_Node* ifelse_node  = assign_type(parser,AST_Node);
-    ifelse_node->data = cond;
-    ifelse_node->type = AST_IFELSE;
-
+    AST_Node* ifelse_node  = make_node(parser,cond,AST_IFELSE);
     return ifelse_node;
 
 }
@@ -1142,7 +998,7 @@ AST_Node* parse_block(bl_parser* parser){
 
     AST_Block* block = assign_type(parser,AST_Block);
     
-    AST_Node** stmts = (AST_Node**)arena_alloc(parser->arena,1024*sizeof(AST_Node*));
+    AST_Node** stmts = assign_arr_type(parser,AST_Node,1024);
     parse_advance(parser);
     while(!parse_match(parser,BL_RBRACE)){
         AST_Node* stmt = parse_stmt(parser);
@@ -1158,10 +1014,7 @@ AST_Node* parse_block(bl_parser* parser){
         block->body = stmts;
         block->type = AST_BLOCK;
 
-        AST_Node* node = assign_type(parser,AST_Node);
-        node->data = block;
-        node->type = AST_BLOCK;
-
+        AST_Node* node = make_node(parser,block,AST_BLOCK);
         return node;
     }else{
         bl_parse_error(parser,"Expected return or `}`",1,51);
@@ -1174,27 +1027,21 @@ AST_Node* parse_loop(bl_parser* parser){
     }
     parse_step_n_expect(parser,BL_LPAREN,"Expected:",61);
     parse_advance(parser);
-    AST_Node* expr = assign_type(parser,AST_Node);
-    expr = parse_expr(parser);
+    AST_Node* expr = parse_expr(parser);
     parse_step_n_expect(parser,BL_RPAREN,"Expected:",62);
     parse_step_n_expect(parser,BL_LBRACE,"Expected:",63);
 
     bl_increase_scope(parser,NULL,SCOPE_WHILE);
 
-    AST_Node* block_node = assign_type(parser,AST_Node);
-    block_node = parse_block(parser);
+    AST_Node* block_node = parse_block(parser);
 
     AST_Loop* loop_ast = assign_type(parser,AST_Loop);
     loop_ast->block = block_node;
     loop_ast->expr = expr;
     loop_ast->type = AST_LOOP;
 
-    AST_Node* node = assign_type(parser,AST_Node);
-    node->data = loop_ast;
-    node->type = AST_LOOP;
-
+    AST_Node* node = make_node(parser,loop_ast,AST_LOOP);
     bl_decrease_scope(parser);
-
     return node;
 }
 
@@ -1216,7 +1063,7 @@ AST_Node* parse_function(bl_parser* parser){
 
     bl_increase_scope(parser,name_val->name,SCOPE_FUNCTION);
 
-    AST_Node** params = (AST_Node**)arena_alloc(parser->arena,1024*sizeof(AST_Node*));
+    AST_Node** params = assign_arr_type(parser,AST_Node,1024);
     while(!parse_match(parser,BL_RPAREN)){
         params[func_ast->param_count] = parse_param(parser);
         func_ast->param_count++;
@@ -1230,16 +1077,11 @@ AST_Node* parse_function(bl_parser* parser){
     parse_expect(parser,BL_RPAREN,"Expected :",29);
     parse_step_n_expect(parser,BL_LBRACE,"Expected :",31);
     
-    AST_Node* block_node = assign_type(parser,AST_Node);
-    block_node = parse_block(parser);
+    AST_Node* block_node = parse_block(parser);
     func_ast->block = block_node;
 
-    AST_Node* ast = assign_type(parser,AST_Node);
-    ast->data = func_ast;
-    ast->type = AST_FUNCTION;
-
+    AST_Node* ast = make_node(parser,func_ast,AST_FUNCTION);
     bl_decrease_scope(parser);
-
     return ast;
 }
 
@@ -1247,16 +1089,12 @@ AST_Node* parse_param(bl_parser* parser){
     AST_Node* ast = parse_identifier(parser,1,0);
 }
 
-
-
 AST_Node* parse_stringliteral(bl_parser* parser){
     AST_StringLiteral* stringval = assign_type(parser,AST_StringLiteral);
     stringval->value = get_string_value(parser);
     stringval->type = AST_STRINGLITERAL;
 
-    AST_Node* ast = assign_type(parser,AST_Node);
-    ast->data= stringval;
-    ast->type = AST_STRINGLITERAL;
+    AST_Node* ast = make_node(parser,stringval,AST_STRINGLITERAL);
     return ast;
 }
 
@@ -1265,9 +1103,7 @@ AST_Node* parse_floatliteral(bl_parser* parser){
     floatval->value = get_float_value(parser);
     floatval->type = AST_FLOATLITERAL;
 
-    AST_Node* ast = assign_type(parser,AST_Node);
-    ast->data= floatval;
-    ast->type = AST_FLOATLITERAL;
+    AST_Node* ast = make_node(parser,floatval,AST_FLOATLITERAL);
     return ast;
 }
 
@@ -1276,9 +1112,7 @@ AST_Node* parse_charliteral(bl_parser* parser){
     charval->value = get_char_value(parser);
     charval->type = AST_CHARLITERAL;
 
-    AST_Node* ast = assign_type(parser,AST_Node);
-    ast->data= charval;
-    ast->type = AST_CHARLITERAL;
+    AST_Node* ast = make_node(parser,charval,AST_CHARLITERAL);
     return ast;
 }
 
@@ -1287,9 +1121,7 @@ AST_Node* parse_intliteral(bl_parser* parser){
     intval->value = get_int_value(parser);
     intval->type = AST_INTLITERAL;
 
-    AST_Node* ast = assign_type(parser,AST_Node);
-    ast->data= intval;
-    ast->type = AST_INTLITERAL;
+    AST_Node* ast = make_node(parser,intval,AST_INTLITERAL);
     return ast;
 }
 
@@ -1298,9 +1130,7 @@ AST_Node* parse_boolliteral(bl_parser* parser){
     boolval->value = get_bool_value(parser);
     boolval->type = AST_BOOLLITERAL;
 
-    AST_Node* ast = assign_type(parser,AST_Node);
-    ast->data = boolval;
-    ast->type = AST_BOOLLITERAL;
+    AST_Node* ast = make_node(parser,boolval,AST_BOOLLITERAL);
     return ast;
 }
 
@@ -1371,7 +1201,6 @@ bool check_in_var_store(bl_parser* parser, AST_Node* node,int check_levels){
     return false;
 }
 
-
 bool parse_match(bl_parser* parser, enum KEYWORD_TYPES type){
     return parser->tokens[parser->parse_point].token == type;
 }
@@ -1380,7 +1209,6 @@ bool parse_check_ahead(bl_parser* parser, enum KEYWORD_TYPES type, int num){
     bl_token* p1 = parse_peek(parser,num);
     return p1->token == type;
 }
-
 
 bool parse_expect(bl_parser* parser, enum KEYWORD_TYPES type, char* errmsg,int err_code){
     if(parse_match(parser,type)){
@@ -1432,8 +1260,6 @@ void parse_backstep(bl_parser* parser){
     parser->line_number = parser->tokens[parser->parse_point].loc.line_number;
     parser->line_offset = parser->tokens[parser->parse_point].loc.line_offset;
 }
-
-
 
 void bl_check_prolog(bl_parser* parser){
     if(parser->current.token != BL_KW_HI_BHAU){
