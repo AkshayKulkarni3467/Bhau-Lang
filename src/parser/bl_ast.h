@@ -435,7 +435,7 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
 
         case AST_ASSIGN: {
             AST_Assign* asg = (AST_Assign*)node->data;
-            printf(C_NODE "ASSIGN" C_RESET "\n");
+            printf(C_NODE "ASSIGN %s" C_RESET "\n",keyword_enum_to_str(asg->op));
             print_ast_tree(asg->lhs, next_prefix, false);
             print_ast_tree(asg->rhs, next_prefix, true);
             break;

@@ -10,7 +10,7 @@ bhau lakshat thev sum(a, b) {
     bhau jar (result > 100) {
         bhau parat de 100;
     } bhau tar {
-        bhau parat de result;
+        bhau parat de result+=100;
     }
 }
 
