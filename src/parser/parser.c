@@ -13,6 +13,7 @@ typedef enum {
     AST_PROGRAM,
     AST_ASSIGN,
     AST_INTLITERAL,
+    AST_BOOLLITERAL,
     AST_IDENTIFIER,
     AST_FLOATLITERAL,
     AST_CHARLITERAL,
@@ -32,6 +33,7 @@ typedef enum {
     AST_CONTINUE,
     AST_DEFAULT,
     AST_LOOP,
+    AST_RETURN,
     AST_COMMENT,
     AST_MULCOMMENT,
 } ASTNodeType;
@@ -72,7 +74,6 @@ typedef struct {
     AST_Node* value;           
     AST_Node** body;           
     size_t body_count;
-    AST_Node* _return;
     ASTNodeType type;
 } AST_SwitchCase;
 
@@ -86,9 +87,13 @@ typedef struct{
 typedef struct {
     AST_Node** body;
     size_t body_count;
-    AST_Node* _return;
     ASTNodeType type;
 } AST_Block;
+
+typedef struct {
+    AST_Node* expr;
+    ASTNodeType type;
+} AST_Return;
 
 
 typedef struct {
@@ -152,6 +157,11 @@ typedef struct {
     int value;
     ASTNodeType type;
 } AST_IntLiteral;
+
+typedef struct {
+    bool value;
+    ASTNodeType type;
+} AST_BoolLiteral;
 
 typedef struct {
     float value;
@@ -245,7 +255,6 @@ AST_Node* parse_logand(bl_parser* parser);
 AST_Node* parse_logor(bl_parser* parser);
 AST_Node* parse_assignment(bl_parser* parser);
 AST_Node* parse_expr(bl_parser* parser);
-AST_Node* parse_switch(bl_parser* parser);
 AST_Node* parse_unops(bl_parser* parser);
 AST_Node* parse_block(bl_parser* parser);
 AST_Node* parse_ifelse(bl_parser* parser);
@@ -253,6 +262,7 @@ AST_Node* parse_switch(bl_parser* parser);
 AST_Node* parse_break(bl_parser* parser);
 AST_Node* parse_loop(bl_parser* parser);
 AST_Node* parse_continue(bl_parser* parser);
+AST_Node* parse_return(bl_parser* parser);
 AST_Node* parse_function(bl_parser* parser);
 AST_Node* parse_param(bl_parser* parser);
 AST_Node* parse_main(bl_parser* parser);
@@ -262,8 +272,10 @@ AST_Node* parse_intliteral(bl_parser* parser);
 AST_Node* parse_stringliteral(bl_parser* parser);
 AST_Node* parse_charliteral(bl_parser* parser);
 AST_Node* parse_floatliteral(bl_parser* parser);
+AST_Node* parse_boolliteral(bl_parser* parser);
 
 int get_int_value(bl_parser* parser);
+bool get_bool_value(bl_parser* parser);
 char get_char_value(bl_parser* parser);
 char* get_string_value(bl_parser* parser);
 float get_float_value(bl_parser* parser);
@@ -404,10 +416,6 @@ AST_Node* parse_program(bl_parser* parser){
     return node;
 }
 
-//TODO check if identifier is a reserved keyword or not
-//TODO implement pointers (PTR, REF)
-//TODO implement bool literals 
-//TODO add return statment in parse_stmt, update parse_ifelse, parse_switch and parse_function to use block (maybe)
 AST_Node* parse_stmt(bl_parser* parser) {
     if(parse_match(parser,BL_KW_BHAU_HAI_AHE)){
         
@@ -416,7 +424,9 @@ AST_Node* parse_stmt(bl_parser* parser) {
     }else if(parse_match(parser,BL_KW_BHAU_BAHERUN_GHE)){
         AST_Node* ast = parse_extern(parser);
         return ast;
-    }else if(parse_match(parser,BL_IDENTIFIER)){
+    }else if(parse_match(parser,BL_IDENTIFIER) || 
+        parse_match(parser,BL_KW_BHAU_PTR) || 
+        parse_match(parser,BL_KW_BHAU_REF)){
         AST_Node* ast = parse_assign(parser);
         return ast;
     }else if(parse_match(parser,BL_KW_BHAU_LAKSHAT_THEV)){
@@ -440,6 +450,9 @@ AST_Node* parse_stmt(bl_parser* parser) {
     }else if(parse_match(parser,BL_KW_BHAU_CHALU_RHA)){
         AST_Node* ast = parse_continue(parser);
         return ast;
+    }else if(parse_match(parser,BL_KW_BHAU_PARAT_DE)){
+        AST_Node* ast = parse_return(parser);
+        return ast;
     }else if(parse_match(parser,BL_COMMENT)){
         AST_Node* ast = assign_type(parser,AST_Node);
         ast->data = NULL;
@@ -449,8 +462,8 @@ AST_Node* parse_stmt(bl_parser* parser) {
         AST_Node* ast = assign_type(parser,AST_Node);
         ast->data = NULL;
         ast->type = AST_MULCOMMENT;
-    }
-    else{
+        return ast;
+    }else{
         bl_parse_error(parser,"ERROR ! Cannot jump to next stmt",1,10);
         return NULL;
     }
@@ -472,7 +485,13 @@ AST_Node* parse_extern(bl_parser* parser){
 }
 
 AST_Node* parse_assign(bl_parser* parser){
-    AST_Node* ast1 = parse_identifier(parser,0,1);
+    AST_Node* ast1 = assign_type(parser,AST_Node);
+    if(parse_match(parser,BL_KW_BHAU_PTR)){
+        ast1 = parse_expr(parser);
+    }else{
+        ast1 = parse_identifier(parser,0,1);
+    }
+    
 
     null_error((void *)ast1,parser,12);
     parse_advance(parser);
@@ -547,17 +566,90 @@ AST_Node* parse_assign(bl_parser* parser){
 
 AST_Node* parse_assign_decl(bl_parser* parser){
 
-
-    parse_step_n_expect(parser,BL_IDENTIFIER,"Expected", 17);
-
+    AST_Node* ast1 = assign_type(parser,AST_Node);
     AST_Assign* assign = assign_type(parser,AST_Assign);
+    if(parse_check_ahead(parser, BL_IDENTIFIER,1)){
+        parse_advance(parser);
+        ast1 = parse_identifier(parser,1,0);
 
-    char* name = get_name_from_parser(parser);
+        null_error((void *)ast1,parser,12);
+    }else if(parse_check_ahead(parser,BL_KW_BHAU_PTR,1)){
+        AST_Node* node = NULL;
+        parse_advance(parser);
+        while (parse_match(parser, BL_KW_BHAU_PTR)){
+            AST_Unop* uop = assign_type(parser, AST_Unop);
+            uop->op = BL_KW_BHAU_PTR;
 
+            AST_Node* uop_node = assign_type(parser, AST_Node);
+            uop_node->type = AST_UNOP;
+            uop_node->data = uop;
 
-    AST_Node* ast1 = parse_identifier(parser,1,0);
+            if (node) {
+                uop->node = node;
+            }
+            node = uop_node;
+            parse_advance(parser);
+        }
+        parse_expect(parser,BL_IDENTIFIER,"Expected:",81);
+        AST_Node* ident_node = assign_type(parser,AST_Node);
+        ident_node = parse_identifier(parser,1,0);
 
-    null_error((void *)ast1,parser,12);
+        AST_Unop* bottom = (AST_Unop*)node->data;
+
+        while (bottom->node && bottom->node->type == AST_UNOP) {
+            bottom = (AST_Unop*)bottom->node->data;
+        }
+
+        bottom->node = ident_node;
+        bottom->type = AST_UNOP;
+
+        AST_Node* uop_node = assign_type(parser,AST_Node);
+        uop_node->data = (AST_Unop*)node->data;
+        uop_node->type = AST_UNOP;
+
+        ast1 = uop_node;
+    }
+    //References like C++?
+    // else if(parse_check_ahead(parser,BL_KW_BHAU_REF,1)){
+    //     AST_Node* node = NULL;
+    //     parse_advance(parser);
+
+    //     while (parse_match(parser, BL_KW_BHAU_REF)){
+    //         AST_Unop* uop = assign_type(parser, AST_Unop);
+    //         uop->op = BL_KW_BHAU_REF;
+
+    //         AST_Node* uop_node = assign_type(parser, AST_Node);
+    //         uop_node->type = AST_UNOP;
+    //         uop_node->data = uop;
+
+    //         if (node) {
+    //             uop->node = node;
+    //         }
+    //         node = uop_node;
+    //         parse_advance(parser);
+    //     }
+    //     parse_expect(parser,BL_IDENTIFIER,"Expected:",81);
+    //     AST_Node* ident_node = assign_type(parser,AST_Node);
+    //     ident_node = parse_identifier(parser,1,0);
+    
+    //     AST_Unop* bottom = (AST_Unop*)node->data;
+
+    //     while (bottom->node && bottom->node->type == AST_UNOP) {
+    //         bottom = (AST_Unop*)bottom->node->data;
+    //     }
+
+    //     bottom->node = ident_node;
+    //     bottom->type = AST_UNOP;
+
+    //     AST_Node* uop_node = assign_type(parser,AST_Node);
+    //     uop_node->data = (AST_Unop*)node->data;
+    //     uop_node->type = AST_UNOP;
+
+    //     ast1 = uop_node;
+    // }
+    else{
+        bl_parse_error(parser,"Expected Identifier or ptr",1,80);
+    }
 
     parse_advance(parser);
     if(parse_match(parser,BL_EQUAL)){
@@ -593,6 +685,9 @@ AST_Node* parse_assign_decl(bl_parser* parser){
 AST_Node* parse_identifier(bl_parser* parser,bool check,int check_levels){
     AST_Identifier* ident = assign_type(parser,AST_Identifier);
     ident->name = get_name_from_parser(parser);
+    if(is_keyword(ident->name)){
+        bl_parse_error(parser,"Identifier cannot be a keyword",1,27);
+    }
     ident->scope_val = stack_peek(parser->scope_stack);
     ident->type = AST_IDENTIFIER;
 
@@ -643,6 +738,22 @@ AST_Node* parse_continue(bl_parser* parser){
     return node;
 }
 
+AST_Node* parse_return(bl_parser* parser){
+    if(stack_size(parser->scope_stack) < 2){
+        bl_parse_error(parser,"Cannot return from global scope",1,70);
+    }
+    parse_advance(parser);
+    AST_Return* retnode = assign_type(parser,AST_Return);
+    retnode->expr = parse_expr(parser);
+    retnode->type = AST_RETURN;
+
+    AST_Node* node = assign_type(parser,AST_Node);
+    node->data = retnode;
+    node->type = AST_RETURN;
+    parse_step_n_expect(parser,BL_SEMICOLON,"Expected:",52);
+    return node;
+}
+
 AST_Node* parse_switch(bl_parser* parser){
     if(stack_size(parser->scope_stack)<2){
         bl_parse_error(parser,"Switch cannot be used globally",1,51);
@@ -671,7 +782,6 @@ AST_Node* parse_switch(bl_parser* parser){
     AST_Node** cases = (AST_Node**)arena_alloc(parser->arena,sizeof(AST_Node*)*50);
     size_t case_count = 0;
     AST_Node* default_case = NULL;
-    AST_Node* retnode = NULL;
 
     parse_advance(parser);
     while(!parse_match(parser,BL_RBRACE)){
@@ -686,15 +796,6 @@ AST_Node* parse_switch(bl_parser* parser){
             while (!parse_match(parser, BL_KW_BHAU_NIVAD) &&
                     !parse_match(parser, BL_KW_BHAU_RAHUDET) &&
                     !parse_match(parser, BL_RBRACE)){
-                    if(parse_match(parser,BL_KW_BHAU_PARAT_DE)){
-                    parse_advance(parser);
-                    retnode = assign_type(parser,AST_Node);
-                    retnode = parse_expr(parser);
-                    
-                    parse_step_n_expect(parser,BL_SEMICOLON,"Expected:",52);
-                    parse_advance(parser);  
-                    break;
-                }
                 stmts[stmt_count++] = parse_stmt(parser);
                 parse_advance(parser);
             }
@@ -703,8 +804,6 @@ AST_Node* parse_switch(bl_parser* parser){
             _case->body = stmts;
             _case->body_count = stmt_count;  
             _case->type = AST_CASE;
-            _case->_return = retnode;
-            retnode = NULL;
 
             AST_Node* case_node = assign_type(parser,AST_Node);
             case_node->type = AST_CASE;
@@ -717,8 +816,7 @@ AST_Node* parse_switch(bl_parser* parser){
             size_t stmt_count = 0;
 
             parse_advance(parser);
-            while (!parse_match(parser, BL_RBRACE) &&
-                !parse_match(parser,BL_KW_BHAU_PARAT_DE)){
+            while (!parse_match(parser, BL_RBRACE)){
                 stmts[stmt_count++] = parse_stmt(parser);
                 parse_advance(parser);
             }
@@ -728,28 +826,6 @@ AST_Node* parse_switch(bl_parser* parser){
                 def->body = stmts;
                 def->body_count = stmt_count;
                 def->type = AST_DEFAULT;
-                def->_return = NULL;
-
-                AST_Node* def_node = assign_type(parser,AST_Node);
-                def_node->type = AST_DEFAULT;
-                def_node->data = def;
-
-                default_case = def_node;
-            }else if(parse_match(parser,BL_KW_BHAU_PARAT_DE)){
-                parse_advance(parser);
-                AST_Node* retnode = assign_type(parser,AST_Node);
-                retnode = parse_expr(parser);
-                
-                
-                parse_step_n_expect(parser,BL_SEMICOLON,"Expected:",52);
-                parse_advance(parser);
-
-                AST_SwitchCase* def = assign_type(parser,AST_SwitchCase);
-                def->value = NULL;
-                def->body = stmts;
-                def->body_count = stmt_count;
-                def->type = AST_DEFAULT;
-                def->_return = retnode;
 
                 AST_Node* def_node = assign_type(parser,AST_Node);
                 def_node->type = AST_DEFAULT;
@@ -1084,7 +1160,9 @@ AST_Node* parse_factor(bl_parser* parser){
 
 //WARN Postfix operations not implemented
 AST_Node* parse_unops(bl_parser* parser){
-    while((parse_match(parser,BL_NOT)) || (parse_match(parser,BL_INC)) || (parse_match(parser,BL_DEC)) || (parse_match(parser,BL_SUBBINOP))){
+    while((parse_match(parser,BL_NOT)) || (parse_match(parser,BL_INC)) || 
+    (parse_match(parser,BL_DEC)) || (parse_match(parser,BL_SUBBINOP))  ||
+    (parse_match(parser,BL_KW_BHAU_PTR)) || (parse_match(parser,BL_KW_BHAU_REF))){
         enum KEYWORD_TYPES op = parser->current.token;
         parse_advance(parser);
 
@@ -1107,6 +1185,7 @@ AST_Node* parse_primary(bl_parser* parser) {
     if (parse_match(parser, BL_FLOAT)) return parse_floatliteral(parser);
     if (parse_match(parser, BL_CHAR)) return parse_charliteral(parser);
     if (parse_match(parser, BL_STRING)) return parse_stringliteral(parser);
+    if (parse_match(parser, BL_KW_BHAU_KHARA) || parse_match(parser,BL_KW_BHAU_KHOTA)) return parse_boolliteral(parser);
 
     if (parse_match(parser, BL_IDENTIFIER)){
         if(parse_check_ahead(parser,BL_LPAREN,1)){
@@ -1275,7 +1354,7 @@ AST_Node* parse_block(bl_parser* parser){
     
     AST_Node** stmts = (AST_Node**)arena_alloc(parser->arena,1024*sizeof(AST_Node*));
     parse_advance(parser);
-    while(!parse_match_two(parser,BL_RBRACE,BL_KW_BHAU_PARAT_DE)){
+    while(!parse_match(parser,BL_RBRACE)){
         AST_Node* stmt = parse_stmt(parser);
         stmts[block->body_count] = stmt;
         block->body_count++;
@@ -1293,21 +1372,6 @@ AST_Node* parse_block(bl_parser* parser){
         node->data = block;
         node->type = AST_BLOCK;
 
-        return node;
-    }else if(parse_match(parser,BL_KW_BHAU_PARAT_DE)){
-        parse_advance(parser);
-        AST_Node* retnode = assign_type(parser,AST_Node);
-        retnode = parse_expr(parser);
-
-        parse_step_n_expect(parser,BL_SEMICOLON,"Expected:",52);
-        parse_step_n_expect(parser,BL_RBRACE,"Expected:",54);
-        block->body = stmts;
-        block->type = AST_BLOCK;
-        block->_return = retnode;
-
-        AST_Node* node = assign_type(parser,AST_Node);
-        node->data = block;
-        node->type = AST_BLOCK;
         return node;
     }else{
         bl_parse_error(parser,"Expected return or `}`",1,51);
@@ -1466,11 +1530,32 @@ AST_Node* parse_intliteral(bl_parser* parser){
     return ast;
 }
 
+AST_Node* parse_boolliteral(bl_parser* parser){
+    AST_BoolLiteral* boolval = assign_type(parser,AST_BoolLiteral);
+    boolval->value = get_bool_value(parser);
+    boolval->type = AST_BOOLLITERAL;
+
+    AST_Node* ast = assign_type(parser,AST_Node);
+    ast->data = boolval;
+    ast->type = AST_BOOLLITERAL;
+    return ast;
+}
+
 int get_int_value(bl_parser* parser){
     if(parser->current.token == BL_INT){
         return parser->current.int_number;
     }else{
         bl_parse_token_error(parser,"Expected","Integer",1,2);
+    }
+}
+
+bool get_bool_value(bl_parser* parser){
+    if(parser->current.token == BL_KW_BHAU_KHARA){
+        return true;
+    }else if(parser->current.token == BL_KW_BHAU_KHOTA){
+        return false;
+    }else{
+        bl_parse_token_error(parser,"Expected","Boolean",1,2);
     }
 }
 
@@ -1591,6 +1676,7 @@ bl_token* parse_peek(bl_parser* parser,int num){
     }
 }
 
+//TODO check and minimize
 void parse_advance(bl_parser* parser){
     parser->parse_point++;
     parser->current = parse_get_current(parser);
@@ -1605,6 +1691,7 @@ void parse_backstep(bl_parser* parser){
     parser->line_offset = parser->tokens[parser->parse_point].loc.line_offset;
 }
 
+//TODO check and minimize
 bool parse_is_at_end(bl_parser* parser){
     if(parser->current.token == BL_EOF){
         return true;
@@ -1613,6 +1700,7 @@ bool parse_is_at_end(bl_parser* parser){
     }
 }
 
+//TODO check and minimize
 bl_token* parse_previous(bl_parser* parser){
     if(parser->tokens[parser->parse_point].token != BL_KW_HI_BHAU){
         return &parser->tokens[parser->parse_point - 1];
@@ -1772,15 +1860,17 @@ void print_ast_tree(AST_Node* node, int level, const char* prefix) {
             }
             printf("FUNCTION START:\n");
             print_ast_tree(func->block,level+1,"└── ");
+            break;
         }
 
-        case AST_MAIN:
+        case AST_MAIN:{
             AST_Main* main_func = (AST_Main*)node->data;
             printf("MAIN FUNCTION:\n");
             print_ast_tree(main_func->block,level+1,"└── ");
             break;
+        }
 
-        case AST_LOOP:
+        case AST_LOOP:{
             AST_Loop* loop_node = (AST_Loop*)node->data;
             printf("WHILE:\n");
             printf("EXPR:\n");
@@ -1788,8 +1878,9 @@ void print_ast_tree(AST_Node* node, int level, const char* prefix) {
             printf("LOOP:\n");
             print_ast_tree(loop_node->block,level+1,"└── ");
             break;
+        }
 
-        case AST_SWITCH:
+        case AST_SWITCH:{
             AST_Switch* switchnode = (AST_Switch*)node->data;
             printf("SWITCH:\nEXPR:\n");
             print_ast_tree(switchnode->expr,level+1,"└── ");
@@ -1801,8 +1892,9 @@ void print_ast_tree(AST_Node* node, int level, const char* prefix) {
             printf("DEFAULT:\n");
             print_ast_tree(switchnode->default_case,level+1,"└── ");
             break;
+        }
 
-        case AST_CASE:
+        case AST_CASE:{
             AST_SwitchCase* _case = (AST_SwitchCase*)node->data;
             printf("CASE :\n");
             printf("VALUE:\n");
@@ -1811,26 +1903,25 @@ void print_ast_tree(AST_Node* node, int level, const char* prefix) {
                 const char* child_prefix = (i == _case->body_count -1)? "└── " : "├── ";
                 print_ast_tree(_case->body[i],level+1,child_prefix);
             }
-            printf("RETURN:\n");
-            print_ast_tree(_case->_return,level+1,"└── ");
             break;
+        }
 
-        case AST_DEFAULT:
+        case AST_DEFAULT:{
             AST_SwitchCase* _case_d = (AST_SwitchCase*)node->data;
             printf("DEFAULT :\n");
             for(int i = 0;i<_case_d->body_count;i++){
                 const char* child_prefix = (i == _case_d->body_count -1)? "└── " : "├── ";
                 print_ast_tree(_case_d->body[i],level+1,child_prefix);
             }
-            printf("RETURN:\n");
-            print_ast_tree(_case_d->_return,level+1,"└── ");
             break;
+        }
 
-        case AST_BREAK:
+        case AST_BREAK:{
             printf("BREAK\n");
             break;
+        }
 
-        case AST_IFELSE:
+        case AST_IFELSE:{
             printf("IF_ELSE:\n");
             AST_Ifelse* ifblock = (AST_Ifelse*)node->data;
             printf("CONDITION:\n");
@@ -1840,18 +1931,26 @@ void print_ast_tree(AST_Node* node, int level, const char* prefix) {
             printf("ELSE BLOCK:\n");
             print_ast_tree(ifblock->else_block,level+1,"└── ");
             break;
+        }
 
-        case AST_BLOCK:
+        case AST_RETURN: {
+            AST_Return* retnode = (AST_Return*)node->data;
+            printf("RETURN:\n");
+            print_ast_tree(retnode->expr,level+1,"└── ");
+            break;
+        }
+
+        case AST_BLOCK: {
             printf("BLOCK:\n");
             AST_Block* block = (AST_Block*)node->data;
             for(size_t i = 0;i<block->body_count;i++){
                 const char* child_prefix = (i == block->body_count -1)? "└── " : "├── ";
                 print_ast_tree(block->body[i],level+1,child_prefix);
             }
-            printf("RETURN:\n");
-            print_ast_tree(block->_return,level,"└── ");
             break;
-        case AST_FUNCTIONCALL:
+        }
+
+        case AST_FUNCTIONCALL: {
             AST_FunctionCall* funcall = (AST_FunctionCall*)node->data;
             AST_Identifier* funcall_name = (AST_Identifier*)funcall->name->data;
             printf("FUNCTION CALL: %s\n",funcall_name->name);
@@ -1860,6 +1959,7 @@ void print_ast_tree(AST_Node* node, int level, const char* prefix) {
                 print_ast_tree(funcall->args[i],level+1,child_prefix);
             }
             break;
+        }
 
         case AST_ASSIGN: {
             AST_Assign* assign = (AST_Assign*)node->data;
@@ -1914,6 +2014,12 @@ void print_ast_tree(AST_Node* node, int level, const char* prefix) {
             break;
         }
 
+        case AST_BOOLLITERAL: {
+            AST_BoolLiteral* blit = (AST_BoolLiteral*)node->data;
+            printf("BOOL_LITERAL: %s\n", blit->value ? "true" : "false");
+            break;
+        }
+
         case AST_BINOP: {
             AST_Binop* bop = (AST_Binop*)node->data;
             printf("BINOP: %s\n",keyword_enum_to_str(bop->op));
@@ -1929,10 +2035,21 @@ void print_ast_tree(AST_Node* node, int level, const char* prefix) {
             break;
         }
 
+        case AST_COMMENT: {
+            printf("//----COMMENT----//\n");
+            break;
+        }
 
-        default:
+        case AST_MULCOMMENT: {
+            printf("/*----MULCOMMENT----*/\n");
+            break;
+        }
+
+
+        default: {
             printf("UNKNOWN NODE TYPE (%d)\n", node->type);
             break;
+        }
     }
 }
 

@@ -406,7 +406,7 @@ bl_token *bl_tokenize(bl_lexer *lexer){
                case '*' : 
                   tok->where_firstchar = lexer->parse_point;
                   bl_forward(lexer,2);
-                  while((*character != '*') && (*(lexer->parse_point) != '/')){
+                  while(!((*character == '*') && (*(lexer->parse_point) == '/'))){
                      UPDATE_CHAR_PTR();
                      bl_forward(lexer,1);
                   }
@@ -762,6 +762,10 @@ char *keyword_enum_to_str(enum KEYWORD_TYPES var){
          return "BL_KW_BHAU_MAIN";
       case BL_KW_BHAU_NIVAD:
          return "BL_KW_BHAU_NIVAD";
+       case BL_KW_BHAU_PTR:
+         return "BL_KW_BHAU_PTR";
+      case BL_KW_BHAU_REF:
+         return "BL_KW_BHAU_REF";
       default:
          return "<<UNKNOWN TOKEN>>";
 

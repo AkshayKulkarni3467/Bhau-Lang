@@ -1,102 +1,89 @@
 hi bhau
 
 bhau baherun ghe printf;
+bhau baherun ghe scanf;
 
-bhau lakshat thev get_rule(left, mid, right) {
-    bhau hai ahe result = 0;
-    bhau hai ahe code = left * 4 + mid * 2 + right;
+bhau lakshat thev sum(a, b) {
+    bhau hai ahe result = a + b;
 
-    bhau chunav(code){
-        bhau nivad 0: result = 0; bhau thamb;
-        bhau nivad 1: result = 1; bhau thamb;
-        bhau nivad 2: result = 1; bhau thamb;
-        bhau nivad 3: result = 1; bhau thamb;
-        bhau nivad 4: result = 0; bhau thamb;
-        bhau nivad 5: result = 1; bhau thamb;
-        bhau nivad 6: result = 1; bhau thamb;
-        bhau nivad 7: result = 0; bhau thamb;
-        bhau rahudet: result = 0; bhau thamb;
+    // Multiple return paths
+    bhau jar (result > 100) {
+        bhau parat de 100;
+    } bhau tar {
+        bhau parat de result;
     }
+}
 
-    bhau parat de result;
+bhau lakshat thev factorial(n) {
+    bhau jar (n == 0) {
+        bhau parat de 1;
+    } bhau tar {
+        bhau parat de n * factorial(n - 1);
+    }
+}
+
+// deeply nested ifs
+bhau lakshat thev deep(a, b, c) {
+    bhau hai ahe x = 0;
+    bhau jar (a > 0) {
+        bhau jar (b > 0) {
+            bhau jar (c > 0) {
+                x = a + b + c;
+            }
+        }
+    }
+    bhau parat de x;
 }
 
 bhau ithun chalu {
-    // Tape cells (only 7 for this example)
-    bhau hai ahe c0 = 0;
-    bhau hai ahe c1 = 0;
-    bhau hai ahe c2 = 0;
-    bhau hai ahe c3 = 1;
-    bhau hai ahe c4 = 0;
-    bhau hai ahe c5 = 0;
-    bhau hai ahe c6 = 0;
+    // variable decl
+    bhau hai ahe x = 10;
+    bhau hai ahe y = 0;
+    bhau hai ahe z;
 
-    // Temp cells
-    bhau hai ahe n0;
-    bhau hai ahe n1;
-    bhau hai ahe n2;
-    bhau hai ahe n3;
-    bhau hai ahe n4;
-    bhau hai ahe n5;
-    bhau hai ahe n6;
+    // pointer chains
+    bhau hai ahe ptr ptr pp = ref x;
+    bhau hai ahe ptr p = ref x;
+    bhau hai ahe val = ptr p;
 
-    bhau hai ahe gen = 0;
-    bhau joparent(gen < 10){
+    // calling functions
+    bhau hai ahe s = sum(50, 60);
+    bhau hai ahe f = factorial(5);
+    bhau hai ahe d = deep(1,2,3);
 
-        // Print current tape
-        bhau jar(c0 == 1) {
-                printf("#");
-            }bhau tar {
-                printf(".");
-            }
-        bhau jar(c1 == 1) {
-                printf("#");
-            }bhau tar {
-                printf(".");
-            }
-        bhau jar(c2 == 1) {
-                printf("#");
-            }bhau tar {
-                printf(".");
-            }
-        bhau jar(c3 == 1) {
-                printf("#");
-            }bhau tar {
-                printf(".");
-            }
-        bhau jar(c4 == 1) {
-                printf("#");
-            }bhau tar {
-                printf(".");
-            }
-        bhau jar(c5 == 1) {
-                printf("#");
-            }bhau tar {
-                printf(".");
-            }
-        bhau jar(c6 == 1) {
-                printf("#");
-            }bhau tar {
-                printf(".");
-            }
-        printf("\n");
-
-        // Compute next gen
-        n0 = get_rule(0, c0, c1);
-        n1 = get_rule(c0, c1, c2);
-        n2 = get_rule(c1, c2, c3);
-        n3 = get_rule(c2, c3, c4);
-        n4 = get_rule(c3, c4, c5);
-        n5 = get_rule(c4, c5, c6);
-        n6 = get_rule(c5, c6, 0);
-
-        // Copy back
-        c0 = n0; c1 = n1; c2 = n2;
-        c3 = n3; c4 = n4; c5 = n5;
-        c6 = n6;
-
-        gen = gen + 1;
+    // switch with default at top
+    bhau hai ahe choice = 9;
+    bhau chunav(choice) {
+        bhau nivad 1: 
+            printf("one\n");
+            bhau thamb;
+            
+        bhau rahudet: 
+            printf("Default\n");
+            bhau thamb;
+        
     }
+
+    // loop inside loop
+    bhau hai ahe i = 0;
+    bhau joparent(i < 2) {
+        bhau hai ahe j = 0;
+        bhau joparent(j < 2) {
+            printf("i=%d, j=%d\n", i, j);
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+
+    // invalid reference (for semantic error test)
+    // This should NOT crash parser, but can be flagged later
+    // bhau hai ahe ptr bad = ref undeclared;
+
+    // return in middle of main
+    bhau parat de 42;
+
+    // unreachable code after return
+    x = x + 1;
 }
 
 bye bhau
