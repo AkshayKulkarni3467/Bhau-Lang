@@ -57,7 +57,7 @@ bhau ithun chalu {
         bhau nivad 1: 
             printf("one\n");
             bhau thamb;
-            
+        
         bhau rahudet: 
             printf("Default\n");
             bhau thamb;

@@ -1,0 +1,210 @@
+PROGRAM START
+EXTERN
+└── IDENTIFIER: printf (SCOPE : global id : 1 )
+EXTERN
+└── IDENTIFIER: scanf (SCOPE : global id : 1 )
+FUNCTION: sum
+PARAMS:
+├── IDENTIFIER: a (SCOPE : sum id : 2 )
+└── IDENTIFIER: b (SCOPE : sum id : 2 )
+FUNCTION START:
+└── BLOCK:
+│   ├── ASSIGN
+│   │   ├── IDENTIFIER: result (SCOPE : sum id : 2 )
+│   │   └── BINOP: BL_ADDBINOP
+│   │   │   ├── IDENTIFIER: a (SCOPE : sum id : 2 )
+│   │   │   └── IDENTIFIER: b (SCOPE : sum id : 2 )
+│   ├── //----COMMENT----//
+│   └── IF_ELSE:
+CONDITION:
+│   │   └── BINOP: BL_GRTTHAN
+│   │   │   ├── IDENTIFIER: result (SCOPE : sum id : 2 )
+│   │   │   └── INT_LITERAL: 100
+IF BLOCK:
+│   │   └── BLOCK:
+│   │   │   └── RETURN:
+│   │   │   │   └── INT_LITERAL: 100
+ELSE BLOCK:
+│   │   └── BLOCK:
+│   │   │   └── RETURN:
+│   │   │   │   └── IDENTIFIER: result (SCOPE : (null) id : 4 )
+FUNCTION: factorial
+PARAMS:
+└── IDENTIFIER: n (SCOPE : factorial id : 5 )
+FUNCTION START:
+└── BLOCK:
+│   └── IF_ELSE:
+CONDITION:
+│   │   └── BINOP: BL_ISEQUALCOND
+│   │   │   ├── IDENTIFIER: n (SCOPE : factorial id : 5 )
+│   │   │   └── INT_LITERAL: 0
+IF BLOCK:
+│   │   └── BLOCK:
+│   │   │   └── RETURN:
+│   │   │   │   └── INT_LITERAL: 1
+ELSE BLOCK:
+│   │   └── BLOCK:
+│   │   │   └── RETURN:
+│   │   │   │   └── BINOP: BL_MULTBINOP
+│   │   │   │   │   ├── IDENTIFIER: n (SCOPE : (null) id : 7 )
+│   │   │   │   │   └── FUNCTION CALL: factorial
+│   │   │   │   │   │   └── BINOP: BL_SUBBINOP
+│   │   │   │   │   │   │   ├── IDENTIFIER: n (SCOPE : (null) id : 7 )
+│   │   │   │   │   │   │   └── INT_LITERAL: 1
+//----COMMENT----//
+FUNCTION: deep
+PARAMS:
+├── IDENTIFIER: a (SCOPE : deep id : 8 )
+├── IDENTIFIER: b (SCOPE : deep id : 8 )
+└── IDENTIFIER: c (SCOPE : deep id : 8 )
+FUNCTION START:
+└── BLOCK:
+│   ├── ASSIGN
+│   │   ├── IDENTIFIER: x (SCOPE : deep id : 8 )
+│   │   └── INT_LITERAL: 0
+│   ├── IF_ELSE:
+CONDITION:
+│   │   └── BINOP: BL_GRTTHAN
+│   │   │   ├── IDENTIFIER: a (SCOPE : deep id : 8 )
+│   │   │   └── INT_LITERAL: 0
+IF BLOCK:
+│   │   └── BLOCK:
+│   │   │   └── IF_ELSE:
+CONDITION:
+│   │   │   │   └── BINOP: BL_GRTTHAN
+│   │   │   │   │   ├── IDENTIFIER: b (SCOPE : (null) id : 9 )
+│   │   │   │   │   └── INT_LITERAL: 0
+IF BLOCK:
+│   │   │   │   └── BLOCK:
+│   │   │   │   │   └── IF_ELSE:
+CONDITION:
+│   │   │   │   │   │   └── BINOP: BL_GRTTHAN
+│   │   │   │   │   │   │   ├── IDENTIFIER: c (SCOPE : (null) id : 10 )
+│   │   │   │   │   │   │   └── INT_LITERAL: 0
+IF BLOCK:
+│   │   │   │   │   │   └── BLOCK:
+│   │   │   │   │   │   │   └── ASSIGN
+│   │   │   │   │   │   │   │   ├── IDENTIFIER: x (SCOPE : (null) id : 11 )
+│   │   │   │   │   │   │   │   └── BINOP: BL_ADDBINOP
+│   │   │   │   │   │   │   │   │   ├── BINOP: BL_ADDBINOP
+│   │   │   │   │   │   │   │   │   │   ├── IDENTIFIER: a (SCOPE : (null) id : 11 )
+│   │   │   │   │   │   │   │   │   │   └── IDENTIFIER: b (SCOPE : (null) id : 11 )
+│   │   │   │   │   │   │   │   │   └── IDENTIFIER: c (SCOPE : (null) id : 11 )
+ELSE BLOCK:
+│   │   │   │   │   │   └── (null node)
+ELSE BLOCK:
+│   │   │   │   └── (null node)
+ELSE BLOCK:
+│   │   └── (null node)
+│   └── RETURN:
+│   │   └── IDENTIFIER: x (SCOPE : deep id : 8 )
+MAIN FUNCTION:
+└── BLOCK:
+│   ├── //----COMMENT----//
+│   ├── ASSIGN
+│   │   ├── IDENTIFIER: x (SCOPE : main id : 12 )
+│   │   └── INT_LITERAL: 10
+│   ├── ASSIGN
+│   │   ├── IDENTIFIER: y (SCOPE : main id : 12 )
+│   │   └── INT_LITERAL: 0
+│   ├── IDENTIFIER: z (SCOPE : main id : 12 )
+│   ├── //----COMMENT----//
+│   ├── ASSIGN
+│   │   ├── UNARYOP: BL_KW_BHAU_PTR
+│   │   │   └── UNARYOP: BL_KW_BHAU_PTR
+│   │   │   │   └── IDENTIFIER: pp (SCOPE : main id : 12 )
+│   │   └── UNARYOP: BL_KW_BHAU_REF
+│   │   │   └── IDENTIFIER: x (SCOPE : main id : 12 )
+│   ├── ASSIGN
+│   │   ├── UNARYOP: BL_KW_BHAU_PTR
+│   │   │   └── IDENTIFIER: p (SCOPE : main id : 12 )
+│   │   └── UNARYOP: BL_KW_BHAU_REF
+│   │   │   └── IDENTIFIER: x (SCOPE : main id : 12 )
+│   ├── ASSIGN
+│   │   ├── IDENTIFIER: val (SCOPE : main id : 12 )
+│   │   └── UNARYOP: BL_KW_BHAU_PTR
+│   │   │   └── IDENTIFIER: p (SCOPE : main id : 12 )
+│   ├── //----COMMENT----//
+│   ├── ASSIGN
+│   │   ├── IDENTIFIER: s (SCOPE : main id : 12 )
+│   │   └── FUNCTION CALL: sum
+│   │   │   ├── INT_LITERAL: 50
+│   │   │   └── INT_LITERAL: 60
+│   ├── ASSIGN
+│   │   ├── IDENTIFIER: f (SCOPE : main id : 12 )
+│   │   └── FUNCTION CALL: factorial
+│   │   │   └── INT_LITERAL: 5
+│   ├── ASSIGN
+│   │   ├── IDENTIFIER: d (SCOPE : main id : 12 )
+│   │   └── FUNCTION CALL: deep
+│   │   │   ├── INT_LITERAL: 1
+│   │   │   ├── INT_LITERAL: 2
+│   │   │   └── INT_LITERAL: 3
+│   ├── //----COMMENT----//
+│   ├── ASSIGN
+│   │   ├── IDENTIFIER: choice (SCOPE : main id : 12 )
+│   │   └── INT_LITERAL: 9
+│   ├── SWITCH:
+EXPR:
+│   │   └── IDENTIFIER: choice (SCOPE : (null) id : 13 )
+CASES:
+│   │   └── CASE :
+VALUE:
+│   │   │   └── INT_LITERAL: 1
+│   │   │   ├── FUNCTION CALL: printf
+│   │   │   │   └── STRING_LITERAL: "one\n"
+│   │   │   └── BREAK
+DEFAULT:
+│   │   └── DEFAULT :
+│   │   │   ├── FUNCTION CALL: printf
+│   │   │   │   └── STRING_LITERAL: "Default\n"
+│   │   │   └── BREAK
+│   ├── //----COMMENT----//
+│   ├── ASSIGN
+│   │   ├── IDENTIFIER: i (SCOPE : main id : 12 )
+│   │   └── INT_LITERAL: 0
+│   ├── WHILE:
+EXPR:
+│   │   └── BINOP: BL_LESSTHAN
+│   │   │   ├── IDENTIFIER: i (SCOPE : main id : 12 )
+│   │   │   └── INT_LITERAL: 2
+LOOP:
+│   │   └── BLOCK:
+│   │   │   ├── ASSIGN
+│   │   │   │   ├── IDENTIFIER: j (SCOPE : (null) id : 14 )
+│   │   │   │   └── INT_LITERAL: 0
+│   │   │   ├── WHILE:
+EXPR:
+│   │   │   │   └── BINOP: BL_LESSTHAN
+│   │   │   │   │   ├── IDENTIFIER: j (SCOPE : (null) id : 14 )
+│   │   │   │   │   └── INT_LITERAL: 2
+LOOP:
+│   │   │   │   └── BLOCK:
+│   │   │   │   │   ├── FUNCTION CALL: printf
+│   │   │   │   │   │   ├── STRING_LITERAL: "i=%d, j=%d\n"
+│   │   │   │   │   │   ├── IDENTIFIER: i (SCOPE : (null) id : 15 )
+│   │   │   │   │   │   └── IDENTIFIER: j (SCOPE : (null) id : 15 )
+│   │   │   │   │   └── ASSIGN
+│   │   │   │   │   │   ├── IDENTIFIER: j (SCOPE : (null) id : 15 )
+│   │   │   │   │   │   └── BINOP: BL_ADDBINOP
+│   │   │   │   │   │   │   ├── IDENTIFIER: j (SCOPE : (null) id : 15 )
+│   │   │   │   │   │   │   └── INT_LITERAL: 1
+│   │   │   └── ASSIGN
+│   │   │   │   ├── IDENTIFIER: i (SCOPE : (null) id : 14 )
+│   │   │   │   └── BINOP: BL_ADDBINOP
+│   │   │   │   │   ├── IDENTIFIER: i (SCOPE : (null) id : 14 )
+│   │   │   │   │   └── INT_LITERAL: 1
+│   ├── //----COMMENT----//
+│   ├── //----COMMENT----//
+│   ├── //----COMMENT----//
+│   ├── //----COMMENT----//
+│   ├── RETURN:
+│   │   └── INT_LITERAL: 42
+│   ├── //----COMMENT----//
+│   └── ASSIGN
+│   │   ├── IDENTIFIER: x (SCOPE : main id : 12 )
+│   │   └── BINOP: BL_ADDBINOP
+│   │   │   ├── IDENTIFIER: x (SCOPE : main id : 12 )
+│   │   │   └── INT_LITERAL: 1
+
+
