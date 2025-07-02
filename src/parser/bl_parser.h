@@ -510,9 +510,9 @@ AST_Node* parse_expr(bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool 
             expr->lhs = lhs;
             expr->rhs = rhs;
             expr->op = op;
-            expr->type = AST_ASSIGN;
+            expr->type = AST_ASSIGNDECL;
 
-            AST_Node* node = make_node(parser,expr,AST_ASSIGN);
+            AST_Node* node = make_node(parser,expr,AST_ASSIGNDECL);
             return node;
         }
         parse_backstep(parser);
@@ -585,13 +585,13 @@ AST_Node* parse_assignment(bl_parser* parser,enum KEYWORD_TYPES type,bool check,
                 assign->lhs = lhs;
                 assign->rhs = rhs;
                 assign->op = op;
-                assign->type = AST_ASSIGN;
+                assign->type = AST_ASSIGNDECL;
             }else{
                 AST_Node* rhs = parse_assignment(parser,type,false,true);
                 assign->lhs = lhs;
                 assign->rhs = rhs;
                 assign->op = op;
-                assign->type = AST_ASSIGN;
+                assign->type = AST_ASSIGNDECL;
             }
 
         }else{
@@ -604,7 +604,12 @@ AST_Node* parse_assignment(bl_parser* parser,enum KEYWORD_TYPES type,bool check,
         if(uses_lhs_in_rhs(assign->lhs,assign->rhs) && type == (enum KEYWORD_TYPES)BL_KW_BHAU_HAI_AHE){
             bl_parse_error(parser,"Recursive Assignment!",1,10);
         }
-        AST_Node* node = make_node(parser,assign,AST_ASSIGN);
+        AST_Node* node = assign_type(parser,AST_Node);
+        if(type == (enum KEYWORD_TYPES)BL_KW_BHAU_HAI_AHE){
+            node = make_node(parser,assign,AST_ASSIGNDECL);
+        }else{
+            node = make_node(parser,assign,AST_ASSIGN);
+        }
         return node;
     }
     parse_backstep(parser);
@@ -1068,6 +1073,7 @@ AST_Node* parse_function(bl_parser* parser){
 }
 
 AST_Node* parse_param(bl_parser* parser){
+    //TODO make a self contained AST_PARAM, AST_Param
     AST_Node* ast = parse_identifier(parser,true,false);
     return ast;
 }

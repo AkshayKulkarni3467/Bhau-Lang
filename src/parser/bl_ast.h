@@ -37,6 +37,7 @@ typedef struct Scope {
 typedef enum {
     AST_PROGRAM, //
     AST_ASSIGN, //
+    AST_ASSIGNDECL,
     AST_INTLITERAL,
     AST_BOOLLITERAL,
     AST_IDENTIFIER,
@@ -441,6 +442,13 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
             printf(C_NODE "ASSIGN %s" C_RESET "\n",keyword_enum_to_str(asg->op));
             print_ast_tree(asg->lhs, next_prefix, false);
             print_ast_tree(asg->rhs, next_prefix, true);
+            break;
+        }
+        case AST_ASSIGNDECL: {
+            AST_Assign* asg = (AST_Assign*)node->data;
+            printf(C_NODE "ASSIGN DECL %s" C_RESET "\n",keyword_enum_to_str(asg->op));
+            print_ast_tree(asg->lhs,next_prefix,false);
+            print_ast_tree(asg->rhs,next_prefix,true);
             break;
         }
 

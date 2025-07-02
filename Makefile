@@ -3,19 +3,17 @@ CFLAGS_TOKENIZER = -Wall -Wextra -Isrc/common
 CFLAGS_LEXER = -Wall -Wextra -Isrc/keywords -Isrc/common
 CFLAGS_TEST = -Wall -Wextra -g -Isrc/common -Isrc/keywords
 CFLAGS_PARSER = -Wall -Wextra -Isrc/lexer -Isrc/common -Isrc/keywords
+CFLAGS_OPTIMIZER = -Wall -Wextra -Isrc/lexer -Isrc/common -Isrc/keywords
 
 
 DYNARR = src/common/bl_dynarray.h
 ARENA  = src/common/bl_arena.h
-
 TOKENIZE = src/lexer/bl_tokenizer.h
 LEXER = src/lexer/bl_lexer.h
+PARSER = src/parser/bl_parser.h
 
 LANGKEYS = src/keywords/bl_langkeywords.h
 
-# lexer : $(DYNARR) $(ARENA) bl_tokenizer.c
-# 	$(CC) bl_lexer.c -o lexer
-# 	./lexer
 
 .phony : clean
 
@@ -31,9 +29,12 @@ test : $(LEXER)
 	$(CC) $(CFLAGS_TEST) src/lexer/test.c -o src/lexer/test
 	./src/lexer/test
 
-make parser : $(LEXER)
-	$(CC) $(CFLAGS_PARSER) src/parser/parser.c -o src/parser/parser
+parser : $(LEXER)
+	$(CC) $(CFLAGS_PARSER) src/parser/bl_parser.c -o src/parser/parser
 	./src/parser/parser
 
+optimizer: $(PARSER)
+	$(CC) $(CFLAGS_OPTIMIZER) src/parser/optimizer.c -o src/parser/optimizer
+	./src/parser/optimizer
 clean : 
-	rm -rf test reducer lexer parser src/lexer/reducer src/lexer/test src/lexer/lexer src/parser/parser
+	rm -rf test reducer lexer parser src/lexer/reducer src/lexer/test src/lexer/lexer src/parser/parser src/parser/optimizer main

@@ -1,38 +1,21 @@
-hi bhau
+hi bhau 
 
 bhau baherun ghe printf;
 
-bhau hai ahe x = 10;
-bhau hai ahe y = 5;
+bhau hai ahe ak,sh,ay;
+bhau hai ahe test;
 
+bhau lakshat thev test_func(a,b,c){
+    bhau hai ahe x;
+    bhau hai ahe y;
 
+    bhau parat de 1;
+}
 
-bhau ithun chalu {
-    bhau hai ahe result = x + y * 2;
-
-    bhau jar (result > 10) {
-        printf("Greater than 10");
-    } bhau tar {
-        printf("Less or equal to 10");
-    }
-
-    bhau joparent (y > 0) {
-        printf("Looping\n");
-        y = y - 1;
-    }
-
-    bhau chunav(x) {
-        bhau nivad 5:
-            printf("It is five");
-            bhau thamb;
-        bhau nivad 10:
-            printf("It is ten");
-            bhau thamb;
-        bhau rahudet:
-            printf("Default case");
-    }
-
-    bhau parat de result;
+bhau ithun chalu{
+    bhau hai ahe j;
+    bhau hai ahe k;
+    bhau hai ahe q = w = e = r = 69;
 }
 
 bye bhau
