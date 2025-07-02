@@ -86,11 +86,13 @@ enum KEYWORD_TYPES {
    #ifdef BL_OPERATORS
    BL_EQUAL,
    BL_ISEQUALCOND,
+   BL_MODBINOP,
    BL_ADDBINOP,
    BL_SUBBINOP,
    BL_MULTBINOP,
    BL_DIVBINOP,
    BL_ADDEQ,
+   BL_MODEQ,
    BL_SUBEQ,
    BL_MULTEQ,
    BL_DIVEQ,
@@ -369,6 +371,14 @@ bl_token *bl_tokenize(bl_lexer *lexer){
                case '=': SET_COMPOUND_TOKEN(BL_ADDEQ,2); break;
                case '+': SET_COMPOUND_TOKEN(BL_INC,2); break;
                default : SET_SIMPLE_TOKEN(BL_ADDBINOP); break;
+            }
+            break;
+         
+         case '%':
+            suff = bl_peek_token(lexer,1);
+            switch(suff){
+               case '=' : SET_COMPOUND_TOKEN(BL_MODEQ,2); break;
+               default  : SET_SIMPLE_TOKEN(BL_MODBINOP); break;
             }
             break;
 
@@ -675,10 +685,14 @@ char *keyword_enum_to_str(int var){
          return "BL_MULTBINOP";
       case BL_ADDBINOP:
          return "BL_ADDBINOP";
+      case BL_MODBINOP:
+         return "BL_MODBINOP";
       case BL_DIVBINOP:
          return "BL_DIVBINOP";
       case BL_ADDEQ:
-         return "BL_ADDEQ";          
+         return "BL_ADDEQ";  
+      case BL_MODEQ:
+         return "BL_MODEQ";        
       case BL_SUBEQ:
          return "BL_SUBEQ";           
       case BL_MULTEQ:

@@ -15,7 +15,7 @@ typedef enum {
 
     /*Defining variables*/    
     //WARN Need to be modified if KEYWORD_TYPES is modified in bl_tokenizer; Currently, BL_EOF is 300
-    BL_KW_BHAU_HAI_AHE = 302, 
+    BL_KW_BHAU_HAI_AHE = 304, 
 
     /*If-else control flow*/            
     BL_KW_BHAU_JAR,

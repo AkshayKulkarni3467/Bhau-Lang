@@ -35,8 +35,8 @@ typedef struct Scope {
 
 
 typedef enum {
-    AST_PROGRAM,
-    AST_ASSIGN,
+    AST_PROGRAM, //
+    AST_ASSIGN, //
     AST_INTLITERAL,
     AST_BOOLLITERAL,
     AST_IDENTIFIER,
@@ -44,21 +44,21 @@ typedef enum {
     AST_CHARLITERAL,
     AST_STRINGLITERAL,
     AST_EXTERN,
-    AST_BINOP,
-    AST_UNOP,
-    AST_GROUP,
-    AST_FUNCTION,
-    AST_MAIN,
-    AST_FUNCTIONCALL,
-    AST_IFELSE,
+    AST_BINOP,//
+    AST_UNOP, //
+    AST_GROUP, // 
+    AST_FUNCTION, //
+    AST_MAIN, //
+    AST_FUNCTIONCALL, //
+    AST_IFELSE, //
     AST_BLOCK,
     AST_SWITCH,
     AST_CASE,
     AST_BREAK,
     AST_CONTINUE,
     AST_DEFAULT,
-    AST_LOOP,
-    AST_RETURN,
+    AST_LOOP, //
+    AST_RETURN, //
     AST_COMMENT,
     AST_MULCOMMENT,
 } ASTNodeType;
@@ -475,6 +475,24 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
         case AST_INTLITERAL: {
             AST_IntLiteral* ilit = (AST_IntLiteral*)node->data;
             printf(C_LABEL "INT_LITERAL: " C_VALUE "%d" C_RESET "\n", ilit->value);
+            break;
+        }
+
+        case AST_FLOATLITERAL: {
+            AST_FloatLiteral* flit = (AST_FloatLiteral*)node->data;
+            printf(C_LABEL "FLOAT_LITERAL: " C_VALUE "%.2f" C_RESET "\n",flit->value);
+            break;
+        }
+
+        case AST_CHARLITERAL: {
+            AST_CharLiteral* clit = (AST_CharLiteral*)node->data;
+            printf(C_LABEL "CHAR_LITERAL: " C_VALUE "%c" C_RESET "\n",clit->value);
+            break;
+        }
+
+        case AST_BOOLLITERAL: {
+            AST_BoolLiteral* blit = (AST_BoolLiteral*)node->data;
+            printf(C_LABEL "BOOL LITERAL: " C_VALUE "%s" C_RESET "\n",blit->value == true ? "true" : "false");
             break;
         }
 
