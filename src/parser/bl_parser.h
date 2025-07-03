@@ -81,7 +81,7 @@ AST_Node* parse_loop(bl_parser* parser);
 AST_Node* parse_continue(bl_parser* parser);
 AST_Node* parse_return(bl_parser* parser);
 AST_Node* parse_function(bl_parser* parser);
-AST_Node* parse_param(bl_parser* parser);
+AST_Node* parse_param(bl_parser* parser,char* func_name);
 AST_Node* parse_main(bl_parser* parser);
 AST_Node* parse_intliteral(bl_parser* parser);
 AST_Node* parse_stringliteral(bl_parser* parser);
@@ -246,9 +246,13 @@ AST_Node* parse_stmt(bl_parser* parser) {
     }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_BAHERUN_GHE)){
         AST_Node* ast = parse_extern(parser);
         return ast;
-    }else if(parse_match(parser,BL_IDENTIFIER) || 
+    }else if(parse_match(parser,BL_IDENTIFIER)                 || 
         parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_PTR) || 
-        parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_REF)){
+        parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_REF) ||
+        parse_match(parser,(enum KEYWORD_TYPES)BL_INC)         ||
+        parse_match(parser,(enum KEYWORD_TYPES)BL_DEC)         ||
+        parse_match(parser,(enum KEYWORD_TYPES)BL_NOT)         ||
+        parse_match(parser,(enum KEYWORD_TYPES)BL_SUBBINOP)){  
         AST_Node* ast = parse_assign(parser);
         return ast;
     }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_LAKSHAT_THEV)){
@@ -1052,7 +1056,7 @@ AST_Node* parse_function(bl_parser* parser){
 
     AST_Node** params = assign_arr_type(parser,AST_Node,1024);
     while(!parse_match(parser,BL_RPAREN)){
-        params[func_ast->param_count] = parse_param(parser);
+        params[func_ast->param_count] = parse_param(parser,name_val->name);
         func_ast->param_count++;
         bool x = parse_check_ahead(parser,BL_RPAREN,1);
         if(!x){
@@ -1072,10 +1076,17 @@ AST_Node* parse_function(bl_parser* parser){
     return ast;
 }
 
-AST_Node* parse_param(bl_parser* parser){
-    //TODO make a self contained AST_PARAM, AST_Param
-    AST_Node* ast = parse_identifier(parser,true,false);
-    return ast;
+AST_Node* parse_param(bl_parser* parser,char* func_name){
+    AST_Param* param = assign_type(parser,AST_Param);
+    AST_Node* ast = parse_expr(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_LAKSHAT_THEV,true,false);
+    param->ident = ast;
+    param->type = AST_PARAM;
+    param->func_name = func_name;
+
+    AST_Node* wrapper = assign_type(parser,AST_Node);
+    wrapper->data = param;
+    wrapper->type = AST_PARAM;
+    return wrapper;
 }
 
 AST_Node* parse_stringliteral(bl_parser* parser){

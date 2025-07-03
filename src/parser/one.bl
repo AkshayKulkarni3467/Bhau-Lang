@@ -1,21 +1,11 @@
-hi bhau 
+hi bhau
 
-bhau baherun ghe printf;
+bhau hai ahe pi = 3.14;
+bhau hai ahe circle_rad = 5;
 
-bhau hai ahe ak,sh,ay;
-bhau hai ahe test;
-
-bhau lakshat thev test_func(a,b,c){
-    bhau hai ahe x;
-    bhau hai ahe y;
-
-    bhau parat de 1;
-}
-
-bhau ithun chalu{
-    bhau hai ahe j;
-    bhau hai ahe k;
-    bhau hai ahe q = w = e = r = 69;
+bhau ithun chalu {
+    pi = 6.6;
+    bhau hai ahe area = pi * circle_rad * circle_rad;
 }
 
 bye bhau

@@ -62,6 +62,7 @@ typedef enum {
     AST_RETURN, //
     AST_COMMENT,
     AST_MULCOMMENT,
+    AST_PARAM,
 } ASTNodeType;
 
 typedef struct {
@@ -69,6 +70,11 @@ typedef struct {
     void* data;
 } AST_Node;
 
+typedef struct {
+    ASTNodeType type;
+    AST_Node* ident;
+    char* func_name;
+} AST_Param;
 
 typedef struct {
     AST_Node* expr;
@@ -258,6 +264,12 @@ void print_ast_node_summary(AST_Node* node) {
             printf("FUNCTION(%s)\n", fid->name);
             break;
         }
+
+        case AST_PARAM: {
+            AST_Param* param = (AST_Param*)node->data;
+            printf("PARAM: %s\n",param->func_name);
+            break;
+        }
         case AST_MAIN:
             printf("MAIN FUNCTION\n");
             break;
@@ -351,6 +363,13 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
             for (size_t i = 0; i < prog->count; ++i) {
                 print_ast_tree(prog->statements[i], next_prefix, i == prog->count - 1);
             }
+            break;
+        }
+
+        case AST_PARAM: {
+            AST_Param* param = (AST_Param*)node->data;
+            printf(C_NODE "PARAM: %s" C_RESET "\n",param->func_name);
+            print_ast_tree(param->ident,next_prefix,true);
             break;
         }
 
@@ -550,7 +569,7 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
         }
 
         default: {
-            printf("UNKNOWN NODE TYPE (%d)\n", node->type);
+            printf("UNKNOWN NODE TYPE (%d), (%p)\n", node->type,node->data);
             break;
         }
     }
@@ -571,6 +590,12 @@ void print_ast_dot_node(FILE* out, AST_Node* node, int parent_id) {
             ASTProgram* prog = (ASTProgram*)node->data;
             for (size_t i = 0; i < prog->count; ++i)
                 print_ast_dot_node(out, prog->statements[i], current_id);
+            break;
+        }
+        case AST_PARAM : {
+            AST_Param* param = (AST_Param*)node->data;
+            AST_Identifier* param_id = (AST_Identifier*)param->ident->data;
+            fprintf(out, "  node%d [label=\"IDENT: %s\"]\n", current_id, param_id->name);
             break;
         }
         case AST_FUNCTION: {
@@ -629,6 +654,14 @@ void print_ast_dot_node(FILE* out, AST_Node* node, int parent_id) {
             print_ast_dot_node(out, ret->expr, current_id);
             break;
         }
+
+        case AST_ASSIGNDECL : {
+            AST_Assign* asg = (AST_Assign*)node->data;
+            fprintf(out, "  node%d [label=\"ASSIGN: %s\"]\n", current_id, keyword_enum_to_str(asg->op));
+            print_ast_dot_node(out, asg->lhs, current_id);
+            print_ast_dot_node(out, asg->rhs, current_id);
+            break;
+        }
         case AST_ASSIGN: {
             AST_Assign* asg = (AST_Assign*)node->data;
             fprintf(out, "  node%d [label=\"ASSIGN: %s\"]\n", current_id, keyword_enum_to_str(asg->op));
@@ -677,6 +710,11 @@ void print_ast_dot_node(FILE* out, AST_Node* node, int parent_id) {
         case AST_STRINGLITERAL: {
             AST_StringLiteral* slit = (AST_StringLiteral*)node->data;
             fprintf(out, "  node%d [label=\"STRING: %s\"]\n", current_id, slit->value);
+            break;
+        }
+        case AST_FLOATLITERAL: {
+            AST_FloatLiteral* flit = (AST_FloatLiteral*)node->data;
+            fprintf(out, "  node%d [label=\"FLOAT: %.2f\"]\n", current_id, flit->value);
             break;
         }
         case AST_EXTERN: {

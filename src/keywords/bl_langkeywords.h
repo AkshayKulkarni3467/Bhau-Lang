@@ -182,8 +182,8 @@ static inline LangKeywordType get_keyword_type(char* keyword){
     if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_BAHERUN_GHE; //extern
     if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_MAIN;        //main 
     if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_NIVAD;       //case
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_PTR;
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_REF;
+    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_PTR;         //pointer
+    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_REF;         //reference
     #endif
     
     return -1;

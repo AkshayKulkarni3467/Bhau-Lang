@@ -12,11 +12,22 @@ typedef struct {
     bl_arena *arena;
 } bl_stack;
 
+static inline size_t stack_size(bl_stack *stack);
+
 static inline void stack_init(bl_stack *stack, bl_arena *arena, size_t initial_capacity) {
     stack->arena = arena;
     stack->items = (void **)arena_alloc(arena, sizeof(void *) * initial_capacity);
     stack->top = 0;
     stack->capacity = initial_capacity;
+}
+
+static inline void *stack_get_index(bl_stack *stack, int num){
+    if(num > ((int)stack_size(stack) - 1)){
+        fprintf(stderr, "Index out of bounds of stack size");
+        exit(1);
+    }
+    
+    return stack->items[num];
 }
 
 static inline void stack_push(bl_stack *stack, void *item) {

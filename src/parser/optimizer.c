@@ -1,6 +1,6 @@
 #include "bl_parser.h"
+#include "bl_set.h"
 
-//TODO implement constant propagation
 typedef enum {
     CONSTKIND_NONE,
     CONSTKIND_INT,
@@ -10,7 +10,6 @@ typedef enum {
     CONSTKIND_STRING,
 } ConstKind;
 
-//TODO assign NULL to declared but not assigned identifiers
 typedef struct {
     ConstKind kind;
     union {
@@ -27,9 +26,26 @@ typedef struct {
     size_t count;
 } AST_NodeList;
 
+typedef struct{
+    char* name;
+    AST_Node* value;
+    bool is_constant;
+} ScopeVar;
+
 
 ConstKind promote_kind(ConstKind a, ConstKind b);
 ConstKind get_const_value(AST_Node* node, ConstValue* out);
+
+
+bl_stack* scope_stack_init(bl_arena* arena);
+void scope_push(bl_stack* stack,char* name, AST_Node* value,bool is_constant, bl_arena* arena);
+ScopeVar* scope_pop(bl_stack* stack);
+ScopeVar* scope_pop_until(bl_stack* stack,AST_Node* value,bool is_constant);
+bool scope_find(bl_stack* stack, char* name);
+int get_scope_size(bl_stack* stack);
+void scope_switch_constant(bl_stack* stack,bl_set* set,char* name,bl_arena* arena);
+void print_current_scope(bl_stack* stack);
+AST_Node* scope_get_most_recent(bl_stack* stack, char* name);
 
 bool is_constant(AST_Node* node);
 bool is_terminating_node(AST_Node* node);
@@ -37,6 +53,10 @@ int eval_binop_int(enum KEYWORD_TYPES op, int lhs, int rhs);
 void promote_values(ConstValue* lhs, ConstValue* rhs, ConstKind target);
 void optimize_block(AST_Block* block, bl_arena* arena) ;
 size_t count_assignment_chain(AST_Node* node);
+AST_Node* transform_undeclared_assigns(AST_Node* node, bl_arena* arena);
+AST_Node* propogate_scope(AST_Node* node, bl_stack* stack,bl_set* set,bl_arena* arena);
+AST_Node* fold_constants_from_scope(AST_Node* node, bl_stack* stack, bl_set* non_const_set, bl_arena* arena);
+
 
 AST_Node* fold_constants(AST_Binop* bin, bl_arena* arena);
 AST_Node* make_int_literal_node(bl_arena* arena, int value);
@@ -55,12 +75,21 @@ int main(){
     bl_arena* arena = (bl_arena*)malloc(sizeof(bl_arena));
     arena_init(arena);
 
-    AST_Node* ast = bhaulang_parser("src/parser/one.bl",arena);
-    print_ast_tree(ast,0,"");
-    AST_Node* optimized_ast = optimize_ast(ast,arena);
-    AST_Node* flattened_ast =  flatten_blocks(optimized_ast,arena);
-    print_ast_tree(flattened_ast,0,"");
+    bl_stack* scope_stack = scope_stack_init(arena);
+    bl_set* scope_set = set_create(arena);
 
+    AST_Node* ast = bhaulang_parser("src/parser/one.bl",arena);
+    AST_Node* optimized_ast = optimize_ast(ast,arena);
+    AST_Node* transformed_ast = transform_undeclared_assigns(optimized_ast,arena);
+    AST_Node* scoped_ast = propogate_scope(transformed_ast,scope_stack,scope_set,arena);
+
+    scope_stack = scope_stack_init(arena);
+    AST_Node* const_prop_ast = fold_constants_from_scope(scoped_ast,scope_stack,scope_set,arena);
+    AST_Node* reoptimized_ast = optimize_ast(const_prop_ast,arena);
+    AST_Node* flattened_ast =  flatten_blocks(reoptimized_ast,arena);
+    print_ast_tree(flattened_ast,0,"");
+    generate_ast_dot(flattened_ast,"src/parser/test.dot");
+    print_current_scope(scope_stack);
 
     return 0;
 }
@@ -432,19 +461,6 @@ int eval_binop_int(enum KEYWORD_TYPES op, int lhs, int rhs) {
     }
 }
 
-// int eval_assignment_int(enum KEYWORD_TYPES op, int lhs, int rhs){
-//     switch(op){
-//         case BL_ADDEQ   : return lhs += rhs;
-//         case BL_SUBEQ   : return lhs -= rhs;
-//         case BL_MULTEQ  : return lhs *= rhs;
-//         case BL_DIVEQ   : return lhs /= rhs;
-//         case BL_MODEQ   : return lhs %= rhs;
-//         case BL_ANDEQ   : return lhs &= rhs;
-//         case BL_OREQ    : return lhs |= rhs;
-//         case BL_XOREQ   : return lhs ^= rhs;
-//         default: return 0;
-//     }
-// }
 
 ConstValue eval_unary_expr(enum KEYWORD_TYPES op, ConstValue val) {
     ConstValue result = val;
@@ -511,6 +527,312 @@ void optimize_block(AST_Block* block, bl_arena* arena) {
 
     block->body = new_body;
     block->body_count = new_count;
+}
+
+size_t count_assignment_chain(AST_Node* node) {
+    size_t count = 0;
+    while (node && node->type == AST_ASSIGNDECL) {
+        AST_Assign* asg = node->data;
+        count++;
+        node = asg->rhs;
+    }
+    return count;
+}
+
+AST_NodeList flatten_comma_chain(AST_Node* node, bl_arena* arena) {
+    size_t max = 16;  
+    AST_Node** list = arena_alloc(arena, sizeof(AST_Node*) * max);
+    size_t count = 0;
+
+    AST_Node* current = node;
+    while (current && current->type == AST_ASSIGNDECL) {
+        AST_Assign* asg = current->data;
+
+        if (asg->op != BL_COMMA) break;
+
+        if (count >= max) {
+            fprintf(stderr, "Comma chain too deep\n");
+            break;
+        }
+
+        list[count++] = asg->lhs;
+        current = asg->rhs;
+    }
+
+    if (count < max) {
+        list[count++] = current;
+    }
+
+    AST_NodeList result = { .items = list, .count = count };
+    return result;
+}
+
+AST_Node* flatten_assignment_chain(AST_Node* assign, bl_arena* arena) {
+    size_t count = count_assignment_chain(assign);
+
+ 
+    AST_Node** lhs_list = arena_alloc(arena, sizeof(AST_Node*) * count);
+    AST_Node* rhs = NULL;
+
+    AST_Node* current = assign;
+    for (size_t i = 0; i < count; ++i) {
+        AST_Assign* asg = current->data;
+        lhs_list[i] = asg->lhs;
+        if (asg->rhs->type != AST_ASSIGNDECL) {
+            rhs = asg->rhs;
+            break;
+        }
+        current = asg->rhs;
+    }
+
+
+    AST_Node** assigns = arena_alloc(arena, sizeof(AST_Node*) * count);
+
+    for (size_t i = 0; i < count; ++i) {
+        AST_Assign* new_asg = arena_alloc(arena, sizeof(AST_Assign));
+        new_asg->lhs = lhs_list[count - 1 - i];  
+        new_asg->rhs = rhs;
+        new_asg->op = BL_EQUAL;
+        new_asg->type = AST_ASSIGNDECL;
+
+        AST_Node* asg_node = arena_alloc(arena, sizeof(AST_Node));
+        asg_node->type = AST_ASSIGNDECL;
+        asg_node->data = new_asg;
+
+        assigns[i] = asg_node;
+    }
+
+    AST_Block* blk = arena_alloc(arena, sizeof(AST_Block));
+    blk->type = AST_BLOCK;
+    blk->body = assigns;
+    blk->body_count = count;
+
+    AST_Node* block_node = arena_alloc(arena, sizeof(AST_Node));
+    block_node->type = AST_BLOCK;
+    block_node->data = blk;
+
+    return block_node;
+}
+
+AST_Node* transform_undeclared_assigns(AST_Node* node, bl_arena* arena){
+    if (!node) return NULL;
+    switch (node->type) {
+        case AST_PROGRAM: {
+            ASTProgram* prog = (ASTProgram*)node->data;
+            for (size_t i = 0; i < prog->count; ++i) {
+                prog->statements[i] = transform_undeclared_assigns(prog->statements[i], arena);
+            }
+            break;
+        }
+
+        case AST_BLOCK:{
+            AST_Block* blk = (AST_Block*)node->data;
+            for (size_t i = 0; i < blk->body_count; ++i) {
+                blk->body[i] = transform_undeclared_assigns(blk->body[i], arena);
+            }
+            break;
+        }
+
+        case AST_MAIN: {
+            AST_Main* main = (AST_Main*)node->data;
+            main->block = transform_undeclared_assigns(main->block, arena);
+            break;
+        }
+
+        case AST_FUNCTION: {
+            AST_Function* func = (AST_Function*)node->data;
+            func->block = transform_undeclared_assigns(func->block,arena);
+            break;
+        }
+
+        case AST_IFELSE: {
+            AST_Ifelse* ifs = (AST_Ifelse*)node->data;
+            ifs->then_block = transform_undeclared_assigns(ifs->then_block, arena);
+            ifs->else_block = transform_undeclared_assigns(ifs->else_block, arena);
+            break;
+        }
+
+        case AST_LOOP: {
+            AST_Loop* loop = (AST_Loop*)node->data;
+            loop->block = transform_undeclared_assigns(loop->block, arena);
+            break;
+        }
+
+        case AST_SWITCH: {
+            AST_Switch* sw = (AST_Switch*)node->data;
+            for (size_t i = 0; i < sw->case_count; ++i) {
+                sw->cases[i] = transform_undeclared_assigns(sw->cases[i], arena);
+            }
+            sw->default_case = transform_undeclared_assigns(sw->default_case, arena);
+            break;
+        }
+
+        case AST_CASE:
+        case AST_DEFAULT: {
+            AST_SwitchCase* sc = (AST_SwitchCase*)node->data;
+            if (node->type == AST_CASE)
+                sc->value = transform_undeclared_assigns(sc->value, arena);
+            for (size_t i = 0; i < sc->body_count; ++i) {
+                sc->body[i] = transform_undeclared_assigns(sc->body[i], arena);
+            }
+            break;
+        }
+
+        case AST_IDENTIFIER: {
+            AST_Assign* decl = (AST_Assign*)arena_alloc(arena, sizeof(AST_Assign));
+            decl->lhs = node;
+            decl->rhs = NULL;
+            decl->op = BL_EQUAL;
+            decl->type = AST_ASSIGNDECL;
+            AST_Node* wrapper = (AST_Node*)arena_alloc(arena, sizeof(AST_Node));
+            wrapper->type = AST_ASSIGNDECL;
+            wrapper->data = decl;
+            return wrapper;
+        }
+
+        default:
+            break;
+    }
+    return node;
+}
+
+bl_stack* scope_stack_init(bl_arena* arena){
+    bl_stack* scope_stack = (bl_stack*)arena_alloc(arena,sizeof(bl_stack));
+    stack_init(scope_stack,arena,1000);
+    return scope_stack;
+}
+
+void scope_push_seperation(bl_stack* stack, char* sep_name,bl_arena* arena){
+    ScopeVar* var = (ScopeVar*)arena_alloc(arena,sizeof(ScopeVar));
+    var->name = sep_name;
+    var->value = NULL;
+    var->is_constant = NULL;
+    stack_push(stack,var);
+}
+
+void scope_push(bl_stack* stack,char* name, AST_Node* value,bool is_constant, bl_arena* arena){
+    ScopeVar* var = (ScopeVar*)arena_alloc(arena,sizeof(ScopeVar));
+    var->name = name;
+    var->value = value;
+    var->is_constant = is_constant;
+    stack_push(stack,var);
+}
+
+ScopeVar* scope_pop(bl_stack* stack){
+    return stack_pop(stack);
+}
+
+ScopeVar* scope_pop_until(bl_stack* stack,AST_Node* value,bool is_constant){
+    while(stack_size(stack) > 0){
+        ScopeVar* var = stack_peek(stack);
+        if(!var || (var->value == value && var->is_constant == is_constant)){
+            ScopeVar* var = stack_pop(stack);
+            if(stack_size(stack) != 0){
+                var = stack_peek(stack);
+            }else{
+                var = NULL;
+            }
+            return var;
+        }else{
+            stack_pop(stack);
+        }
+    }
+    return NULL;
+}
+
+bool scope_find(bl_stack* stack, char* name){
+    int num = stack_size(stack);
+    for(int i = 0;i<num;i++){
+        ScopeVar* item = stack->items[i];
+        if(item->name == NULL) continue;
+        if(strcmp(name,item->name) == 0){
+            if(item->value == NULL){
+                return false;
+            }else{
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int get_scope_size(bl_stack* stack){
+    int num = 0;
+    for(int i = 0;i< (int)stack_size(stack);i++){
+        ScopeVar* var = stack_get_index(stack,i);
+        if(!(var->name == NULL && var->value == NULL && var->is_constant == (long)NULL)){
+            num++;
+        }
+    }   
+    return num;
+}
+
+void scope_switch_constant(bl_stack* stack,bl_set* set,char* name,bl_arena* arena){
+    int num = stack_size(stack) - 1;
+    for(int i = num; i>= 0; i--){
+        ScopeVar* var = stack->items[i];
+        if(var->name == NULL) continue;
+        if(strcmp(var->name,name) == 0){
+            if(var->is_constant == true){
+                var->is_constant = false;
+                set_insert(set,var->name,arena);
+            }
+        }
+    }
+}
+
+
+void print_current_scope(bl_stack* stack){
+    int size = stack_size(stack);
+    for(int i = size-1; i>=0; i--){
+        ScopeVar* val = stack->items[i];
+        if(val->value == NULL && val->is_constant == (long)NULL){
+            printf("==================================== (%s)\n",val->name);
+        }else if(val->value == NULL){
+            printf("%s  : (null) <- Undefined (%s)\n",val->name,val->is_constant == true? "true":"false");
+        }else{
+            printf("%s      : ",val->name);
+            if(val->value->type == AST_INTLITERAL){
+                AST_IntLiteral* ilit = (AST_IntLiteral*)val->value->data;
+                printf("%d <- int (%s)\n",ilit->value,val->is_constant == true? "constant" : "not constant");
+            }else if(val->value->type == AST_CHARLITERAL){
+                AST_CharLiteral* clit = (AST_CharLiteral*)val->value->data;
+                printf("%c <- char (%s)\n",clit->value,val->is_constant == true? "constant" : "not constant");
+            }else if(val->value->type == AST_STRINGLITERAL){
+                AST_StringLiteral* slit = (AST_StringLiteral*)val->value->data;
+                printf("%s <- str (%s)\n",slit->value,val->is_constant == true? "constant" : "not constant");
+            }else if(val->value->type == AST_FLOATLITERAL){
+                AST_FloatLiteral* flit = (AST_FloatLiteral*)val->value->data;
+                printf("%.2f <- float (%s)\n",flit->value,val->is_constant == true? "constant" : "not constant");
+            }else if(val->value->type == AST_BOOLLITERAL){
+                AST_BoolLiteral* blit = (AST_BoolLiteral*)val->value->data;
+                printf("%s <- bool (%s)\n",blit->value == true ? "true" : "false",val->is_constant == true? "constant" : "not constant");
+            }else if(val->value->type == AST_IDENTIFIER){
+                AST_Identifier* ilit = (AST_Identifier*)val->value->data;
+                printf("%s <- ident (%s)\n",ilit->name, val->is_constant == true? "constant":"not constant");
+            }else if(val->value->type == AST_FUNCTIONCALL){
+                AST_FunctionCall* fcall = (AST_FunctionCall*)val->value->data;
+                AST_Identifier* fcall_name = (AST_Identifier*)fcall->name->data;
+                printf("%s <- func call (%s)\n",fcall_name->name,val->is_constant == true? "constant":"not constant");
+            }
+            else{
+                printf("Undefined node\n");
+            }
+        }
+    }
+}
+
+AST_Node* scope_get_most_recent(bl_stack* stack, char* name) {
+    int num = stack_size(stack) - 1;
+    for (int i = num; i >= 0; i--) {
+        ScopeVar* item = stack->items[i];
+        if (!item || item->name == NULL || item->value == NULL) continue;
+
+        if (strcmp(name, item->name) == 0) {
+            return item->value;
+        }
+    }
+    return NULL; 
 }
 
 AST_Node* optimize_ast(AST_Node* node, bl_arena* arena) {
@@ -628,7 +950,7 @@ AST_Node* optimize_ast(AST_Node* node, bl_arena* arena) {
         }
 
         case AST_FUNCTION: {
-            AST_Function* fn = node->data;
+            AST_Function* fn = (AST_Function*)node->data;
             fn->block = optimize_ast(fn->block, arena);
             if (fn->block && fn->block->type == AST_BLOCK) {
                 optimize_block(fn->block->data, arena);
@@ -637,7 +959,7 @@ AST_Node* optimize_ast(AST_Node* node, bl_arena* arena) {
             return node;
         }
         case AST_MAIN: {
-            AST_Main* fn = node->data;
+            AST_Main* fn = (AST_Main*)node->data;
             fn->block = optimize_ast(fn->block, arena);
             if (fn->block && fn->block->type == AST_BLOCK) {
                 optimize_block(fn->block->data, arena);
@@ -690,87 +1012,326 @@ AST_Node* optimize_ast(AST_Node* node, bl_arena* arena) {
     }
 }
 
-size_t count_assignment_chain(AST_Node* node) {
-    size_t count = 0;
-    while (node && node->type == AST_ASSIGNDECL) {
-        AST_Assign* asg = node->data;
-        count++;
-        node = asg->rhs;
-    }
-    return count;
-}
-
-AST_NodeList flatten_comma_chain(AST_Node* node, bl_arena* arena) {
-    size_t max = 16;  
-    AST_Node** list = arena_alloc(arena, sizeof(AST_Node*) * max);
-    size_t count = 0;
-
-    AST_Node* current = node;
-    while (current && current->type == AST_ASSIGNDECL) {
-        AST_Assign* asg = current->data;
-
-        if (asg->op != BL_COMMA) break;
-
-        if (count >= max) {
-            fprintf(stderr, "Comma chain too deep\n");
-            break;
+AST_Node* propogate_scope(AST_Node* node, bl_stack* stack,bl_set* set,bl_arena* arena){
+    if (!node) return NULL;
+    switch (node->type){
+        case AST_PROGRAM:{
+            scope_push_seperation(stack,"program",arena);
+            ASTProgram* prog = node->data;
+            for (size_t i = 0; i < prog->count; ++i) {
+                prog->statements[i] = propogate_scope(prog->statements[i],stack,set, arena);
+            }
+            scope_pop_until(stack,NULL,NULL);
+            return node;
         }
 
-        list[count++] = asg->lhs;
-        current = asg->rhs;
-    }
+        case AST_PARAM: {
+            AST_Param* param = (AST_Param*)arena_alloc(arena,sizeof(AST_Param));
+            param = (AST_Param*)node->data;
+            AST_Node* ide = (AST_Node*)param->ident;
+            AST_Identifier* ident = (AST_Identifier*)ide->data;
+            AST_Node* val_wrapper = (AST_Node*)arena_alloc(arena,sizeof(AST_Node));
+            AST_IntLiteral* ilit = (AST_IntLiteral*)arena_alloc(arena,sizeof(AST_IntLiteral));
+            ilit->value = 0;
+            ilit->type = AST_INTLITERAL;
+            val_wrapper->data = ilit;
+            val_wrapper->type = AST_INTLITERAL;
+            scope_push(stack,ident->name,val_wrapper,false,arena);
+            set_insert(set,ident->name,arena);
+            return node;
+        }
+            
+        case AST_ASSIGNDECL:{
+            AST_Assign* assign = (AST_Assign*)node->data;
+            AST_Identifier* ident = assign->lhs->data;
+            assign->rhs = propogate_scope(assign->rhs,stack,set,arena);
+            scope_push(stack,ident->name,assign->rhs,true,arena);
+            return node;
+        }
 
-    if (count < max) {
-        list[count++] = current;
-    }
+        case AST_ASSIGN: {
+            AST_Assign* assign = (AST_Assign*)node->data;
+            AST_Identifier* ident = assign->lhs->data;
+            scope_switch_constant(stack,set,ident->name,arena);
+            assign->rhs = propogate_scope(assign->rhs,stack,set,arena);
+            return node;
+        }
 
-    AST_NodeList result = { .items = list, .count = count };
-    return result;
+        case AST_IFELSE: {
+            AST_Ifelse* ifs = node->data;
+            ifs->condition = propogate_scope(ifs->condition,stack,set,arena);
+            scope_push_seperation(stack,"if statement",arena);
+            ifs->then_block = propogate_scope(ifs->then_block,stack,set,arena);
+            scope_pop_until(stack,NULL,NULL);
+            scope_push_seperation(stack,"else statement",arena);
+            ifs->else_block = propogate_scope(ifs->else_block,stack,set,arena);
+            scope_pop_until(stack,NULL,NULL);
+            return node;
+        }
+
+        case AST_LOOP : {
+            AST_Loop* loop = node->data;
+            loop->expr = propogate_scope(loop->expr,stack,set,arena);
+            scope_push_seperation(stack,"while loop",arena);
+            loop->block = propogate_scope(loop->block,stack,set,arena);
+            scope_pop_until(stack,NULL,NULL);
+            return node;
+        }
+
+        case AST_FUNCTION : {
+            scope_push_seperation(stack,"function",arena);
+            AST_Function* fn = (AST_Function*)node->data;
+            for(int i = 0;i<(int)fn->param_count;i++){             
+                fn->params[i] = propogate_scope(fn->params[i],stack,set,arena);
+            }
+            fn->block = propogate_scope(fn->block,stack,set,arena);
+            scope_pop_until(stack,NULL,NULL);
+            return node;
+        }
+
+        case AST_MAIN : {
+            scope_push_seperation(stack,"main",arena);
+            AST_Main* main = (AST_Main*)node->data;
+            main->block = propogate_scope(main->block,stack,set,arena);
+            scope_pop_until(stack,NULL,NULL);
+            return node;
+        }
+
+        case AST_BLOCK : {
+            AST_Block* block = node->data;
+            for (size_t i = 0; i < block->body_count; ++i) {
+                block->body[i] = propogate_scope(block->body[i],stack,set,arena);
+            }
+            return node;
+        }
+
+        case AST_IDENTIFIER: {
+            AST_Identifier* ident = (AST_Identifier*)node->data;
+            if(scope_find(stack,ident->name)){
+                return node;
+            }else{
+                fprintf(stderr,"Cannot find identfier in given scope: `%s`\n",ident->name);
+                exit(69);
+            }
+        }
+        
+        case AST_BINOP: {
+            AST_Binop* binop = (AST_Binop*)node->data;
+            binop->lhs = propogate_scope(binop->lhs,stack,set,arena);
+            binop->rhs = propogate_scope(binop->rhs,stack,set,arena);
+            return node;
+        }
+
+        case AST_UNOP: {
+            AST_Unop* unop = (AST_Unop*)node->data;
+            unop->node = propogate_scope(unop->node,stack,set,arena);
+            return node;
+        }
+
+        case AST_GROUP: {
+            AST_Group* grp = (AST_Group*)node->data;
+            grp->expr = propogate_scope(grp->expr,stack,set,arena);
+            return node;
+        }
+
+        case AST_FUNCTIONCALL: {
+            AST_FunctionCall* call = node->data;
+            for (int i = 0; i < call->args_count; ++i) {
+                call->args[i] = propogate_scope(call->args[i],stack,set,arena);
+            }
+            return node;
+        }
+
+        case AST_SWITCH: {
+            AST_Switch* switchnode = (AST_Switch*)arena_alloc(arena,sizeof(AST_Switch));
+            switchnode->expr = propogate_scope(switchnode->expr,stack,set,arena);
+            scope_push_seperation(stack,"switch statement",arena);
+            for(int i = 0;i<(int)switchnode->case_count;i++){
+                switchnode->cases[i] = propogate_scope(switchnode->cases[i],stack,set,arena);
+            }
+            switchnode->default_case = propogate_scope(switchnode->default_case,stack,set,arena);
+
+            scope_pop_until(stack,NULL,NULL);
+            return node;
+        }
+
+        case AST_CASE:
+            AST_SwitchCase* swc = (AST_SwitchCase*)arena_alloc(arena,sizeof(AST_SwitchCase));
+            for(int i = 0;i<(int)swc->body_count;i++){
+                swc->body[i] = propogate_scope(swc->body[i],stack,set,arena);
+            }
+            return node;
+
+        default:
+            return node;
+    }
 }
 
-AST_Node* flatten_assignment_chain(AST_Node* assign, bl_arena* arena) {
-    size_t count = count_assignment_chain(assign);
+AST_Node* fold_constants_from_scope(AST_Node* node, bl_stack* stack, bl_set* non_const_set, bl_arena* arena) {
+    if (!node) return NULL;
 
- 
-    AST_Node** lhs_list = arena_alloc(arena, sizeof(AST_Node*) * count);
-    AST_Node* rhs = NULL;
-
-    AST_Node* current = assign;
-    for (size_t i = 0; i < count; ++i) {
-        AST_Assign* asg = current->data;
-        lhs_list[i] = asg->lhs;
-        if (asg->rhs->type != AST_ASSIGNDECL) {
-            rhs = asg->rhs;
-            break;
+    switch (node->type) {
+        case AST_PROGRAM: {
+            scope_push_seperation(stack, "program", arena);
+            ASTProgram* prog = node->data;
+            for (size_t i = 0; i < prog->count; ++i) {
+                prog->statements[i] = fold_constants_from_scope(prog->statements[i], stack, non_const_set, arena);
+            }
+            scope_pop_until(stack, NULL, NULL);
+            return node;
         }
-        current = asg->rhs;
+
+        case AST_PARAM: {
+            AST_Param* param = node->data;
+            AST_Identifier* ident = (AST_Identifier*)param->ident->data;
+            AST_Node* dummy_val = make_int_literal_node(arena, 0);
+            scope_push(stack, ident->name, dummy_val, false, arena);
+            return node;
+        }
+
+        case AST_ASSIGNDECL: {
+            AST_Assign* assign = node->data;
+            assign->rhs = fold_constants_from_scope(assign->rhs, stack, non_const_set, arena);
+
+            AST_Identifier* ident = (AST_Identifier*)assign->lhs->data;
+            scope_push(stack, ident->name, assign->rhs, true, arena);
+            return node;
+        }
+
+        case AST_ASSIGN: {
+            AST_Assign* assign = node->data;
+            assign->rhs = fold_constants_from_scope(assign->rhs, stack, non_const_set, arena);
+
+            AST_Identifier* ident = assign->lhs->data;
+            scope_push(stack, ident->name, assign->rhs, false, arena); 
+            return node;
+        }
+
+        case AST_IFELSE: {
+            AST_Ifelse* ifs = node->data;
+            ifs->condition = fold_constants_from_scope(ifs->condition, stack, non_const_set, arena);
+
+            scope_push_seperation(stack, "if block", arena);
+            ifs->then_block = fold_constants_from_scope(ifs->then_block, stack, non_const_set, arena);
+            scope_pop_until(stack, NULL, NULL);
+
+            scope_push_seperation(stack, "else block", arena);
+            ifs->else_block = fold_constants_from_scope(ifs->else_block, stack, non_const_set, arena);
+            scope_pop_until(stack, NULL, NULL);
+
+            return node;
+        }
+
+        case AST_LOOP: {
+            AST_Loop* loop = node->data;
+            loop->expr = fold_constants_from_scope(loop->expr, stack, non_const_set, arena);
+
+            scope_push_seperation(stack, "loop block", arena);
+            loop->block = fold_constants_from_scope(loop->block, stack, non_const_set, arena);
+            scope_pop_until(stack, NULL, NULL);
+
+            return node;
+        }
+
+        case AST_FUNCTION: {
+            scope_push_seperation(stack, "function", arena);
+            AST_Function* fn = node->data;
+
+            for (int i = 0; i < (int)fn->param_count; ++i) {
+                fn->params[i] = fold_constants_from_scope(fn->params[i], stack, non_const_set, arena);
+            }
+
+            fn->block = fold_constants_from_scope(fn->block, stack, non_const_set, arena);
+            scope_pop_until(stack, NULL, NULL);
+            return node;
+        }
+
+        case AST_MAIN: {
+            scope_push_seperation(stack, "main", arena);
+            AST_Main* main = node->data;
+            main->block = fold_constants_from_scope(main->block, stack, non_const_set, arena);
+            scope_pop_until(stack, NULL, NULL);
+            return node;
+        }
+
+        case AST_BLOCK: {
+            AST_Block* block = node->data;
+            for (size_t i = 0; i < block->body_count; ++i) {
+                block->body[i] = fold_constants_from_scope(block->body[i], stack, non_const_set, arena);
+            }
+            return node;
+        }
+
+        case AST_IDENTIFIER: {
+            AST_Identifier* ident = node->data;
+
+            if (set_contains(non_const_set, ident->name)) {
+                return node; 
+            }
+
+            AST_Node* found = scope_get_most_recent(stack, ident->name);
+            if (found && found->type != AST_IDENTIFIER) {
+                return found;  
+            }
+
+            return node;
+        }
+
+        case AST_BINOP: {
+            AST_Binop* bin = node->data;
+            bin->lhs = fold_constants_from_scope(bin->lhs, stack, non_const_set, arena);
+            bin->rhs = fold_constants_from_scope(bin->rhs, stack, non_const_set, arena);
+            return node;
+        }
+
+        case AST_UNOP: {
+            AST_Unop* uop = node->data;
+            uop->node = fold_constants_from_scope(uop->node, stack, non_const_set, arena);
+            return node;
+        }
+
+        case AST_GROUP: {
+            AST_Group* grp = node->data;
+            grp->expr = fold_constants_from_scope(grp->expr, stack, non_const_set, arena);
+            return grp->expr;
+        }
+
+        case AST_RETURN: {
+            AST_Return* ret = node->data;
+            ret->expr = fold_constants_from_scope(ret->expr, stack, non_const_set, arena);
+            return node;
+        }
+
+        case AST_FUNCTIONCALL: {
+            AST_FunctionCall* fcall = node->data;
+            for (int i = 0; i < fcall->args_count; ++i) {
+                fcall->args[i] = fold_constants_from_scope(fcall->args[i], stack, non_const_set, arena);
+            }
+            return node;
+        }
+
+        case AST_SWITCH: {
+            AST_Switch* sw = node->data;
+            sw->expr = fold_constants_from_scope(sw->expr, stack, non_const_set, arena);
+
+            scope_push_seperation(stack, "switch", arena);
+            for (int i = 0; i < (int)sw->case_count; ++i) {
+                sw->cases[i] = fold_constants_from_scope(sw->cases[i], stack, non_const_set, arena);
+            }
+            sw->default_case = fold_constants_from_scope(sw->default_case, stack, non_const_set, arena);
+            scope_pop_until(stack, NULL, NULL);
+            return node;
+        }
+
+        case AST_CASE: {
+            AST_SwitchCase* sc = node->data;
+            for (int i = 0; i < (int)sc->body_count; ++i) {
+                sc->body[i] = fold_constants_from_scope(sc->body[i], stack, non_const_set, arena);
+            }
+            return node;
+        }
+
+        default:
+            return node;
     }
-
-
-    AST_Node** assigns = arena_alloc(arena, sizeof(AST_Node*) * count);
-
-    for (size_t i = 0; i < count; ++i) {
-        AST_Assign* new_asg = arena_alloc(arena, sizeof(AST_Assign));
-        new_asg->lhs = lhs_list[count - 1 - i];  
-        new_asg->rhs = rhs;
-        new_asg->op = BL_EQUAL;
-        new_asg->type = AST_ASSIGNDECL;
-
-        AST_Node* asg_node = arena_alloc(arena, sizeof(AST_Node));
-        asg_node->type = AST_ASSIGNDECL;
-        asg_node->data = new_asg;
-
-        assigns[i] = asg_node;
-    }
-
-    AST_Block* blk = arena_alloc(arena, sizeof(AST_Block));
-    blk->type = AST_BLOCK;
-    blk->body = assigns;
-    blk->body_count = count;
-
-    AST_Node* block_node = arena_alloc(arena, sizeof(AST_Node));
-    block_node->type = AST_BLOCK;
-    block_node->data = blk;
-
-    return block_node;
 }
