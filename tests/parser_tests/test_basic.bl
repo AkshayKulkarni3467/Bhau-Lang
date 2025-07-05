@@ -53,9 +53,8 @@ bhau lakshat thev deeply_nested(n){
 bhau lakshat thev test_strings(){
     bhau hai ahe str1 = "Hello";
     bhau hai ahe str2 = "BhauLang";
-    bhau hai ahe full = str1 + " " + str2;
     printf("Message: ");
-    printf(full);
+    printf(str2);
 }
 
 bhau lakshat thev mega_recursive(x){

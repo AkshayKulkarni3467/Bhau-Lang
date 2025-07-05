@@ -1,6 +1,8 @@
 #include "bl_parser.h"
 #include "bl_set.h"
 
+// #define BL_OPTIMIZER_TEST
+
 typedef enum {
     CONSTKIND_NONE,
     CONSTKIND_INT,
@@ -32,6 +34,17 @@ typedef struct{
     bool is_constant;
 } ScopeVar;
 
+typedef struct {
+    char* name;
+    int param_count;
+} FunctionInfo;
+
+typedef struct {
+    FunctionInfo** items;
+    int count;
+    int capacity;
+} FunctionRegistry;
+
 
 ConstKind promote_kind(ConstKind a, ConstKind b);
 ConstKind get_const_value(AST_Node* node, ConstValue* out);
@@ -56,6 +69,7 @@ size_t count_assignment_chain(AST_Node* node);
 AST_Node* transform_undeclared_assigns(AST_Node* node, bl_arena* arena);
 AST_Node* propogate_scope(AST_Node* node, bl_stack* stack,bl_set* set,bl_arena* arena);
 AST_Node* fold_constants_from_scope(AST_Node* node, bl_stack* stack, bl_set* non_const_set, bl_arena* arena);
+AST_Node* check_function_arity(AST_Node* node, FunctionRegistry* reg,bl_arena* arena);
 
 
 AST_Node* fold_constants(AST_Binop* bin, bl_arena* arena);
@@ -68,17 +82,44 @@ AST_Block* flatten_block(AST_Block* block, bl_arena* arena);
 AST_Node* flatten_assignment_chain(AST_Node* assign, bl_arena* arena);
 AST_NodeList flatten_comma_chain(AST_Node* node, bl_arena* arena);
 
+void func_registry_init(FunctionRegistry* reg, bl_arena* arena);
+void func_registry_add(FunctionRegistry* reg, char* name, int param_count, bl_arena* arena);
+int func_registry_get(FunctionRegistry* reg, char* name);
+
+AST_Node* perform_optimization(AST_Node* ast,bl_arena* arena);
+AST_Node* bhaulang_optimizer(char* filename, bl_arena* arena);
 
 
+#ifdef BL_OPTIMIZER_TEST
 
 int main(){
     bl_arena* arena = (bl_arena*)malloc(sizeof(bl_arena));
     arena_init(arena);
 
+
+
+    AST_Node* op_ast = bhaulang_optimizer("tests/examples/one.bl",arena);
+
+    print_ast_tree(op_ast,0,"");
+    arena_stats(arena);
+    return 0;
+}
+
+#endif
+
+AST_Node* bhaulang_optimizer(char* filename, bl_arena* arena){
+    AST_Node* ast = bhaulang_parser(filename,arena);
+    AST_Node* op_ast = perform_optimization(ast,arena);
+    return op_ast;
+}
+
+AST_Node* perform_optimization(AST_Node* ast,bl_arena* arena){
+
     bl_stack* scope_stack = scope_stack_init(arena);
     bl_set* scope_set = set_create(arena);
+    FunctionRegistry* reg = arena_alloc(arena, sizeof(FunctionRegistry));
+    func_registry_init(reg, arena);
 
-    AST_Node* ast = bhaulang_parser("src/parser/one.bl",arena);
     AST_Node* optimized_ast = optimize_ast(ast,arena);
     AST_Node* transformed_ast = transform_undeclared_assigns(optimized_ast,arena);
     AST_Node* scoped_ast = propogate_scope(transformed_ast,scope_stack,scope_set,arena);
@@ -86,13 +127,35 @@ int main(){
     scope_stack = scope_stack_init(arena);
     AST_Node* const_prop_ast = fold_constants_from_scope(scoped_ast,scope_stack,scope_set,arena);
     AST_Node* reoptimized_ast = optimize_ast(const_prop_ast,arena);
-    AST_Node* flattened_ast =  flatten_blocks(reoptimized_ast,arena);
-    print_ast_tree(flattened_ast,0,"");
-    generate_ast_dot(flattened_ast,"src/parser/test.dot");
-    print_current_scope(scope_stack);
-
-    return 0;
+    AST_Node* arity_checked_ast = check_function_arity(reoptimized_ast,reg,arena);
+    AST_Node* flattened_ast =  flatten_blocks(arity_checked_ast,arena);
+    return flattened_ast;
 }
+
+void func_registry_init(FunctionRegistry* reg, bl_arena* arena) {
+    reg->count = 0;
+    reg->capacity = 1024;
+    reg->items = arena_alloc(arena, sizeof(FunctionInfo*) * reg->capacity);
+    memset(reg->items, 0, sizeof(FunctionInfo*) * reg->capacity);
+}
+
+void func_registry_add(FunctionRegistry* reg, char* name, int param_count, bl_arena* arena) {
+    if (reg->count >= reg->capacity) return; 
+    FunctionInfo* info = arena_alloc(arena, sizeof(FunctionInfo));
+    info->name = name;
+    info->param_count = param_count;
+    reg->items[reg->count++] = info;
+}
+
+int func_registry_get(FunctionRegistry* reg, char* name) {
+    for (int i = 0; i < reg->count; ++i) {
+        if (strcmp(reg->items[i]->name, name) == 0) {
+            return reg->items[i]->param_count;
+        }
+    }
+    return -1;
+}
+
 
 AST_Block* flatten_block(AST_Block* block, bl_arena* arena) {
     if (!block) return NULL;
@@ -372,6 +435,8 @@ AST_Node* fold_constants(AST_Binop* bin, bl_arena* arena) {
                 bool same = strcmp(lhs.s, rhs.s) == 0;
                 return make_bool_literal_node(arena, bin->op == BL_ISEQUALCOND ? same : !same);
             }
+            fprintf(stderr,"Only comparsion is allowed between strings\n");
+            exit(12);
             return NULL;
         }
 
@@ -982,8 +1047,8 @@ AST_Node* optimize_ast(AST_Node* node, bl_arena* arena) {
             for (size_t i = 0; i < prog->count; ++i) {
                 prog->statements[i] = optimize_ast(prog->statements[i], arena);
             }
-            //WARN passing ASTProgram* instead of AST_Block* since only x->body & x->body_count are used
-            optimize_block(prog, arena);
+            //WARN sneaky hack!! can cause undefined behaviour :)
+            optimize_block((AST_Block*)prog, arena);
             return node;
         }
 
@@ -1333,5 +1398,154 @@ AST_Node* fold_constants_from_scope(AST_Node* node, bl_stack* stack, bl_set* non
 
         default:
             return node;
+    }
+}
+
+AST_Node* check_function_arity(AST_Node* node, FunctionRegistry* reg,bl_arena* arena) {
+    if (!node) return NULL;
+
+    switch (node->type) {
+        case AST_PROGRAM: {
+            ASTProgram* prog = node->data;
+            for (size_t i = 0; i < (size_t)prog->count; ++i) {
+                prog->statements[i] = check_function_arity(prog->statements[i], reg,arena);
+            }
+            return node;
+        } 
+        
+
+        case AST_FUNCTION: {
+            AST_Function* fn = node->data;
+            AST_Identifier* name = fn->name->data;
+            func_registry_add(reg, name->name, fn->param_count, arena);
+            fn->block = check_function_arity(fn->block, reg,arena);
+            return node;
+        } 
+
+        case AST_EXTERN : {
+            AST_Extern* ext = node->data;
+            AST_Identifier* ident = ext->ident->data;
+            func_registry_add(reg,ident->name,1000,arena);
+            return node;
+        }
+
+        case AST_MAIN: {
+            AST_Main* m = node->data;
+            m->block=check_function_arity(m->block, reg,arena);
+            return node;
+        } 
+
+        case AST_BLOCK: {
+            AST_Block* blk = node->data;
+            for (size_t i = 0; i < blk->body_count; ++i) {
+                blk->body[i]  = check_function_arity(blk->body[i], reg,arena);
+            }
+            return node;
+        } 
+
+        case AST_IFELSE: {
+            AST_Ifelse* ifs = node->data;
+            ifs->condition = check_function_arity(ifs->condition, reg,arena);
+            ifs->then_block = check_function_arity(ifs->then_block, reg,arena);
+            ifs->else_block = check_function_arity(ifs->else_block, reg,arena);
+            return node;
+        } 
+
+        case AST_LOOP: {
+            AST_Loop* loop = node->data;
+            loop->expr = check_function_arity(loop->expr, reg,arena);
+            loop->block = check_function_arity(loop->block, reg,arena);
+            return node;
+        } 
+
+        case AST_FUNCTIONCALL: {
+            AST_FunctionCall* call = node->data;
+
+            if (!call->name || call->name->type != AST_IDENTIFIER) {
+                fprintf(stderr, "Invalid function call: name is not an identifier.\n");
+                exit(99);
+            }
+
+            if (!call->name) {
+                fprintf(stderr, "Function call with missing name\n");
+                exit(88);
+            }
+
+            AST_Identifier* name = call->name->data;
+            int expected = func_registry_get(reg, name->name);
+            if (expected == -1) {
+                fprintf(stderr, "Function `%s` not declared.\n", name->name);
+                exit(1);
+            }
+            if(expected < 999){
+                if (expected != call->args_count) {
+                    fprintf(stderr, "Function `%s` expects %d args but got %d.\n",
+                            name->name, expected, call->args_count);
+                    exit(2);
+                }
+                if (call->args_count > 0 && call->args == NULL) {
+                    fprintf(stderr, "Function `%s` has %d args but call->args is NULL\n", name->name, call->args_count);
+                    exit(87);
+                }
+            }
+            for (int i = 0; i < call->args_count; ++i) {
+                call->args[i] = check_function_arity(call->args[i], reg, arena);
+            }
+            return node;
+        }
+
+        case AST_RETURN: {
+            AST_Return* ret = node->data;
+            ret->expr = check_function_arity(ret->expr, reg,arena);
+            return node;
+        } 
+
+        case AST_ASSIGN:
+        case AST_ASSIGNDECL: {
+            AST_Assign* asg = node->data;
+            asg->rhs = check_function_arity(asg->rhs, reg,arena);
+            return node;
+        } 
+
+        case AST_BINOP: {
+            AST_Binop* bin = node->data;
+            bin ->lhs = check_function_arity(bin->lhs, reg,arena);
+            bin-> rhs = check_function_arity(bin->rhs, reg,arena);
+            return node;
+        } 
+
+        case AST_UNOP: {
+            AST_Unop* uop = node->data;
+            uop->node = check_function_arity(uop->node, reg,arena);
+            return node;
+        } 
+
+        case AST_GROUP: {
+            AST_Group* grp = node->data;
+            grp->expr = check_function_arity(grp->expr, reg,arena);
+            return node;
+        } 
+
+        case AST_SWITCH: {
+            AST_Switch* sw = node->data;
+            sw->expr = check_function_arity(sw->expr, reg,arena);
+            for (int i = 0; i < (int)sw->case_count; ++i) {
+                sw->cases[i] = check_function_arity(sw->cases[i], reg,arena);
+            }
+            sw->default_case = check_function_arity(sw->default_case, reg,arena);
+            return node;
+        } 
+
+        case AST_CASE: {
+            AST_SwitchCase* cs = node->data;
+            for (int i = 0; i < (int)cs->body_count; ++i) {
+                cs->body[i] = check_function_arity(cs->body[i], reg,arena);
+            }
+            return node;
+        } 
+
+        default: {
+            return node;
+        };
     }
 }
