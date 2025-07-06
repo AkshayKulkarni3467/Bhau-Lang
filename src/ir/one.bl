@@ -1,0 +1,14 @@
+hi bhau
+
+bhau baherun ghe printf;
+
+bhau hai ahe x = 1;
+
+bhau ithun chalu{
+   bhau joparent(x < 5){
+      printf("hello");
+      x = x+1;
+   }
+}
+
+bye bhau

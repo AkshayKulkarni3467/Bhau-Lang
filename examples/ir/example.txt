@@ -1,0 +1,15 @@
+extern printf
+x = 1
+main begin:
+L0:
+t0 = x BL_LESSTHAN 5
+if t0 != 0 goto L1
+goto L2
+L1:
+param hello
+t1 = call printf, 1
+t2 = x BL_ADDBINOP 1
+x = t2
+goto L0
+L2:
+main end

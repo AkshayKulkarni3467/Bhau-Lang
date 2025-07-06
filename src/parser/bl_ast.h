@@ -35,8 +35,8 @@ typedef struct Scope {
 
 
 typedef enum {
-    AST_PROGRAM, //
-    AST_ASSIGN, //
+    AST_PROGRAM, 
+    AST_ASSIGN, 
     AST_ASSIGNDECL,
     AST_INTLITERAL,
     AST_BOOLLITERAL,
@@ -45,21 +45,21 @@ typedef enum {
     AST_CHARLITERAL,
     AST_STRINGLITERAL,
     AST_EXTERN,
-    AST_BINOP,//
-    AST_UNOP, //
-    AST_GROUP, // 
-    AST_FUNCTION, //
-    AST_MAIN, //
-    AST_FUNCTIONCALL, //
-    AST_IFELSE, //
+    AST_BINOP,
+    AST_UNOP, 
+    AST_GROUP, 
+    AST_FUNCTION,
+    AST_MAIN, 
+    AST_FUNCTIONCALL, 
+    AST_IFELSE,
     AST_BLOCK,
     AST_SWITCH,
     AST_CASE,
     AST_BREAK,
     AST_CONTINUE,
     AST_DEFAULT,
-    AST_LOOP, //
-    AST_RETURN, //
+    AST_LOOP, 
+    AST_RETURN, 
     AST_COMMENT,
     AST_MULCOMMENT,
     AST_PARAM,

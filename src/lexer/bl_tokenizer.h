@@ -216,6 +216,12 @@ bl_token *bl_tokenize(bl_lexer *lexer){
 
   #ifdef BL_IDENTIFIERS
 
+   //WARN New addition, can result in bugs
+  while(*character == ' ' || *character == '\n' || *character == '\r'){
+   bl_forward(lexer,1);
+   UPDATE_CHAR_PTR();
+  }
+
    if (*character && *character && (is_alpha(*character) || *character == '_'))
    {
       tok->where_firstchar = lexer->parse_point;

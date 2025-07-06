@@ -57,6 +57,7 @@ ScopeVar* scope_pop_until(bl_stack* stack,AST_Node* value,bool is_constant);
 bool scope_find(bl_stack* stack, char* name);
 int get_scope_size(bl_stack* stack);
 void scope_switch_constant(bl_stack* stack,bl_set* set,char* name,bl_arena* arena);
+void scope_update(bl_stack* stack,char* name, AST_Node* value);
 void print_current_scope(bl_stack* stack);
 AST_Node* scope_get_most_recent(bl_stack* stack, char* name);
 
@@ -98,7 +99,7 @@ int main(){
 
 
 
-    AST_Node* op_ast = bhaulang_optimizer("tests/examples/one.bl",arena);
+    AST_Node* op_ast = bhaulang_optimizer("src/ir/one.bl",arena);
 
     print_ast_tree(op_ast,0,"");
     arena_stats(arena);
@@ -783,6 +784,17 @@ void scope_push(bl_stack* stack,char* name, AST_Node* value,bool is_constant, bl
     stack_push(stack,var);
 }
 
+void scope_update(bl_stack* stack,char* name, AST_Node* value){
+    int num = stack_size(stack) - 1;
+    for(int i = num;i>=0;i--){
+        ScopeVar* item = stack->items[i];
+        if(item->name == NULL) continue;
+        if(strcmp(name,item->name) == 0){
+                item->value = value;
+        }
+    }
+}
+
 ScopeVar* scope_pop(bl_stack* stack){
     return stack_pop(stack);
 }
@@ -806,16 +818,16 @@ ScopeVar* scope_pop_until(bl_stack* stack,AST_Node* value,bool is_constant){
 }
 
 bool scope_find(bl_stack* stack, char* name){
-    int num = stack_size(stack);
-    for(int i = 0;i<num;i++){
+    int num = stack_size(stack) - 1;
+    for(int i = num;i>=0;i--){
         ScopeVar* item = stack->items[i];
         if(item->name == NULL) continue;
         if(strcmp(name,item->name) == 0){
-            if(item->value == NULL){
-                return false;
-            }else{
-                return true;
-            }
+                if(item->value == NULL){
+                    return false;
+                }else{
+                    return true;
+                }
         }
     }
     return false;
@@ -1072,6 +1084,7 @@ AST_Node* optimize_ast(AST_Node* node, bl_arena* arena) {
             return node;
         }
 
+
         default:
             return node;
     }
@@ -1118,6 +1131,7 @@ AST_Node* propogate_scope(AST_Node* node, bl_stack* stack,bl_set* set,bl_arena* 
             AST_Assign* assign = (AST_Assign*)node->data;
             AST_Identifier* ident = assign->lhs->data;
             scope_switch_constant(stack,set,ident->name,arena);
+            scope_update(stack,ident->name,assign->rhs);
             assign->rhs = propogate_scope(assign->rhs,stack,set,arena);
             return node;
         }
@@ -1175,7 +1189,7 @@ AST_Node* propogate_scope(AST_Node* node, bl_stack* stack,bl_set* set,bl_arena* 
             if(scope_find(stack,ident->name)){
                 return node;
             }else{
-                fprintf(stderr,"Cannot find identfier in given scope: `%s`\n",ident->name);
+                fprintf(stderr,"FILE: %s LINE : %d Cannot find identfier in given scope: `%s`\n",__FILE__,__LINE__,ident->name);
                 exit(69);
             }
         }
@@ -1208,7 +1222,7 @@ AST_Node* propogate_scope(AST_Node* node, bl_stack* stack,bl_set* set,bl_arena* 
         }
 
         case AST_SWITCH: {
-            AST_Switch* switchnode = (AST_Switch*)arena_alloc(arena,sizeof(AST_Switch));
+            AST_Switch* switchnode = node->data;
             switchnode->expr = propogate_scope(switchnode->expr,stack,set,arena);
             scope_push_seperation(stack,"switch statement",arena);
             for(int i = 0;i<(int)switchnode->case_count;i++){
@@ -1220,12 +1234,21 @@ AST_Node* propogate_scope(AST_Node* node, bl_stack* stack,bl_set* set,bl_arena* 
             return node;
         }
 
-        case AST_CASE:
-            AST_SwitchCase* swc = (AST_SwitchCase*)arena_alloc(arena,sizeof(AST_SwitchCase));
+        case AST_CASE:{
+            AST_SwitchCase* swc = node->data;
             for(int i = 0;i<(int)swc->body_count;i++){
                 swc->body[i] = propogate_scope(swc->body[i],stack,set,arena);
             }
             return node;
+        }
+
+        case AST_DEFAULT:{
+            AST_SwitchCase* def = node->data;
+            for(int i = 0;i<(int)def->body_count;i++){
+                def->body[i] = propogate_scope(def->body[i],stack,set,arena);
+            }
+            return node;
+        }
 
         default:
             return node;

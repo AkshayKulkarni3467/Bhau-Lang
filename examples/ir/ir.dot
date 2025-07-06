@@ -1,0 +1,35 @@
+digraph TAC {
+    node [shape=box fontname="Courier"];
+    n0 [label="extern  printf"];
+    n0 -> n1;
+    n1 [label="x = 1"];
+    n1 -> n2;
+    n2 [label="function main begin"];
+    n2 -> n3;
+    n3 [label="L0:"];
+    n3 -> n4;
+    n4 [label="t0 = x BL_LESSTHAN 5"];
+    n4 -> n5;
+    n5 [label="if t0 != 0 goto L1"];
+    n5 -> n6;
+    n5 -> n7 [style=dashed color=blue];
+    n6 [label="goto L2"];
+    n6 -> n7;
+    n6 -> n13 [style=dashed color=blue];
+    n7 [label="L1:"];
+    n7 -> n8;
+    n8 [label="param hello"];
+    n8 -> n9;
+    n9 [label="t1 = call printf (1)"];
+    n9 -> n10;
+    n10 [label="t2 = x BL_ADDBINOP 1"];
+    n10 -> n11;
+    n11 [label="x = t2"];
+    n11 -> n12;
+    n12 [label="goto L0"];
+    n12 -> n13;
+    n12 -> n3 [style=dashed color=blue];
+    n13 [label="L2:"];
+    n13 -> n14;
+    n14 [label="function main end"];
+}
