@@ -499,7 +499,6 @@ AST_Node* parse_switch(bl_parser* parser){
 
 }
 
-//WARN recursive assignment check is only works if a single variable is assigned (Eg: bhau hai ahe x = x + 1 : works; bhau hai ahe x = y = x+1 doesnt)
 
 AST_Node* parse_expr(bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels){
     if(type == (enum KEYWORD_TYPES)BL_KW_BHAU_HAI_AHE){

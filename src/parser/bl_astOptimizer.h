@@ -78,8 +78,6 @@ AST_Node* make_int_literal_node(bl_arena* arena, int value);
 AST_Node* make_bool_literal_node(bl_arena* arena, int value);
 AST_Node* make_float_literal_node(bl_arena* arena, float value);
 AST_Node* optimize_ast(AST_Node* node,bl_arena* arena);
-AST_Node* flatten_blocks(AST_Node* node, bl_arena* arena);
-AST_Block* flatten_block(AST_Block* block, bl_arena* arena);
 AST_Node* flatten_assignment_chain(AST_Node* assign, bl_arena* arena);
 AST_NodeList flatten_comma_chain(AST_Node* node, bl_arena* arena);
 
@@ -129,8 +127,7 @@ AST_Node* perform_optimization(AST_Node* ast,bl_arena* arena){
     AST_Node* const_prop_ast = fold_constants_from_scope(scoped_ast,scope_stack,scope_set,arena);
     AST_Node* reoptimized_ast = optimize_ast(const_prop_ast,arena);
     AST_Node* arity_checked_ast = check_function_arity(reoptimized_ast,reg,arena);
-    AST_Node* flattened_ast =  flatten_blocks(arity_checked_ast,arena);
-    return flattened_ast;
+    return arity_checked_ast;
 }
 
 void func_registry_init(FunctionRegistry* reg, bl_arena* arena) {
@@ -158,137 +155,6 @@ int func_registry_get(FunctionRegistry* reg, char* name) {
 }
 
 
-AST_Block* flatten_block(AST_Block* block, bl_arena* arena) {
-    if (!block) return NULL;
-
-    AST_Node** new_body = arena_alloc(arena, sizeof(AST_Node*) * block->body_count * 20);
-    size_t new_count = 0;
-
-    for (size_t i = 0; i < block->body_count; ++i) {
-        AST_Node* stmt = flatten_blocks(block->body[i], arena); 
-
-        if (stmt && stmt->type == AST_BLOCK) {
-            AST_Block* inner = stmt->data;
-            for (size_t j = 0; j < inner->body_count; ++j) {
-                new_body[new_count++] = inner->body[j];
-            }
-        } else if (stmt) {
-            new_body[new_count++] = stmt;
-        }
-    }
-
-    block->body = new_body;
-    block->body_count = new_count;
-    return block;
-}
-
-AST_Node* flatten_blocks(AST_Node* node, bl_arena* arena) {
-    if (!node) return NULL;
-
-    switch (node->type) {
-        case AST_PROGRAM: {
-            ASTProgram* prog = node->data;
-            for (size_t i = 0; i < prog->count; ++i) {
-                prog->statements[i] = flatten_blocks(prog->statements[i], arena);
-            }
-
-
-            AST_Node** new_stmts = arena_alloc(arena, sizeof(AST_Node*) * prog->count * 2);
-            size_t new_count = 0;
-
-            for (size_t i = 0; i < prog->count; ++i) {
-                AST_Node* stmt = prog->statements[i];
-                if (stmt->type == AST_BLOCK) {
-                    AST_Block* blk = stmt->data;
-                    for (size_t j = 0; j < blk->body_count; ++j) {
-                        new_stmts[new_count++] = blk->body[j];
-                    }
-                } else {
-                    new_stmts[new_count++] = stmt;
-                }
-            }
-
-            prog->statements = new_stmts;
-            prog->count = new_count;
-            return node;
-        }
-
-        case AST_BLOCK: {
-            AST_Block* blk = node->data;
-
-            AST_Node** new_body = arena_alloc(arena, sizeof(AST_Node*) * blk->body_count * 2);
-            size_t new_count = 0;
-
-            for (size_t i = 0; i < blk->body_count; ++i) {
-                AST_Node* stmt = flatten_blocks(blk->body[i], arena);
-                if (!stmt) continue;
-
-                if (stmt->type == AST_BLOCK) {
-                    AST_Block* inner = stmt->data;
-                    for (size_t j = 0; j < inner->body_count; ++j) {
-                        new_body[new_count++] = inner->body[j];
-                    }
-                } else {
-                    new_body[new_count++] = stmt;
-                }
-            }
-
-            blk->body = new_body;
-            blk->body_count = new_count;
-            return node;
-        }
-
-        case AST_IFELSE: {
-            AST_Ifelse* ifs = node->data;
-            ifs->condition = flatten_blocks(ifs->condition, arena);
-            ifs->then_block = flatten_blocks(ifs->then_block, arena);
-            ifs->else_block = flatten_blocks(ifs->else_block, arena);
-            return node;
-        }
-
-        case AST_LOOP: {
-            AST_Loop* loop = node->data;
-            loop->expr = flatten_blocks(loop->expr, arena);
-            loop->block = flatten_blocks(loop->block, arena);
-            return node;
-        }
-
-        case AST_SWITCH: {
-            AST_Switch* sw = node->data;
-            sw->expr = flatten_blocks(sw->expr, arena);
-            for (size_t i = 0; i < sw->case_count; ++i) {
-                sw->cases[i] = flatten_blocks(sw->cases[i], arena);
-            }
-            sw->default_case = flatten_blocks(sw->default_case, arena);
-            return node;
-        }
-
-        case AST_CASE:
-        case AST_DEFAULT: {
-            AST_SwitchCase* sc = node->data;
-            for (size_t i = 0; i < sc->body_count; ++i) {
-                sc->body[i] = flatten_blocks(sc->body[i], arena);
-            }
-            return node;
-        }
-
-        case AST_FUNCTION:
-        case AST_MAIN: {
-
-            AST_Node** body_ptr = (node->type == AST_FUNCTION)
-                ? &((AST_Function*)node->data)->block
-                : &((AST_Main*)node->data)->block;
-
-            *body_ptr = flatten_blocks(*body_ptr, arena);
-            return node;
-        }
-
-        default: {
-
-            return node;
-        }
-    }
-}
 
 ConstKind promote_kind(ConstKind a, ConstKind b) {
     if (a == CONSTKIND_STRING || b == CONSTKIND_STRING) return CONSTKIND_STRING;
