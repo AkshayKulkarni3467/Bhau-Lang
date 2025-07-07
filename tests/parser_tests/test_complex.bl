@@ -105,10 +105,6 @@ bhau lakshat thev long_loop_chain(){
 
 bhau lakshat thev string_block(){
     bhau hai ahe base = "BhauLang";
-    bhau hai ahe desc = base + " is powerful.";
-    bhau hai ahe shout = base + "!!!";
-    printf(desc);
-    printf(shout);
 }
 
 bhau lakshat thev everything(val){

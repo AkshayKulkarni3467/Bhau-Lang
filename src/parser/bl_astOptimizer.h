@@ -118,13 +118,12 @@ AST_Node* perform_optimization(AST_Node* ast,bl_arena* arena){
     bl_set* scope_set = set_create(arena);
     FunctionRegistry* reg = arena_alloc(arena, sizeof(FunctionRegistry));
     func_registry_init(reg, arena);
-
     AST_Node* optimized_ast = optimize_ast(ast,arena);
     AST_Node* transformed_ast = transform_undeclared_assigns(optimized_ast,arena);
     AST_Node* scoped_ast = propogate_scope(transformed_ast,scope_stack,scope_set,arena);
-
     scope_stack = scope_stack_init(arena);
     AST_Node* const_prop_ast = fold_constants_from_scope(scoped_ast,scope_stack,scope_set,arena);
+    print_ast_tree(const_prop_ast,0,"");
     AST_Node* reoptimized_ast = optimize_ast(const_prop_ast,arena);
     AST_Node* arity_checked_ast = check_function_arity(reoptimized_ast,reg,arena);
     return arity_checked_ast;
@@ -404,6 +403,8 @@ ConstValue eval_unary_expr(enum KEYWORD_TYPES op, ConstValue val) {
             switch (op) {
                 case BL_NOT: result.kind = CONSTKIND_INT; result.i = !v; break;
                 case BL_SUBBINOP: result.kind = CONSTKIND_INT; result.i = -v; break;
+                case BL_INC : result.kind = CONSTKIND_INT; result.i = v+1; break;
+                case BL_DEC : result.kind = CONSTKIND_INT; result.i = v-1; break;
                 default: break;
             }
             break;
@@ -413,6 +414,8 @@ ConstValue eval_unary_expr(enum KEYWORD_TYPES op, ConstValue val) {
             switch (op) {
                 case BL_NOT: result.kind = CONSTKIND_INT; result.i = !(val.f); break;
                 case BL_SUBBINOP: result.kind = CONSTKIND_FLOAT; result.f = -val.f; break;
+                case BL_INC: result.kind = CONSTKIND_FLOAT; result.f = val.f+1; break;
+                case BL_DEC: result.kind = CONSTKIND_FLOAT; result.f = val.f-1; break;
                 default: break;
             }
             break;
@@ -606,6 +609,22 @@ AST_Node* transform_undeclared_assigns(AST_Node* node, bl_arena* arena){
                 sc->value = transform_undeclared_assigns(sc->value, arena);
             for (size_t i = 0; i < sc->body_count; ++i) {
                 sc->body[i] = transform_undeclared_assigns(sc->body[i], arena);
+            }
+            break;
+        }
+
+        case AST_UNOP: {
+            AST_Unop* u_node = (AST_Unop*)node->data;
+            if(u_node->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR){
+                AST_Assign* decl = (AST_Assign*)arena_alloc(arena, sizeof(AST_Assign));
+                decl->lhs = node;
+                decl->rhs = NULL;
+                decl->op = BL_EQUAL;
+                decl->type = AST_ASSIGNDECL;
+                AST_Node* wrapper = (AST_Node*)arena_alloc(arena, sizeof(AST_Node));
+                wrapper->type = AST_ASSIGNDECL;
+                wrapper->data = decl;
+                return wrapper;
             }
             break;
         }
@@ -832,12 +851,17 @@ AST_Node* optimize_ast(AST_Node* node, bl_arena* arena) {
                 for (size_t i = 0; i < idents.count; ++i) {
                     AST_Assign* decl = arena_alloc(arena, sizeof(AST_Assign));
                     decl->lhs = idents.items[i];
-                    AST_Identifier* ident = (AST_Identifier*)idents.items[i]->data;
-                    AST_Node* decl_node = arena_alloc(arena, sizeof(AST_Node));
-                    decl_node->type = AST_IDENTIFIER;
-                    decl_node->data = ident;
+                    if(idents.items[i]->type != AST_UNOP){
+                        AST_Identifier* ident = (AST_Identifier*)idents.items[i]->data;
+                        AST_Node* decl_node = arena_alloc(arena, sizeof(AST_Node));
+                        decl_node->type = AST_IDENTIFIER;
+                        decl_node->data = ident;
 
-                    decls[i] = decl_node;
+                        decls[i] = decl_node;
+                    }else{
+                        fprintf(stderr,"Cannot assign pointers with comma currently\n");
+                        exit(69);
+                    }
                 }
 
 
@@ -987,19 +1011,42 @@ AST_Node* propogate_scope(AST_Node* node, bl_stack* stack,bl_set* set,bl_arena* 
             
         case AST_ASSIGNDECL:{
             AST_Assign* assign = (AST_Assign*)node->data;
-            AST_Identifier* ident = assign->lhs->data;
-            assign->rhs = propogate_scope(assign->rhs,stack,set,arena);
-            scope_push(stack,ident->name,assign->rhs,true,arena);
-            return node;
+            if(assign->lhs->type != AST_UNOP){
+                AST_Identifier* ident = assign->lhs->data;
+                assign->rhs = propogate_scope(assign->rhs,stack,set,arena);
+                scope_push(stack,ident->name,assign->rhs,true,arena);
+                return node;
+            }else{
+                AST_Unop* unop = (AST_Unop*)assign->lhs->data;
+                while(unop->node->type == AST_UNOP){
+                    unop = (AST_Unop*)unop->node->data;
+                }
+                AST_Identifier* ident = unop->node->data;
+                assign->rhs = propogate_scope(assign->rhs,stack,set,arena);
+                scope_push(stack,ident->name,assign->rhs,true,arena);
+                return node;
+            }
         }
 
         case AST_ASSIGN: {
             AST_Assign* assign = (AST_Assign*)node->data;
-            AST_Identifier* ident = assign->lhs->data;
-            scope_switch_constant(stack,set,ident->name,arena);
-            scope_update(stack,ident->name,assign->rhs);
-            assign->rhs = propogate_scope(assign->rhs,stack,set,arena);
-            return node;
+            if(assign->lhs->type != AST_UNOP){
+                AST_Identifier* ident = assign->lhs->data;
+                scope_switch_constant(stack,set,ident->name,arena);
+                scope_update(stack,ident->name,assign->rhs);
+                assign->rhs = propogate_scope(assign->rhs,stack,set,arena);
+                return node;
+            }else{
+                AST_Unop* unop = (AST_Unop*)assign->lhs->data;
+                while(unop->node->type == AST_UNOP){
+                    unop = (AST_Unop*)unop->node->data;
+                }
+                AST_Identifier* ident = unop->node->data;
+                scope_update(stack,ident->name,assign->rhs);
+                unop->node = propogate_scope(unop->node,stack,set,arena);
+                assign->rhs = propogate_scope(assign->rhs,stack,set,arena);
+                return node;
+            }
         }
 
         case AST_IFELSE: {
@@ -1147,18 +1194,42 @@ AST_Node* fold_constants_from_scope(AST_Node* node, bl_stack* stack, bl_set* non
             AST_Assign* assign = node->data;
             assign->rhs = fold_constants_from_scope(assign->rhs, stack, non_const_set, arena);
 
-            AST_Identifier* ident = (AST_Identifier*)assign->lhs->data;
-            scope_push(stack, ident->name, assign->rhs, true, arena);
-            return node;
+            if(assign->lhs->type != AST_UNOP){
+                AST_Identifier* ident = (AST_Identifier*)assign->lhs->data;
+                scope_push(stack, ident->name, assign->rhs, true, arena);
+                return node;
+            }else{
+                AST_Unop* unop = (AST_Unop*)assign->lhs->data;
+                if(!(unop->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR || unop->op == (enum KEYWORD_TYPES)BL_KW_BHAU_REF)){
+                    while(unop->node->type == AST_UNOP){
+                        unop = (AST_Unop*)unop->node->data;
+                    }
+                    AST_Identifier* ident = unop->node->data;
+                    scope_push(stack,ident->name,assign->rhs,true,arena);
+                }
+                return node;
+            }
         }
 
         case AST_ASSIGN: {
             AST_Assign* assign = node->data;
             assign->rhs = fold_constants_from_scope(assign->rhs, stack, non_const_set, arena);
-
-            AST_Identifier* ident = assign->lhs->data;
-            scope_push(stack, ident->name, assign->rhs, false, arena); 
-            return node;
+            if(assign->lhs->type != AST_UNOP){
+                AST_Identifier* ident = assign->lhs->data;
+                scope_push(stack, ident->name, assign->rhs, false, arena); 
+                return node;
+            }else{
+                AST_Unop* unop = (AST_Unop*)assign->lhs->data;
+                if(!(unop->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR || unop->op == (enum KEYWORD_TYPES)BL_KW_BHAU_REF)){
+                    while(unop->node->type == AST_UNOP){
+                        unop = (AST_Unop*)unop->node->data;
+                    }
+                    AST_Identifier* ident = unop->node->data;
+                    scope_update(stack,ident->name,assign->rhs);
+                    unop->node = fold_constants_from_scope(unop->node,stack,non_const_set,arena);
+                }
+                return node;
+            }
         }
 
         case AST_IFELSE: {
@@ -1239,8 +1310,10 @@ AST_Node* fold_constants_from_scope(AST_Node* node, bl_stack* stack, bl_set* non
         }
 
         case AST_UNOP: {
-            AST_Unop* uop = node->data;
-            uop->node = fold_constants_from_scope(uop->node, stack, non_const_set, arena);
+            AST_Unop* un_node = node->data;
+            if(!(un_node->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR || un_node->op == (enum KEYWORD_TYPES)BL_KW_BHAU_REF)){
+                un_node->node = fold_constants_from_scope(un_node->node,stack,non_const_set,arena);
+            }
             return node;
         }
 
