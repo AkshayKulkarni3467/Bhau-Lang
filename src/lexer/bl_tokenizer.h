@@ -966,7 +966,9 @@ static inline bl_token* bl_tokenize_file(char* filename,bl_arena* arena){
    if (len < 0) {
       fprintf(stderr, "Error opening file\n");
    }
-   fclose(f);
+   if(f != NULL){
+      fclose(f);
+   }
 
    char* string_store = (char *)arena_alloc(arena,1<<13);
    int string_store_len = 1<<13;

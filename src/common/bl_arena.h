@@ -232,4 +232,11 @@ static inline int pointer_in_arena(const void *ptr, const bl_arena *arena) {
     return 0;
 }
 
+char* arena_strdup(bl_arena* arena, const char* s) {
+    size_t len = strlen(s) + 1;
+    char* copy = (char*)arena_alloc(arena, len);
+    if (copy) memcpy(copy, s, len);
+    return copy;
+}
+
 #endif // ARENA_H

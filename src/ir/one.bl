@@ -2,12 +2,12 @@ hi bhau
 
 
 bhau hai ahe c = 12;
-bhau hai ahe ptr b = ref c;
-bhau hai ahe ptr a = ptr b;
+bhau hai ahe b = ref c;
+bhau hai ahe a = ptr b;
 
-bhau hai ahe ptr e = ptr f = ptr g = ref c;
+bhau hai ahe e = f = g = ref c;
 
-ptr f = ref a;
+f = ref a;
 f = ref b;
 
 bhau hai ahe mul_dr = ptr ptr c;

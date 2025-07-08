@@ -28,7 +28,6 @@ typedef enum {
     TAC_RETURN,
     TAC_EXTERN,
     TAC_LOAD_PTR,
-    TAC_STORE_PTR,
     TAC_ADDR_OF,   
 } TAC_Op;
 
@@ -138,16 +137,26 @@ char* new_label(bl_arena* arena);
 char* print_type_val(DataContext* context,bl_arena* arena);
 char* get_str_type(ValueType type);
 
+char* arena_strdup(bl_arena* arena, const char* s);
+void symbol_table_list_init(SymbolTableList* list, bl_arena* arena);
+SymbolTable* get_or_create_table(SymbolTableList* list, const char* scope_name);
+void add_or_update_symbol(SymbolTable* table, bl_arena* arena, const char* name, ValueType type, bool is_const, ValuePrimitive val, bool initialized);
+void print_symbol_table(SymbolTable* table);
+void print_all_symbol_tables(SymbolTableList* list);
+SymbolTableList* get_symbol_table(TACList* list, bl_arena* arena);
+
+
 
 int main(){
     bl_arena* arena = (bl_arena*)malloc(sizeof(bl_arena));
     arena_init(arena);
     AST_Node* node = bhaulang_optimizer("src/ir/one.bl",arena);
-    print_ast_tree(node,0,"");
 
     TACList* list = generate_tac(node,arena);
+    SymbolTableList* slist = get_symbol_table(list,arena);
+    print_all_symbol_tables(slist);
+    printf("\n");
     tac_print(list,arena);
-    arena_stats(arena);
     return 0;
 }
 
@@ -310,7 +319,7 @@ TACList* generate_tac(AST_Node* ast, bl_arena* arena) {
     return list;
 }
 
-//TODO implement multi reference on left side of assignment
+
 DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext* loop_ctx) {
     if (!node) return NULL;
     switch (node->type) {
@@ -488,12 +497,22 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             if (un->op == (enum KEYWORD_TYPES)BL_KW_BHAU_REF) {
                 DataContext* result = new_temp(arena);
                 result->type = TYPE_REF;
-                tac_append(prog, tac_create_instr(arena, TAC_ADDR_OF, result, arg, NULL, NULL, NULL));
+
+                OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                op_ctx->operator_str = get_unaryop_from_keyword(un->op);
+                op_ctx->operator_type = un->op;
+
+                tac_append(prog, tac_create_instr(arena, TAC_ADDR_OF, result, arg, NULL, op_ctx, NULL));
                 return result;
             }else if(un->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR){
                 DataContext* result = new_temp(arena);
                 result->type = TYPE_PTR;
-                tac_append(prog,tac_create_instr(arena,TAC_LOAD_PTR,result,arg,NULL,NULL,NULL));
+
+                OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                op_ctx->operator_str = get_unaryop_from_keyword(un->op);
+                op_ctx->operator_type = un->op;
+
+                tac_append(prog,tac_create_instr(arena,TAC_LOAD_PTR,result,arg,NULL,op_ctx,NULL));
                 return result;
             }
             DataContext* result = new_temp(arena);
@@ -511,29 +530,10 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             AST_Assign* asg = node->data;
             DataContext* rhs = gen_tac(asg->rhs, prog, arena,loop_ctx);
             DataContext* ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
-
-            if (asg->lhs->type == AST_UNOP && ((AST_Unop*)asg->lhs->data)->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR) {
-                AST_Unop* temp_unop = (AST_Unop*)arena_alloc(arena,sizeof(AST_Unop));
-                temp_unop = asg->lhs->data;
-                
-                while((temp_unop->node->type == AST_UNOP) && (temp_unop->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR)){
-                    temp_unop = temp_unop->node->data;
-                }
-                AST_Identifier* ident = temp_unop->node->data;
-                ctx->val.sval = ident->name;                
-                ctx->type = TYPE_IDENTIFIER;
-
-                OperatorContext* op_ctx = arena_alloc(arena,sizeof(OperatorContext));
-                op_ctx->operator_str = get_binop_from_keyword(asg->op);
-                op_ctx->operator_type = asg->op;
-
-                tac_append(prog, tac_create_instr(arena, TAC_STORE_PTR, ctx, rhs, NULL, NULL, NULL));
-
-                return ctx;
-            }else if(asg->lhs->type == AST_UNOP && ((AST_Unop*)asg->lhs->data)->op == (enum KEYWORD_TYPES)BL_KW_BHAU_REF){
-                    fprintf(stderr, "Reference not allowed on left side of the assignment\n");
-                    exit(69);
-                }
+            if(asg->lhs->type == AST_UNOP && (((AST_Unop*)asg->lhs->data)->op == (enum KEYWORD_TYPES)BL_KW_BHAU_REF || ((AST_Unop*)asg->lhs->data)->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR)){
+                fprintf(stderr, "Reference not allowed on left side of the assignment\n");
+                exit(69);
+            }
             AST_Identifier* ident = asg->lhs->data;
             ctx->val.sval = ident->name;
             ctx->type = TYPE_IDENTIFIER;
@@ -548,62 +548,35 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
 
         case AST_ASSIGNDECL: {
             AST_Assign* asg = node->data;
-            DataContext* ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
-            if(asg->rhs){
-                DataContext* rhs = gen_tac(asg->rhs, prog, arena,loop_ctx);
+            DataContext* ctx = (DataContext*)arena_alloc(arena, sizeof(DataContext));
 
-                if (asg->lhs->type == AST_UNOP && ((AST_Unop*)asg->lhs->data)->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR) {
-                    AST_Unop* temp_unop = (AST_Unop*)arena_alloc(arena,sizeof(AST_Unop));
-                    temp_unop = asg->lhs->data;
-                    while(temp_unop->node->type == AST_UNOP){
-                        temp_unop = temp_unop->node->data;
-                    }
-                    AST_Identifier* ident = temp_unop->node->data;
-                    ctx->val.sval = ident->name;
-                    ctx->type = TYPE_IDENTIFIER;
+            if (asg->rhs) {
+                DataContext* rhs = gen_tac(asg->rhs, prog, arena, loop_ctx);
 
-                    tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL, ctx,NULL,NULL,NULL,NULL));
-                    tac_append(prog, tac_create_instr(arena, TAC_STORE_PTR, ctx, rhs, NULL, NULL, NULL));
-
-                    return ctx;
-                }else if(asg->lhs->type == AST_UNOP && ((AST_Unop*)asg->lhs->data)->op == (enum KEYWORD_TYPES)BL_KW_BHAU_REF){
-                    fprintf(stderr, "Reference cannot be on the left side of assignment");
+                if (asg->lhs->type == AST_UNOP && (((AST_Unop*)asg->lhs->data)->op == (enum KEYWORD_TYPES)BL_KW_BHAU_REF || ((AST_Unop*)asg->lhs->data)->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR)) {
+                    fprintf(stderr, "Pointer or Reference cannot be on the left side of assignment\n");
                     exit(69);
                 }
+
                 
                 AST_Identifier* ident = asg->lhs->data;
                 ctx->val.sval = ident->name;
                 ctx->type = TYPE_IDENTIFIER;
                 tac_append(prog, tac_create_instr(arena, TAC_ASSIGNDECL, ctx, rhs, NULL, NULL, NULL));
-            }else{
-
-
-                if (asg->lhs->type == AST_UNOP && ((AST_Unop*)asg->lhs->data)->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR) {
-                    AST_Unop* temp_unop = (AST_Unop*)arena_alloc(arena,sizeof(AST_Unop));
-                    temp_unop = asg->lhs->data;
-                    while(temp_unop->node->type == AST_UNOP){
-                        temp_unop = temp_unop->node->data;
-                    }
-                    AST_Identifier* ident = temp_unop->node->data;
-                    ctx->val.sval = ident->name;
-                    ctx->type = TYPE_IDENTIFIER;
-
-                    tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL, ctx,NULL,NULL,NULL,NULL));
-                    tac_append(prog, tac_create_instr(arena, TAC_STORE_PTR, ctx, NULL, NULL, NULL, NULL));
-
-                    return ctx;
-                }else if(asg->lhs->type == AST_UNOP && ((AST_Unop*)asg->lhs->data)->op == (enum KEYWORD_TYPES)BL_KW_BHAU_REF){
-                    fprintf(stderr, "Reference cannot be on the left side of assignment");
+                return ctx;
+            } else {
+                if (asg->lhs->type == AST_UNOP &&( ((AST_Unop*)asg->lhs->data)->op == (enum KEYWORD_TYPES)BL_KW_BHAU_REF || ((AST_Unop*)asg->lhs->data)->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR)) {
+                    fprintf(stderr, "Reference cannot be on the left side of assignment\n");
                     exit(69);
                 }
+
                 AST_Identifier* ident = asg->lhs->data;
                 ctx->val.sval = ident->name;
                 ctx->type = TYPE_IDENTIFIER;
                 tac_append(prog, tac_create_instr(arena, TAC_ASSIGNDECL, ctx, NULL, NULL, NULL, NULL));
+                return ctx;
             }
-            return ctx;
         }
-
 
         case AST_MAIN: {
             AST_Main* fn = node->data;
@@ -817,6 +790,9 @@ void tac_colored_print(TACList* list,bl_arena* arena) {
                         COLOR_OP, instr->relop->operator_str, COLOR_RESET,
                         COLOR_ARG, print_type_val(instr->arg2,arena), COLOR_RESET);
                 break;
+            
+            case TAC_ADDR_OF:
+            case TAC_LOAD_PTR:
             case TAC_UNOP:
                 printf("  %s%-3s%s = %s%-3s%s %s%-3s%s\n",
                         COLOR_RESULT, print_type_val(instr->result,arena), COLOR_RESET,
@@ -923,6 +899,8 @@ void tac_export_dot(TACList* list, const char* filename,bl_arena* arena) {
             case TAC_BINOP:
                 snprintf(label, sizeof(label), "%s = %s %s %s", print_type_val(instr->result,arena), print_type_val(instr->arg1,arena), instr->relop->operator_str, print_type_val(instr->arg2,arena));
                 break;
+            case TAC_ADDR_OF:
+            case TAC_LOAD_PTR:
             case TAC_UNOP:
                 snprintf(label, sizeof(label), "%s = %s %s", print_type_val(instr->result,arena), instr->relop->operator_str, print_type_val(instr->arg1,arena));
                 break;
@@ -1069,26 +1047,19 @@ void tac_print(TACList* list,bl_arena* arena) {
                     get_str_type(instr->result->type),
                     print_type_val(instr->arg1, arena),
                     get_str_type(instr->arg1->type));
-                break;
-
-            case TAC_STORE_PTR:
-                printf("[STORE PTR] %s (%s) = %s (%s)\n", 
-                    print_type_val(instr->result, arena),  
-                    get_str_type(instr->result->type),
-                    instr->arg1? 
-                    print_type_val(instr->arg1, arena):
-                    "(null)",
-                    instr->arg1?
-                    get_str_type(instr->arg1->type):
-                    "null");   
+                
                 break;
 
             case TAC_ADDR_OF:
                 printf("[ADDR OF] %s (%s) = &%s (%s)\n", 
                     print_type_val(instr->result, arena), 
                     get_str_type(instr->result->type),
-                    print_type_val(instr->arg1, arena),
-                    get_str_type(instr->arg1->type));
+                    instr->arg1 ?
+                    print_type_val(instr->arg1, arena):
+                    "null",
+                    instr->arg1 ?
+                    get_str_type(instr->arg1->type):
+                    "null");
                 break;
             case TAC_ASSIGNDECL:
                 if(instr->arg1){
@@ -1150,3 +1121,147 @@ void tac_print(TACList* list,bl_arena* arena) {
         }
     }
 }
+
+void symbol_table_list_init(SymbolTableList* list, bl_arena* arena) {
+    list->arena = arena;
+    list->table_count = 0;
+    list->table_capacity = 32;
+    list->tables = (SymbolTable**)arena_alloc(arena, sizeof(SymbolTable*) * list->table_capacity);
+}
+
+
+SymbolTableList* get_symbol_table(TACList* list, bl_arena* arena) {
+    SymbolTableList* table_list = (SymbolTableList*)arena_alloc(arena, sizeof(SymbolTableList));
+    symbol_table_list_init(table_list, arena);
+
+    char* current_scope = "global";  
+    SymbolTable* current_table = get_or_create_table(table_list, current_scope);
+
+    for (TACInstr* instr = list->head; instr; instr = instr->next) {
+        switch (instr->op) {
+            case TAC_FUNC_BEGIN:
+            case TAC_MAIN_BEGIN:
+                current_scope = arena_strdup(arena, instr->label);  
+                current_table = get_or_create_table(table_list, current_scope);
+                break;
+
+            case TAC_FUNC_END:
+            case TAC_MAIN_END:
+                current_scope = "global";
+                current_table = get_or_create_table(table_list, current_scope);
+                break;
+
+            case TAC_ASSIGNDECL: {
+                const char* name = print_type_val(instr->result, arena);
+                ValueType type = instr->arg1 ? instr->arg1->type : instr->result->type;
+                bool initialized = instr->arg1 != NULL;
+                ValuePrimitive val = instr->arg1 ? instr->arg1->val : (ValuePrimitive){0};
+                add_or_update_symbol(current_table, arena, name, type, true, val, initialized);
+                break;
+            }
+
+            case TAC_ASSIGN: {
+                const char* name = print_type_val(instr->result, arena);
+                ValueType type = instr->arg1->type;
+                ValuePrimitive val = instr->arg1->val;
+                add_or_update_symbol(current_table, arena, name, type, false, val, true);
+                break;
+            }
+
+            case TAC_PARAM: {
+                const char* name = print_type_val(instr->arg1, arena);
+                ValueType type = instr->arg1->type;
+                add_or_update_symbol(current_table, arena, name, type, false, instr->arg1->val, true);
+                break;
+            }
+
+
+            case TAC_EXTERN: {
+                const char* name = print_type_val(instr->result, arena);
+                ValueType type = instr->result->type;
+                add_or_update_symbol(current_table, arena, name, type, true, instr->result->val, true);
+                break;
+            }
+
+            case TAC_ADDR_OF:
+            case TAC_LOAD_PTR:
+            case TAC_BINOP:
+            case TAC_UNOP:
+            case TAC_CALL: {
+                if (instr->result) {
+                    const char* temp_name = print_type_val(instr->result, arena);
+                    ValueType type = instr->result->type;
+                    add_or_update_symbol(current_table, arena, temp_name, type, false, instr->result->val, true);
+                }
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
+
+    return table_list;
+}
+
+void print_all_symbol_tables(SymbolTableList* list) {
+    for (int i = 0; i < list->table_count; ++i) {
+        print_symbol_table(list->tables[i]);
+    }
+}
+
+void print_symbol_table(SymbolTable* table) {
+    printf(">> Symbol Table for Scope: %s\n", table->scope_name);
+    for (int i = 0; i < table->symbol_count; ++i) {
+        SymbolEntry* s = table->entries[i];
+        printf("  [%d] %s (%s) | Const: %d | Init: %d\n", i, s->name, get_str_type(s->type), s->is_const, s->is_initialized);
+    }
+}
+
+void add_or_update_symbol(SymbolTable* table, bl_arena* arena, const char* name, ValueType type, bool is_const, ValuePrimitive val, bool initialized) {
+    for (int i = 0; i < table->symbol_count; ++i) {
+        if (strcmp(table->entries[i]->name, name) == 0) {
+            table->entries[i]->type = type;
+            table->entries[i]->value = val;
+            table->entries[i]->is_const = is_const;
+            table->entries[i]->is_initialized = initialized;
+            return;
+        }
+    }
+
+    if (table->symbol_count >= table->symbol_capacity) {
+        printf("! SymbolTable capacity exceeded in scope: %s\n", table->scope_name);
+        return;
+    }
+
+    SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena, sizeof(SymbolEntry));
+    entry->name = arena_strdup(arena, name);
+    entry->type = type;
+    entry->value = val;
+    entry->is_const = is_const;
+    entry->is_initialized = initialized;
+
+    table->entries[table->symbol_count++] = entry;
+}
+
+SymbolTable* get_or_create_table(SymbolTableList* list, const char* scope_name) {
+    for (int i = 0; i < list->table_count; ++i) {
+        if (strcmp(list->tables[i]->scope_name, scope_name) == 0)
+            return list->tables[i];
+    }
+
+    if (list->table_count >= list->table_capacity) {
+        printf("! SymbolTableList capacity exceeded. Please increase capacity or use chunked allocation.\n");
+        return NULL;
+    }
+
+    SymbolTable* table = (SymbolTable*)arena_alloc(list->arena, sizeof(SymbolTable));
+    table->scope_name = arena_strdup(list->arena, scope_name);
+    table->symbol_count = 0;
+    table->symbol_capacity = 32;
+    table->entries = (SymbolEntry**)arena_alloc(list->arena, sizeof(SymbolEntry*) * table->symbol_capacity);
+
+    list->tables[list->table_count++] = table;
+    return table;
+}
+

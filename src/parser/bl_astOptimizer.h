@@ -123,7 +123,6 @@ AST_Node* perform_optimization(AST_Node* ast,bl_arena* arena){
     AST_Node* scoped_ast = propogate_scope(transformed_ast,scope_stack,scope_set,arena);
     scope_stack = scope_stack_init(arena);
     AST_Node* const_prop_ast = fold_constants_from_scope(scoped_ast,scope_stack,scope_set,arena);
-    print_ast_tree(const_prop_ast,0,"");
     AST_Node* reoptimized_ast = optimize_ast(const_prop_ast,arena);
     AST_Node* arity_checked_ast = check_function_arity(reoptimized_ast,reg,arena);
     return arity_checked_ast;
