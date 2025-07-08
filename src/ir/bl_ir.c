@@ -9,6 +9,10 @@
 #define COLOR_COMMENT   "\x1b[2;37m"
 
 
+//TODO assigning register offset based on the types and scopes
+
+//TODO try to propogate function name in symbol entry and assign proper types to funccall variables
+
 typedef enum {
     TAC_NOP,
     TAC_ASSIGNDECL,
@@ -42,6 +46,8 @@ typedef enum {
     TYPE_IDENTIFIER,
     TYPE_PTR,
     TYPE_REF,
+    TYPE_FUNCTION,
+    TYPE_PARAM,
 } ValueType;
 
 
@@ -54,7 +60,9 @@ typedef union{
 } ValuePrimitive;
 typedef struct {
     ValuePrimitive val;
+    ValueType acquired_type;
     ValueType type;
+    int scope_id;
 } DataContext;
 
 typedef struct {
@@ -92,9 +100,7 @@ typedef struct LoopContext {
 typedef struct {
     char* name;
     ValueType type;
-    bool is_const;
-    bool is_pointer;  
-    bool is_ref;      
+    bool is_const; 
     ValuePrimitive value; 
     bool is_initialized;
 } SymbolEntry;
@@ -129,6 +135,7 @@ void tac_colored_print(TACList* list,bl_arena* arena);
 void tac_export_dot(TACList* list, const char* filename,bl_arena* arena);
 
 TACList* generate_tac(AST_Node* ast, bl_arena* arena);
+TACList* update_list_types(TACList* list,bl_arena* arena);
 DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena, LoopContext* loop_ctx);
 
 DataContext* new_temp(bl_arena* arena);
@@ -136,6 +143,7 @@ char* get_binop_from_keyword(enum KEYWORD_TYPES type);
 char* new_label(bl_arena* arena);
 char* print_type_val(DataContext* context,bl_arena* arena);
 char* get_str_type(ValueType type);
+TACList* generate_scope_ids(TACList* list);
 
 char* arena_strdup(bl_arena* arena, const char* s);
 void symbol_table_list_init(SymbolTableList* list, bl_arena* arena);
@@ -153,10 +161,12 @@ int main(){
     AST_Node* node = bhaulang_optimizer("src/ir/one.bl",arena);
 
     TACList* list = generate_tac(node,arena);
-    SymbolTableList* slist = get_symbol_table(list,arena);
-    print_all_symbol_tables(slist);
+    TACList* slist = generate_scope_ids(list);
+    TACList* ulist = update_list_types(slist,arena);
+    SymbolTableList* sylist = get_symbol_table(ulist,arena);
+    print_all_symbol_tables(sylist);
     printf("\n");
-    tac_print(list,arena);
+    tac_print(ulist,arena);
     return 0;
 }
 
@@ -265,6 +275,8 @@ char* get_str_type(ValueType type){
         case TYPE_UNKNOWN: return "unknown";
         case TYPE_PTR: return "ptr";
         case TYPE_REF: return "ref";
+        case TYPE_FUNCTION: return "func";
+        case TYPE_PARAM: return "param";
     }
     return NULL;
 }
@@ -299,6 +311,7 @@ DataContext* new_temp(bl_arena* arena) {
     DataContext* ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
     ctx->val.sval = tmp;
     ctx->type = TYPE_IDENTIFIER;
+    ctx->acquired_type = TYPE_IDENTIFIER;
     return ctx;
 }
 
@@ -358,6 +371,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                     DataContext* sw_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
                     sw_ctx->val.ival = ilit->value;
                     sw_ctx->type = TYPE_INT;
+                    sw_ctx->acquired_type = TYPE_INT;
 
                     OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
                     op_ctx->operator_str = "==";
@@ -369,6 +383,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                     DataContext* sw_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
                     sw_ctx->val.cval = clit->value;
                     sw_ctx->type = TYPE_CHAR;
+                    sw_ctx->acquired_type = TYPE_CHAR;
 
                     OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
                     op_ctx->operator_str = "==";
@@ -419,6 +434,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             DataContext* ext_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             ext_ctx->val.sval = ext->name;
             ext_ctx->type = TYPE_IDENTIFIER;
+            ext_ctx->acquired_type = TYPE_IDENTIFIER;
             tac_append(prog, tac_create_instr(arena, TAC_EXTERN, ext_ctx,NULL, NULL, NULL, NULL));
             return NULL;
         }
@@ -428,6 +444,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             DataContext* int_val = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             int_val->val.ival = lit->value;
             int_val->type = TYPE_INT;
+            int_val->acquired_type = TYPE_INT;
             return int_val;
         }
         
@@ -436,6 +453,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             DataContext* bool_val = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             bool_val->val.bval=blit->value;
             bool_val->type = TYPE_BOOL;
+            bool_val->acquired_type = TYPE_BOOL;
             return bool_val;
         }
 
@@ -444,6 +462,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             DataContext* str_val = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             str_val->val.sval = slit->value;
             str_val->type = TYPE_STRING;
+            str_val->acquired_type = TYPE_STRING;
             return str_val;
         }
 
@@ -452,6 +471,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             DataContext* char_val = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             char_val->val.cval = clit->value;
             char_val->type = TYPE_CHAR;
+            char_val->acquired_type = TYPE_CHAR;
             return char_val;
         }
 
@@ -460,6 +480,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             DataContext* float_val = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             float_val->val.fval = flit->value;
             float_val->type = TYPE_FLOAT;
+            float_val->acquired_type = TYPE_FLOAT;
             return float_val;
         }
 
@@ -468,6 +489,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             DataContext* ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             ctx->val.sval = ident->name;
             ctx->type = TYPE_IDENTIFIER;
+            ctx->acquired_type = TYPE_IDENTIFIER;
             return ctx;
         }
 
@@ -497,6 +519,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             if (un->op == (enum KEYWORD_TYPES)BL_KW_BHAU_REF) {
                 DataContext* result = new_temp(arena);
                 result->type = TYPE_REF;
+                result->acquired_type = TYPE_REF;
 
                 OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
                 op_ctx->operator_str = get_unaryop_from_keyword(un->op);
@@ -507,6 +530,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             }else if(un->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR){
                 DataContext* result = new_temp(arena);
                 result->type = TYPE_PTR;
+                result->acquired_type = TYPE_PTR;
 
                 OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
                 op_ctx->operator_str = get_unaryop_from_keyword(un->op);
@@ -537,6 +561,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             AST_Identifier* ident = asg->lhs->data;
             ctx->val.sval = ident->name;
             ctx->type = TYPE_IDENTIFIER;
+            ctx->acquired_type = TYPE_IDENTIFIER;
 
             OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
             op_ctx->operator_str = get_binop_from_keyword(asg->op);
@@ -562,6 +587,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 AST_Identifier* ident = asg->lhs->data;
                 ctx->val.sval = ident->name;
                 ctx->type = TYPE_IDENTIFIER;
+                ctx->acquired_type = TYPE_IDENTIFIER;
                 tac_append(prog, tac_create_instr(arena, TAC_ASSIGNDECL, ctx, rhs, NULL, NULL, NULL));
                 return ctx;
             } else {
@@ -573,6 +599,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 AST_Identifier* ident = asg->lhs->data;
                 ctx->val.sval = ident->name;
                 ctx->type = TYPE_IDENTIFIER;
+                ctx->acquired_type = TYPE_IDENTIFIER;
                 tac_append(prog, tac_create_instr(arena, TAC_ASSIGNDECL, ctx, NULL, NULL, NULL, NULL));
                 return ctx;
             }
@@ -610,6 +637,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             DataContext* zero_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             zero_ctx->val.ival = 0;
             zero_ctx->type = TYPE_INT;
+            zero_ctx->acquired_type = TYPE_INT;
 
             OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
             op_ctx->operator_str = "!=";
@@ -641,6 +669,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             DataContext* zero_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             zero_ctx->val.ival = 0;
             zero_ctx->type = TYPE_INT;
+            zero_ctx->acquired_type = TYPE_INT;
 
             LoopContext* new_ctx = (LoopContext*)arena_alloc(arena,sizeof(LoopContext));
             new_ctx->break_label = end_label,
@@ -702,6 +731,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 DataContext* param_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
                 param_ctx->val.sval = param;
                 param_ctx->type = TYPE_IDENTIFIER;
+                param_ctx->acquired_type = TYPE_IDENTIFIER;
                 tac_append(prog, tac_create_instr(arena, TAC_PARAM, NULL, param_ctx, NULL, NULL, NULL));
             }
 
@@ -722,6 +752,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             DataContext* name_ctx = (DataContext*)arena_alloc(arena, sizeof(DataContext));
             name_ctx->val.sval = name->name;
             name_ctx->type = TYPE_IDENTIFIER;
+            name_ctx->acquired_type = TYPE_IDENTIFIER;
 
             TACInstr* call_instr = tac_create_instr(arena, TAC_CALL, result, name_ctx, NULL, NULL, NULL);
             call_instr->arg_count = call->args_count;
@@ -1030,6 +1061,14 @@ char* print_type_val(DataContext* context,bl_arena* arena){
             str = "unknown";
             return str;
         }
+
+        case TYPE_FUNCTION: {
+            char buf[1024];
+            snprintf(buf,sizeof(buf),"%s",context->val.sval);
+            char* str = arena_alloc(arena,strlen(buf) + 1);
+            strcpy(str,buf);
+            return str;
+        }
         
         default: {
             return NULL;
@@ -1038,45 +1077,498 @@ char* print_type_val(DataContext* context,bl_arena* arena){
     return NULL;
 }
 
+TACList* update_list_types(TACList* list1,bl_arena* arena){
+
+        TACList* list = arena_alloc(arena, sizeof(TACList));
+        list->head = list->tail = NULL;
+        list->temp_id = 0;
+        list->label_id = 0;
+    
+    for(TACInstr* instr = list1->head;instr;instr = instr->next){
+        switch(instr->op){
+            case TAC_EXTERN:{
+                instr->result->acquired_type = TYPE_FUNCTION;
+
+                TACInstr* temp_ptr = instr;
+                DataContext* ctx = instr->result;
+                ValueType temp_type = instr->result->acquired_type;
+
+                while(instr){
+                    
+                    if(instr->result){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
+                            instr->result->acquired_type = temp_type;
+                        }
+
+                    }
+                    if(instr->arg1){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
+                            instr->arg1->acquired_type = temp_type;
+                        }
+                    }
+                    if(instr->arg2){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
+                            instr->arg2->acquired_type = temp_type;
+                        }
+                    }
+                    instr = instr->next;
+                }
+                instr = temp_ptr;  
+                break;
+            }
+            case TAC_ASSIGNDECL:{
+                if(instr->arg1){
+                    instr->result->acquired_type = instr->arg1->acquired_type;
+                    TACInstr* temp_ptr = instr;
+                    DataContext* ctx = instr->result;
+                    ValueType temp_type = instr->result->acquired_type;
+
+                    while(instr){
+                        
+                        if(instr->result){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
+                                instr->result->acquired_type = temp_type;
+                            }
+
+                        }
+                        if(instr->arg1){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
+                                instr->arg1->acquired_type = temp_type;
+                            }
+                        }
+                        if(instr->arg2){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
+                                instr->arg2->acquired_type = temp_type;
+                            }
+                        }
+                        instr = instr->next;
+                    }
+                    instr = temp_ptr;  
+                }else{
+                    instr->result->acquired_type = TYPE_IDENTIFIER;
+                    TACInstr* temp_ptr = instr;
+                    DataContext* ctx = instr->result;
+                    ValueType temp_type = instr->result->acquired_type;
+
+                    while(instr){
+                        
+                        if(instr->result){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
+                                instr->result->acquired_type = temp_type;
+                            }
+
+                        }
+                        if(instr->arg1){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
+                                instr->arg1->acquired_type = temp_type;
+                            }
+                        }
+                        if(instr->arg2){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
+                                instr->arg2->acquired_type = temp_type;
+                            }
+                        }
+                        instr = instr->next;
+                    }
+                    instr = temp_ptr;  
+                }
+                break;
+            }
+            case TAC_BINOP:{
+                if(instr->arg1->acquired_type == TYPE_FLOAT || instr->arg2->acquired_type == TYPE_FLOAT){
+                    instr->result->acquired_type = TYPE_FLOAT;
+                    TACInstr* temp_ptr = instr;
+                    DataContext* ctx = instr->result;
+                    ValueType temp_type = instr->result->acquired_type;
+
+                    while(instr){
+                        
+                        if(instr->result){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
+                                instr->result->acquired_type = temp_type;
+                            }
+
+                        }
+                        if(instr->arg1){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
+                                instr->arg1->acquired_type = temp_type;
+                            }
+                        }
+                        if(instr->arg2){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
+                                instr->arg2->acquired_type = temp_type;
+                            }
+                        }
+                        instr = instr->next;
+                    }
+                    instr = temp_ptr;  
+                    break;
+                }
+                if(instr->arg1->acquired_type == TYPE_INT || instr->arg2->acquired_type == TYPE_INT){
+                    instr->result->acquired_type = TYPE_INT;
+                    TACInstr* temp_ptr = instr;
+                    DataContext* ctx = instr->result;
+                    ValueType temp_type = instr->result->acquired_type;
+
+                    while(instr){
+                        
+                        if(instr->result){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
+                                instr->result->acquired_type = temp_type;
+                            }
+
+                        }
+                        if(instr->arg1){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
+                                instr->arg1->acquired_type = temp_type;
+                            }
+                        }
+                        if(instr->arg2){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
+                                instr->arg2->acquired_type = temp_type;
+                            }
+                        }
+                        instr = instr->next;
+                    }
+                    instr = temp_ptr;  
+                    break;
+                }
+                if(instr->arg1->acquired_type == TYPE_CHAR || instr->arg2->acquired_type == TYPE_CHAR){
+                    instr->result->acquired_type = TYPE_CHAR;
+                    TACInstr* temp_ptr = instr;
+                    DataContext* ctx = instr->result;
+                    ValueType temp_type = instr->result->acquired_type;
+
+                    while(instr){
+                        
+                        if(instr->result){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
+                                instr->result->acquired_type = temp_type;
+                            }
+
+                        }
+                        if(instr->arg1){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
+                                instr->arg1->acquired_type = temp_type;
+                            }
+                        }
+                        if(instr->arg2){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
+                                instr->arg2->acquired_type = temp_type;
+                            }
+                        }
+                        instr = instr->next;
+                    }
+                    instr = temp_ptr;  
+                    break;
+                }
+                if(instr->arg1->acquired_type == TYPE_BOOL || instr->arg2->acquired_type == TYPE_BOOL){
+                    instr->result->acquired_type = TYPE_BOOL;
+                    TACInstr* temp_ptr = instr;
+                    DataContext* ctx = instr->result;
+                    ValueType temp_type = instr->result->acquired_type;
+
+                    while(instr){
+                        
+                        if(instr->result){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
+                                instr->result->acquired_type = temp_type;
+                            }
+
+                        }
+                        if(instr->arg1){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
+                                instr->arg1->acquired_type = temp_type;
+                            }
+                        }
+                        if(instr->arg2){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
+                                instr->arg2->acquired_type = temp_type;
+                            }
+                        }
+                        instr = instr->next;
+                    }
+                    instr = temp_ptr;  
+                    break;
+                }
+                if(instr->arg1->acquired_type == TYPE_STRING || instr->arg2->acquired_type == TYPE_STRING){
+                    instr->result->acquired_type = TYPE_BOOL;
+                    TACInstr* temp_ptr = instr;
+                    DataContext* ctx = instr->result;
+                    ValueType temp_type = instr->result->acquired_type;
+
+                    while(instr){
+                        
+                        if(instr->result){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
+                                instr->result->acquired_type = temp_type;
+                            }
+
+                        }
+                        if(instr->arg1){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
+                                instr->arg1->acquired_type = temp_type;
+                            }
+                        }
+                        if(instr->arg2){
+                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
+                                instr->arg2->acquired_type = temp_type;
+                            }
+                        }
+                        instr = instr->next;
+                    }
+                    instr = temp_ptr;  
+                    break;
+                }
+                instr->result->acquired_type = TYPE_IDENTIFIER;
+                TACInstr* temp_ptr = instr;
+                DataContext* ctx = instr->result;
+                ValueType temp_type = instr->result->acquired_type;
+
+                while(instr){
+                    
+                    if(instr->result){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
+                            instr->result->acquired_type = temp_type;
+                        }
+
+                    }
+                    if(instr->arg1){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
+                            instr->arg1->acquired_type = temp_type;
+                        }
+                    }
+                    if(instr->arg2){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
+                            instr->arg2->acquired_type = temp_type;
+                        }
+                    }
+                    instr = instr->next;
+                }
+                instr = temp_ptr;  
+                break;
+            }
+            case TAC_ASSIGN:{
+                instr->result->acquired_type = instr->arg1->acquired_type;
+                TACInstr* temp_ptr = instr;
+                DataContext* ctx = instr->result;
+                ValueType temp_type = instr->result->acquired_type;
+
+                while(instr){
+                    
+                    if(instr->result){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
+                            instr->result->acquired_type = temp_type;
+                        }
+
+                    }
+                    if(instr->arg1){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
+                            instr->arg1->acquired_type = temp_type;
+                        }
+                    }
+                    if(instr->arg2){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
+                            instr->arg2->acquired_type = temp_type;
+                        }
+                    }
+                    instr = instr->next;
+                }
+                instr = temp_ptr;  
+                break;
+            }
+            case TAC_FUNC_BEGIN:{
+                break;
+            }
+            case TAC_FUNC_END: {
+                break;
+            }
+            case TAC_MAIN_BEGIN:{
+                break;
+            }
+            case TAC_MAIN_END: {
+                break;
+            }
+            case TAC_PARAM:{
+                instr->arg1->acquired_type = TYPE_PARAM;
+                TACInstr* temp_ptr = instr;
+                DataContext* ctx = instr->arg1;
+                ValueType temp_type = instr->arg1->acquired_type;
+
+                while(instr){
+                    
+                    if(instr->result){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
+                            instr->result->acquired_type = temp_type;
+                        }
+
+                    }
+                    if(instr->arg1){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
+                            instr->arg1->acquired_type = temp_type;
+                        }
+                    }
+                    if(instr->arg2){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
+                            instr->arg2->acquired_type = temp_type;
+                        }
+                    }
+                    instr = instr->next;
+                }
+                instr = temp_ptr;  
+                break;
+            }
+            case TAC_IFGOTO: {
+                break;
+            }
+            case TAC_GOTO: {
+                break;
+            }
+            case TAC_ARG:{
+                break;
+            }
+            case TAC_LOAD_PTR: {
+                instr->result->acquired_type = instr->arg1->acquired_type;
+                TACInstr* temp_ptr = instr;
+                DataContext* ctx = instr->result;
+                ValueType temp_type = TYPE_PTR;
+
+                while(instr){
+                    
+                    if(instr->result){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
+                            instr->result->acquired_type = temp_type;
+                        }
+
+                    }
+                    if(instr->arg1){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
+                            instr->arg1->acquired_type = temp_type;
+                        }
+                    }
+                    if(instr->arg2){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
+                            instr->arg2->acquired_type = temp_type;
+                        }
+                    }
+                    instr = instr->next;
+                }
+                instr = temp_ptr;  
+                break;
+            }
+            case TAC_UNOP:{
+                instr->result->acquired_type = instr->arg1->acquired_type;
+                TACInstr* temp_ptr = instr;
+                DataContext* ctx = instr->result;
+                ValueType temp_type = instr->result->acquired_type;
+
+                while(instr){
+                    
+                    if(instr->result){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
+                            instr->result->acquired_type = temp_type;
+                        }
+
+                    }
+                    if(instr->arg1){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
+                            instr->arg1->acquired_type = temp_type;
+                        }
+                    }
+                    if(instr->arg2){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
+                            instr->arg2->acquired_type = temp_type;
+                        }
+                    }
+                    instr = instr->next;
+                }
+                instr = temp_ptr;  
+                break;
+            }
+            case TAC_ADDR_OF: {
+                instr->result->acquired_type = instr->arg1->acquired_type;
+                TACInstr* temp_ptr = instr;
+                DataContext* ctx = instr->result;
+                ValueType temp_type = TYPE_REF;
+
+                while(instr){
+                    
+                    if(instr->result){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
+                            instr->result->acquired_type = temp_type;
+                        }
+
+                    }
+                    if(instr->arg1){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
+                            instr->arg1->acquired_type = temp_type;
+                        }
+                    }
+                    if(instr->arg2){
+                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
+                            instr->arg2->acquired_type = temp_type;
+                        }
+                    }
+                    instr = instr->next;
+                }
+                instr = temp_ptr;  
+                break;
+            }
+            case TAC_LABEL:{
+                break;
+            }
+            case TAC_NOP: {
+                break;
+            }
+            case TAC_RETURN: {
+                break;
+            }
+            default:
+                break;
+        }
+    }
+    return list1;
+}
+
 void tac_print(TACList* list,bl_arena* arena) { 
     for (TACInstr* instr = list->head; instr; instr = instr->next) {
         switch (instr->op) {
             case TAC_LOAD_PTR:
                 printf("[LOAD PTR] %s (%s) = *%s (%s)\n", 
                     print_type_val(instr->result, arena), 
-                    get_str_type(instr->result->type),
+                    get_str_type(instr->result->acquired_type),
                     print_type_val(instr->arg1, arena),
-                    get_str_type(instr->arg1->type));
+                    get_str_type(instr->arg1->acquired_type));
                 
                 break;
 
             case TAC_ADDR_OF:
                 printf("[ADDR OF] %s (%s) = &%s (%s)\n", 
                     print_type_val(instr->result, arena), 
-                    get_str_type(instr->result->type),
+                    get_str_type(instr->result->acquired_type),
                     instr->arg1 ?
                     print_type_val(instr->arg1, arena):
                     "null",
                     instr->arg1 ?
-                    get_str_type(instr->arg1->type):
+                    get_str_type(instr->arg1->acquired_type):
                     "null");
                 break;
             case TAC_ASSIGNDECL:
                 if(instr->arg1){
-                    printf("[Declaration] %s (%s) = %s (%s)\n", print_type_val(instr->result,arena),get_str_type(instr->result->type), print_type_val(instr->arg1,arena),get_str_type(instr->arg1->type));
+                    printf("[Declaration] %s (%s) = %s (%s)\n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type), print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type));
                 }else{
-                    printf("[Declaration] %s (%s) unassigned\n", print_type_val(instr->result,arena),get_str_type(instr->result->type));
+                    printf("[Declaration] %s (%s) unassigned\n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type));
                 }
                 break;
             case TAC_ASSIGN:
-                printf("[Assignment] %s (%s) %s %s (%s)\n", print_type_val(instr->result,arena),get_str_type(instr->result->type),instr->relop->operator_str, print_type_val(instr->arg1,arena),get_str_type(instr->arg1->type));
+                printf("[Assignment] %s (%s) %s %s (%s)\n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type),instr->relop->operator_str, print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type));
                 break;
             case TAC_BINOP:
                 
-                printf("[Binary Op] %s (%s) = %s (%s) %s %s (%s)\n", print_type_val(instr->result,arena),get_str_type(instr->result->type), print_type_val(instr->arg1,arena),get_str_type(instr->arg1->type), instr->relop->operator_str, print_type_val(instr->arg2,arena),get_str_type(instr->arg2->type));
+                printf("[Binary Op] %s (%s) = %s (%s) %s %s (%s)\n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type), print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type), instr->relop->operator_str, print_type_val(instr->arg2,arena),get_str_type(instr->arg2->acquired_type));
                 break;
             case TAC_UNOP:
-                printf("[Unary op] %s (%s) = %s%s (%s)\n", print_type_val(instr->result,arena),get_str_type(instr->result->type), instr->relop->operator_str, print_type_val(instr->arg1,arena),get_str_type(instr->arg1->type));
+                printf("[Unary op] %s (%s) = %s%s (%s)\n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type), instr->relop->operator_str, print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type));
                 break;
             case TAC_LABEL:
                 printf("\n");
@@ -1086,7 +1578,7 @@ void tac_print(TACList* list,bl_arena* arena) {
                 printf("[Jump] goto %s\n", instr->label);
                 break;
             case TAC_IFGOTO:
-                printf("[Conditional Jump] if %s (%s) %s %s (%s) goto %s\n", print_type_val(instr->arg1,arena),get_str_type(instr->arg1->type), instr->relop->operator_str, print_type_val(instr->arg2,arena),get_str_type(instr->arg2->type), instr->label);
+                printf("[Conditional Jump] if %s (%s) %s %s (%s) goto %s\n", print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type), instr->relop->operator_str, print_type_val(instr->arg2,arena),get_str_type(instr->arg2->acquired_type), instr->label);
                 break;
             case TAC_PARAM:
                 printf("[Parameter] param %s\n", print_type_val(instr->arg1,arena));
@@ -1095,10 +1587,10 @@ void tac_print(TACList* list,bl_arena* arena) {
                 printf("[Argument] arg %s\n",print_type_val(instr->arg1,arena));
                 break;
             case TAC_CALL:
-                printf("[Function call] %s (%s) = call %s (%s), %d\n", print_type_val(instr->result,arena),get_str_type(instr->result->type), print_type_val(instr->arg1,arena),get_str_type(instr->arg1->type), instr->arg_count);
+                printf("[Function call] %s (%s) = call %s (%s), %d\n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type), print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type), instr->arg_count);
                 break;
             case TAC_RETURN:
-                printf("[Return] return %s (%s)\n", print_type_val(instr->arg1,arena),get_str_type(instr->arg1->type));
+                printf("[Return] return %s (%s)\n", print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type));
                 break;
             case TAC_FUNC_BEGIN:
                 printf("[Function start] function %s begin:\n", instr->label);
@@ -1113,7 +1605,7 @@ void tac_print(TACList* list,bl_arena* arena) {
                 printf("[Main end] main end\n");
                 break;
             case TAC_EXTERN:
-                printf("[Extern] extern %s (%s)\n",print_type_val(instr->result,arena),get_str_type(instr->result->type));
+                printf("[Extern] extern %s (%s)\n",print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type));
                 break;
             default:
                 printf("nop\n");
@@ -1153,7 +1645,7 @@ SymbolTableList* get_symbol_table(TACList* list, bl_arena* arena) {
 
             case TAC_ASSIGNDECL: {
                 const char* name = print_type_val(instr->result, arena);
-                ValueType type = instr->arg1 ? instr->arg1->type : instr->result->type;
+                ValueType type = instr->arg1 ? instr->arg1->acquired_type : instr->result->acquired_type;
                 bool initialized = instr->arg1 != NULL;
                 ValuePrimitive val = instr->arg1 ? instr->arg1->val : (ValuePrimitive){0};
                 add_or_update_symbol(current_table, arena, name, type, true, val, initialized);
@@ -1162,7 +1654,7 @@ SymbolTableList* get_symbol_table(TACList* list, bl_arena* arena) {
 
             case TAC_ASSIGN: {
                 const char* name = print_type_val(instr->result, arena);
-                ValueType type = instr->arg1->type;
+                ValueType type = instr->arg1->acquired_type;
                 ValuePrimitive val = instr->arg1->val;
                 add_or_update_symbol(current_table, arena, name, type, false, val, true);
                 break;
@@ -1170,7 +1662,7 @@ SymbolTableList* get_symbol_table(TACList* list, bl_arena* arena) {
 
             case TAC_PARAM: {
                 const char* name = print_type_val(instr->arg1, arena);
-                ValueType type = instr->arg1->type;
+                ValueType type = instr->arg1->acquired_type;
                 add_or_update_symbol(current_table, arena, name, type, false, instr->arg1->val, true);
                 break;
             }
@@ -1178,7 +1670,7 @@ SymbolTableList* get_symbol_table(TACList* list, bl_arena* arena) {
 
             case TAC_EXTERN: {
                 const char* name = print_type_val(instr->result, arena);
-                ValueType type = instr->result->type;
+                ValueType type = instr->result->acquired_type;
                 add_or_update_symbol(current_table, arena, name, type, true, instr->result->val, true);
                 break;
             }
@@ -1190,7 +1682,7 @@ SymbolTableList* get_symbol_table(TACList* list, bl_arena* arena) {
             case TAC_CALL: {
                 if (instr->result) {
                     const char* temp_name = print_type_val(instr->result, arena);
-                    ValueType type = instr->result->type;
+                    ValueType type = instr->result->acquired_type;
                     add_or_update_symbol(current_table, arena, temp_name, type, false, instr->result->val, true);
                 }
                 break;
@@ -1265,3 +1757,47 @@ SymbolTable* get_or_create_table(SymbolTableList* list, const char* scope_name) 
     return table;
 }
 
+TACList* generate_scope_ids(TACList* list){
+    int current_scope_id = 0;
+    int next_scope_id = 1;
+
+    for (TACInstr* instr = list->head; instr; instr = instr->next) {
+        switch(instr->op) {
+            case TAC_FUNC_BEGIN:
+                current_scope_id = next_scope_id++;
+                break;
+
+            case TAC_FUNC_END:
+                current_scope_id = 0;
+                break;
+
+            case TAC_MAIN_BEGIN:
+                current_scope_id = next_scope_id++;
+                break;
+
+            case TAC_MAIN_END:
+                current_scope_id = 0;
+                break;
+
+            case TAC_ARG:
+            case TAC_CALL:
+            case TAC_GOTO:
+            case TAC_IFGOTO:
+            case TAC_PARAM:
+            case TAC_ASSIGNDECL:
+            case TAC_ASSIGN:
+            case TAC_BINOP:
+            case TAC_UNOP:
+            case TAC_LOAD_PTR:
+            case TAC_ADDR_OF:
+                if (instr->result) instr->result->scope_id = current_scope_id;
+                if (instr->arg1) instr->arg1->scope_id = current_scope_id;
+                if (instr->arg2) instr->arg2->scope_id = current_scope_id;
+                break;
+
+            default:
+                break;
+        }
+    }
+    return list;
+}

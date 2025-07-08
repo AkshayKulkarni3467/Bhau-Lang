@@ -1,16 +1,151 @@
 hi bhau
 
+// Imports
+bhau baherun ghe printf;
+bhau baherun ghe scanf;
+bhau baherun ghe strlen;
+bhau baherun ghe mathlib;
 
-bhau hai ahe c = 12;
-bhau hai ahe b = ref c;
-bhau hai ahe a = ptr b;
+// Top-level constants
+bhau hai ahe pi = 3.1415;
+bhau hai ahe e = 2.718;
+bhau hai ahe greeting = "Hello from BhauLang!";
+bhau hai ahe flag = 1;
+bhau hai ahe z = 10;
 
-bhau hai ahe e = f = g = ref c;
+// Constant folding test
+bhau hai ahe folded = 2 + 3 * (4 - 1);
 
-f = ref a;
-f = ref b;
+bhau hai ahe x = 5;
+x = x + 10;
 
-bhau hai ahe mul_dr = ptr ptr c;
-bhau hai ahe mul_r = ref ref c;
+
+// Multi-variable declarations (chained)
+bhau hai ahe a = b = c = 42;
+
+// Reassignment, should break constness
+c = c + 1;
+
+// If-else chains and nested conditions
+bhau lakshat thev nested_conditions(n){
+    bhau jar (n == 0){
+        printf("Zero");
+    }
+    bhau nahitar(n < 0){
+        printf("Negative");
+    }
+    bhau tar {
+        printf("Positive");
+        bhau jar (n > 100){
+            printf("Very large");
+        }
+    }
+}
+
+// Switch-case with default
+bhau lakshat thev switch_demo(x){
+    bhau chunav(x) {
+        bhau nivad 1:
+            printf("One");
+        bhau nivad 2:
+            printf("Two");
+        bhau nivad 3:
+            printf("Three");
+        bhau rahudet:
+            printf("Other");
+    }
+}
+
+// Loops and nested loops
+bhau lakshat thev nested_loops(){
+    bhau hai ahe i = 0;
+    bhau joparent(i < 5){
+        bhau hai ahe j = 0;
+        bhau joparent(j < 3){
+            printf(i);
+            printf(j);
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+}
+
+// Function using const propagation
+bhau lakshat thev add_const(){
+    bhau hai ahe a = 5;
+    bhau hai ahe b = 10;
+    bhau parat de a + b;
+}
+
+// Function with side effects and changing vars
+bhau lakshat thev counter_test(){
+    bhau hai ahe counter = 0;
+    bhau joparent(counter < 3){
+        printf("Counting");
+        printf(counter);
+        counter = counter + 1;
+    }
+    bhau parat de counter;
+}
+
+// Recursion
+bhau lakshat thev power(x, n){
+    bhau jar (n == 0){
+        bhau parat de 1;
+    }
+    bhau parat de x * power(x, n - 1);
+}
+
+// Call power with const + ident
+bhau hai ahe result = power(2, 3);
+
+// Re-declaration in inner scope
+bhau lakshat thev scope_test(){
+    bhau hai ahe x = 10;
+    bhau joparent(x > 0){
+        bhau hai ahe x = 2;
+        printf("Inner x: ");
+        printf(x);
+        x = x - 1;
+    }
+}
+
+// Function call edge case: wrong arity (should trigger your check)
+bhau lakshat thev dummy(a, b, c){
+    bhau parat de a + b + c;
+}
+
+// Testing string, float, char, bool
+bhau lakshat thev literal_demo(){
+    bhau hai ahe ch = 'b';
+    bhau hai ahe s = "string test";
+    bhau hai ahe pi_val = 3.14;
+    bhau hai ahe is_bhau = 1;
+    printf(ch);
+    printf(s);
+    printf(pi_val);
+    printf(is_bhau);
+}
+
+// Function call in RHS (should not be folded)
+bhau hai ahe final = dummy(1, 2, 3); // OK
+// bhau hai ahe bad = dummy(1, 2);   // Uncomment to trigger arity error
+
+// Main
+bhau ithun chalu {
+    printf(greeting);
+    printf(folded);
+    nested_conditions(42);
+    switch_demo(3);
+    nested_loops();
+    bhau hai ahe res = add_const();
+    printf(res);
+    bhau hai ahe ct = counter_test();
+    printf(ct);
+    printf(result);
+    scope_test();
+    literal_demo();
+    printf(final);
+}
 
 bye bhau
