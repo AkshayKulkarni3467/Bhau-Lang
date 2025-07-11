@@ -46,6 +46,8 @@ typedef enum {
     TYPE_REF,
     TYPE_FUNCTION,
     TYPE_PARAM,
+    TYPE_EXTERN,
+    TYPE_UNDECLARED,
 } ValueType;
 
 
@@ -298,6 +300,8 @@ char* get_str_type(ValueType type){
         case TYPE_PTR: return "ptr";
         case TYPE_REF: return "ref";
         case TYPE_FUNCTION: return "func";
+        case TYPE_EXTERN: return "extern";
+        case TYPE_UNDECLARED: return "undeclared";
         case TYPE_PARAM: return "param";
     }
     return NULL;
@@ -1084,6 +1088,12 @@ char* print_type_val(DataContext* context,bl_arena* arena){
             return str;
         }
 
+        case TYPE_UNDECLARED: {
+            char* str = (char*)arena_alloc(arena,10);
+            str = "undeclared";
+            return str;
+        }
+
         case TYPE_FUNCTION: {
             char buf[1024];
             snprintf(buf,sizeof(buf),"%s",context->val.sval);
@@ -1092,6 +1102,14 @@ char* print_type_val(DataContext* context,bl_arena* arena){
             return str;
         }
         
+        case TYPE_EXTERN: {
+            char buf[1024];
+            snprintf(buf,sizeof(buf),"%s",context->val.sval);
+            char* str = (char*)arena_alloc(arena,strlen(buf) + 1);
+            strcpy(str,buf);
+            return str;
+        }
+
         default: {
             return NULL;
         }
@@ -1109,7 +1127,7 @@ TACList* update_list_types(TACList* list1,bl_arena* arena){
     for(TACInstr* instr = list1->head;instr;instr = instr->next){
         switch(instr->op){
             case TAC_EXTERN:{
-                instr->result->acquired_type = TYPE_FUNCTION;
+                instr->result->acquired_type = TYPE_EXTERN;
 
                 TACInstr* temp_ptr = instr;
                 DataContext* ctx = instr->result;
@@ -1667,7 +1685,7 @@ SymbolTableList* get_symbol_table(TACList* list, bl_arena* arena) {
 
             case TAC_ASSIGNDECL: {
                 const char* name = print_type_val(instr->result, arena);
-                ValueType type = instr->arg1 ? instr->arg1->acquired_type : instr->result->acquired_type;
+                ValueType type = instr->arg1 ? instr->arg1->acquired_type : TYPE_UNDECLARED;
                 bool initialized = instr->arg1 != NULL;
                 ValuePrimitive val = instr->arg1 ? instr->arg1->val : (ValuePrimitive){0};
                 add_or_update_symbol(current_table, arena, name, type, true, val, initialized);
@@ -1705,7 +1723,7 @@ SymbolTableList* get_symbol_table(TACList* list, bl_arena* arena) {
                 if (instr->result) {
                     const char* temp_name = print_type_val(instr->result, arena);
                     ValueType type = instr->result->acquired_type;
-                    add_or_update_symbol(current_table, arena, temp_name, type, false, instr->result->val, true);
+                    add_or_update_symbol(current_table, arena, temp_name, type, false, instr->arg1->val, true);
                 }
                 break;
             }

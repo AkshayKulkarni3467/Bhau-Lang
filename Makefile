@@ -47,10 +47,11 @@ ir : $(OPTIMIZER)
 codegen: $(IR)
 	$(CC) $(CFLAGS_CODEGEN) src/codegen/codegen.c -o src/codegen/codegen
 	./src/codegen/codegen
+	nasm -f elf64 -o src/codegen/out.o src/codegen/out.asm
+	gcc -no-pie -ggdb -o src/codegen/out src/codegen/out.o
+	./src/codegen/out
 
-asm : $(CODEGEN)
-	$(CC) $(CFLAGS_CODEGEN) src/codegen/codegen.c -o src/codegen/codegen
-	./src/codegen/codegen
+asm : src/codegen/out.asm
 	nasm -f elf64 -o src/codegen/out.o src/codegen/out.asm
 	gcc -no-pie -ggdb -o src/codegen/out src/codegen/out.o
 	./src/codegen/out

@@ -308,6 +308,9 @@ AST_Node* parse_extern(bl_parser* parser){
 }
 
 AST_Node* parse_assign(bl_parser* parser){
+    if(stack_size(parser->scope_stack) < 2){
+        bl_parse_error(parser,"Assignment expressions cannot be used globally",1,60);
+    }
     AST_Node* ast1 = assign_type(parser,AST_Node);
     ast1 = parse_expr(parser,BL_IDENTIFIER,false,true);
     parse_step_n_expect(parser,BL_SEMICOLON,"Expected:",19);
@@ -843,6 +846,9 @@ AST_Node* parse_factor(bl_parser* parser,bool check, bool check_levels){
 
 //WARN Postfix operations not implemented
 AST_Node* parse_unops(bl_parser* parser,bool check, bool check_levels){
+    if(stack_size(parser->scope_stack) < 2 && ((parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_PTR)) || (parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_REF)))){
+        bl_parse_error(parser,"Variables cannot be referenced globally",1,60);
+    }
     while((parse_match(parser,(enum KEYWORD_TYPES)BL_NOT)) || (parse_match(parser,(enum KEYWORD_TYPES)BL_INC)) || 
     (parse_match(parser,(enum KEYWORD_TYPES)BL_DEC)) || (parse_match(parser,(enum KEYWORD_TYPES)BL_SUBBINOP))  ||
     (parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_PTR)) || (parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_REF))){
