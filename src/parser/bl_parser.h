@@ -12,6 +12,8 @@
 #define assign_type(parser,type) (type*)arena_alloc(parser->arena,sizeof(type));
 #define assign_arr_type(parser,type,capacity) (type**)arena_alloc(parser->arena, sizeof(type*) * capacity);
 
+static int has_main = 0;
+
 
 
 typedef struct {
@@ -263,6 +265,7 @@ AST_Node* parse_stmt(bl_parser* parser) {
         return ast;
     }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_MAIN)){
         AST_Node* ast = parse_main(parser);
+        has_main = 1;
         return ast;
     }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_CHUNAV)){
         AST_Node* ast = parse_switch(parser);
@@ -1276,6 +1279,9 @@ void bl_check_prolog(bl_parser* parser){
 
 void bl_check_epilog(bl_parser* parser){
     bl_token* next_token = parse_peek(parser,1);
+    if(has_main == 0){
+        bl_parse_error(parser,"File does not include main\n",1,1);
+    }
     if((parser->current.token != BL_KW_BYE_BHAU) || (next_token->token != BL_EOF)){
         bl_parse_token_error(parser,(char *)"End the file with",keyword_to_string(BL_KW_BYE_BHAU),1,9);
     }
