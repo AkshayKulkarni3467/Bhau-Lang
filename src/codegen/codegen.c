@@ -1,6 +1,9 @@
 #include "bl_ir.h"
 
 static void mangleGlobal(char *out, const char *name);
+static int get_offset(SymbolTable* table,char* name);
+static SymbolTable* symbol_table_values(SymbolTableList* slist, char* table_name,bl_arena* arena);
+char* double_to_hex(float value);
 // static void mangleLocal (char *out, const char* func_name, const char *name);
 
 
@@ -8,8 +11,12 @@ static void emitProlog(FILE *fp, SymbolTableList* slist,bl_arena* arena);
 static void emitExterns(FILE* fp,SymbolTableList* slist,bl_arena* arena);
 static void emitUndeclared(FILE* fp, SymbolTableList* slist, bl_arena* arena);
 static void emitGlobals(FILE *fp, SymbolTableList* slist,bl_arena* arena);
+static void emitFunction(FILE* fp,SymbolTable* table,TACList* instr);
+static void emitMain(FILE* fp, SymbolTable* table, SymbolTableList* slist,TACList* instr,bl_arena* arena);
 static void emitFuncHeader(FILE *fp, char* table_name,int frameSize);
+static void emitMainHeader(FILE *fp, char* table_name,int frameSize);
 static void emitFuncFooter(FILE *fp);
+static void emitMainFooter(FILE* fp);
 
 void generateAssembly(const char* outfile, SymbolTableList* slist, TACList* list,bl_arena* arena);
 
@@ -52,14 +59,64 @@ void generateAssembly(const char* outfile, SymbolTableList* slist, TACList* list
     emitGlobals(fp,slist,arena);
     emitUndeclared(fp,slist,arena);
     emitProlog(fp,slist,arena);
-    for(int i = 0;i<slist->table_count; i++){
-        if(strcmp(slist->tables[i]->scope_name,"global") != 0){
-            emitFuncHeader(fp,slist->tables[i]->scope_name,slist->tables[i]->total_offset);
-            //TODO 
-            emitFuncFooter(fp);
+    for (TACInstr* instr = list->head; instr; instr = instr->next){
+        if(instr->op == TAC_FUNC_BEGIN || instr->op == TAC_MAIN_BEGIN){
+            switch(instr->op){
+                case TAC_FUNC_BEGIN:{
+                    SymbolTable* table = symbol_table_values(slist,instr->label,arena);
+                    list->head = instr->next;
+                    emitFunction(fp,table,list);
+                    break;
+                }
+                case TAC_MAIN_BEGIN:{
+                    SymbolTable* table = symbol_table_values(slist,instr->label,arena);
+                    list->head = instr;
+                    emitMain(fp,table,slist,list,arena);
+                    break;
+                }
+                default:
+                    break;
+            }
         }
     }
     emitEpilog(fp);
+}
+
+//WARN currently not in use due to constant propagation
+static bool get_fromGlobal(FILE* fp,SymbolTableList* slist,TACInstr* instr,char* name,bl_arena* arena){
+    char cmp_label[64];
+    mangleGlobal(cmp_label,name);
+    SymbolTable* table = (SymbolTable*)arena_alloc(arena,sizeof(SymbolTable));
+    for(int i = 0; i< slist->table_count; i++){
+        if(strcmp(slist->tables[i]->scope_name,"global") == 0){
+            table = slist->tables[i];
+        }
+    }
+    for(int i = 0;i< table->symbol_count; i++){
+        char label[64]; 
+        mangleGlobal(label, table->entries[i]->name);
+        if(strcmp(label,cmp_label) == 0){
+            switch(table->entries[i]->type){
+                case TYPE_INT:
+                case TYPE_FLOAT:
+                case TYPE_CHAR:
+                case TYPE_BOOL:
+                    fprintf(fp,"    mov rax, [%s]\n"
+                               "    mov QWORD [rbp - %d], rax\n", label,get_offset(table,instr->result->val.sval));
+                    return 1;
+                case TYPE_STRING:
+                    fprintf(fp,"    mov rax, %s\n"
+                               "    mov QWORD [rbp - %d], rax\n",label,get_offset(table,instr->result->val.sval));
+                    return 1;
+                
+                default:
+                    fprintf(stderr, "Globals can only be int, float, string, char and bool");
+                    exit(1);
+
+            }
+        }
+    }
+    return 0;
 }
 
 static void emitGlobals(FILE *fp, SymbolTableList* slist,bl_arena* arena){
@@ -163,6 +220,123 @@ static void emitUndeclared(FILE* fp, SymbolTableList* slist, bl_arena* arena){
 }
 
 
+static int get_offset(SymbolTable* table,char* name){
+    for(int i = 0;i<table->symbol_count;i++){
+        if(strcmp(table->entries[i]->name, name) == 0){
+            return table->entries[i]->offset;
+        }
+    }
+    return 0;
+}
+
+
+
+
+static SymbolTable* symbol_table_values(SymbolTableList* slist, char* table_name,bl_arena* arena){
+    SymbolTable* table = (SymbolTable*)arena_alloc(arena,sizeof(SymbolTable));
+    for(int i = 0; i< slist->table_count;i++){
+        if(strcmp(slist->tables[i]->scope_name,table_name) == 0){
+            table = slist->tables[i];
+        }
+    }
+    return table;
+}
+
+
+
+static void emitFunction(FILE* fp, SymbolTable* table, TACList* list){
+    emitFuncHeader(fp,table->scope_name,table->total_offset);
+    //TODO define function body
+    TACInstr* instr = list->head;
+    while(instr->op != TAC_FUNC_END){
+        instr = instr->next;
+    }
+    list->head = instr;
+    emitFuncFooter(fp);
+}
+
+static void emitMain(FILE* fp, SymbolTable* table, SymbolTableList* slist,TACList* list,bl_arena* arena){
+    emitMainHeader(fp,table->scope_name,table->total_offset);
+    TACInstr* instr = list->head;
+    while(instr->op != TAC_MAIN_END){
+        switch(instr->op){
+            case TAC_ASSIGNDECL:
+                if(instr->arg1){
+                    switch(instr->arg1->type){
+                        case TYPE_INT:
+                            fprintf(fp,"    mov QWORD [rbp - %d], %d\n",get_offset(table,instr->result->val.sval),instr->arg1->val.ival);
+                            break;
+                        case TYPE_FLOAT:
+                            fprintf(fp,"    mov rax, %s\n"
+                                       "    movq xmm0, rax\n"
+                                       "    movsd QWORD [rbp - %d], xmm0\n",double_to_hex(instr->arg1->val.fval), get_offset(table,instr->result->val.sval));
+                            break;
+                        case TYPE_CHAR:
+                            fprintf(fp,"    mov QWORD [rbp - %d], \'%c\'\n",get_offset(table,instr->result->val.sval),instr->arg1->val.cval);
+                            break;
+                        case TYPE_BOOL:
+                            fprintf(fp,"    mov QWORD [rbp - %d], %d\n",get_offset(table,instr->result->val.sval),instr->arg1->val.bval == true ? 1 : 0);
+                            break;
+                        case TYPE_STRING:
+                            char* tmp_str = instr->arg1->val.sval;
+                            int tmp_offset = get_offset(table,instr->result->val.sval);
+                            int i = 0;
+                            char tmp_char = tmp_str[i];
+                            while(tmp_char != '\0'){
+                                //TODO if \, check next character (n,r,t,",',\) and merge them into one character
+                                if(tmp_char == '\\'){
+                                    fprintf(fp,"    mov byte [rbp - %d], 0x0A\n",tmp_offset);
+                                    i++;
+                                    tmp_char = tmp_str[i];
+                                    tmp_offset-=1;
+                                }else{
+                                    fprintf(fp,"    mov byte [rbp - %d], \'%c\'\n",tmp_offset,tmp_char);
+                                    i++;
+                                    tmp_char = tmp_str[i];
+                                    tmp_offset-=1;
+                                }
+                            }
+                            fprintf(fp,"    mov byte [rbp - %d], %d\n",tmp_offset,0);
+                            break;
+                        
+                        case TYPE_REF:
+                                fprintf(fp,"    mov rax, QWORD [rbp - %d]\n"
+                                           "    mov QWORD [rbp - %d], rax\n",get_offset(table,instr->arg1->val.sval),get_offset(table,instr->result->val.sval));
+                                break;
+                        case TYPE_PTR:
+                                fprintf(fp,"    mov rax, QWORD [rbp - %d]\n"
+                                           "    mov QWORD [rbp - %d], rax\n",get_offset(table,instr->arg1->val.sval),get_offset(table,instr->result->val.sval));
+                                break;
+                        case TYPE_IDENTIFIER:
+                            if(get_offset(table,instr->arg1->val.sval)){
+                                fprintf(fp,"    mov rax, QWORD [rbp - %d]\n"
+                                           "    mov QWORD [rbp - %d], rax\n",get_offset(table,instr->arg1->val.sval),get_offset(table,instr->result->val.sval));
+                            }else if(get_fromGlobal(fp,slist,instr,instr->arg1->val.sval,arena)){
+                                get_fromGlobal(fp,slist,instr,instr->arg1->val.sval,arena);
+                            }else{
+                                fprintf(stderr,"Identifier not found\n");
+                                exit(1);
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
+                }else{
+                    fprintf(fp,"    mov QWORD [rbp - %d], %d\n",get_offset(table,instr->result->val.sval),0);
+                    break;
+                }
+                break;
+            default:
+                break;
+        }
+        instr = instr->next;
+
+    }
+    fputc('\n',fp);
+    list->head = instr;
+    emitMainFooter(fp);
+}
 
 
 static void emitFuncHeader(FILE *fp, char* table_name,int frameSize)
@@ -174,7 +348,24 @@ static void emitFuncHeader(FILE *fp, char* table_name,int frameSize)
         "    sub  rsp, %d\n",table_name, frameSize);
 }
 
+
 static void emitFuncFooter(FILE *fp)
+{
+    fputs(
+        "    leave\n"
+        "    ret\n\n", fp);
+}
+
+static void emitMainHeader(FILE *fp, char* table_name,int frameSize)
+{
+    fprintf(fp,
+        "%s:\n"
+        "    push rbp\n"
+        "    mov  rbp, rsp\n"
+        "    sub  rsp, %d\n",table_name, frameSize);
+}
+
+static void emitMainFooter(FILE *fp)
 {
     fputs(
         "    xor rax, rax\n"
@@ -182,4 +373,10 @@ static void emitFuncFooter(FILE *fp)
         "    ret\n\n", fp);
 }
 
+char* double_to_hex(float value){
+    static char buf[19];
 
+    union { double d; uint64_t u; } conv = { .d = value };
+    snprintf(buf, sizeof buf, "0x%016llx", (unsigned long long)conv.u);
+    return buf;               
+}

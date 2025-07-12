@@ -5,17 +5,14 @@ bhau baherun ghe scanf;
 
 bhau hai ahe x = 12;
 bhau hai ahe y = 2.345;
-bhau hai ahe z = 'A';
-bhau hai ahe w = "hello this is a string example";
-bhau hai ahe q = khara;
-bhau hai ahe point = -y;
-bhau hai ahe akshay;
-bhau hai ahe jkkk;
+bhau hai ahe test_str = "hello this is a test string";
+bhau hai ahe test1;
+
 
 bhau ithun chalu {
+    test1 = 13;
+    bhau hai ahe test2 = "hello\nthis";
 
 }
-
-bhau hai ahe test_test = "akshay";
 
 bye bhau

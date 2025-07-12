@@ -307,6 +307,7 @@ AST_Node* parse_extern(bl_parser* parser){
     return ast;
 }
 
+
 AST_Node* parse_assign(bl_parser* parser){
     if(stack_size(parser->scope_stack) < 2){
         bl_parse_error(parser,"Assignment expressions cannot be used globally",1,60);

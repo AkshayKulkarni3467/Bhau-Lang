@@ -11,26 +11,26 @@
 // #define BL_IR_TEST
 
 
-typedef enum {
-    TAC_NOP,
-    TAC_ASSIGNDECL,
-    TAC_ASSIGN,     
+typedef enum { 
+    TAC_NOP,        //--
+    TAC_ASSIGNDECL, //
+    TAC_ASSIGN,     //--
     TAC_BINOP,   
     TAC_UNOP,       
-    TAC_LABEL,
+    TAC_LABEL,      //--
     TAC_GOTO,
     TAC_IFGOTO,     
     TAC_PARAM,
     TAC_ARG,
-    TAC_CALL,
-    TAC_FUNC_BEGIN,  
-    TAC_FUNC_END,    
-    TAC_MAIN_BEGIN,
-    TAC_MAIN_END,
+    TAC_CALL,        //--
+    TAC_FUNC_BEGIN,  //
+    TAC_FUNC_END,    //
+    TAC_MAIN_BEGIN,  //
+    TAC_MAIN_END,    //
     TAC_RETURN,
-    TAC_EXTERN,
-    TAC_LOAD_PTR,
-    TAC_ADDR_OF,   
+    TAC_EXTERN,      //
+    TAC_LOAD_PTR,    //--
+    TAC_ADDR_OF,     //--
 } TAC_Op;
 
 typedef enum {
@@ -1390,6 +1390,10 @@ TACList* update_list_types(TACList* list1,bl_arena* arena){
             }
             case TAC_ASSIGN:{
                 instr->result->acquired_type = instr->arg1->acquired_type;
+                if((instr->result->acquired_type == TYPE_STRING) && (instr->arg1->acquired_type == TYPE_STRING)){
+                    fprintf(stderr,"Cannot assign or redeclare string literals. Found at `%s`\n",instr->result->val.sval);
+                    exit(1);
+                }
                 TACInstr* temp_ptr = instr;
                 DataContext* ctx = instr->result;
                 ValueType temp_type = instr->result->acquired_type;
@@ -1745,10 +1749,21 @@ void print_all_symbol_tables(SymbolTableList* list) {
 }
 
 void allocate_offsets_for_table(SymbolTable* table){
-    int offset = 0;
+    int offset = 8;
     for(int i = 0;i<table->symbol_count; i++){
+        if(table->entries[i]->type != TYPE_STRING){
+            table->entries[i]->offset = offset;
+            offset+=8;  
+        }else{
+            offset-=8;
+            char* str= table->entries[i]->value.sval;
+            int t_offset = strlen(str)+1;
+            t_offset = (t_offset + 7) & ~7;
+            offset+=t_offset;
             table->entries[i]->offset = offset;
             offset+=8;
+        }
+
     }
     int frame = (offset + 15) & ~15;
     table->total_offset = frame;
