@@ -1,12 +1,27 @@
 hi bhau 
 
-bhau hai ahe x = "hello i am akshay";
+bhau hai ahe x = 12;
+bhau hai ahe y = 13;
+bhau hai ahe z = 14;
 
 
 bhau ithun chalu {
-    bhau hai ahe test2 = ref ref x;
-    bhau hai ahe test3 = "h";
-    bhau hai ahe test4 = ref ref test3;
+    bhau hai ahe test = 0;
+    bhau hai ahe cond = 100;
+
+    bhau jar(cond < 100){
+        test = x;
+    }
+    bhau nahitar(cond > 100){
+        test = y;
+    }bhau tar{
+        test = z;
+    }
+    
+    bhau joparent(test < 100){
+        cond = test;
+        ++test;
+    }
 }
 
 bye bhau

@@ -1115,6 +1115,10 @@ AST_Node* propogate_scope(AST_Node* node, bl_stack* stack,bl_set* set,bl_arena* 
 
         case AST_UNOP: {
             AST_Unop* unop = (AST_Unop*)node->data;
+            if(unop->op == BL_INC || unop->op == BL_DEC){
+                AST_Identifier* ident = (AST_Identifier*)unop->node->data;
+                scope_switch_constant(stack,set,ident->name,arena);
+            }
             unop->node = propogate_scope(unop->node,stack,set,arena);
             return node;
         }

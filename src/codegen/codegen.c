@@ -508,7 +508,7 @@ static void emitMain(FILE* fp, SymbolTable* table, SymbolTableList* slist,TACLis
             }
 
             case TAC_LABEL:{
-                fprintf(fp,"    .%s\n",instr->label);
+                fprintf(fp,"    .%s:\n",instr->label);
                 break;
             }
 
@@ -523,9 +523,20 @@ static void emitMain(FILE* fp, SymbolTable* table, SymbolTableList* slist,TACLis
 
             case TAC_IFGOTO: {
                 if(strcmp(instr->relop->operator_str,"!=")==0){
-                    fprintf(fp,"    mov rax, QWORD [rbp - %d]\n"
-                               "    cmp rax, %d\n"
-                               "    jne .%s\n",get_offset(table,instr->arg1->val.sval),instr->arg2->val.ival,instr->label);
+                    printf("hello\n");
+                    if(instr->arg1->type == TYPE_IDENTIFIER){
+                        fprintf(fp,"    mov rax, QWORD [rbp - %d]\n"
+                                   "    cmp rax, %d\n"
+                                   "    jne .%s\n",get_offset(table,instr->arg1->val.sval),instr->arg2->val.ival,instr->label);
+                    }else if(instr->arg1->type == TYPE_INT){
+                        fprintf(fp,"    mov rax, %d\n"
+                                   "    cmp rax, %d\n"
+                                   "    jne .%s\n",instr->arg1->val.ival,instr->arg2->val.ival,instr->label);
+                    }else if(instr->arg1->type == TYPE_BOOL){
+                        fprintf(fp,"    mov rax, %d\n"
+                                   "    cmp rax, %d\n"
+                                   "    jne .%s\n",instr->arg1->val.bval == true ? 1 : 0,instr->arg2->val.ival,instr->label);
+                    }
                 }else if(strcmp(instr->relop->operator_str,"==") == 0){
                     if(instr->arg2->type == TYPE_CHAR){
                         fprintf(fp,"    mov rax, QWORD [rbp - %d]\n"
