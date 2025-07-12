@@ -1,18 +1,12 @@
 hi bhau 
 
-bhau baherun ghe printf;
-bhau baherun ghe scanf;
-
-bhau hai ahe x = 12;
-bhau hai ahe y = 2.345;
-bhau hai ahe test_str = "hello this is a test string";
-bhau hai ahe test1;
+bhau hai ahe x = "hello i am akshay";
 
 
 bhau ithun chalu {
-    test1 = 13;
-    bhau hai ahe test2 = "hello\nthis";
-
+    bhau hai ahe test2 = ref ref x;
+    bhau hai ahe test3 = "h";
+    bhau hai ahe test4 = ref ref test3;
 }
 
 bye bhau

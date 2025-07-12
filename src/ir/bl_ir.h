@@ -12,25 +12,25 @@
 
 
 typedef enum { 
-    TAC_NOP,        //--
+    TAC_NOP,        //
     TAC_ASSIGNDECL, //
-    TAC_ASSIGN,     //--
+    TAC_ASSIGN,     //
     TAC_BINOP,   
-    TAC_UNOP,       
-    TAC_LABEL,      //--
-    TAC_GOTO,
-    TAC_IFGOTO,     
-    TAC_PARAM,
-    TAC_ARG,
-    TAC_CALL,        //--
-    TAC_FUNC_BEGIN,  //
-    TAC_FUNC_END,    //
-    TAC_MAIN_BEGIN,  //
-    TAC_MAIN_END,    //
-    TAC_RETURN,
-    TAC_EXTERN,      //
-    TAC_LOAD_PTR,    //--
-    TAC_ADDR_OF,     //--
+    TAC_UNOP,       //--
+    TAC_LABEL,      //
+    TAC_GOTO,       //
+    TAC_IFGOTO,     //
+    TAC_PARAM,      //--
+    TAC_ARG,        //--
+    TAC_CALL,       //
+    TAC_FUNC_BEGIN, //
+    TAC_FUNC_END,   //
+    TAC_MAIN_BEGIN, //
+    TAC_MAIN_END,   //
+    TAC_RETURN,     //-- 
+    TAC_EXTERN,     //
+    TAC_LOAD_PTR,   //
+    TAC_ADDR_OF,    //--
 } TAC_Op;
 
 typedef enum {
@@ -184,7 +184,6 @@ int main(){
 
 bl_ir* bhaulang_ir(char* filename, bl_arena* arena){
     AST_Node* node = bhaulang_optimizer(filename,arena);
-
     TACList* list = generate_tac(node,arena);
     TACList* slist = generate_scope_ids(list);
     TACList* ulist = update_list_types(slist,arena);
@@ -529,6 +528,12 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             op_ctx->operator_str = get_binop_from_keyword(bin->op);
             op_ctx->operator_type = bin->op;
 
+
+            DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
+            temp_ctx->type = TYPE_INT;
+            temp_ctx->acquired_type = TYPE_INT;
+            temp_ctx->val.ival = 0;
+            tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
             tac_append(prog, tac_create_instr(arena, TAC_BINOP, result, left, right, op_ctx, NULL));
             return result;
         }
@@ -551,6 +556,11 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 op_ctx->operator_str = get_unaryop_from_keyword(un->op);
                 op_ctx->operator_type = un->op;
 
+                DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
+                temp_ctx->type = TYPE_INT;
+                temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->val.ival = 0;
+                tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
                 tac_append(prog, tac_create_instr(arena, TAC_ADDR_OF, result, arg, NULL, op_ctx, NULL));
                 return result;
             }else if(un->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR){
@@ -562,8 +572,32 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 op_ctx->operator_str = get_unaryop_from_keyword(un->op);
                 op_ctx->operator_type = un->op;
 
+                DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
+                temp_ctx->type = TYPE_INT;
+                temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->val.ival = 0;
+                tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
                 tac_append(prog,tac_create_instr(arena,TAC_LOAD_PTR,result,arg,NULL,op_ctx,NULL));
                 return result;
+            }else if(un->op == (enum KEYWORD_TYPES)BL_INC || un->op == (enum KEYWORD_TYPES)BL_DEC){
+                DataContext* result = new_temp(arena);
+
+                OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                op_ctx->operator_str = get_unaryop_from_keyword(un->op);
+                op_ctx->operator_type = un->op;
+
+                OperatorContext* aop_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                aop_ctx->operator_str = "=";
+                aop_ctx->operator_type = BL_EQUAL;
+
+                DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
+                temp_ctx->type = TYPE_INT;
+                temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->val.ival = 0;
+                tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_UNOP, result, arg, NULL, op_ctx, NULL));
+                tac_append(prog,tac_create_instr(arena,TAC_ASSIGN,arg,result,NULL, aop_ctx,NULL));
+                return arg;
             }
             DataContext* result = new_temp(arena);
 
@@ -571,7 +605,11 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             op_ctx->operator_str = get_unaryop_from_keyword(un->op);
             op_ctx->operator_type = un->op;
 
-
+            DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
+            temp_ctx->type = TYPE_INT;
+            temp_ctx->acquired_type = TYPE_INT;
+            temp_ctx->val.ival = 0;
+            tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
             tac_append(prog, tac_create_instr(arena, TAC_UNOP, result, arg, NULL, op_ctx, NULL));
             return result;
         }
@@ -593,7 +631,173 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             op_ctx->operator_str = get_binop_from_keyword(asg->op);
             op_ctx->operator_type = asg->op;
 
-            tac_append(prog, tac_create_instr(arena, TAC_ASSIGN, ctx, rhs, NULL,op_ctx, NULL));
+            if(strcmp(op_ctx->operator_str,"=") == 0){
+                tac_append(prog, tac_create_instr(arena, TAC_ASSIGN, ctx, rhs, NULL,op_ctx, NULL));
+            }else if(strcmp(op_ctx->operator_str,"+=") == 0){
+                DataContext* left = ctx;
+                DataContext* right = rhs;
+                DataContext* result = new_temp(arena);
+
+                OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                op_ctx->operator_str = "+";
+                op_ctx->operator_type = BL_ADDBINOP;
+
+                OperatorContext* aop_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                aop_ctx->operator_str = "=";
+                aop_ctx->operator_type = BL_EQUAL;
+
+                DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
+                temp_ctx->type = TYPE_INT;
+                temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->val.ival = 0;
+                tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_BINOP, result, left, right, op_ctx, NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_ASSIGN, ctx, result, NULL,aop_ctx, NULL));
+            }else if(strcmp(op_ctx->operator_str,"-=") == 0){
+                DataContext* left = ctx;
+                DataContext* right = rhs;
+                DataContext* result = new_temp(arena);
+
+                OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                op_ctx->operator_str = "-";
+                op_ctx->operator_type = BL_SUBBINOP;
+
+                OperatorContext* aop_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                aop_ctx->operator_str = "=";
+                aop_ctx->operator_type = BL_EQUAL;
+
+                DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
+                temp_ctx->type = TYPE_INT;
+                temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->val.ival = 0;
+                tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_BINOP, result, left, right, op_ctx, NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_ASSIGN, ctx, result, NULL,aop_ctx, NULL));
+            }else if(strcmp(op_ctx->operator_str,"*=") == 0){
+                DataContext* left = ctx;
+                DataContext* right = rhs;
+                DataContext* result = new_temp(arena);
+
+                OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                op_ctx->operator_str = "*";
+                op_ctx->operator_type = BL_MULTBINOP;
+
+                OperatorContext* aop_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                aop_ctx->operator_str = "=";
+                aop_ctx->operator_type = BL_EQUAL;
+
+                DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
+                temp_ctx->type = TYPE_INT;
+                temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->val.ival = 0;
+                tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_BINOP, result, left, right, op_ctx, NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_ASSIGN, ctx, result, NULL,aop_ctx, NULL));
+            }else if(strcmp(op_ctx->operator_str,"/=") == 0){
+                DataContext* left = ctx;
+                DataContext* right = rhs;
+                DataContext* result = new_temp(arena);
+
+                OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                op_ctx->operator_str = "/";
+                op_ctx->operator_type = BL_DIVBINOP;
+
+                OperatorContext* aop_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                aop_ctx->operator_str = "=";
+                aop_ctx->operator_type = BL_EQUAL;
+
+                DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
+                temp_ctx->type = TYPE_INT;
+                temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->val.ival = 0;
+                tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_BINOP, result, left, right, op_ctx, NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_ASSIGN, ctx, result, NULL,aop_ctx, NULL));
+            }else if(strcmp(op_ctx->operator_str,"&=") == 0){
+                DataContext* left = ctx;
+                DataContext* right = rhs;
+                DataContext* result = new_temp(arena);
+
+                OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                op_ctx->operator_str = "&";
+                op_ctx->operator_type = BL_AND;
+
+                OperatorContext* aop_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                aop_ctx->operator_str = "=";
+                aop_ctx->operator_type = BL_EQUAL;
+
+                DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
+                temp_ctx->type = TYPE_INT;
+                temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->val.ival = 0;
+                tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_BINOP, result, left, right, op_ctx, NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_ASSIGN, ctx, result, NULL,aop_ctx, NULL));
+            }else if(strcmp(op_ctx->operator_str,"|=") == 0){
+                DataContext* left = ctx;
+                DataContext* right = rhs;
+                DataContext* result = new_temp(arena);
+
+                OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                op_ctx->operator_str = "|";
+                op_ctx->operator_type = BL_OR;
+
+                OperatorContext* aop_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                aop_ctx->operator_str = "=";
+                aop_ctx->operator_type = BL_EQUAL;
+
+                DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
+                temp_ctx->type = TYPE_INT;
+                temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->val.ival = 0;
+                tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_BINOP, result, left, right, op_ctx, NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_ASSIGN, ctx, result, NULL,aop_ctx, NULL));
+            }else if(strcmp(op_ctx->operator_str,"^=") == 0){
+                DataContext* left = ctx;
+                DataContext* right = rhs;
+                DataContext* result = new_temp(arena);
+
+                OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                op_ctx->operator_str = "^";
+                op_ctx->operator_type = BL_XOR;
+
+                OperatorContext* aop_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                aop_ctx->operator_str = "=";
+                aop_ctx->operator_type = BL_EQUAL;
+
+                DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
+                temp_ctx->type = TYPE_INT;
+                temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->val.ival = 0;
+                tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_BINOP, result, left, right, op_ctx, NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_ASSIGN, ctx, result, NULL,aop_ctx, NULL));
+            }else if(strcmp(op_ctx->operator_str,"%=") == 0){
+                DataContext* left = ctx;
+                DataContext* right = rhs;
+                DataContext* result = new_temp(arena);
+
+                OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                op_ctx->operator_str = "%";
+                op_ctx->operator_type = BL_MODBINOP;
+
+                OperatorContext* aop_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                aop_ctx->operator_str = "=";
+                aop_ctx->operator_type = BL_EQUAL;
+
+                DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
+                temp_ctx->type = TYPE_INT;
+                temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->val.ival = 0;
+                tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_BINOP, result, left, right, op_ctx, NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_ASSIGN, ctx, result, NULL,aop_ctx, NULL));
+            }else{
+                fprintf(stderr,"Unknown assignment operator, got `%s`\n",op_ctx->operator_str);
+                exit(1);
+            }
+
             return ctx;
         }
 
@@ -780,6 +984,11 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             name_ctx->type = TYPE_IDENTIFIER;
             name_ctx->acquired_type = TYPE_IDENTIFIER;
 
+            DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
+            temp_ctx->type = TYPE_INT;
+            temp_ctx->acquired_type = TYPE_INT;
+            temp_ctx->val.ival = 0;
+            tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
             TACInstr* call_instr = tac_create_instr(arena, TAC_CALL, result, name_ctx, NULL, NULL, NULL);
             call_instr->arg_count = call->args_count;
 
@@ -1123,6 +1332,8 @@ TACList* update_list_types(TACList* list1,bl_arena* arena){
         list->head = list->tail = NULL;
         list->temp_id = 0;
         list->label_id = 0;
+
+       
     
     for(TACInstr* instr = list1->head;instr;instr = instr->next){
         switch(instr->op){
@@ -1157,6 +1368,7 @@ TACList* update_list_types(TACList* list1,bl_arena* arena){
                 break;
             }
             case TAC_ASSIGNDECL:{
+                
                 if(instr->arg1){
                     instr->result->acquired_type = instr->arg1->acquired_type;
                     TACInstr* temp_ptr = instr;
@@ -1696,13 +1908,13 @@ SymbolTableList* get_symbol_table(TACList* list, bl_arena* arena) {
                 break;
             }
 
-            case TAC_ASSIGN: {
-                const char* name = print_type_val(instr->result, arena);
-                ValueType type = instr->arg1->acquired_type;
-                ValuePrimitive val = instr->arg1->val;
-                add_or_update_symbol(current_table, arena, name, type, false, val, true);
-                break;
-            }
+            // case TAC_ASSIGN: {
+            //     const char* name = print_type_val(instr->result, arena);
+            //     ValueType type = instr->arg1->acquired_type;
+            //     ValuePrimitive val = instr->arg1->val;
+            //     add_or_update_symbol(current_table, arena, name, type, false, val, true);
+            //     break;
+            // }
 
             case TAC_PARAM: {
                 const char* name = print_type_val(instr->arg1, arena);
@@ -1719,18 +1931,18 @@ SymbolTableList* get_symbol_table(TACList* list, bl_arena* arena) {
                 break;
             }
 
-            case TAC_ADDR_OF:
-            case TAC_LOAD_PTR:
-            case TAC_BINOP:
-            case TAC_UNOP:
-            case TAC_CALL: {
-                if (instr->result) {
-                    const char* temp_name = print_type_val(instr->result, arena);
-                    ValueType type = instr->result->acquired_type;
-                    add_or_update_symbol(current_table, arena, temp_name, type, false, instr->arg1->val, true);
-                }
-                break;
-            }
+            // case TAC_ADDR_OF:
+            // case TAC_LOAD_PTR:
+            // case TAC_BINOP:
+            // case TAC_UNOP:
+            // case TAC_CALL: {
+            //     if (instr->result) {
+            //         const char* temp_name = print_type_val(instr->result, arena);
+            //         ValueType type = instr->result->acquired_type;
+            //         add_or_update_symbol(current_table, arena, temp_name, type, false, instr->arg1->val, true);
+            //     }
+            //     break;
+            // }
 
             default:
                 break;

@@ -1308,13 +1308,13 @@ AST_Node* fold_constants_from_scope(AST_Node* node, bl_stack* stack, bl_set* non
             return node;
         }
 
-        case AST_UNOP: {
-            AST_Unop* un_node = node->data;
-            if(!(un_node->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR || un_node->op == (enum KEYWORD_TYPES)BL_KW_BHAU_REF)){
-                un_node->node = fold_constants_from_scope(un_node->node,stack,non_const_set,arena);
-            }
-            return node;
-        }
+        // case AST_UNOP: {
+        //     AST_Unop* un_node = node->data;
+        //     if(!(un_node->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR || un_node->op == (enum KEYWORD_TYPES)BL_KW_BHAU_REF)){
+        //         un_node->node = fold_constants_from_scope(un_node->node,stack,non_const_set,arena);
+        //     }
+        //     return node;
+        // }
 
         case AST_GROUP: {
             AST_Group* grp = node->data;
