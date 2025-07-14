@@ -10,9 +10,6 @@
 
 // #define BL_IR_TEST
 
-//TODO no type param should exist, only keep the function if the function is called, and assign the params the types of arguments
-//TODO can be done by traversing all the instructions, finding the call given the name, take arg_count, take call - arg_count num of arguments and return their types
-//TODO if no func call is found, remove the function since its not used
 typedef enum { 
     TAC_NOP,        //
     TAC_ASSIGNDECL, //
@@ -48,6 +45,7 @@ typedef enum {
     TYPE_REF,
     TYPE_FUNCTION,
     TYPE_PARAM,
+    TYPE_ARG,
     TYPE_EXTERN,
     TYPE_UNDECLARED,
 } ValueType;
@@ -205,9 +203,8 @@ int main(){
 bl_ir* bhaulang_ir(char* filename, bl_arena* arena){
     AST_Node* node = bhaulang_optimizer(filename,arena);
     bl_ir* ir_struct = generate_tac(node,arena);
-    allocate_offsets_for_all_funcs(ir_struct->slist);
-    tac_print(ir_struct->list,arena);
     ir_struct->list = update_list_types(ir_struct->list,arena);
+    allocate_offsets_for_all_funcs(ir_struct->slist);
     return ir_struct;
 }
 
@@ -319,6 +316,7 @@ char* get_str_type(ValueType type){
         case TYPE_EXTERN: return "extern";
         case TYPE_UNDECLARED: return "undeclared";
         case TYPE_PARAM: return "param";
+        case TYPE_ARG : return "arg";
     }
     return NULL;
 }
@@ -1314,11 +1312,39 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
         case AST_FUNCTIONCALL: {
             AST_FunctionCall* call = (AST_FunctionCall*)node->data;
             for (int i = 0; i < call->args_count; ++i) {
+                DataContext* result = new_temp(arena);
+
+                result->scope = current_table;
+                result->scope_id = current_table->scope_id;
+
+                SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+                entry->name = result->val.sval;
+                entry->is_global = current_table->scope_id == 0 ? true : false;
+                entry->type = TYPE_ARG;
                 DataContext* arg = gen_tac(call->args[i], prog,slist,current_table, arena, loop_ctx);
-                tac_append(prog, tac_create_instr(arena, TAC_ARG, NULL, arg, NULL, NULL, NULL));
+                if(arg->acquired_type == TYPE_STRING){
+                    entry->string_val = arg->val.sval;
+                }
+                current_table->entries[current_table->symbol_count++] = entry;
+
+                DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
+                temp_ctx->type = TYPE_INT;
+                temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->scope = current_table;
+                temp_ctx->scope_id = current_table->scope_id;
+                temp_ctx->val.ival = 0;
+
+                OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
+                op_ctx->operator_str = "=";
+                op_ctx->operator_type = BL_EQUAL;
+
+                tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,arg,NULL,NULL,NULL));
+                tac_append(prog, tac_create_instr(arena, TAC_ARG, NULL, result, NULL, NULL, NULL));
             }
 
             DataContext* result = new_temp(arena);
+            result->scope = current_table;
+            result->scope_id = current_table->scope_id;
 
             SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
             entry->is_global = 0;
@@ -1992,8 +2018,8 @@ TACList* update_list_types(TACList* list1,bl_arena* arena){
             case TAC_MAIN_END: {
                 break;
             }
+
             case TAC_PARAM:{
-                instr->arg1->acquired_type = TYPE_PARAM;
                 TACInstr* temp_ptr = instr;
                 DataContext* ctx = instr->arg1;
                 ValueType temp_type = instr->arg1->acquired_type;
@@ -2191,10 +2217,10 @@ void tac_print(TACList* list,bl_arena* arena) {
                 printf("[Conditional Jump] if %s (%s) (%d) %s %s (%s) (%d) goto %s\n", print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type),instr->arg1->scope_id, instr->relop->operator_str, print_type_val(instr->arg2,arena),get_str_type(instr->arg2->acquired_type), instr->arg2->scope_id,instr->label);
                 break;
             case TAC_PARAM:
-                printf("[Parameter] param %s (%d)\n", print_type_val(instr->arg1,arena),instr->arg1->scope_id);
+                printf("[Parameter] param %s (%s) (%d)\n", print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type),instr->arg1->scope_id);
                 break;
             case TAC_ARG:
-                printf("[Argument] arg %s (%d)\n",print_type_val(instr->arg1,arena),instr->arg1->scope_id);
+                printf("[Argument] arg %s (%s) (%d)\n",print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type),instr->arg1->scope_id);
                 break;
             case TAC_CALL:
                 printf("[Function call] %s (%s) (%d) = call %s (%s) (%d), %d\n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type), instr->result->scope_id,print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type),instr->arg1->scope_id, instr->arg_count);
@@ -2243,12 +2269,22 @@ void allocate_offsets_for_func(SymbolTable* table,int *offset){
     if (table == NULL) return;
     for(int j = 0;j<table->symbol_count;j++){
         if(table->entries[j]->type == TYPE_STRING){
-            (*offset)-=8;
             int t_offset = strlen(table->entries[j]->string_val) + 1;
             t_offset = (t_offset + 7) & ~7;
             (*offset)+=t_offset;
             table->entries[j]->offset = *offset;
             (*offset)+=8;
+        }else if(table->entries[j]->type == TYPE_ARG){
+            if(table->entries[j]->string_val){
+                int t_offset = strlen(table->entries[j]->string_val) + 1;
+                t_offset = (t_offset + 7) & ~7;
+                (*offset)+=t_offset;
+                table->entries[j]->offset = *offset;
+                (*offset)+=8;
+            }else{
+                table->entries[j]->offset = *offset;
+                (*offset)+=8;
+            }
         }else{
             table->entries[j]->offset = *offset;
             (*offset)+=8;
