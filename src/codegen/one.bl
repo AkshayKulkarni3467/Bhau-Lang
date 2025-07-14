@@ -1,22 +1,13 @@
 hi bhau 
 
-bhau baherun ghe printf;
 
-bhau hai ahe x = 12;
-bhau hai ahe y = 13;
-bhau hai ahe z = 14;
+bhau hai ahe x = 13;
 
 bhau ithun chalu {
-    bhau hai ahe test1 = 13;
-    test1 = test1 + 1;
-    bhau jar(x < 5){
-        bhau hai ahe test1 = 'A';
-    }bhau nahitar(x>5){
-        bhau hai ahe test1 = khara;
-    }bhau tar{
-        bhau hai ahe test1 = 32.222;
+    bhau hai ahe test1 = 12;
+    bhau joparent(test1 > 0){
+        --test1;
     }
-    bhau hai ahe test2 = test1;
 }
 
 bye bhau

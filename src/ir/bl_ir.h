@@ -71,6 +71,10 @@ typedef struct LoopContext {
 typedef struct {
     char* name;
     char* string_val;
+    int int_val;
+    float float_val;
+    char char_val;
+    bool bool_val;
     ValueType type;
     bool is_global;
     int offset;
@@ -202,6 +206,7 @@ bl_ir* bhaulang_ir(char* filename, bl_arena* arena){
     AST_Node* node = bhaulang_optimizer(filename,arena);
     bl_ir* ir_struct = generate_tac(node,arena);
     allocate_offsets_for_all_funcs(ir_struct->slist);
+    tac_print(ir_struct->list,arena);
     ir_struct->list = update_list_types(ir_struct->list,arena);
     return ir_struct;
 }
@@ -365,7 +370,6 @@ bl_ir* generate_tac(AST_Node* ast, bl_arena* arena) {
     SymbolTable* g_table = arena_alloc(arena,sizeof(SymbolTable));
     g_table->scope_name = "global";
     g_table->scope_id = scope_id_counter;
-    scope_id_counter++;
     g_table->parent = NULL;
     g_table->symbol_count = 0;
     g_table->children_count = 0;
@@ -390,7 +394,6 @@ bl_ir* generate_tac(AST_Node* ast, bl_arena* arena) {
     return ir_;
 }
 
-//TODO Will assign scopes in all AST_Nodes, each datacontext will have the scope_id according to it
 DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,SymbolTable* current_table, bl_arena* arena,LoopContext* loop_ctx) {
     if (!node) return NULL;
     switch (node->type) {
@@ -418,7 +421,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             sw_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
             sw_table->symbol_capacity = 128;
             sw_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
-            sw_table->scope_id = scope_id_counter++;
+            sw_table->scope_id = ++scope_id_counter;
             sw_table->scope_name = "null";
             sw_table->symbol_count = 0;
             sw_table->children_count = 0;
@@ -441,6 +444,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
                     DataContext* sw_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
                     sw_ctx->val.ival = ilit->value;
                     sw_ctx->type = TYPE_INT;
+                    sw_ctx->scope = sw_table;
+                    sw_ctx->scope_id = sw_table->scope_id;
                     sw_ctx->acquired_type = TYPE_INT;
 
                     OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
@@ -453,6 +458,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
                     DataContext* sw_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
                     sw_ctx->val.cval = clit->value;
                     sw_ctx->type = TYPE_CHAR;
+                    sw_ctx->scope = sw_table;
+                    sw_ctx->scope_id = sw_table->scope_id;
                     sw_ctx->acquired_type = TYPE_CHAR;
 
                     OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
@@ -524,6 +531,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             DataContext* int_val = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             int_val->val.ival = lit->value;
             int_val->type = TYPE_INT;
+            int_val->scope = current_table;
+            int_val->scope_id = current_table->scope_id;
             int_val->acquired_type = TYPE_INT;
 
             return int_val;
@@ -535,6 +544,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             bool_val->val.bval=blit->value;
             bool_val->type = TYPE_BOOL;
             bool_val->acquired_type = TYPE_BOOL;
+            bool_val->scope = current_table;
+            bool_val->scope_id = current_table->scope_id;
             return bool_val;
         }
 
@@ -543,6 +554,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             DataContext* str_val = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             str_val->val.sval = slit->value;
             str_val->type = TYPE_STRING;
+            str_val->scope = current_table;
+            str_val->scope_id = current_table->scope_id;
             str_val->acquired_type = TYPE_STRING;
             return str_val;
         }
@@ -553,6 +566,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             char_val->val.cval = clit->value;
             char_val->type = TYPE_CHAR;
             char_val->acquired_type = TYPE_CHAR;
+            char_val->scope = current_table;
+            char_val->scope_id = current_table->scope_id;
             return char_val;
         }
 
@@ -562,6 +577,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             float_val->val.fval = flit->value;
             float_val->type = TYPE_FLOAT;
             float_val->acquired_type = TYPE_FLOAT;
+            float_val->scope = current_table;
+            float_val->scope_id = current_table->scope_id;
             return float_val;
         }
 
@@ -570,6 +587,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             DataContext* ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             ctx->val.sval = ident->name;
             ctx->type = TYPE_IDENTIFIER;
+            ctx->scope_id = current_table->scope_id;
+            ctx->scope = current_table;
             ctx->acquired_type = TYPE_IDENTIFIER;
             return ctx;
         }
@@ -597,6 +616,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             temp_ctx->type = TYPE_INT;
             temp_ctx->acquired_type = TYPE_INT;
+            temp_ctx->scope = current_table;
+            temp_ctx->scope_id = current_table->scope_id;
             temp_ctx->val.ival = 0;
             tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
             tac_append(prog, tac_create_instr(arena, TAC_BINOP, result, left, right, op_ctx, NULL));
@@ -633,6 +654,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
                 DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
                 temp_ctx->type = TYPE_INT;
                 temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->scope = current_table;
+                temp_ctx->scope_id = current_table->scope_id;
                 temp_ctx->val.ival = 0;
                 tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
                 tac_append(prog, tac_create_instr(arena, TAC_ADDR_OF, result, arg, NULL, op_ctx, NULL));
@@ -658,6 +681,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
 
                 DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
                 temp_ctx->type = TYPE_INT;
+                temp_ctx->scope = current_table;
+                temp_ctx->scope_id = current_table->scope_id;
                 temp_ctx->acquired_type = TYPE_INT;
                 temp_ctx->val.ival = 0;
                 tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
@@ -685,6 +710,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
 
                 DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
                 temp_ctx->type = TYPE_INT;
+                temp_ctx->scope = current_table;
+                temp_ctx->scope_id = current_table->scope_id;
                 temp_ctx->acquired_type = TYPE_INT;
                 temp_ctx->val.ival = 0;
                 tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
@@ -710,6 +737,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             temp_ctx->type = TYPE_INT;
             temp_ctx->acquired_type = TYPE_INT;
+            temp_ctx->scope = current_table;
+            temp_ctx->scope_id = current_table->scope_id;
             temp_ctx->val.ival = 0;
             tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
             tac_append(prog, tac_create_instr(arena, TAC_UNOP, result, arg, NULL, op_ctx, NULL));
@@ -727,6 +756,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             AST_Identifier* ident = (AST_Identifier*)asg->lhs->data;
             ctx->val.sval = ident->name;
             ctx->type = TYPE_IDENTIFIER;
+            ctx->scope = current_table;
+            ctx->scope_id = current_table->scope_id;
             ctx->acquired_type = TYPE_IDENTIFIER;
 
             OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
@@ -759,6 +790,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
 
                 DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
                 temp_ctx->type = TYPE_INT;
+                temp_ctx->scope = current_table;
+                temp_ctx->scope_id = current_table->scope_id;
                 temp_ctx->acquired_type = TYPE_INT;
                 temp_ctx->val.ival = 0;
                 tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
@@ -789,6 +822,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
 
                 DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
                 temp_ctx->type = TYPE_INT;
+                temp_ctx->scope = current_table;
+                temp_ctx->scope_id = current_table->scope_id;
                 temp_ctx->acquired_type = TYPE_INT;
                 temp_ctx->val.ival = 0;
                 tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
@@ -819,6 +854,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
 
                 DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
                 temp_ctx->type = TYPE_INT;
+                temp_ctx->scope = current_table;
+                temp_ctx->scope_id = current_table->scope_id;
                 temp_ctx->acquired_type = TYPE_INT;
                 temp_ctx->val.ival = 0;
                 tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
@@ -850,6 +887,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
                 DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
                 temp_ctx->type = TYPE_INT;
                 temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->scope = current_table;
+                temp_ctx->scope_id = current_table->scope_id;
                 temp_ctx->val.ival = 0;
                 tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
                 tac_append(prog, tac_create_instr(arena, TAC_BINOP, result, left, right, op_ctx, NULL));
@@ -880,6 +919,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
                 DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
                 temp_ctx->type = TYPE_INT;
                 temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->scope = current_table;
+                temp_ctx->scope_id = current_table->scope_id;
                 temp_ctx->val.ival = 0;
                 tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
                 tac_append(prog, tac_create_instr(arena, TAC_BINOP, result, left, right, op_ctx, NULL));
@@ -910,6 +951,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
                 DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
                 temp_ctx->type = TYPE_INT;
                 temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->scope = current_table;
+                temp_ctx->scope_id = current_table->scope_id;
                 temp_ctx->val.ival = 0;
                 tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
                 tac_append(prog, tac_create_instr(arena, TAC_BINOP, result, left, right, op_ctx, NULL));
@@ -930,6 +973,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
                 DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
                 temp_ctx->type = TYPE_INT;
                 temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->scope = current_table;
+                temp_ctx->scope_id = current_table->scope_id;
                 temp_ctx->val.ival = 0;
                 tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
                 tac_append(prog, tac_create_instr(arena, TAC_BINOP, result, left, right, op_ctx, NULL));
@@ -960,6 +1005,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
                 DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
                 temp_ctx->type = TYPE_INT;
                 temp_ctx->acquired_type = TYPE_INT;
+                temp_ctx->scope = current_table;
+                temp_ctx->scope_id = current_table->scope_id;
                 temp_ctx->val.ival = 0;
                 tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
                 tac_append(prog, tac_create_instr(arena, TAC_BINOP, result, left, right, op_ctx, NULL));
@@ -989,7 +1036,6 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
                 ctx->val.sval = ident->name;
                 ctx->type = TYPE_IDENTIFIER;
                 ctx->acquired_type = TYPE_IDENTIFIER;
-
                 ctx->scope = current_table;
                 ctx->scope_id = current_table->scope_id;
 
@@ -1001,6 +1047,23 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
                     entry->type = rhs->type;
                 }else{
                     entry->type = TYPE_IDENTIFIER;
+                }
+                if(entry->is_global){
+                    entry->type = rhs->type;
+                    if(entry->type == TYPE_INT){
+                        entry->int_val = rhs->val.ival;
+                    }else if(entry->type == TYPE_FLOAT){
+                        entry->float_val = rhs->val.fval;
+                    }else if(entry->type == TYPE_CHAR){
+                        entry->char_val = rhs->val.cval;
+                    }else if(entry->type == TYPE_STRING){
+                        entry->string_val = rhs->val.sval;
+                    }else if(entry->type == TYPE_BOOL){
+                        entry->bool_val = rhs->val.bval;
+                    }else{
+                        fprintf(stderr,"Unknown declaration type in global scope; Declaration can only be int, float, char, string and bool\n");
+                        exit(1);
+                    }
                 }
 
                 current_table->entries[current_table->symbol_count++] = entry;
@@ -1025,6 +1088,9 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
                 entry->name = ctx->val.sval;
                 entry->is_global = current_table->scope_id == 0 ? true : false;
                 entry->type = TYPE_IDENTIFIER;
+                if(entry->is_global){
+                    entry->type = TYPE_UNDECLARED;
+                }
 
                 current_table->entries[current_table->symbol_count++] = entry;
 
@@ -1040,7 +1106,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             main_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
             main_table->symbol_capacity = 128;
             main_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
-            main_table->scope_id = scope_id_counter++;
+            main_table->scope_id = ++scope_id_counter;
             main_table->scope_name = "main";
             main_table->symbol_count = 0;
             main_table->children_count = 0;
@@ -1077,6 +1143,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             DataContext* zero_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             zero_ctx->val.ival = 0;
             zero_ctx->type = TYPE_INT;
+            zero_ctx->scope = current_table;
+            zero_ctx->scope_id = current_table->scope_id;
             zero_ctx->acquired_type = TYPE_INT;
 
             OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
@@ -1092,7 +1160,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
                 else_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
                 else_table->symbol_capacity = 128;
                 else_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
-                else_table->scope_id = scope_id_counter++;
+                else_table->scope_id = ++scope_id_counter;
                 else_table->scope_name = "null";
                 else_table->symbol_count = 0;
                 else_table->children_count = 0;
@@ -1112,7 +1180,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             if_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
             if_table->symbol_capacity = 128;
             if_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
-            if_table->scope_id = scope_id_counter++;
+            if_table->scope_id = ++scope_id_counter;
             if_table->scope_name = "null";
             if_table->symbol_count = 0;
             if_table->children_count = 0;
@@ -1135,6 +1203,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             DataContext* zero_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             zero_ctx->val.ival = 0;
             zero_ctx->type = TYPE_INT;
+            zero_ctx->scope = current_table;
+            zero_ctx->scope_id = current_table->scope_id;
             zero_ctx->acquired_type = TYPE_INT;
 
             LoopContext* new_ctx = (LoopContext*)arena_alloc(arena,sizeof(LoopContext));
@@ -1160,7 +1230,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             loop_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
             loop_table->symbol_capacity = 128;
             loop_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
-            loop_table->scope_id = scope_id_counter++;
+            loop_table->scope_id = ++scope_id_counter;
             loop_table->scope_name = "null";
             loop_table->symbol_count = 0;
             loop_table->children_count = 0;
@@ -1208,7 +1278,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             func_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
             func_table->symbol_capacity = 128;
             func_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
-            func_table->scope_id = scope_id_counter++;
+            func_table->scope_id = ++scope_id_counter;
             func_table->scope_name = name->name;
             func_table->symbol_count = 0;
             func_table->children_count = 0;
@@ -1260,11 +1330,15 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             DataContext* name_ctx = (DataContext*)arena_alloc(arena, sizeof(DataContext));
             name_ctx->val.sval = name->name;
             name_ctx->type = TYPE_IDENTIFIER;
+            name_ctx->scope = current_table;
+            name_ctx->scope_id = current_table->scope_id;
             name_ctx->acquired_type = TYPE_IDENTIFIER;
 
             DataContext* temp_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             temp_ctx->type = TYPE_INT;
             temp_ctx->acquired_type = TYPE_INT;
+            temp_ctx->scope = current_table;
+            temp_ctx->scope_id = current_table->scope_id;
             temp_ctx->val.ival = 0;
             tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,temp_ctx,NULL,NULL,NULL));
             TACInstr* call_instr = tac_create_instr(arena, TAC_CALL, result, name_ctx, NULL, NULL, NULL);
@@ -1606,14 +1680,9 @@ char* print_type_val(DataContext* context,bl_arena* arena){
 
 TACList* update_list_types(TACList* list1,bl_arena* arena){
 
-        TACList* list = (TACList*)arena_alloc(arena, sizeof(TACList));
-        list->head = list->tail = NULL;
-        list->temp_id = 0;
-        list->label_id = 0;
-
-       
-    
     for(TACInstr* instr = list1->head;instr;instr = instr->next){
+        if(instr->op == TAC_ASSIGNDECL){
+        }
         switch(instr->op){
             case TAC_EXTERN:{
                 instr->result->acquired_type = TYPE_EXTERN;
@@ -2068,41 +2137,48 @@ void tac_print(TACList* list,bl_arena* arena) {
     for (TACInstr* instr = list->head; instr; instr = instr->next) {
         switch (instr->op) {
             case TAC_LOAD_PTR:
-                printf("[LOAD PTR] %s (%s) = *%s (%s)\n", 
+                printf("[LOAD PTR] %s (%s) (%d) = *%s (%s) (%d)\n", 
                     print_type_val(instr->result, arena), 
                     get_str_type(instr->result->acquired_type),
+                    instr->result->scope_id,
                     print_type_val(instr->arg1, arena),
-                    get_str_type(instr->arg1->acquired_type));
+                    get_str_type(instr->arg1->acquired_type),
+                    instr->arg1->scope_id);
                 
                 break;
 
             case TAC_ADDR_OF:
-                printf("[ADDR OF] %s (%s) = &%s (%s)\n", 
+                printf("[ADDR OF] %s (%s) (%d) = &%s (%s) (%d)\n", 
                     print_type_val(instr->result, arena), 
                     get_str_type(instr->result->acquired_type),
+                    instr->result->scope_id,
                     instr->arg1 ?
                     print_type_val(instr->arg1, arena):
                     "null",
+                    
                     instr->arg1 ?
                     get_str_type(instr->arg1->acquired_type):
-                    "null");
+                    "null",
+                    
+                    instr->arg1?
+                    instr->arg1->scope_id : 0);
                 break;
             case TAC_ASSIGNDECL:
                 if(instr->arg1){
-                    printf("[Declaration] %s (%s) = %s (%s)\n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type), print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type));
+                    printf("[Declaration] %s (%s) (%d) = %s (%s) (%d)\n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type),instr->result->scope_id, print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type),instr->result->scope_id);
                 }else{
-                    printf("[Declaration] %s (%s) unassigned\n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type));
+                    printf("[Declaration] %s (%s) (%d) unassigned\n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type),instr->result->scope_id);
                 }
                 break;
             case TAC_ASSIGN:
-                printf("[Assignment] %s (%s) %s %s (%s)\n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type),instr->relop->operator_str, print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type));
+                printf("[Assignment] %s (%s) (%d) %s %s (%s) (%d)\n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type),instr->result->scope_id,instr->relop->operator_str, print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type),instr->arg1->scope_id);
                 break;
             case TAC_BINOP:
                 
-                printf("[Binary Op] %s (%s) = %s (%s) %s %s (%s)\n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type), print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type), instr->relop->operator_str, print_type_val(instr->arg2,arena),get_str_type(instr->arg2->acquired_type));
+                printf("[Binary Op] %s (%s) (%d) = %s (%s) (%d) %s %s (%s) (%d) \n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type), instr->result->scope_id,print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type),instr->arg1->scope_id, instr->relop->operator_str, print_type_val(instr->arg2,arena),get_str_type(instr->arg2->acquired_type),instr->arg2->scope_id);
                 break;
             case TAC_UNOP:
-                printf("[Unary op] %s (%s) = %s%s (%s)\n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type), instr->relop->operator_str, print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type));
+                printf("[Unary op] %s (%s) (%d) = %s%s (%s) (%d) \n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type), instr->result->scope_id,instr->relop->operator_str, print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type),instr->arg1->scope_id);
                 break;
             case TAC_LABEL:
                 printf("\n");
@@ -2112,19 +2188,19 @@ void tac_print(TACList* list,bl_arena* arena) {
                 printf("[Jump] goto %s\n", instr->label);
                 break;
             case TAC_IFGOTO:
-                printf("[Conditional Jump] if %s (%s) %s %s (%s) goto %s\n", print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type), instr->relop->operator_str, print_type_val(instr->arg2,arena),get_str_type(instr->arg2->acquired_type), instr->label);
+                printf("[Conditional Jump] if %s (%s) (%d) %s %s (%s) (%d) goto %s\n", print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type),instr->arg1->scope_id, instr->relop->operator_str, print_type_val(instr->arg2,arena),get_str_type(instr->arg2->acquired_type), instr->arg2->scope_id,instr->label);
                 break;
             case TAC_PARAM:
-                printf("[Parameter] param %s\n", print_type_val(instr->arg1,arena));
+                printf("[Parameter] param %s (%d)\n", print_type_val(instr->arg1,arena),instr->arg1->scope_id);
                 break;
             case TAC_ARG:
-                printf("[Argument] arg %s\n",print_type_val(instr->arg1,arena));
+                printf("[Argument] arg %s (%d)\n",print_type_val(instr->arg1,arena),instr->arg1->scope_id);
                 break;
             case TAC_CALL:
-                printf("[Function call] %s (%s) = call %s (%s), %d\n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type), print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type), instr->arg_count);
+                printf("[Function call] %s (%s) (%d) = call %s (%s) (%d), %d\n", print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type), instr->result->scope_id,print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type),instr->arg1->scope_id, instr->arg_count);
                 break;
             case TAC_RETURN:
-                printf("[Return] return %s (%s)\n", print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type));
+                printf("[Return] return %s (%s) (%d)\n", print_type_val(instr->arg1,arena),get_str_type(instr->arg1->acquired_type),instr->arg1->scope_id);
                 break;
             case TAC_FUNC_BEGIN:
                 printf("[Function start] function %s begin:\n", instr->label);
@@ -2139,7 +2215,7 @@ void tac_print(TACList* list,bl_arena* arena) {
                 printf("[Main end] main end\n");
                 break;
             case TAC_EXTERN:
-                printf("[Extern] extern %s (%s)\n",print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type));
+                printf("[Extern] extern %s (%s) (%d)\n",print_type_val(instr->result,arena),get_str_type(instr->result->acquired_type),instr->result->scope_id);
                 break;
             default:
                 printf("nop\n");
