@@ -4,7 +4,7 @@ CFLAGS_LEXER = -Wall -Wextra -Isrc/keywords -Isrc/common
 CFLAGS_TEST = -Wall -Wextra -g -Isrc/common -Isrc/keywords
 CFLAGS_PARSER = -Wall -Wextra -Isrc/lexer -Isrc/common -Isrc/keywords
 CFLAGS_OPTIMIZER = -Wall -Wextra -Isrc/lexer -Isrc/common -Isrc/keywords
-CFLAGS_IR = -Wall -Wextra -O0 -ggdb -Isrc/lexer -Isrc/common -Isrc/keywords -Isrc/parser
+CFLAGS_IR = -Wall -Wextra -ggdb -Isrc/lexer -Isrc/common -Isrc/keywords -Isrc/parser
 CFLAGS_CODEGEN = -Wall -Wextra -O0 -ggdb -Isrc/lexer -Isrc/common -Isrc/keywords -Isrc/parser -Isrc/ir
 
 

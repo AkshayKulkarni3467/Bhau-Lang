@@ -33,7 +33,6 @@ typedef struct Scope {
     Scope* scope_parent;
 } Scope;
 
-
 typedef enum {
     AST_PROGRAM, 
     AST_ASSIGN, 

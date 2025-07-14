@@ -10,7 +10,9 @@
 
 // #define BL_IR_TEST
 
-
+//TODO no type param should exist, only keep the function if the function is called, and assign the params the types of arguments
+//TODO can be done by traversing all the instructions, finding the call given the name, take arg_count, take call - arg_count num of arguments and return their types
+//TODO if no func call is found, remove the function since its not used
 typedef enum { 
     TAC_NOP,        //
     TAC_ASSIGNDECL, //
@@ -27,10 +29,10 @@ typedef enum {
     TAC_FUNC_END,   //
     TAC_MAIN_BEGIN, //
     TAC_MAIN_END,   //
-    TAC_RETURN,     //-- 
+    TAC_RETURN,     // 
     TAC_EXTERN,     //
     TAC_LOAD_PTR,   //
-    TAC_ADDR_OF,    //--
+    TAC_ADDR_OF,    //
 } TAC_Op;
 
 typedef enum {
@@ -51,6 +53,7 @@ typedef enum {
 } ValueType;
 
 
+
 typedef union{
     int ival;
     float fval;
@@ -58,10 +61,55 @@ typedef union{
     bool bval;
     char* sval;
 } ValuePrimitive;
+
+typedef struct LoopContext {
+    char* break_label;
+    char* continue_label;
+    struct LoopContext* prev;
+} LoopContext;
+
+typedef struct {
+    char* name;
+    char* string_val;
+    ValueType type;
+    bool is_global;
+    int offset;
+} SymbolEntry;
+
+typedef struct SymbolTable SymbolTable;
+
+typedef struct SymbolTable{
+    char* scope_name;    
+    int scope_id;
+
+    SymbolEntry** entries;  
+    SymbolTable* parent;
+    SymbolTable** children;
+    int children_count;
+
+    int symbol_count;
+    int symbol_capacity;
+    int total_offset;
+} SymbolTable;
+
+typedef struct {
+    SymbolTable** tables;     
+    int table_count;
+    int table_capacity;
+    bl_arena* arena;
+} SymbolTableList;
+
+typedef struct {
+    char* scope_stack[100];     
+    int top;
+} ScopeStack;
+
+
 typedef struct {
     ValuePrimitive val;
     ValueType acquired_type;
     ValueType type;
+    SymbolTable* scope;
     int scope_id;
 } DataContext;
 
@@ -89,43 +137,6 @@ typedef struct {
     int label_id;
 } TACList;
 
-
-
-typedef struct LoopContext {
-    char* break_label;
-    char* continue_label;
-    struct LoopContext* prev;
-} LoopContext;
-
-typedef struct {
-    char* name;
-    ValueType type;
-    bool is_const; 
-    bool is_global;
-    ValuePrimitive value; 
-    bool is_initialized;
-    int offset;
-} SymbolEntry;
-
-typedef struct {
-    char* scope_name;         
-    SymbolEntry** entries;  
-    int symbol_count;
-    int symbol_capacity;
-    int total_offset;
-} SymbolTable;
-typedef struct {
-    SymbolTable** tables;     
-    int table_count;
-    int table_capacity;
-    bl_arena* arena;
-} SymbolTableList;
-
-typedef struct {
-    char* scope_stack[100];     
-    int top;
-} ScopeStack;
-
 typedef struct {
     TACList* list;
     SymbolTableList* slist;
@@ -133,6 +144,7 @@ typedef struct {
 
 static char temp_counter = 0;
 static char label_counter = 0;
+static int scope_id_counter = 0;
 
 
 TACInstr* tac_create_instr(bl_arena* arena, TAC_Op op, DataContext* result, DataContext* arg1, DataContext* arg2, OperatorContext* relop, char* label);
@@ -142,26 +154,30 @@ void tac_debug_print(TACList* list,bl_arena* arena);
 void tac_colored_print(TACList* list,bl_arena* arena);
 void tac_export_dot(TACList* list, const char* filename,bl_arena* arena);
 
-TACList* generate_tac(AST_Node* ast, bl_arena* arena);
+bl_ir* generate_tac(AST_Node* ast, bl_arena* arena);
 TACList* update_list_types(TACList* list,bl_arena* arena);
-DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena, LoopContext* loop_ctx);
+DataContext* gen_tac(AST_Node* node, TACList* prog, SymbolTableList* slist,SymbolTable* current_table,bl_arena* arena, LoopContext* loop_ctx);
 
 DataContext* new_temp(bl_arena* arena);
 char* get_binop_from_keyword(enum KEYWORD_TYPES type);
 char* new_label(bl_arena* arena);
 char* print_type_val(DataContext* context,bl_arena* arena);
 char* get_str_type(ValueType type);
-TACList* generate_scope_ids(TACList* list);
 
 char* arena_strdup(bl_arena* arena, const char* s);
 void symbol_table_list_init(SymbolTableList* list, bl_arena* arena);
 SymbolTable* get_or_create_table(SymbolTableList* list, const char* scope_name);
-void add_or_update_symbol(SymbolTable* table, bl_arena* arena, const char* name, ValueType type, bool is_const, ValuePrimitive val, bool initialized);
-void allocate_offsets_for_table(SymbolTable* table);
-void allocate_offsets_for_all_tables(SymbolTableList* list);
+void allocate_offsets_for_func(SymbolTable* table,int *offset);
+void allocate_offsets_for_all_funcs(SymbolTableList* list);
+
 void print_symbol_table(SymbolTable* table);
 void print_all_symbol_tables(SymbolTableList* list);
-SymbolTableList* get_symbol_table(TACList* list, bl_arena* arena);
+void visualize_symbol_tables_ascii(const SymbolTable *root);
+void visualize_symbol_tables_dot(const SymbolTable *root);
+void print_table_dot(const SymbolTable *root);
+static void emit_dot_nodes(const SymbolTable *tbl);
+static void print_table_ascii(const SymbolTable *tbl, int depth);
+
 
 #ifdef BL_IR_TEST
 
@@ -170,13 +186,13 @@ int main(){
     arena_init(arena);
     AST_Node* node = bhaulang_optimizer("src/ir/one.bl",arena);
 
-    TACList* list = generate_tac(node,arena);
-    TACList* slist = generate_scope_ids(list);
-    TACList* ulist = update_list_types(slist,arena);
-    SymbolTableList* sylist = get_symbol_table(ulist,arena);
-    print_all_symbol_tables(sylist);
+    bl_ir* ir_struct = generate_tac(node,arena);
+    allocate_offsets_for_all_funcs(ir_struct->slist);
+    visualize_symbol_tables_ascii(ir_struct->slist->tables[0]);
+    ir_struct->list = update_list_types(ir_struct->list,arena);
+    print_all_symbol_tables(ir_struct->slist);
     printf("\n");
-    tac_print(ulist,arena);
+    tac_print(ir_struct->list,arena);
     return 0;
 }
 
@@ -184,14 +200,10 @@ int main(){
 
 bl_ir* bhaulang_ir(char* filename, bl_arena* arena){
     AST_Node* node = bhaulang_optimizer(filename,arena);
-    TACList* list = generate_tac(node,arena);
-    TACList* slist = generate_scope_ids(list);
-    TACList* ulist = update_list_types(slist,arena);
-    SymbolTableList* sylist = get_symbol_table(ulist,arena);
-    bl_ir* ir = (bl_ir*)arena_alloc(arena,sizeof(bl_ir));
-    ir->list = ulist;
-    ir->slist = sylist;
-    return ir;
+    bl_ir* ir_struct = generate_tac(node,arena);
+    allocate_offsets_for_all_funcs(ir_struct->slist);
+    ir_struct->list = update_list_types(ir_struct->list,arena);
+    return ir_struct;
 }
 
 char* get_binop_from_keyword(enum KEYWORD_TYPES type){
@@ -348,23 +360,44 @@ char* new_label(bl_arena* arena) {
     return lbl;
 }
 
-TACList* generate_tac(AST_Node* ast, bl_arena* arena) {
+bl_ir* generate_tac(AST_Node* ast, bl_arena* arena) {
+
+    SymbolTable* g_table = arena_alloc(arena,sizeof(SymbolTable));
+    g_table->scope_name = "global";
+    g_table->scope_id = scope_id_counter;
+    scope_id_counter++;
+    g_table->parent = NULL;
+    g_table->symbol_count = 0;
+    g_table->children_count = 0;
+    g_table->symbol_capacity = 128;
+    g_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*g_table->symbol_capacity);
+    g_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
+
+    SymbolTableList* table_list = (SymbolTableList*)arena_alloc(arena,sizeof(SymbolTableList));
+    symbol_table_list_init(table_list,arena);
+    table_list->tables[table_list->table_count++] = g_table;
+
     TACList* list = (TACList*)arena_alloc(arena, sizeof(TACList));
     list->head = list->tail = NULL;
     list->temp_id = 0;
     list->label_id = 0;
-    gen_tac(ast, list, arena,NULL);
-    return list;
+
+    gen_tac(ast, list,table_list,g_table, arena,NULL);
+
+    bl_ir* ir_ = (bl_ir*)arena_alloc(arena,sizeof(bl_ir));
+    ir_->list = list;
+    ir_->slist = table_list;
+    return ir_;
 }
 
-
-DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext* loop_ctx) {
+//TODO Will assign scopes in all AST_Nodes, each datacontext will have the scope_id according to it
+DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,SymbolTable* current_table, bl_arena* arena,LoopContext* loop_ctx) {
     if (!node) return NULL;
     switch (node->type) {
         case AST_PROGRAM: {
             ASTProgram* prog_node = (ASTProgram*)node->data;
             for (size_t i = 0; i < prog_node->count; ++i) {
-                gen_tac(prog_node->statements[i], prog, arena,loop_ctx);
+                gen_tac(prog_node->statements[i], prog,slist,current_table, arena,loop_ctx);
             }
             return NULL;
         }
@@ -380,7 +413,19 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             new_ctx->continue_label = NULL;
             new_ctx->prev = loop_ctx;
 
-            DataContext* switch_val_data = gen_tac(sw->expr, prog, arena,new_ctx);
+            SymbolTable* sw_table = (SymbolTable*)arena_alloc(arena,sizeof(SymbolTable));
+            sw_table->parent = current_table;
+            sw_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
+            sw_table->symbol_capacity = 128;
+            sw_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
+            sw_table->scope_id = scope_id_counter++;
+            sw_table->scope_name = "null";
+            sw_table->symbol_count = 0;
+            sw_table->children_count = 0;
+            current_table->children[current_table->children_count++] = sw_table;
+            slist->tables[slist->table_count++] = sw_table;
+
+            DataContext* switch_val_data = gen_tac(sw->expr, prog,slist,sw_table, arena,new_ctx);
 
 
             char** case_labels = (char**)arena_alloc(arena, sizeof(char*) * sw->case_count);
@@ -426,12 +471,12 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
 
             for (int i = 0; i < (int)sw->case_count; ++i) {
                 tac_append(prog, tac_create_instr(arena, TAC_LABEL, NULL, NULL,NULL,NULL, case_labels[i]));
-                gen_tac(sw->cases[i], prog, arena,new_ctx);
+                gen_tac(sw->cases[i], prog, slist,sw_table,arena,new_ctx);
             }
             tac_append(prog, tac_create_instr(arena, TAC_LABEL, NULL, NULL,NULL,NULL, def_label));
 
             if (sw->default_case) {
-                gen_tac(sw->default_case, prog, arena,new_ctx);
+                gen_tac(sw->default_case, prog,slist,sw_table, arena,new_ctx);
             }
 
             tac_append(prog, tac_create_instr(arena, TAC_LABEL, NULL, NULL,NULL,NULL, end_label));
@@ -441,7 +486,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
         case AST_CASE: {
             AST_SwitchCase* cs = (AST_SwitchCase*)node->data;
             for (int i = 0; i < (int)cs->body_count; ++i) {
-                gen_tac(cs->body[i], prog, arena,loop_ctx);
+                gen_tac(cs->body[i], prog,slist,current_table, arena,loop_ctx);
             }
             return NULL;
         }
@@ -449,7 +494,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
         case AST_DEFAULT: {
             AST_SwitchCase* def = (AST_SwitchCase*)node->data;
             for (int i = 0; i < (int)def->body_count; ++i) {
-                gen_tac(def->body[i], prog, arena,loop_ctx);
+                gen_tac(def->body[i], prog,slist,current_table, arena,loop_ctx);
             }
             return NULL;
         }
@@ -460,6 +505,16 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             ext_ctx->val.sval = ext->name;
             ext_ctx->type = TYPE_IDENTIFIER;
             ext_ctx->acquired_type = TYPE_IDENTIFIER;
+            ext_ctx->scope = current_table;
+            ext_ctx->scope_id = current_table->scope_id;
+
+            SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+            entry->is_global = current_table->scope_id == 0? true : false;
+            entry->name = ext_ctx->val.sval;
+            entry->type = TYPE_EXTERN;
+
+            current_table->entries[current_table->symbol_count++] = entry;
+
             tac_append(prog, tac_create_instr(arena, TAC_EXTERN, ext_ctx,NULL, NULL, NULL, NULL));
             return NULL;
         }
@@ -470,6 +525,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             int_val->val.ival = lit->value;
             int_val->type = TYPE_INT;
             int_val->acquired_type = TYPE_INT;
+
             return int_val;
         }
         
@@ -520,9 +576,18 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
 
         case AST_BINOP: {
             AST_Binop* bin = (AST_Binop*)node->data;
-            DataContext* left = gen_tac(bin->lhs, prog, arena,loop_ctx);
-            DataContext* right = gen_tac(bin->rhs, prog, arena,loop_ctx);
+            DataContext* left = gen_tac(bin->lhs, prog, slist,current_table,arena,loop_ctx);
+            DataContext* right = gen_tac(bin->rhs, prog,slist,current_table, arena,loop_ctx);
             DataContext* result = new_temp(arena);
+            result->scope = current_table;
+            result->scope_id = current_table->scope_id;
+
+            SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+            entry->name = result->val.sval;
+            entry->is_global = current_table->scope_id == 0 ? true : false;
+            entry->type = TYPE_IDENTIFIER;
+
+            current_table->entries[current_table->symbol_count++] = entry;
 
             OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
             op_ctx->operator_str = get_binop_from_keyword(bin->op);
@@ -540,17 +605,26 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
         
         case AST_GROUP: {
             AST_Group* grp = (AST_Group*)node->data;
-            return gen_tac(grp->expr, prog, arena, loop_ctx);
+            return gen_tac(grp->expr, prog,slist, current_table,arena, loop_ctx);
         }
 
         case AST_UNOP: {
             AST_Unop* un = (AST_Unop*)node->data;
-            DataContext* arg = gen_tac(un->node, prog, arena,loop_ctx);
+            DataContext* arg = gen_tac(un->node, prog,slist,current_table, arena,loop_ctx);
 
             if (un->op == (enum KEYWORD_TYPES)BL_KW_BHAU_REF) {
                 DataContext* result = new_temp(arena);
                 result->type = TYPE_REF;
                 result->acquired_type = TYPE_REF;
+                result->scope = current_table;
+                result->scope_id = current_table->scope_id;
+
+                SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+                entry->name = result->val.sval;
+                entry->is_global = current_table->scope_id == 0 ? true : false;
+                entry->type = TYPE_IDENTIFIER;
+
+                current_table->entries[current_table->symbol_count++] = entry;
 
                 OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
                 op_ctx->operator_str = get_unaryop_from_keyword(un->op);
@@ -567,6 +641,16 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 DataContext* result = new_temp(arena);
                 result->type = TYPE_PTR;
                 result->acquired_type = TYPE_PTR;
+                result->scope = current_table;
+                result->scope_id = current_table->scope_id;
+
+
+                SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+                entry->name = result->val.sval;
+                entry->is_global = current_table->scope_id == 0 ? true : false;
+                entry->type = TYPE_IDENTIFIER;
+
+                current_table->entries[current_table->symbol_count++] = entry;
 
                 OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
                 op_ctx->operator_str = get_unaryop_from_keyword(un->op);
@@ -581,6 +665,15 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 return result;
             }else if(un->op == (enum KEYWORD_TYPES)BL_INC || un->op == (enum KEYWORD_TYPES)BL_DEC){
                 DataContext* result = new_temp(arena);
+                result->scope = current_table;
+                result->scope_id = current_table->scope_id;
+
+                SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+                entry->name = result->val.sval;
+                entry->is_global = current_table->scope_id == 0 ? true : false;
+                entry->type = TYPE_IDENTIFIER;
+
+                current_table->entries[current_table->symbol_count++] = entry;
 
                 OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
                 op_ctx->operator_str = get_unaryop_from_keyword(un->op);
@@ -600,6 +693,15 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 return arg;
             }
             DataContext* result = new_temp(arena);
+            result->scope = current_table;
+            result->scope_id = current_table->scope_id;
+
+            SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+            entry->name = result->val.sval;
+            entry->is_global = current_table->scope_id == 0 ? true : false;
+            entry->type = TYPE_IDENTIFIER;
+
+            current_table->entries[current_table->symbol_count++] = entry;
 
             OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
             op_ctx->operator_str = get_unaryop_from_keyword(un->op);
@@ -616,7 +718,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
 
         case AST_ASSIGN: {
             AST_Assign* asg = (AST_Assign*)node->data;
-            DataContext* rhs = gen_tac(asg->rhs, prog, arena,loop_ctx);
+            DataContext* rhs = gen_tac(asg->rhs, prog,slist,current_table, arena,loop_ctx);
             DataContext* ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
             if(asg->lhs->type == AST_UNOP && (((AST_Unop*)asg->lhs->data)->op == (enum KEYWORD_TYPES)BL_KW_BHAU_REF || ((AST_Unop*)asg->lhs->data)->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR)){
                 fprintf(stderr, "Reference not allowed on left side of the assignment\n");
@@ -637,6 +739,15 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 DataContext* left = ctx;
                 DataContext* right = rhs;
                 DataContext* result = new_temp(arena);
+                result->scope = current_table;
+                result->scope_id = current_table->scope_id;
+
+                SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+                entry->name = result->val.sval;
+                entry->is_global = current_table->scope_id == 0 ? true : false;
+                entry->type = TYPE_IDENTIFIER;
+
+                current_table->entries[current_table->symbol_count++] = entry;
 
                 OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
                 op_ctx->operator_str = "+";
@@ -658,6 +769,16 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 DataContext* right = rhs;
                 DataContext* result = new_temp(arena);
 
+                result->scope = current_table;
+                result->scope_id = current_table->scope_id;
+
+                SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+                entry->name = result->val.sval;
+                entry->is_global = current_table->scope_id == 0 ? true : false;
+                entry->type = TYPE_IDENTIFIER;
+
+                current_table->entries[current_table->symbol_count++] = entry;
+
                 OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
                 op_ctx->operator_str = "-";
                 op_ctx->operator_type = BL_SUBBINOP;
@@ -677,6 +798,16 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 DataContext* left = ctx;
                 DataContext* right = rhs;
                 DataContext* result = new_temp(arena);
+
+                result->scope = current_table;
+                result->scope_id = current_table->scope_id;
+
+                SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+                entry->name = result->val.sval;
+                entry->is_global = current_table->scope_id == 0 ? true : false;
+                entry->type = TYPE_IDENTIFIER;
+
+                current_table->entries[current_table->symbol_count++] = entry;
 
                 OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
                 op_ctx->operator_str = "*";
@@ -698,6 +829,16 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 DataContext* right = rhs;
                 DataContext* result = new_temp(arena);
 
+                result->scope = current_table;
+                result->scope_id = current_table->scope_id;
+
+                SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+                entry->name = result->val.sval;
+                entry->is_global = current_table->scope_id == 0 ? true : false;
+                entry->type = TYPE_IDENTIFIER;
+
+                current_table->entries[current_table->symbol_count++] = entry;
+
                 OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
                 op_ctx->operator_str = "/";
                 op_ctx->operator_type = BL_DIVBINOP;
@@ -718,6 +859,16 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 DataContext* right = rhs;
                 DataContext* result = new_temp(arena);
 
+                result->scope = current_table;
+                result->scope_id = current_table->scope_id;
+
+                SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+                entry->name = result->val.sval;
+                entry->is_global = current_table->scope_id == 0 ? true : false;
+                entry->type = TYPE_IDENTIFIER;
+
+                current_table->entries[current_table->symbol_count++] = entry;
+
                 OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
                 op_ctx->operator_str = "&";
                 op_ctx->operator_type = BL_AND;
@@ -737,6 +888,16 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 DataContext* left = ctx;
                 DataContext* right = rhs;
                 DataContext* result = new_temp(arena);
+
+                result->scope = current_table;
+                result->scope_id = current_table->scope_id;
+
+                SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+                entry->name = result->val.sval;
+                entry->is_global = current_table->scope_id == 0 ? true : false;
+                entry->type = TYPE_IDENTIFIER;
+
+                current_table->entries[current_table->symbol_count++] = entry;
 
                 OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
                 op_ctx->operator_str = "|";
@@ -778,6 +939,16 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 DataContext* right = rhs;
                 DataContext* result = new_temp(arena);
 
+                result->scope = current_table;
+                result->scope_id = current_table->scope_id;
+
+                SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+                entry->name = result->val.sval;
+                entry->is_global = current_table->scope_id == 0 ? true : false;
+                entry->type = TYPE_IDENTIFIER;
+
+                current_table->entries[current_table->symbol_count++] = entry;
+
                 OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
                 op_ctx->operator_str = "%";
                 op_ctx->operator_type = BL_MODBINOP;
@@ -806,7 +977,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             DataContext* ctx = (DataContext*)arena_alloc(arena, sizeof(DataContext));
 
             if (asg->rhs) {
-                DataContext* rhs = gen_tac(asg->rhs, prog, arena, loop_ctx);
+                DataContext* rhs = gen_tac(asg->rhs, prog, slist,current_table,arena, loop_ctx);
 
                 if (asg->lhs->type == AST_UNOP && (((AST_Unop*)asg->lhs->data)->op == (enum KEYWORD_TYPES)BL_KW_BHAU_REF || ((AST_Unop*)asg->lhs->data)->op == (enum KEYWORD_TYPES)BL_KW_BHAU_PTR)) {
                     fprintf(stderr, "Pointer or Reference cannot be on the left side of assignment\n");
@@ -818,6 +989,22 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 ctx->val.sval = ident->name;
                 ctx->type = TYPE_IDENTIFIER;
                 ctx->acquired_type = TYPE_IDENTIFIER;
+
+                ctx->scope = current_table;
+                ctx->scope_id = current_table->scope_id;
+
+                SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+                entry->name = ctx->val.sval;
+                entry->is_global = current_table->scope_id == 0 ? true : false;
+                if(rhs->type == TYPE_STRING){
+                    entry->string_val = rhs->val.sval;
+                    entry->type = rhs->type;
+                }else{
+                    entry->type = TYPE_IDENTIFIER;
+                }
+
+                current_table->entries[current_table->symbol_count++] = entry;
+
                 tac_append(prog, tac_create_instr(arena, TAC_ASSIGNDECL, ctx, rhs, NULL, NULL, NULL));
                 return ctx;
             } else {
@@ -830,6 +1017,17 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 ctx->val.sval = ident->name;
                 ctx->type = TYPE_IDENTIFIER;
                 ctx->acquired_type = TYPE_IDENTIFIER;
+
+                ctx->scope = current_table;
+                ctx->scope_id = current_table->scope_id;
+
+                SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+                entry->name = ctx->val.sval;
+                entry->is_global = current_table->scope_id == 0 ? true : false;
+                entry->type = TYPE_IDENTIFIER;
+
+                current_table->entries[current_table->symbol_count++] = entry;
+
                 tac_append(prog, tac_create_instr(arena, TAC_ASSIGNDECL, ctx, NULL, NULL, NULL, NULL));
                 return ctx;
             }
@@ -837,8 +1035,20 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
 
         case AST_MAIN: {
             AST_Main* fn = (AST_Main*)node->data;
+            SymbolTable* main_table = (SymbolTable*)arena_alloc(arena,sizeof(SymbolTable));
+            main_table->parent = current_table;
+            main_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
+            main_table->symbol_capacity = 128;
+            main_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
+            main_table->scope_id = scope_id_counter++;
+            main_table->scope_name = "main";
+            main_table->symbol_count = 0;
+            main_table->children_count = 0;
+            current_table->children[current_table->children_count++] = main_table;
+            slist->tables[slist->table_count++] = main_table;
+
             tac_append(prog, tac_create_instr(arena, TAC_MAIN_BEGIN, NULL, NULL, NULL, NULL, "main"));
-            gen_tac(fn->block, prog, arena,loop_ctx);
+            gen_tac(fn->block, prog, slist,main_table,arena,loop_ctx);
             tac_append(prog, tac_create_instr(arena, TAC_MAIN_END, NULL, NULL, NULL, NULL, NULL));
             return NULL;
         }
@@ -846,21 +1056,21 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
         case AST_BLOCK: {
             AST_Block* blk = (AST_Block*)node->data;
             for (size_t i = 0; i < blk->body_count; ++i) {
-                gen_tac(blk->body[i], prog, arena,loop_ctx);
+                gen_tac(blk->body[i], prog,slist,current_table, arena,loop_ctx);
             }
             return NULL;
         }
 
         case AST_RETURN: {
             AST_Return* ret = (AST_Return*)node->data;
-            DataContext* val = gen_tac(ret->expr, prog, arena,loop_ctx);
+            DataContext* val = gen_tac(ret->expr, prog,slist,current_table, arena,loop_ctx);
             tac_append(prog, tac_create_instr(arena, TAC_RETURN, NULL, val, NULL, NULL, NULL));
             return NULL;
         }
 
         case AST_IFELSE: {
             AST_Ifelse* ifs = (AST_Ifelse*)node->data;
-            DataContext* cond = gen_tac(ifs->condition, prog, arena,loop_ctx);
+            DataContext* cond = gen_tac(ifs->condition, prog,slist,current_table, arena,loop_ctx);
             char* then_label = new_label(arena);
             char* end_label  = new_label(arena);
 
@@ -876,14 +1086,40 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             tac_append(prog, tac_create_instr(arena, TAC_IFGOTO, NULL, cond, zero_ctx, op_ctx, then_label));
 
             if (ifs->else_block) {
-                gen_tac(ifs->else_block, prog, arena,loop_ctx);
+
+                SymbolTable* else_table = (SymbolTable*)arena_alloc(arena,sizeof(SymbolTable));
+                else_table->parent = current_table;
+                else_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
+                else_table->symbol_capacity = 128;
+                else_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
+                else_table->scope_id = scope_id_counter++;
+                else_table->scope_name = "null";
+                else_table->symbol_count = 0;
+                else_table->children_count = 0;
+                current_table->children[current_table->children_count++] = else_table;
+                slist->tables[slist->table_count++] = else_table;
+
+                gen_tac(ifs->else_block, prog,slist,else_table, arena,loop_ctx);
                 tac_append(prog, tac_create_instr(arena, TAC_GOTO, NULL, NULL, NULL, NULL, end_label));
             }else{
                 tac_append(prog,tac_create_instr(arena, TAC_GOTO,NULL,NULL,NULL,NULL,end_label));
             }
 
             tac_append(prog, tac_create_instr(arena, TAC_LABEL, NULL, NULL, NULL, NULL, then_label));
-            gen_tac(ifs->then_block, prog, arena,loop_ctx);
+
+            SymbolTable* if_table = (SymbolTable*)arena_alloc(arena,sizeof(SymbolTable));
+            if_table->parent = current_table;
+            if_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
+            if_table->symbol_capacity = 128;
+            if_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
+            if_table->scope_id = scope_id_counter++;
+            if_table->scope_name = "null";
+            if_table->symbol_count = 0;
+            if_table->children_count = 0;
+            current_table->children[current_table->children_count++] = if_table;
+            slist->tables[slist->table_count++] = if_table;
+
+            gen_tac(ifs->then_block, prog,slist,if_table, arena,loop_ctx);
 
             tac_append(prog, tac_create_instr(arena, TAC_LABEL, NULL, NULL, NULL, NULL, end_label));
             return NULL;
@@ -912,13 +1148,26 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             op_ctx->operator_str = "!=";
             op_ctx->operator_type = BL_NOTEQ;
 
-            DataContext* cond = gen_tac(loop->expr, prog, arena, new_ctx);
+            DataContext* cond = gen_tac(loop->expr, prog,slist,current_table, arena, new_ctx);
             tac_append(prog, tac_create_instr(arena, TAC_IFGOTO, NULL, cond, zero_ctx, op_ctx, body_label));
             
             tac_append(prog, tac_create_instr(arena, TAC_GOTO, NULL, NULL, NULL, NULL, end_label));
 
             tac_append(prog, tac_create_instr(arena, TAC_LABEL, NULL, NULL, NULL, NULL, body_label));
-            gen_tac(loop->block, prog, arena, new_ctx);
+
+            SymbolTable* loop_table = (SymbolTable*)arena_alloc(arena,sizeof(SymbolTable));
+            loop_table->parent = current_table;
+            loop_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
+            loop_table->symbol_capacity = 128;
+            loop_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
+            loop_table->scope_id = scope_id_counter++;
+            loop_table->scope_name = "null";
+            loop_table->symbol_count = 0;
+            loop_table->children_count = 0;
+            current_table->children[current_table->children_count++] = loop_table;
+            slist->tables[slist->table_count++] = loop_table;
+
+            gen_tac(loop->block, prog,slist,loop_table, arena, new_ctx);
             
 
             tac_append(prog, tac_create_instr(arena, TAC_GOTO, NULL, NULL, NULL, NULL, cond_label));
@@ -954,6 +1203,18 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
             AST_Function* fn = (AST_Function*)node->data;
             AST_Identifier* name = (AST_Identifier*)fn->name->data;
 
+            SymbolTable* func_table = (SymbolTable*)arena_alloc(arena,sizeof(SymbolTable));
+            func_table->parent = current_table;
+            func_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
+            func_table->symbol_capacity = 128;
+            func_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
+            func_table->scope_id = scope_id_counter++;
+            func_table->scope_name = name->name;
+            func_table->symbol_count = 0;
+            func_table->children_count = 0;
+            current_table->children[current_table->children_count++] = func_table;
+            slist->tables[slist->table_count++] = func_table;
+
             tac_append(prog, tac_create_instr(arena, TAC_FUNC_BEGIN, NULL, NULL, NULL, NULL, name->name));
 
             for (int i = 0; i < (int)fn->param_count; ++i) {
@@ -962,10 +1223,20 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
                 param_ctx->val.sval = param;
                 param_ctx->type = TYPE_IDENTIFIER;
                 param_ctx->acquired_type = TYPE_IDENTIFIER;
+                param_ctx->scope = func_table;
+                param_ctx->scope_id = func_table->scope_id;
+
+
+                SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+                entry->is_global = 0;
+                entry->name = param_ctx->val.sval;
+                entry->type = TYPE_PARAM;
+
+                func_table->entries[func_table->symbol_count++] = entry;
                 tac_append(prog, tac_create_instr(arena, TAC_PARAM, NULL, param_ctx, NULL, NULL, NULL));
             }
 
-            gen_tac(fn->block, prog, arena,loop_ctx);
+            gen_tac(fn->block, prog,slist,func_table, arena,loop_ctx);
             tac_append(prog, tac_create_instr(arena, TAC_FUNC_END, NULL, NULL, NULL, NULL, NULL));
             return NULL;
         }
@@ -973,11 +1244,18 @@ DataContext* gen_tac(AST_Node* node, TACList* prog, bl_arena* arena,LoopContext*
         case AST_FUNCTIONCALL: {
             AST_FunctionCall* call = (AST_FunctionCall*)node->data;
             for (int i = 0; i < call->args_count; ++i) {
-                DataContext* arg = gen_tac(call->args[i], prog, arena, loop_ctx);
+                DataContext* arg = gen_tac(call->args[i], prog,slist,current_table, arena, loop_ctx);
                 tac_append(prog, tac_create_instr(arena, TAC_ARG, NULL, arg, NULL, NULL, NULL));
             }
 
             DataContext* result = new_temp(arena);
+
+            SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+            entry->is_global = 0;
+            entry->name = result->val.sval;
+            entry->type = TYPE_IDENTIFIER;
+            current_table->entries[current_table->symbol_count++] = entry;
+
             AST_Identifier* name = (AST_Identifier*)call->name->data;
             DataContext* name_ctx = (DataContext*)arena_alloc(arena, sizeof(DataContext));
             name_ctx->val.sval = name->name;
@@ -1878,81 +2156,6 @@ void symbol_table_list_init(SymbolTableList* list, bl_arena* arena) {
 }
 
 
-SymbolTableList* get_symbol_table(TACList* list, bl_arena* arena) {
-    SymbolTableList* table_list = (SymbolTableList*)arena_alloc(arena, sizeof(SymbolTableList));
-    symbol_table_list_init(table_list, arena);
-
-    char* current_scope = "global";  
-    SymbolTable* current_table = get_or_create_table(table_list, current_scope);
-
-    for (TACInstr* instr = list->head; instr; instr = instr->next) {
-        switch (instr->op) {
-            case TAC_FUNC_BEGIN:
-            case TAC_MAIN_BEGIN:
-                current_scope = arena_strdup(arena, instr->label);  
-                current_table = get_or_create_table(table_list, current_scope);
-                break;
-
-            case TAC_FUNC_END:
-            case TAC_MAIN_END:
-                current_scope = "global";
-                current_table = get_or_create_table(table_list, current_scope);
-                break;
-
-            case TAC_ASSIGNDECL: {
-                const char* name = print_type_val(instr->result, arena);
-                ValueType type = instr->arg1 ? instr->arg1->acquired_type : TYPE_UNDECLARED;
-                bool initialized = instr->arg1 != NULL;
-                ValuePrimitive val = instr->arg1 ? instr->arg1->val : (ValuePrimitive){0};
-                add_or_update_symbol(current_table, arena, name, type, true, val, initialized);
-                break;
-            }
-
-            // case TAC_ASSIGN: {
-            //     const char* name = print_type_val(instr->result, arena);
-            //     ValueType type = instr->arg1->acquired_type;
-            //     ValuePrimitive val = instr->arg1->val;
-            //     add_or_update_symbol(current_table, arena, name, type, false, val, true);
-            //     break;
-            // }
-
-            case TAC_PARAM: {
-                const char* name = print_type_val(instr->arg1, arena);
-                ValueType type = instr->arg1->acquired_type;
-                add_or_update_symbol(current_table, arena, name, type, false, instr->arg1->val, true);
-                break;
-            }
-
-
-            case TAC_EXTERN: {
-                const char* name = print_type_val(instr->result, arena);
-                ValueType type = instr->result->acquired_type;
-                add_or_update_symbol(current_table, arena, name, type, true, instr->result->val, true);
-                break;
-            }
-
-            // case TAC_ADDR_OF:
-            // case TAC_LOAD_PTR:
-            // case TAC_BINOP:
-            // case TAC_UNOP:
-            // case TAC_CALL: {
-            //     if (instr->result) {
-            //         const char* temp_name = print_type_val(instr->result, arena);
-            //         ValueType type = instr->result->acquired_type;
-            //         add_or_update_symbol(current_table, arena, temp_name, type, false, instr->arg1->val, true);
-            //     }
-            //     break;
-            // }
-
-            default:
-                break;
-        }
-    }
-
-    allocate_offsets_for_all_tables(table_list);
-
-    return table_list;
-}
 
 void print_all_symbol_tables(SymbolTableList* list) {
     for (int i = 0; i < list->table_count; ++i) {
@@ -1960,133 +2163,108 @@ void print_all_symbol_tables(SymbolTableList* list) {
     }
 }
 
-void allocate_offsets_for_table(SymbolTable* table){
-    int offset = 8;
-    for(int i = 0;i<table->symbol_count; i++){
-        if(table->entries[i]->type != TYPE_STRING){
-            table->entries[i]->offset = offset;
-            offset+=8;  
-        }else{
-            offset-=8;
-            char* str= table->entries[i]->value.sval;
-            int t_offset = strlen(str)+1;
+void allocate_offsets_for_func(SymbolTable* table,int *offset){
+    if (table == NULL) return;
+    for(int j = 0;j<table->symbol_count;j++){
+        if(table->entries[j]->type == TYPE_STRING){
+            (*offset)-=8;
+            int t_offset = strlen(table->entries[j]->string_val) + 1;
             t_offset = (t_offset + 7) & ~7;
-            offset+=t_offset;
-            table->entries[i]->offset = offset;
-            offset+=8;
+            (*offset)+=t_offset;
+            table->entries[j]->offset = *offset;
+            (*offset)+=8;
+        }else{
+            table->entries[j]->offset = *offset;
+            (*offset)+=8;
         }
-
     }
-    int frame = (offset + 15) & ~15;
-    table->total_offset = frame;
+    for (int i = 0; i < table->children_count; i++) {
+        allocate_offsets_for_func(table->children[i],offset);
+    }
 }
 
-void allocate_offsets_for_all_tables(SymbolTableList* list){
-    for(int i = 0; i< list->table_count; i++){
-        if(strcmp(list->tables[i]->scope_name,"global") != 0){
-            allocate_offsets_for_table(list->tables[i]);
-        }
+void allocate_offsets_for_all_funcs(SymbolTableList* list){
+    SymbolTable* global_table = list->tables[0];
+    for(int i = 0;i<global_table->symbol_count;i++){
+        global_table->entries[i]->offset = 0;
+    }
+    global_table->total_offset = 0;
+    for(int i = 0; i< global_table->children_count; i++){
+        int offset = 8;
+        allocate_offsets_for_func(global_table->children[i],&offset);
+        int frame = (offset + 15) & ~15;
+        global_table->children[i]->total_offset = frame;
     }
 }
 
 void print_symbol_table(SymbolTable* table) {
-    printf(">> Symbol Table for Scope: %s\n", table->scope_name);
+    printf(">> Symbol Table for Scope: %s %p, Scope ID : %d, Parent Scope : %s %p\n",table->scope_name,table,table->scope_id, table->parent ? table->parent->scope_name ? table->parent->scope_name : "null" : "TOP",table->parent ? table->parent : 0x00000000);
     for (int i = 0; i < table->symbol_count; ++i) {
         SymbolEntry* s = table->entries[i];
-        printf("  [%d] %s (%s) | Const: %d | is Global : %d | Init: %d | Offset: %d\n", i, s->name, get_str_type(s->type), s->is_const,s->is_global, s->is_initialized,s->offset);
+        printf("  [%d] %s (%s) | is Global : %d | Offset: %d\n", i, s->name, get_str_type(s->type),s->is_global,s->offset ? s->offset : 0);
     }
 }
 
-void add_or_update_symbol(SymbolTable* table, bl_arena* arena, const char* name, ValueType type, bool is_const, ValuePrimitive val, bool initialized) {
-    for (int i = 0; i < table->symbol_count; ++i) {
-        if (strcmp(table->entries[i]->name, name) == 0) {
-            table->entries[i]->type = type;
-            table->entries[i]->value = val;
-            table->entries[i]->is_const = is_const;
-            table->entries[i]->is_initialized = initialized;
-            table->entries[i]->is_global = strcmp(table->scope_name,"global") == 0 ? true : false;
-            return;
-        }
-    }
+static void print_table_ascii(const SymbolTable *tbl, int depth)
+{
+    if (!tbl) return;
 
-    if (table->symbol_count >= table->symbol_capacity) {
-        printf("! SymbolTable capacity exceeded in scope: %s\n", table->scope_name);
-        return;
-    }
+    /* indent */
+    for (int i = 0; i < depth; ++i) fputs("    ", stdout);
 
-    SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena, sizeof(SymbolEntry));
-    entry->name = arena_strdup(arena, name);
-    entry->type = type;
-    entry->value = val;
-    entry->is_const = is_const;
-    entry->is_initialized = initialized;
-    entry->is_global = strcmp(table->scope_name,"global")== 0 ? true : false;
+    /* node info */
+    printf("• %s (id=%d, symbols=%d, offset=%d)\n",
+           tbl->scope_name ? tbl->scope_name : "<unnamed>",
+           tbl->scope_id,
+           tbl->symbol_count,
+           tbl->total_offset);
 
-    table->entries[table->symbol_count++] = entry;
+    /* recurse into children */
+    for (int i = 0; i < tbl->children_count; ++i)
+        print_table_ascii(tbl->children[i], depth + 1);
 }
 
-SymbolTable* get_or_create_table(SymbolTableList* list, const char* scope_name) {
-    for (int i = 0; i < list->table_count; ++i) {
-        if (strcmp(list->tables[i]->scope_name, scope_name) == 0)
-            return list->tables[i];
+
+static void emit_dot_nodes(const SymbolTable *tbl)
+{
+    if (!tbl) return;
+
+    printf("  n%d [label=\"%s\\n(id=%d)\\nsyms=%d\\noff=%d\"];\n",
+           tbl->scope_id,
+           tbl->scope_name ? tbl->scope_name : "<unnamed>",
+           tbl->scope_id,
+           tbl->symbol_count,
+           tbl->total_offset);
+
+    for (int i = 0; i < tbl->children_count; ++i) {
+        const SymbolTable *child = tbl->children[i];
+        if (!child) continue;
+        printf("  n%d -> n%d;\n", tbl->scope_id, child->scope_id);
+        emit_dot_nodes(child);
     }
-
-    if (list->table_count >= list->table_capacity) {
-        printf("! SymbolTableList capacity exceeded. Please increase capacity or use chunked allocation.\n");
-        return NULL;
-    }
-
-    SymbolTable* table = (SymbolTable*)arena_alloc(list->arena, sizeof(SymbolTable));
-    table->scope_name = arena_strdup(list->arena, scope_name);
-    table->symbol_count = 0;
-    table->symbol_capacity = 32;
-    table->entries = (SymbolEntry**)arena_alloc(list->arena, sizeof(SymbolEntry*) * table->symbol_capacity);
-
-    list->tables[list->table_count++] = table;
-    return table;
 }
 
-TACList* generate_scope_ids(TACList* list){
-    int current_scope_id = 0;
-    int next_scope_id = 1;
-
-    for (TACInstr* instr = list->head; instr; instr = instr->next) {
-        switch(instr->op) {
-            case TAC_FUNC_BEGIN:
-                current_scope_id = next_scope_id++;
-                break;
-
-            case TAC_FUNC_END:
-                current_scope_id = 0;
-                break;
-
-            case TAC_MAIN_BEGIN:
-                current_scope_id = next_scope_id++;
-                break;
-
-            case TAC_MAIN_END:
-                current_scope_id = 0;
-                break;
-
-            case TAC_ARG:
-            case TAC_CALL:
-            case TAC_GOTO:
-            case TAC_IFGOTO:
-            case TAC_PARAM:
-            case TAC_ASSIGNDECL:
-            case TAC_ASSIGN:
-            case TAC_BINOP:
-            case TAC_UNOP:
-            case TAC_LOAD_PTR:
-            case TAC_ADDR_OF:
-                if (instr->result) instr->result->scope_id = current_scope_id;
-                if (instr->arg1) instr->arg1->scope_id = current_scope_id;
-                if (instr->arg2) instr->arg2->scope_id = current_scope_id;
-                break;
-
-            default:
-                break;
-        }
-    }
-    return list;
+void print_table_dot(const SymbolTable *root)
+{
+    puts("digraph SymbolTables {");
+    puts("  node [shape=box, fontname=\"Sans\", fontsize=10];");
+    emit_dot_nodes(root);
+    puts("}");
 }
+
+
+void visualize_symbol_tables_ascii(const SymbolTable *root)
+{
+    puts("=== Symbol Table Tree (ASCII) ===");
+    print_table_ascii(root, 0);
+    puts("=================================");
+}
+
+void visualize_symbol_tables_dot(const SymbolTable *root)
+{
+    puts("=== Symbol Table Graph (DOT) ===");
+    print_table_dot(root);
+    puts("================================");
+}
+
+
