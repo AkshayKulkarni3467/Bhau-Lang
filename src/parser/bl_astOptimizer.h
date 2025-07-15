@@ -1328,12 +1328,10 @@ AST_Node* fold_constants_from_scope(AST_Node* node, bl_stack* stack, bl_set* non
             return node;
         }
 
-        //TODO Uncomment after fixing the argument issue
         case AST_FUNCTIONCALL: {
             // AST_FunctionCall* fcall = node->data;
             // for (int i = 0; i < fcall->args_count; ++i) {
             //     if(fcall->args[i]->type != AST_UNOP){
-            //         printf("----%d----\n",fcall->args[i]->type);
             //         fcall->args[i] = fold_constants_from_scope(fcall->args[i], stack, non_const_set, arena);
             //     }
             // }

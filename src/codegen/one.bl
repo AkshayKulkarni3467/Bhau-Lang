@@ -1,27 +1,52 @@
 hi bhau 
+
 bhau baherun ghe printf;
 
-bhau lakshat thev func1(a,b){
-    bhau parat de a+b;
+bhau lakshat thev star_de(a){
+    bhau joparent(a > 0){
+        printf("* ");
+        --a;
+    }
+    printf("\n");
 }
 
-
-bhau lakshat thev func2(a){
-    bhau parat de ++a;
+bhau lakshat thev plus_de(a){
+    bhau joparent(a > 0){
+        printf("+ ");
+        --a;
+    }
+    printf("\n");
 }
 
 bhau ithun chalu {
-    bhau hai ahe test1 = "This is hello from bhaulang\nTrying to see how long a string can be in this language and does it bug outif size goes brrrr";
-    bhau hai ahe test4 = 12.44;
-    bhau hai ahe test2 = ref ref ref ref ref test1;
-    bhau hai ahe test3 = ptr ptr ptr ptr ptr test2;
-    printf("%.16f\n",test4);
-    printf("%s\n",test3);
-    bhau hai ahe test7 = 1;
-
-    bhau hai ahe test6 = func2(test7);
-
-    printf("This is from func2: %d\n",test6);
+    
+    bhau hai ahe i = 0;
+    bhau hai ahe j = 0;
+    bhau joparent(i<10){
+        bhau joparent(j<i+1){
+            bhau jar(j%2 == 0){
+                star_de(j);
+            }bhau tar{
+                plus_de(j);
+            }
+            ++j;
+        }
+        j = 0;
+        //printf("\n");
+        ++i;
+    }
+    
+    /*
+    bhau hai ahe test1 = 0.0;
+    test1+=0.000000000000000000001;
+    printf("%.32f\n",test1);
+    test1+=1.1;
+    printf("%.2f\n",test1);
+    test1+='A';
+    printf("%.2f\n",test1);
+    test1+=khara;
+    printf("%.2f\n",test1);
+    */
 }
 
 bye bhau

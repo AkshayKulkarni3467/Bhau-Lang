@@ -84,38 +84,38 @@ enum KEYWORD_TYPES {
    #endif //BL_SYMBOLS
 
    #ifdef BL_OPERATORS
-   BL_EQUAL,
-   BL_ISEQUALCOND,
-   BL_MODBINOP,
-   BL_ADDBINOP,
-   BL_SUBBINOP,
-   BL_MULTBINOP,
-   BL_DIVBINOP,
-   BL_ADDEQ,
-   BL_MODEQ,
-   BL_SUBEQ,
-   BL_MULTEQ,
-   BL_DIVEQ,
-   BL_INC,
-   BL_DEC,
-   BL_LSHIFT,
-   BL_RSHIFT,
-   BL_AND,
-   BL_OR,
-   BL_XOR,
-   BL_ANDEQ,
-   BL_OREQ,
-   BL_XOREQ,
-   BL_NOT,
-   BL_LESSTHAN,
-   BL_GRTTHAN,
-   BL_NOTEQ,
-   BL_LESSEQ,
-   BL_GRTEQ,
-   BL_LOGAND,
-   BL_LOGOR,
-   BL_COMMENT,
-   BL_MULCOMMENT,
+   BL_EQUAL,            //
+   BL_ISEQUALCOND,      //
+   BL_MODBINOP,         //
+   BL_ADDBINOP,         //
+   BL_SUBBINOP,         //
+   BL_MULTBINOP,        //
+   BL_DIVBINOP,         //
+   BL_ADDEQ,            //
+   BL_MODEQ,            //
+   BL_SUBEQ,            //
+   BL_MULTEQ,           //
+   BL_DIVEQ,            //
+   BL_INC,              //
+   BL_DEC,              //
+   BL_LSHIFT,           //
+   BL_RSHIFT,           //
+   BL_AND,              //
+   BL_OR,               //
+   BL_XOR,              //
+   BL_ANDEQ,            //
+   BL_OREQ,             //
+   BL_XOREQ,            //
+   BL_NOT,              //
+   BL_LESSTHAN,         //
+   BL_GRTTHAN,          //
+   BL_NOTEQ,            //
+   BL_LESSEQ,           //
+   BL_GRTEQ,            //
+   BL_LOGAND,           //--
+   BL_LOGOR,            //--
+   BL_COMMENT,          //
+   BL_MULCOMMENT,       //
    #endif //BL_OPERATORS
 
 
