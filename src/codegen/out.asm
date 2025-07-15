@@ -1,844 +1,170 @@
 SECTION .data
-global_global        dq 99
-global_pi            dq 3.1400001049041748
-global_name          dq "BhauLang Tester",0
-global_z             dq 42
-global_y             dq 42
-global_x             dq 42
+global_pi            dq 3.1414999961853027
+global_e             dq 2.7179999351501465
+global_greeting      dq "Hello from BhauLang!",0
+global_flag          dq 1
+global_z             dq 10
+global_folded        dq 11
+global_x             dq 5
+global_c             dq 42
+global_b             dq 42
+global_a             dq 42
 
 SECTION .bss
 
 SECTION .text
 global  main
 extern printf
-extern strlen
-extern scanf
-complex:
+nested_conditions:
     push rbp
     mov  rbp, rsp
-    sub  rsp, 368
+    sub  rsp, 208
     mov QWORD [rbp - 8], rdi
-    mov QWORD [rbp - 16], rsi
-    mov QWORD [rbp - 24], rdx
+    mov QWORD [rbp - 16], 0
+    mov QWORD [rbp - 24], 0
+    mov rax, QWORD [rbp - 8]
+    mov QWORD [rbp - 24], rax
     mov QWORD [rbp - 32], 0
-    .L0:
+    mov QWORD [rbp - 32], 0
+    mov rax, QWORD [rbp - 24]
+    mov rbx, QWORD [rbp - 32]
+    cmp rax,rbx
+    sete al
+    movzx rax,al
+    mov QWORD [rbp - 16], rax
+    mov rax, QWORD [rbp - 16]
+    cmp rax, 0
+    jne .L0
     mov QWORD [rbp - 40], 0
     mov QWORD [rbp - 48], 0
-    mov rax, QWORD [rbp - 16]
+    mov rax, QWORD [rbp - 8]
     mov QWORD [rbp - 48], rax
     mov QWORD [rbp - 56], 0
-    mov rax, QWORD [rbp - 24]
-    mov QWORD [rbp - 56], rax
+    mov QWORD [rbp - 56], 0
     mov rax, QWORD [rbp - 48]
     mov rbx, QWORD [rbp - 56]
-    add rax,rbx
+    cmp rax,rbx
+    setl al
+    movzx rax,al
     mov QWORD [rbp - 40], rax
-    mov QWORD [rbp - 64], 0
-    mov QWORD [rbp - 72], 0
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 72], rax
-    mov QWORD [rbp - 80], 0
     mov rax, QWORD [rbp - 40]
-    mov QWORD [rbp - 80], rax
-    mov rax, QWORD [rbp - 72]
-    mov rbx, QWORD [rbp - 80]
-    cmp rax,rbx
-    setl al
-    movzx rax,al
-    mov QWORD [rbp - 64], rax
-    mov rax, QWORD [rbp - 64]
     cmp rax, 0
-    jne .L1
-    jmp .L2
-    .L1:
+    jne .L2
+    lea rax, [rbp - 72]
+    mov QWORD [rbp - 80], rax
+    mov byte [rbp - 72], 'P'
+    mov byte [rbp - 71], 'o'
+    mov byte [rbp - 70], 's'
+    mov byte [rbp - 69], 'i'
+    mov byte [rbp - 68], 't'
+    mov byte [rbp - 67], 'i'
+    mov byte [rbp - 66], 'v'
+    mov byte [rbp - 65], 'e'
+    mov byte [rbp - 64], 0x0A
+    mov byte [rbp - 63], 0
+    mov rdi, QWORD [rbp - 80]
+    mov QWORD [rbp - 88], 0
+    xor rax,rax
+    call printf
+    mov QWORD [rbp - 88],rax
+    mov QWORD [rbp - 96], 0
+    mov QWORD [rbp - 104], 0
+    mov rax, QWORD [rbp - 8]
+    mov QWORD [rbp - 104], rax
     mov QWORD [rbp - 112], 0
-    .L3:
-    mov QWORD [rbp - 120], 0
-    mov QWORD [rbp - 128], 0
-    mov rax, QWORD [rbp - 112]
-    mov QWORD [rbp - 128], rax
-    mov QWORD [rbp - 136], 0
-    mov QWORD [rbp - 136], 5
-    mov rax, QWORD [rbp - 128]
-    mov rbx, QWORD [rbp - 136]
+    mov QWORD [rbp - 112], 100
+    mov rax, QWORD [rbp - 104]
+    mov rbx, QWORD [rbp - 112]
     cmp rax,rbx
-    setl al
+    setg al
     movzx rax,al
-    mov QWORD [rbp - 120], rax
-    mov rax, QWORD [rbp - 120]
+    mov QWORD [rbp - 96], rax
+    mov rax, QWORD [rbp - 96]
     cmp rax, 0
     jne .L4
     jmp .L5
     .L4:
-    mov QWORD [rbp - 168], 0
-    mov QWORD [rbp - 176], 0
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 176], rax
-    mov QWORD [rbp - 184], 0
-    mov rax, QWORD [rbp - 16]
-    mov QWORD [rbp - 184], rax
-    mov rax, QWORD [rbp - 176]
-    mov rbx, QWORD [rbp - 184]
-    imul rax,rbx
-    mov QWORD [rbp - 168], rax
-    mov QWORD [rbp - 192], 0
-    mov QWORD [rbp - 200], 0
-    mov rax, QWORD [rbp - 32]
-    mov QWORD [rbp - 200], rax
-    mov QWORD [rbp - 208], 0
-    mov rax, QWORD [rbp - 168]
-    mov QWORD [rbp - 208], rax
-    mov rax, QWORD [rbp - 200]
-    mov rbx, QWORD [rbp - 208]
-    add rax,rbx
-    mov QWORD [rbp - 192], rax
-    mov QWORD [rbp - 216], 0
-    mov QWORD [rbp - 224], 0
-    mov rax, QWORD [rbp - 192]
-    mov QWORD [rbp - 224], rax
-    mov QWORD [rbp - 232], 0
-    mov rax, QWORD [rbp - 24]
-    mov QWORD [rbp - 232], rax
-    mov rax, QWORD [rbp - 224]
-    mov rbx, QWORD [rbp - 232]
-    sub rax,rbx
-    mov QWORD [rbp - 216], rax
-    mov QWORD [rbp - 240], 0
-    mov QWORD [rbp - 248], 0
-    mov rax, QWORD [rbp - 216]
-    mov QWORD [rbp - 248], rax
-    mov QWORD [rbp - 256], 0
-    mov rax, QWORD [rbp - 112]
-    mov QWORD [rbp - 256], rax
-    mov rax, QWORD [rbp - 248]
-    mov rbx, QWORD [rbp - 256]
-    add rax,rbx
-    mov QWORD [rbp - 240], rax
-    mov rax, QWORD [rbp - 240]
-    mov QWORD [rbp - 32], rax
-    mov QWORD [rbp - 264], 0
-    mov QWORD [rbp - 272], 0
-    mov rax, QWORD [rbp - 112]
-    mov QWORD [rbp - 272], rax
-    mov QWORD [rbp - 280], 0
-    mov QWORD [rbp - 280], 1
-    mov rax, QWORD [rbp - 272]
-    mov rbx, QWORD [rbp - 280]
-    add rax,rbx
-    mov QWORD [rbp - 264], rax
-    mov rax, QWORD [rbp - 264]
-    mov QWORD [rbp - 112], rax
-    jmp .L3
-    .L5:
-    mov QWORD [rbp - 144], 0
-    mov QWORD [rbp - 152], 0
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 152], rax
-    mov QWORD [rbp - 160], 0
-    mov QWORD [rbp - 160], 1
-    mov rax, QWORD [rbp - 152]
-    mov rbx, QWORD [rbp - 160]
-    add rax,rbx
-    mov QWORD [rbp - 144], rax
-    mov rax, QWORD [rbp - 144]
-    mov QWORD [rbp - 8], rax
-    jmp .L0
-    .L2:
-    mov QWORD [rbp - 88], 0
-    mov QWORD [rbp - 96], 0
-    mov rax, QWORD [rbp - 32]
-    mov QWORD [rbp - 96], rax
-    mov QWORD [rbp - 104], 0
-    mov QWORD [rbp - 104], 100
-    mov rax, QWORD [rbp - 96]
-    mov rbx, QWORD [rbp - 104]
-    cmp rax,rbx
-    setg al
-    movzx rax,al
-    mov QWORD [rbp - 88], rax
-    mov rax, QWORD [rbp - 88]
-    cmp rax, 0
-    jne .L6
-    mov QWORD [rbp - 288], 0
-    mov QWORD [rbp - 296], 0
-    mov rax, QWORD [rbp - 32]
-    mov QWORD [rbp - 296], rax
-    mov QWORD [rbp - 304], 0
-    mov QWORD [rbp - 304], 100
-    mov rax, QWORD [rbp - 296]
-    mov rbx, QWORD [rbp - 304]
-    cmp rax,rbx
-    sete al
-    movzx rax,al
-    mov QWORD [rbp - 288], rax
-    mov rax, QWORD [rbp - 288]
-    cmp rax, 0
-    jne .L8
-    mov QWORD [rbp - 312], 0
-    mov rax, QWORD [rbp - 312]
-    jmp .L9
-    .L8:
-    mov QWORD [rbp - 320], 0
-    mov QWORD [rbp - 328], 0
-    mov rax, QWORD [rbp - 32]
-    mov QWORD [rbp - 328], rax
-    mov QWORD [rbp - 336], 0
-    mov QWORD [rbp - 336], 1
-    mov rax, QWORD [rbp - 328]
-    mov rbx, QWORD [rbp - 336]
-    add rax,rbx
-    mov QWORD [rbp - 320], rax
-    mov rax, QWORD [rbp - 320]
-    mov QWORD [rbp - 344], rax
-    mov rax, QWORD [rbp - 344]
-    .L9:
-    jmp .L7
-    .L6:
-    mov rax, QWORD [rbp - 32]
-    mov QWORD [rbp - 352], rax
-    mov rax, QWORD [rbp - 352]
-    .L7:
-    leave
-    ret
-
-deeply_nested:
-    push rbp
-    mov  rbp, rsp
-    sub  rsp, 256
-    mov QWORD [rbp - 8], rdi
-    mov QWORD [rbp - 16], 1
-    .L10:
-    mov QWORD [rbp - 24], 0
-    mov QWORD [rbp - 32], 0
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 32], rax
-    mov QWORD [rbp - 40], 0
-    mov QWORD [rbp - 40], 0
-    mov rax, QWORD [rbp - 32]
-    mov rbx, QWORD [rbp - 40]
-    cmp rax,rbx
-    setg al
-    movzx rax,al
-    mov QWORD [rbp - 24], rax
-    mov rax, QWORD [rbp - 24]
-    cmp rax, 0
-    jne .L11
-    jmp .L12
-    .L11:
-    mov QWORD [rbp - 56], 0
-    mov QWORD [rbp - 64], 0
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 64], rax
-    mov QWORD [rbp - 72], 0
-    mov QWORD [rbp - 72], 2
-    mov rax, QWORD [rbp - 64]
-    mov rbx, QWORD [rbp - 72]
-    cqo
-    idiv rbx
-    mov QWORD [rbp - 56],rdx
-    mov QWORD [rbp - 80], 0
-    mov QWORD [rbp - 88], 0
-    mov rax, QWORD [rbp - 56]
-    mov QWORD [rbp - 88], rax
-    mov QWORD [rbp - 96], 0
-    mov QWORD [rbp - 96], 0
-    mov rax, QWORD [rbp - 88]
-    mov rbx, QWORD [rbp - 96]
-    cmp rax,rbx
-    sete al
-    movzx rax,al
-    mov QWORD [rbp - 80], rax
-    mov rax, QWORD [rbp - 80]
-    cmp rax, 0
-    jne .L13
-    mov QWORD [rbp - 128], 0
-    mov QWORD [rbp - 136], 0
-    mov rax, QWORD [rbp - 8]
+    lea rax, [rbp - 128]
     mov QWORD [rbp - 136], rax
+    mov byte [rbp - 128], 'V'
+    mov byte [rbp - 127], 'e'
+    mov byte [rbp - 126], 'r'
+    mov byte [rbp - 125], 'y'
+    mov byte [rbp - 124], ' '
+    mov byte [rbp - 123], 'l'
+    mov byte [rbp - 122], 'a'
+    mov byte [rbp - 121], 'r'
+    mov byte [rbp - 120], 'g'
+    mov byte [rbp - 119], 'e'
+    mov byte [rbp - 118], 0x0A
+    mov byte [rbp - 117], 0
+    mov rdi, QWORD [rbp - 136]
     mov QWORD [rbp - 144], 0
-    mov QWORD [rbp - 144], 3
-    mov rax, QWORD [rbp - 136]
-    mov rbx, QWORD [rbp - 144]
-    cqo
-    idiv rbx
-    mov QWORD [rbp - 128],rdx
-    mov QWORD [rbp - 152], 0
-    mov QWORD [rbp - 160], 0
-    mov rax, QWORD [rbp - 128]
-    mov QWORD [rbp - 160], rax
-    mov QWORD [rbp - 168], 0
-    mov QWORD [rbp - 168], 0
-    mov rax, QWORD [rbp - 160]
-    mov rbx, QWORD [rbp - 168]
-    cmp rax,rbx
-    sete al
-    movzx rax,al
-    mov QWORD [rbp - 152], rax
-    mov rax, QWORD [rbp - 152]
-    cmp rax, 0
-    jne .L15
+    xor rax,rax
+    call printf
+    mov QWORD [rbp - 144],rax
+    .L5:
+    jmp .L3
+    .L2:
+    lea rax, [rbp - 160]
+    mov QWORD [rbp - 168], rax
+    mov byte [rbp - 160], 'N'
+    mov byte [rbp - 159], 'e'
+    mov byte [rbp - 158], 'g'
+    mov byte [rbp - 157], 'a'
+    mov byte [rbp - 156], 't'
+    mov byte [rbp - 155], 'i'
+    mov byte [rbp - 154], 'v'
+    mov byte [rbp - 153], 'e'
+    mov byte [rbp - 152], 0x0A
+    mov byte [rbp - 151], 0
+    mov rdi, QWORD [rbp - 168]
     mov QWORD [rbp - 176], 0
-    mov QWORD [rbp - 184], 0
-    mov rax, QWORD [rbp - 16]
-    mov QWORD [rbp - 184], rax
-    mov QWORD [rbp - 192], 0
-    mov QWORD [rbp - 192], 1
-    mov rax, QWORD [rbp - 184]
-    mov rbx, QWORD [rbp - 192]
-    add rax,rbx
-    mov QWORD [rbp - 176], rax
-    mov rax, QWORD [rbp - 176]
-    mov QWORD [rbp - 16], rax
-    jmp .L16
-    .L15:
-    mov QWORD [rbp - 200], 0
-    mov QWORD [rbp - 208], 0
-    mov rax, QWORD [rbp - 16]
-    mov QWORD [rbp - 208], rax
-    mov QWORD [rbp - 216], 0
-    mov QWORD [rbp - 216], 3
-    mov rax, QWORD [rbp - 208]
-    mov rbx, QWORD [rbp - 216]
-    add rax,rbx
-    mov QWORD [rbp - 200], rax
-    mov rax, QWORD [rbp - 200]
-    mov QWORD [rbp - 16], rax
-    .L16:
-    jmp .L14
-    .L13:
-    mov QWORD [rbp - 224], 0
-    mov QWORD [rbp - 232], 0
-    mov rax, QWORD [rbp - 16]
-    mov QWORD [rbp - 232], rax
-    mov QWORD [rbp - 240], 0
-    mov QWORD [rbp - 240], 2
-    mov rax, QWORD [rbp - 232]
-    mov rbx, QWORD [rbp - 240]
-    imul rax,rbx
-    mov QWORD [rbp - 224], rax
-    mov rax, QWORD [rbp - 224]
-    mov QWORD [rbp - 16], rax
-    .L14:
-    mov QWORD [rbp - 104], 0
-    mov QWORD [rbp - 112], 0
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 112], rax
-    mov QWORD [rbp - 120], 0
-    mov QWORD [rbp - 120], 1
-    mov rax, QWORD [rbp - 112]
-    mov rbx, QWORD [rbp - 120]
-    sub rax,rbx
-    mov QWORD [rbp - 104], rax
-    mov rax, QWORD [rbp - 104]
-    mov QWORD [rbp - 8], rax
-    jmp .L10
-    .L12:
-    mov rax, QWORD [rbp - 16]
-    mov QWORD [rbp - 48], rax
-    mov rax, QWORD [rbp - 48]
-    leave
-    ret
-
-test_strings:
-    push rbp
-    mov  rbp, rsp
-    sub  rsp, 112
-    lea rax, [rbp - 8]
-    mov QWORD [rbp - 16], rax
-    mov byte [rbp - 8], 'H'
-    mov byte [rbp - 7], 'e'
-    mov byte [rbp - 6], 'l'
-    mov byte [rbp - 5], 'l'
-    mov byte [rbp - 4], 'o'
-    mov byte [rbp - 3], 0
-    lea rax, [rbp - 32]
-    mov QWORD [rbp - 40], rax
-    mov byte [rbp - 32], 'B'
-    mov byte [rbp - 31], 'h'
-    mov byte [rbp - 30], 'a'
-    mov byte [rbp - 29], 'u'
-    mov byte [rbp - 28], 'L'
-    mov byte [rbp - 27], 'a'
-    mov byte [rbp - 26], 'n'
-    mov byte [rbp - 25], 'g'
-    mov byte [rbp - 24], 0
-    lea rax, [rbp - 56]
-    mov QWORD [rbp - 64], rax
-    mov byte [rbp - 56], 'M'
-    mov byte [rbp - 55], 'e'
-    mov byte [rbp - 54], 's'
-    mov byte [rbp - 53], 's'
-    mov byte [rbp - 52], 'a'
-    mov byte [rbp - 51], 'g'
-    mov byte [rbp - 50], 'e'
-    mov byte [rbp - 49], ':'
-    mov byte [rbp - 48], ' '
-    mov byte [rbp - 47], 0
-    mov rdi, QWORD [rbp - 64]
-    mov QWORD [rbp - 72], 0
     xor rax,rax
     call printf
-    mov QWORD [rbp - 72],rax
-    lea rax, [rbp - 80]
-    mov QWORD [rbp - 88], rax
-    mov byte [rbp - 80], '%'
-    mov byte [rbp - 79], 's'
-    mov byte [rbp - 78], 0x0A
-    mov byte [rbp - 77], 0
-    mov rdi, QWORD [rbp - 88]
-    mov rax, QWORD [rbp - 40]
-    mov QWORD [rbp - 96], rax
-    mov rsi, QWORD [rbp - 96]
-    mov QWORD [rbp - 104], 0
-    xor rax,rax
-    call printf
-    mov QWORD [rbp - 104],rax
-    leave
-    ret
-
-mega_recursive:
-    push rbp
-    mov  rbp, rsp
-    sub  rsp, 128
-    mov QWORD [rbp - 8], rdi
-    mov QWORD [rbp - 16], 0
-    mov QWORD [rbp - 24], 0
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 24], rax
-    mov QWORD [rbp - 32], 0
-    mov QWORD [rbp - 32], 1
-    mov rax, QWORD [rbp - 24]
-    mov rbx, QWORD [rbp - 32]
-    cmp rax,rbx
-    setle al
-    movzx rax,al
-    mov QWORD [rbp - 16], rax
-    mov rax, QWORD [rbp - 16]
-    cmp rax, 0
-    jne .L17
-    jmp .L18
-    .L17:
-    mov QWORD [rbp - 112], 1
-    mov rax, QWORD [rbp - 112]
-    .L18:
-    mov QWORD [rbp - 40], 0
-    mov QWORD [rbp - 48], 0
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 48], rax
-    mov QWORD [rbp - 56], 0
-    mov QWORD [rbp - 56], 1
-    mov rax, QWORD [rbp - 48]
-    mov rbx, QWORD [rbp - 56]
-    sub rax,rbx
-    mov QWORD [rbp - 40], rax
-    mov rax, QWORD [rbp - 40]
-    mov QWORD [rbp - 64], rax
-    mov rdi, QWORD [rbp - 64]
-    mov QWORD [rbp - 72], 0
-    xor rax,rax
-    call mega_recursive
-    mov QWORD [rbp - 72],rax
-    mov QWORD [rbp - 80], 0
-    mov QWORD [rbp - 88], 0
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 88], rax
-    mov QWORD [rbp - 96], 0
-    mov rax, QWORD [rbp - 72]
-    mov QWORD [rbp - 96], rax
-    mov rax, QWORD [rbp - 88]
-    mov rbx, QWORD [rbp - 96]
-    imul rax,rbx
-    mov QWORD [rbp - 80], rax
-    mov rax, QWORD [rbp - 80]
-    mov QWORD [rbp - 104], rax
-    mov rax, QWORD [rbp - 104]
-    leave
-    ret
-
-nested_conditions:
-    push rbp
-    mov  rbp, rsp
-    sub  rsp, 288
-    mov QWORD [rbp - 8], rdi
-    mov QWORD [rbp - 16], 0
-    mov QWORD [rbp - 24], 0
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 24], rax
-    mov QWORD [rbp - 32], 0
-    mov QWORD [rbp - 32], 0
-    mov rax, QWORD [rbp - 24]
-    mov rbx, QWORD [rbp - 32]
-    cmp rax,rbx
-    setg al
-    movzx rax,al
-    mov QWORD [rbp - 16], rax
-    mov rax, QWORD [rbp - 16]
-    cmp rax, 0
-    jne .L19
-    mov QWORD [rbp - 40], 0
-    mov QWORD [rbp - 48], 0
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 48], rax
-    mov QWORD [rbp - 56], 0
-    mov QWORD [rbp - 56], 0
-    mov rax, QWORD [rbp - 48]
-    mov rbx, QWORD [rbp - 56]
-    cmp rax,rbx
-    setl al
-    movzx rax,al
-    mov QWORD [rbp - 40], rax
-    mov rax, QWORD [rbp - 40]
-    cmp rax, 0
-    jne .L21
-    lea rax, [rbp - 64]
-    mov QWORD [rbp - 72], rax
-    mov byte [rbp - 64], 'Z'
-    mov byte [rbp - 63], 'e'
-    mov byte [rbp - 62], 'r'
-    mov byte [rbp - 61], 'o'
-    mov byte [rbp - 60], 0x0A
-    mov byte [rbp - 59], 0
-    mov rdi, QWORD [rbp - 72]
-    mov QWORD [rbp - 80], 0
-    xor rax,rax
-    call printf
-    mov QWORD [rbp - 80],rax
-    jmp .L22
-    .L21:
-    lea rax, [rbp - 96]
-    mov QWORD [rbp - 104], rax
-    mov byte [rbp - 96], 'N'
-    mov byte [rbp - 95], 'e'
-    mov byte [rbp - 94], 'g'
-    mov byte [rbp - 93], 'a'
-    mov byte [rbp - 92], 't'
-    mov byte [rbp - 91], 'i'
-    mov byte [rbp - 90], 'v'
-    mov byte [rbp - 89], 'e'
-    mov byte [rbp - 88], 0x0A
-    mov byte [rbp - 87], 0
-    mov rdi, QWORD [rbp - 104]
-    mov QWORD [rbp - 112], 0
-    xor rax,rax
-    call printf
-    mov QWORD [rbp - 112],rax
-    .L22:
-    jmp .L20
-    .L19:
-    mov QWORD [rbp - 120], 0
-    mov QWORD [rbp - 128], 0
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 128], rax
-    mov QWORD [rbp - 136], 0
-    mov QWORD [rbp - 136], 10
-    mov rax, QWORD [rbp - 128]
-    mov rbx, QWORD [rbp - 136]
-    cmp rax,rbx
-    setl al
-    movzx rax,al
-    mov QWORD [rbp - 120], rax
-    mov rax, QWORD [rbp - 120]
-    cmp rax, 0
-    jne .L23
-    mov QWORD [rbp - 144], 0
-    mov QWORD [rbp - 152], 0
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 152], rax
-    mov QWORD [rbp - 160], 0
-    mov QWORD [rbp - 160], 100
-    mov rax, QWORD [rbp - 152]
-    mov rbx, QWORD [rbp - 160]
-    cmp rax,rbx
-    setl al
-    movzx rax,al
-    mov QWORD [rbp - 144], rax
-    mov rax, QWORD [rbp - 144]
-    cmp rax, 0
-    jne .L25
+    mov QWORD [rbp - 176],rax
+    .L3:
+    jmp .L1
+    .L0:
     lea rax, [rbp - 184]
     mov QWORD [rbp - 192], rax
-    mov byte [rbp - 184], 'L'
-    mov byte [rbp - 183], 'a'
+    mov byte [rbp - 184], 'Z'
+    mov byte [rbp - 183], 'e'
     mov byte [rbp - 182], 'r'
-    mov byte [rbp - 181], 'g'
-    mov byte [rbp - 180], 'e'
-    mov byte [rbp - 179], ' '
-    mov byte [rbp - 178], 'P'
-    mov byte [rbp - 177], 'o'
-    mov byte [rbp - 176], 's'
-    mov byte [rbp - 175], 'i'
-    mov byte [rbp - 174], 't'
-    mov byte [rbp - 173], 'i'
-    mov byte [rbp - 172], 'v'
-    mov byte [rbp - 171], 'e'
-    mov byte [rbp - 170], 0x0A
-    mov byte [rbp - 169], 0
+    mov byte [rbp - 181], 'o'
+    mov byte [rbp - 180], 0x0A
+    mov byte [rbp - 179], 0
     mov rdi, QWORD [rbp - 192]
     mov QWORD [rbp - 200], 0
     xor rax,rax
     call printf
     mov QWORD [rbp - 200],rax
-    jmp .L26
-    .L25:
-    lea rax, [rbp - 224]
-    mov QWORD [rbp - 232], rax
-    mov byte [rbp - 224], 'T'
-    mov byte [rbp - 223], 'w'
-    mov byte [rbp - 222], 'o'
-    mov byte [rbp - 221], ' '
-    mov byte [rbp - 220], 'D'
-    mov byte [rbp - 219], 'i'
-    mov byte [rbp - 218], 'g'
-    mov byte [rbp - 217], 'i'
-    mov byte [rbp - 216], 't'
-    mov byte [rbp - 215], ' '
-    mov byte [rbp - 214], 'P'
-    mov byte [rbp - 213], 'o'
-    mov byte [rbp - 212], 's'
-    mov byte [rbp - 211], 'i'
-    mov byte [rbp - 210], 't'
-    mov byte [rbp - 209], 'i'
-    mov byte [rbp - 208], 'v'
-    mov byte [rbp - 207], 'e'
-    mov byte [rbp - 206], 0x0A
-    mov byte [rbp - 205], 0
-    mov rdi, QWORD [rbp - 232]
-    mov QWORD [rbp - 240], 0
-    xor rax,rax
-    call printf
-    mov QWORD [rbp - 240],rax
-    .L26:
-    jmp .L24
-    .L23:
-    lea rax, [rbp - 264]
-    mov QWORD [rbp - 272], rax
-    mov byte [rbp - 264], 'S'
-    mov byte [rbp - 263], 'i'
-    mov byte [rbp - 262], 'n'
-    mov byte [rbp - 261], 'g'
-    mov byte [rbp - 260], 'l'
-    mov byte [rbp - 259], 'e'
-    mov byte [rbp - 258], ' '
-    mov byte [rbp - 257], 'D'
-    mov byte [rbp - 256], 'i'
-    mov byte [rbp - 255], 'g'
-    mov byte [rbp - 254], 'i'
-    mov byte [rbp - 253], 't'
-    mov byte [rbp - 252], ' '
-    mov byte [rbp - 251], 'P'
-    mov byte [rbp - 250], 'o'
-    mov byte [rbp - 249], 's'
-    mov byte [rbp - 248], 'i'
-    mov byte [rbp - 247], 't'
-    mov byte [rbp - 246], 'i'
-    mov byte [rbp - 245], 'v'
-    mov byte [rbp - 244], 'e'
-    mov byte [rbp - 243], 0x0A
-    mov byte [rbp - 242], 0
-    mov rdi, QWORD [rbp - 272]
-    mov QWORD [rbp - 280], 0
-    xor rax,rax
-    call printf
-    mov QWORD [rbp - 280],rax
-    .L24:
-    .L20:
+    .L1:
     leave
     ret
 
-loop_fun:
-    push rbp
-    mov  rbp, rsp
-    sub  rsp, 112
-    mov QWORD [rbp - 8], 0
-    mov QWORD [rbp - 16], 1
-    .L27:
-    mov QWORD [rbp - 24], 0
-    mov QWORD [rbp - 32], 0
-    mov rax, QWORD [rbp - 16]
-    mov QWORD [rbp - 32], rax
-    mov QWORD [rbp - 40], 0
-    mov QWORD [rbp - 40], 10
-    mov rax, QWORD [rbp - 32]
-    mov rbx, QWORD [rbp - 40]
-    cmp rax,rbx
-    setle al
-    movzx rax,al
-    mov QWORD [rbp - 24], rax
-    mov rax, QWORD [rbp - 24]
-    cmp rax, 0
-    jne .L28
-    jmp .L29
-    .L28:
-    mov QWORD [rbp - 56], 0
-    mov QWORD [rbp - 64], 0
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 64], rax
-    mov QWORD [rbp - 72], 0
-    mov rax, QWORD [rbp - 16]
-    mov QWORD [rbp - 72], rax
-    mov rax, QWORD [rbp - 64]
-    mov rbx, QWORD [rbp - 72]
-    add rax,rbx
-    mov QWORD [rbp - 56], rax
-    mov rax, QWORD [rbp - 56]
-    mov QWORD [rbp - 8], rax
-    mov QWORD [rbp - 80], 0
-    mov QWORD [rbp - 88], 0
-    mov rax, QWORD [rbp - 16]
-    mov QWORD [rbp - 88], rax
-    mov QWORD [rbp - 96], 0
-    mov QWORD [rbp - 96], 1
-    mov rax, QWORD [rbp - 88]
-    mov rbx, QWORD [rbp - 96]
-    add rax,rbx
-    mov QWORD [rbp - 80], rax
-    mov rax, QWORD [rbp - 80]
-    mov QWORD [rbp - 16], rax
-    jmp .L27
-    .L29:
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 48], rax
-    mov rax, QWORD [rbp - 48]
-    leave
-    ret
-
-test_scope_shadowing:
+switch_demo:
     push rbp
     mov  rbp, rsp
     sub  rsp, 144
-    mov QWORD [rbp - 8], 5
-    .L30:
-    mov QWORD [rbp - 16], 0
-    mov QWORD [rbp - 24], 0
+    mov QWORD [rbp - 8], rdi
     mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 24], rax
-    mov QWORD [rbp - 32], 0
-    mov QWORD [rbp - 32], 10
-    mov rax, QWORD [rbp - 24]
-    mov rbx, QWORD [rbp - 32]
-    cmp rax,rbx
-    setl al
-    movzx rax,al
     mov QWORD [rbp - 16], rax
     mov rax, QWORD [rbp - 16]
-    cmp rax, 0
-    jne .L31
-    jmp .L32
-    .L31:
-    mov QWORD [rbp - 72], 20
-    mov QWORD [rbp - 80], 0
-    mov QWORD [rbp - 88], 0
-    mov rax, QWORD [rbp - 72]
-    mov QWORD [rbp - 88], rax
-    mov QWORD [rbp - 96], 0
-    mov QWORD [rbp - 96], 1
-    mov rax, QWORD [rbp - 88]
-    mov rbx, QWORD [rbp - 96]
-    add rax,rbx
-    mov QWORD [rbp - 80], rax
-    mov rax, QWORD [rbp - 80]
-    mov QWORD [rbp - 72], rax
-    lea rax, [rbp - 104]
-    mov QWORD [rbp - 112], rax
-    mov byte [rbp - 104], '%'
-    mov byte [rbp - 103], 'd'
-    mov byte [rbp - 102], 0x0A
-    mov byte [rbp - 101], 0
-    mov rdi, QWORD [rbp - 112]
-    mov rax, QWORD [rbp - 72]
-    mov QWORD [rbp - 120], rax
-    mov rsi, QWORD [rbp - 120]
-    mov QWORD [rbp - 128], 0
-    xor rax,rax
-    call printf
-    mov QWORD [rbp - 128],rax
-    jmp .L32
-    jmp .L30
-    .L32:
-    lea rax, [rbp - 40]
-    mov QWORD [rbp - 48], rax
-    mov byte [rbp - 40], '%'
-    mov byte [rbp - 39], 'd'
-    mov byte [rbp - 38], 0x0A
-    mov byte [rbp - 37], 0
-    mov rdi, QWORD [rbp - 48]
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 56], rax
-    mov rsi, QWORD [rbp - 56]
-    mov QWORD [rbp - 64], 0
-    xor rax,rax
-    call printf
-    mov QWORD [rbp - 64],rax
-    leave
-    ret
-
-test_big_exprs:
-    push rbp
-    mov  rbp, rsp
-    sub  rsp, 112
-    mov QWORD [rbp - 8], 96
-    mov QWORD [rbp - 16], 0
-    mov QWORD [rbp - 24], 0
+    cmp rax, 1
+    je .L7
     mov rax, QWORD [rbp - 8]
     mov QWORD [rbp - 24], rax
-    mov QWORD [rbp - 32], 0
+    mov rax, QWORD [rbp - 24]
+    cmp rax, 2
+    je .L8
     mov rax, QWORD [rbp - 8]
     mov QWORD [rbp - 32], rax
-    mov rax, QWORD [rbp - 24]
-    mov rbx, QWORD [rbp - 32]
-    imul rax,rbx
-    mov QWORD [rbp - 16], rax
-    mov QWORD [rbp - 40], 0
-    mov QWORD [rbp - 48], 0
-    mov rax, QWORD [rbp - 16]
-    mov QWORD [rbp - 48], rax
-    mov QWORD [rbp - 56], 0
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 56], rax
-    mov rax, QWORD [rbp - 48]
-    mov rbx, QWORD [rbp - 56]
-    add rax,rbx
-    mov QWORD [rbp - 40], rax
-    mov QWORD [rbp - 64], 0
-    mov QWORD [rbp - 72], 0
-    mov rax, QWORD [rbp - 40]
-    mov QWORD [rbp - 72], rax
-    mov QWORD [rbp - 80], 0
-    mov QWORD [rbp - 80], 47
-    mov rax, QWORD [rbp - 72]
-    mov rbx, QWORD [rbp - 80]
-    sub rax,rbx
-    mov QWORD [rbp - 64], rax
-    mov rax, QWORD [rbp - 64]
-    mov QWORD [rbp - 88], rax
-    mov rax, QWORD [rbp - 88]
-    mov QWORD [rbp - 96], rax
-    mov rax, QWORD [rbp - 96]
-    leave
-    ret
-
-empty_else:
-    push rbp
-    mov  rbp, rsp
-    sub  rsp, 64
-    mov QWORD [rbp - 8], rdi
-    mov QWORD [rbp - 16], 0
-    mov QWORD [rbp - 24], 0
-    mov rax, QWORD [rbp - 8]
-    mov QWORD [rbp - 24], rax
-    mov QWORD [rbp - 32], 0
-    mov QWORD [rbp - 32], 1
-    mov rax, QWORD [rbp - 24]
-    mov rbx, QWORD [rbp - 32]
-    cmp rax,rbx
-    sete al
-    movzx rax,al
-    mov QWORD [rbp - 16], rax
-    mov rax, QWORD [rbp - 16]
-    cmp rax, 0
-    jne .L33
-    jmp .L34
-    .L33:
+    mov rax, QWORD [rbp - 32]
+    cmp rax, 3
+    je .L9
+    jmp .L10
+    .L7:
     lea rax, [rbp - 40]
     mov QWORD [rbp - 48], rax
     mov byte [rbp - 40], 'O'
@@ -851,226 +177,599 @@ empty_else:
     xor rax,rax
     call printf
     mov QWORD [rbp - 56],rax
-    .L34:
-    leave
-    ret
-
-test_all:
-    push rbp
-    mov  rbp, rsp
-    sub  rsp, 432
-    lea rax, [rbp - 16]
-    mov QWORD [rbp - 24], rax
-    mov byte [rbp - 16], 'C'
-    mov byte [rbp - 15], 'o'
-    mov byte [rbp - 14], 'm'
-    mov byte [rbp - 13], 'p'
-    mov byte [rbp - 12], 'l'
-    mov byte [rbp - 11], 'e'
-    mov byte [rbp - 10], 'x'
-    mov byte [rbp - 9], ':'
-    mov byte [rbp - 8], ' '
-    mov byte [rbp - 7], 0
-    mov rdi, QWORD [rbp - 24]
-    mov QWORD [rbp - 32], 0
+    .L8:
+    lea rax, [rbp - 64]
+    mov QWORD [rbp - 72], rax
+    mov byte [rbp - 64], 'T'
+    mov byte [rbp - 63], 'w'
+    mov byte [rbp - 62], 'o'
+    mov byte [rbp - 61], 0x0A
+    mov byte [rbp - 60], 0
+    mov rdi, QWORD [rbp - 72]
+    mov QWORD [rbp - 80], 0
     xor rax,rax
     call printf
-    mov QWORD [rbp - 32],rax
-    mov QWORD [rbp - 40], 1
-    mov rdi, QWORD [rbp - 40]
-    mov QWORD [rbp - 48], 3
-    mov rsi, QWORD [rbp - 48]
-    mov QWORD [rbp - 56], 2
-    mov rdx, QWORD [rbp - 56]
-    mov QWORD [rbp - 64], 0
-    xor rax,rax
-    call complex
-    mov QWORD [rbp - 64],rax
-    mov rax, QWORD [rbp - 64]
-    mov QWORD [rbp - 72], rax
-    lea rax, [rbp - 80]
-    mov QWORD [rbp - 88], rax
-    mov byte [rbp - 80], '%'
-    mov byte [rbp - 79], 'd'
-    mov byte [rbp - 78], 0x0A
-    mov byte [rbp - 77], 0
-    mov rdi, QWORD [rbp - 88]
-    mov rax, QWORD [rbp - 72]
+    mov QWORD [rbp - 80],rax
+    .L9:
+    lea rax, [rbp - 88]
     mov QWORD [rbp - 96], rax
-    mov rsi, QWORD [rbp - 96]
+    mov byte [rbp - 88], 'T'
+    mov byte [rbp - 87], 'h'
+    mov byte [rbp - 86], 'r'
+    mov byte [rbp - 85], 'e'
+    mov byte [rbp - 84], 'e'
+    mov byte [rbp - 83], 0x0A
+    mov byte [rbp - 82], 0
+    mov rdi, QWORD [rbp - 96]
     mov QWORD [rbp - 104], 0
     xor rax,rax
     call printf
     mov QWORD [rbp - 104],rax
-    mov QWORD [rbp - 112], 10
-    mov rdi, QWORD [rbp - 112]
-    mov QWORD [rbp - 120], 0
+    .L10:
+    lea rax, [rbp - 112]
+    mov QWORD [rbp - 120], rax
+    mov byte [rbp - 112], 'O'
+    mov byte [rbp - 111], 't'
+    mov byte [rbp - 110], 'h'
+    mov byte [rbp - 109], 'e'
+    mov byte [rbp - 108], 'r'
+    mov byte [rbp - 107], 0x0A
+    mov byte [rbp - 106], 0
+    mov rdi, QWORD [rbp - 120]
+    mov QWORD [rbp - 128], 0
     xor rax,rax
-    call deeply_nested
-    mov QWORD [rbp - 120],rax
-    mov rax, QWORD [rbp - 120]
+    call printf
+    mov QWORD [rbp - 128],rax
+    .L6:
+    leave
+    ret
+
+nested_loops:
+    push rbp
+    mov  rbp, rsp
+    sub  rsp, 208
+    mov QWORD [rbp - 8], 0
+    .L11:
+    mov QWORD [rbp - 16], 0
+    mov QWORD [rbp - 24], 0
+    mov rax, QWORD [rbp - 8]
+    mov QWORD [rbp - 24], rax
+    mov QWORD [rbp - 32], 0
+    mov QWORD [rbp - 32], 5
+    mov rax, QWORD [rbp - 24]
+    mov rbx, QWORD [rbp - 32]
+    cmp rax,rbx
+    setl al
+    movzx rax,al
+    mov QWORD [rbp - 16], rax
+    mov rax, QWORD [rbp - 16]
+    cmp rax, 0
+    jne .L12
+    jmp .L13
+    .L12:
+    mov QWORD [rbp - 40], 0
+    .L14:
+    mov QWORD [rbp - 48], 0
+    mov QWORD [rbp - 56], 0
+    mov rax, QWORD [rbp - 40]
+    mov QWORD [rbp - 56], rax
+    mov QWORD [rbp - 64], 0
+    mov QWORD [rbp - 64], 3
+    mov rax, QWORD [rbp - 56]
+    mov rbx, QWORD [rbp - 64]
+    cmp rax,rbx
+    setl al
+    movzx rax,al
+    mov QWORD [rbp - 48], rax
+    mov rax, QWORD [rbp - 48]
+    cmp rax, 0
+    jne .L15
+    jmp .L16
+    .L15:
+    lea rax, [rbp - 120]
     mov QWORD [rbp - 128], rax
-    lea rax, [rbp - 136]
-    mov QWORD [rbp - 144], rax
-    mov byte [rbp - 136], 'D'
-    mov byte [rbp - 135], 'e'
-    mov byte [rbp - 134], 'e'
-    mov byte [rbp - 133], 'p'
-    mov byte [rbp - 132], ':'
-    mov byte [rbp - 131], ' '
-    mov byte [rbp - 130], 0
-    mov rdi, QWORD [rbp - 144]
-    mov QWORD [rbp - 152], 0
+    mov byte [rbp - 120], '%'
+    mov byte [rbp - 119], 'd'
+    mov byte [rbp - 118], ' '
+    mov byte [rbp - 117], 0
+    mov rdi, QWORD [rbp - 128]
+    mov rax, QWORD [rbp - 8]
+    mov QWORD [rbp - 136], rax
+    mov rsi, QWORD [rbp - 136]
+    mov QWORD [rbp - 144], 0
     xor rax,rax
     call printf
-    mov QWORD [rbp - 152],rax
-    lea rax, [rbp - 160]
+    mov QWORD [rbp - 144],rax
+    lea rax, [rbp - 152]
+    mov QWORD [rbp - 160], rax
+    mov byte [rbp - 152], '%'
+    mov byte [rbp - 151], 'd'
+    mov byte [rbp - 150], ' '
+    mov byte [rbp - 149], 0
+    mov rdi, QWORD [rbp - 160]
+    mov rax, QWORD [rbp - 40]
     mov QWORD [rbp - 168], rax
-    mov byte [rbp - 160], '%'
-    mov byte [rbp - 159], 'd'
-    mov byte [rbp - 158], 0x0A
-    mov byte [rbp - 157], 0
-    mov rdi, QWORD [rbp - 168]
-    mov rax, QWORD [rbp - 128]
-    mov QWORD [rbp - 176], rax
-    mov rsi, QWORD [rbp - 176]
+    mov rsi, QWORD [rbp - 168]
+    mov QWORD [rbp - 176], 0
+    xor rax,rax
+    call printf
+    mov QWORD [rbp - 176],rax
     mov QWORD [rbp - 184], 0
-    xor rax,rax
-    call printf
-    mov QWORD [rbp - 184],rax
     mov QWORD [rbp - 192], 0
-    xor rax,rax
-    call test_strings
-    mov QWORD [rbp - 192],rax
-    mov QWORD [rbp - 200], 5
-    mov rdi, QWORD [rbp - 200]
-    mov QWORD [rbp - 208], 0
-    xor rax,rax
-    call nested_conditions
-    mov QWORD [rbp - 208],rax
-    mov QWORD [rbp - 216], -5
-    mov rdi, QWORD [rbp - 216]
-    mov QWORD [rbp - 224], 0
-    xor rax,rax
-    call nested_conditions
-    mov QWORD [rbp - 224],rax
-    mov QWORD [rbp - 232], 100
-    mov rdi, QWORD [rbp - 232]
-    mov QWORD [rbp - 240], 0
-    xor rax,rax
-    call nested_conditions
-    mov QWORD [rbp - 240],rax
-    mov QWORD [rbp - 248], 0
-    xor rax,rax
-    call loop_fun
-    mov QWORD [rbp - 248],rax
-    mov rax, QWORD [rbp - 248]
-    mov QWORD [rbp - 256], rax
-    lea rax, [rbp - 272]
-    mov QWORD [rbp - 280], rax
-    mov byte [rbp - 272], 'L'
-    mov byte [rbp - 271], 'o'
-    mov byte [rbp - 270], 'o'
-    mov byte [rbp - 269], 'p'
-    mov byte [rbp - 268], ' '
-    mov byte [rbp - 267], 'F'
-    mov byte [rbp - 266], 'u'
-    mov byte [rbp - 265], 'n'
-    mov byte [rbp - 264], ':'
-    mov byte [rbp - 263], ' '
-    mov byte [rbp - 262], 0
-    mov rdi, QWORD [rbp - 280]
-    mov QWORD [rbp - 288], 0
+    mov rax, QWORD [rbp - 40]
+    mov QWORD [rbp - 192], rax
+    mov QWORD [rbp - 200], 0
+    mov QWORD [rbp - 200], 1
+    mov rax, QWORD [rbp - 192]
+    mov rbx, QWORD [rbp - 200]
+    add rax,rbx
+    mov QWORD [rbp - 184], rax
+    mov rax, QWORD [rbp - 184]
+    mov QWORD [rbp - 40], rax
+    jmp .L14
+    .L16:
+    lea rax, [rbp - 72]
+    mov QWORD [rbp - 80], rax
+    mov byte [rbp - 72], 0x0A
+    mov byte [rbp - 71], 0
+    mov rdi, QWORD [rbp - 80]
+    mov QWORD [rbp - 88], 0
     xor rax,rax
     call printf
-    mov QWORD [rbp - 288],rax
-    lea rax, [rbp - 296]
-    mov QWORD [rbp - 304], rax
-    mov byte [rbp - 296], '%'
-    mov byte [rbp - 295], 'd'
-    mov byte [rbp - 294], 0x0A
-    mov byte [rbp - 293], 0
-    mov rdi, QWORD [rbp - 304]
-    mov rax, QWORD [rbp - 256]
-    mov QWORD [rbp - 312], rax
-    mov rsi, QWORD [rbp - 312]
-    mov QWORD [rbp - 320], 0
+    mov QWORD [rbp - 88],rax
+    mov QWORD [rbp - 96], 0
+    mov QWORD [rbp - 104], 0
+    mov rax, QWORD [rbp - 8]
+    mov QWORD [rbp - 104], rax
+    mov QWORD [rbp - 112], 0
+    mov QWORD [rbp - 112], 1
+    mov rax, QWORD [rbp - 104]
+    mov rbx, QWORD [rbp - 112]
+    add rax,rbx
+    mov QWORD [rbp - 96], rax
+    mov rax, QWORD [rbp - 96]
+    mov QWORD [rbp - 8], rax
+    jmp .L11
+    .L13:
+    leave
+    ret
+
+add_const:
+    push rbp
+    mov  rbp, rsp
+    sub  rsp, 64
+    mov QWORD [rbp - 8], 5
+    mov QWORD [rbp - 16], 10
+    mov QWORD [rbp - 24], 0
+    mov QWORD [rbp - 32], 0
+    mov rax, QWORD [rbp - 8]
+    mov QWORD [rbp - 32], rax
+    mov QWORD [rbp - 40], 0
+    mov rax, QWORD [rbp - 16]
+    mov QWORD [rbp - 40], rax
+    mov rax, QWORD [rbp - 32]
+    mov rbx, QWORD [rbp - 40]
+    add rax,rbx
+    mov QWORD [rbp - 24], rax
+    mov rax, QWORD [rbp - 24]
+    mov QWORD [rbp - 48], rax
+    mov rax, QWORD [rbp - 48]
+    leave
+    ret
+counter_test:
+    push rbp
+    mov  rbp, rsp
+    sub  rsp, 160
+    mov QWORD [rbp - 8], 0
+    .L17:
+    mov QWORD [rbp - 16], 0
+    mov QWORD [rbp - 24], 0
+    mov rax, QWORD [rbp - 8]
+    mov QWORD [rbp - 24], rax
+    mov QWORD [rbp - 32], 0
+    mov QWORD [rbp - 32], 3
+    mov rax, QWORD [rbp - 24]
+    mov rbx, QWORD [rbp - 32]
+    cmp rax,rbx
+    setl al
+    movzx rax,al
+    mov QWORD [rbp - 16], rax
+    mov rax, QWORD [rbp - 16]
+    cmp rax, 0
+    jne .L18
+    jmp .L19
+    .L18:
+    lea rax, [rbp - 80]
+    mov QWORD [rbp - 88], rax
+    mov byte [rbp - 80], 'C'
+    mov byte [rbp - 79], 'o'
+    mov byte [rbp - 78], 'u'
+    mov byte [rbp - 77], 'n'
+    mov byte [rbp - 76], 't'
+    mov byte [rbp - 75], 'i'
+    mov byte [rbp - 74], 'n'
+    mov byte [rbp - 73], 'g'
+    mov byte [rbp - 72], 0
+    mov rdi, QWORD [rbp - 88]
+    mov QWORD [rbp - 96], 0
     xor rax,rax
     call printf
-    mov QWORD [rbp - 320],rax
-    mov QWORD [rbp - 328], 0
-    xor rax,rax
-    call test_scope_shadowing
-    mov QWORD [rbp - 328],rax
-    lea rax, [rbp - 344]
-    mov QWORD [rbp - 352], rax
-    mov byte [rbp - 344], 'B'
-    mov byte [rbp - 343], 'i'
-    mov byte [rbp - 342], 'g'
-    mov byte [rbp - 341], ' '
-    mov byte [rbp - 340], 'e'
-    mov byte [rbp - 339], 'x'
-    mov byte [rbp - 338], 'p'
-    mov byte [rbp - 337], 'r'
-    mov byte [rbp - 336], ':'
-    mov byte [rbp - 335], ' '
-    mov byte [rbp - 334], 0
-    mov rdi, QWORD [rbp - 352]
-    mov QWORD [rbp - 360], 0
+    mov QWORD [rbp - 96],rax
+    lea rax, [rbp - 104]
+    mov QWORD [rbp - 112], rax
+    mov byte [rbp - 104], ' '
+    mov byte [rbp - 103], '%'
+    mov byte [rbp - 102], 'd'
+    mov byte [rbp - 101], ' '
+    mov byte [rbp - 100], 0
+    mov rdi, QWORD [rbp - 112]
+    mov rax, QWORD [rbp - 8]
+    mov QWORD [rbp - 120], rax
+    mov rsi, QWORD [rbp - 120]
+    mov QWORD [rbp - 128], 0
     xor rax,rax
     call printf
-    mov QWORD [rbp - 360],rax
-    mov QWORD [rbp - 368], 0
-    xor rax,rax
-    call test_big_exprs
-    mov QWORD [rbp - 368],rax
-    mov rax, QWORD [rbp - 368]
-    mov QWORD [rbp - 376], rax
-    lea rax, [rbp - 384]
-    mov QWORD [rbp - 392], rax
-    mov byte [rbp - 384], '%'
-    mov byte [rbp - 383], 'd'
-    mov byte [rbp - 382], 0x0A
-    mov byte [rbp - 381], 0
-    mov rdi, QWORD [rbp - 392]
-    mov rax, QWORD [rbp - 376]
-    mov QWORD [rbp - 400], rax
-    mov rsi, QWORD [rbp - 400]
-    mov QWORD [rbp - 408], 0
+    mov QWORD [rbp - 128],rax
+    mov QWORD [rbp - 136], 0
+    mov QWORD [rbp - 144], 0
+    mov rax, QWORD [rbp - 8]
+    mov QWORD [rbp - 144], rax
+    mov QWORD [rbp - 152], 0
+    mov QWORD [rbp - 152], 1
+    mov rax, QWORD [rbp - 144]
+    mov rbx, QWORD [rbp - 152]
+    add rax,rbx
+    mov QWORD [rbp - 136], rax
+    mov rax, QWORD [rbp - 136]
+    mov QWORD [rbp - 8], rax
+    jmp .L17
+    .L19:
+    lea rax, [rbp - 40]
+    mov QWORD [rbp - 48], rax
+    mov byte [rbp - 40], 0x0A
+    mov byte [rbp - 39], 0
+    mov rdi, QWORD [rbp - 48]
+    mov QWORD [rbp - 56], 0
     xor rax,rax
     call printf
-    mov QWORD [rbp - 408],rax
-    mov QWORD [rbp - 416], 1
-    mov rdi, QWORD [rbp - 416]
-    mov QWORD [rbp - 424], 0
+    mov QWORD [rbp - 56],rax
+    mov rax, QWORD [rbp - 8]
+    mov QWORD [rbp - 64], rax
+    mov rax, QWORD [rbp - 64]
+    leave
+    ret
+power:
+    push rbp
+    mov  rbp, rsp
+    sub  rsp, 144
+    mov QWORD [rbp - 8], rdi
+    mov QWORD [rbp - 16], rsi
+    mov QWORD [rbp - 24], 0
+    mov QWORD [rbp - 32], 0
+    mov rax, QWORD [rbp - 16]
+    mov QWORD [rbp - 32], rax
+    mov QWORD [rbp - 40], 0
+    mov QWORD [rbp - 40], 0
+    mov rax, QWORD [rbp - 32]
+    mov rbx, QWORD [rbp - 40]
+    cmp rax,rbx
+    sete al
+    movzx rax,al
+    mov QWORD [rbp - 24], rax
+    mov rax, QWORD [rbp - 24]
+    cmp rax, 0
+    jne .L20
+    jmp .L21
+    .L20:
+    mov QWORD [rbp - 128], 1
+    mov rax, QWORD [rbp - 128]
+    leave
+    ret
+    .L21:
+    mov rax, QWORD [rbp - 8]
+    mov QWORD [rbp - 48], rax
+    mov rdi, QWORD [rbp - 48]
+    mov QWORD [rbp - 56], 0
+    mov QWORD [rbp - 64], 0
+    mov rax, QWORD [rbp - 16]
+    mov QWORD [rbp - 64], rax
+    mov QWORD [rbp - 72], 0
+    mov QWORD [rbp - 72], 1
+    mov rax, QWORD [rbp - 64]
+    mov rbx, QWORD [rbp - 72]
+    sub rax,rbx
+    mov QWORD [rbp - 56], rax
+    mov rax, QWORD [rbp - 56]
+    mov QWORD [rbp - 80], rax
+    mov rsi, QWORD [rbp - 80]
+    mov QWORD [rbp - 88], 0
     xor rax,rax
-    call empty_else
-    mov QWORD [rbp - 424],rax
+    call power
+    mov QWORD [rbp - 88],rax
+    mov QWORD [rbp - 96], 0
+    mov QWORD [rbp - 104], 0
+    mov rax, QWORD [rbp - 8]
+    mov QWORD [rbp - 104], rax
+    mov QWORD [rbp - 112], 0
+    mov rax, QWORD [rbp - 88]
+    mov QWORD [rbp - 112], rax
+    mov rax, QWORD [rbp - 104]
+    mov rbx, QWORD [rbp - 112]
+    imul rax,rbx
+    mov QWORD [rbp - 96], rax
+    mov rax, QWORD [rbp - 96]
+    mov QWORD [rbp - 120], rax
+    mov rax, QWORD [rbp - 120]
+    leave
+    ret
+dummy:
+    push rbp
+    mov  rbp, rsp
+    sub  rsp, 96
+    mov QWORD [rbp - 8], rdi
+    mov QWORD [rbp - 16], rsi
+    mov QWORD [rbp - 24], rdx
+    mov QWORD [rbp - 32], 0
+    mov QWORD [rbp - 40], 0
+    mov rax, QWORD [rbp - 8]
+    mov QWORD [rbp - 40], rax
+    mov QWORD [rbp - 48], 0
+    mov rax, QWORD [rbp - 16]
+    mov QWORD [rbp - 48], rax
+    mov rax, QWORD [rbp - 40]
+    mov rbx, QWORD [rbp - 48]
+    add rax,rbx
+    mov QWORD [rbp - 32], rax
+    mov QWORD [rbp - 56], 0
+    mov QWORD [rbp - 64], 0
+    mov rax, QWORD [rbp - 32]
+    mov QWORD [rbp - 64], rax
+    mov QWORD [rbp - 72], 0
+    mov rax, QWORD [rbp - 24]
+    mov QWORD [rbp - 72], rax
+    mov rax, QWORD [rbp - 64]
+    mov rbx, QWORD [rbp - 72]
+    add rax,rbx
+    mov QWORD [rbp - 56], rax
+    mov rax, QWORD [rbp - 56]
+    mov QWORD [rbp - 80], rax
+    mov rax, QWORD [rbp - 80]
+    leave
+    ret
+literal_demo:
+    push rbp
+    mov  rbp, rsp
+    sub  rsp, 192
+    mov QWORD [rbp - 8], 'b'
+    lea rax, [rbp - 24]
+    mov QWORD [rbp - 32], rax
+    mov byte [rbp - 24], 's'
+    mov byte [rbp - 23], 't'
+    mov byte [rbp - 22], 'r'
+    mov byte [rbp - 21], 'i'
+    mov byte [rbp - 20], 'n'
+    mov byte [rbp - 19], 'g'
+    mov byte [rbp - 18], ' '
+    mov byte [rbp - 17], 't'
+    mov byte [rbp - 16], 'e'
+    mov byte [rbp - 15], 's'
+    mov byte [rbp - 14], 't'
+    mov byte [rbp - 13], 0
+    mov rax, 0x40091eb860000000
+    movq xmm7, rax
+    movsd QWORD [rbp - 40], xmm7
+    mov QWORD [rbp - 48], 1
+    lea rax, [rbp - 56]
+    mov QWORD [rbp - 64], rax
+    mov byte [rbp - 56], '%'
+    mov byte [rbp - 55], 'c'
+    mov byte [rbp - 54], 0x0A
+    mov byte [rbp - 53], 0
+    mov rdi, QWORD [rbp - 64]
+    mov rax, QWORD [rbp - 8]
+    mov QWORD [rbp - 72], rax
+    mov rsi, QWORD [rbp - 72]
+    mov QWORD [rbp - 80], 0
+    xor rax,rax
+    call printf
+    mov QWORD [rbp - 80],rax
+    lea rax, [rbp - 88]
+    mov QWORD [rbp - 96], rax
+    mov byte [rbp - 88], '%'
+    mov byte [rbp - 87], 's'
+    mov byte [rbp - 86], 0x0A
+    mov byte [rbp - 85], 0
+    mov rdi, QWORD [rbp - 96]
+    mov rax, QWORD [rbp - 32]
+    mov QWORD [rbp - 104], rax
+    mov rsi, QWORD [rbp - 104]
+    mov QWORD [rbp - 112], 0
+    xor rax,rax
+    call printf
+    mov QWORD [rbp - 112],rax
+    lea rax, [rbp - 120]
+    mov QWORD [rbp - 128], rax
+    mov byte [rbp - 120], '%'
+    mov byte [rbp - 119], '.'
+    mov byte [rbp - 118], '2'
+    mov byte [rbp - 117], 'f'
+    mov byte [rbp - 116], 0x0A
+    mov byte [rbp - 115], 0
+    mov rdi, QWORD [rbp - 128]
+    mov rax, QWORD [rbp - 40]
+    mov QWORD [rbp - 136], rax
+    movq xmm0, QWORD [rbp - 136]
+    mov QWORD [rbp - 144], 0
+    mov rax, 1
+    call printf
+    mov QWORD [rbp - 144],rax
+    lea rax, [rbp - 152]
+    mov QWORD [rbp - 160], rax
+    mov byte [rbp - 152], '%'
+    mov byte [rbp - 151], 'd'
+    mov byte [rbp - 150], 0x0A
+    mov byte [rbp - 149], 0
+    mov rdi, QWORD [rbp - 160]
+    mov rax, QWORD [rbp - 48]
+    mov QWORD [rbp - 168], rax
+    mov rsi, QWORD [rbp - 168]
+    mov QWORD [rbp - 176], 0
+    xor rax,rax
+    call printf
+    mov QWORD [rbp - 176],rax
     leave
     ret
 
 main:
     push rbp
     mov  rbp, rsp
-    sub  rsp, 48
-    lea rax, [rbp - 8]
-    mov QWORD [rbp - 16], rax
-    mov byte [rbp - 8], '%'
-    mov byte [rbp - 7], 's'
-    mov byte [rbp - 6], 0x0A
-    mov byte [rbp - 5], 0
-    mov rdi, QWORD [rbp - 16]
-    mov rax, global_name
-    mov QWORD [rbp - 24], rax
-    mov rsi, QWORD [rbp - 24]
+    sub  rsp, 368
+    mov QWORD [rbp - 8], 1
+    mov rdi, QWORD [rbp - 8]
+    mov QWORD [rbp - 16], 2
+    mov rsi, QWORD [rbp - 16]
+    mov QWORD [rbp - 24], 3
+    mov rdx, QWORD [rbp - 24]
     mov QWORD [rbp - 32], 0
     xor rax,rax
-    call printf
+    call dummy
     mov QWORD [rbp - 32],rax
-    mov QWORD [rbp - 40], 0
+    mov rax, QWORD [rbp - 32]
+    mov QWORD [rbp - 40], rax
+    mov QWORD [rbp - 48], 3
+    mov rdi, QWORD [rbp - 48]
+    mov QWORD [rbp - 56], 3
+    mov rsi, QWORD [rbp - 56]
+    mov QWORD [rbp - 64], 0
     xor rax,rax
-    call test_all
-    mov QWORD [rbp - 40],rax
+    call power
+    mov QWORD [rbp - 64],rax
+    mov rax, QWORD [rbp - 64]
+    mov QWORD [rbp - 72], rax
+    lea rax, [rbp - 80]
+    mov QWORD [rbp - 88], rax
+    mov byte [rbp - 80], '%'
+    mov byte [rbp - 79], 's'
+    mov byte [rbp - 78], 0x0A
+    mov byte [rbp - 77], 0
+    mov rdi, QWORD [rbp - 88]
+    mov rax, global_greeting
+    mov QWORD [rbp - 96], rax
+    mov rsi, QWORD [rbp - 96]
+    mov QWORD [rbp - 104], 0
+    xor rax,rax
+    call printf
+    mov QWORD [rbp - 104],rax
+    lea rax, [rbp - 120]
+    mov QWORD [rbp - 128], rax
+    mov byte [rbp - 120], 'P'
+    mov byte [rbp - 119], 'o'
+    mov byte [rbp - 118], 'w'
+    mov byte [rbp - 117], 'e'
+    mov byte [rbp - 116], 'r'
+    mov byte [rbp - 115], ' '
+    mov byte [rbp - 114], ':'
+    mov byte [rbp - 113], ' '
+    mov byte [rbp - 112], '%'
+    mov byte [rbp - 111], 'd'
+    mov byte [rbp - 110], 0x0A
+    mov byte [rbp - 109], 0
+    mov rdi, QWORD [rbp - 128]
+    mov rax, QWORD [rbp - 72]
+    mov QWORD [rbp - 136], rax
+    mov rsi, QWORD [rbp - 136]
+    mov QWORD [rbp - 144], 0
+    xor rax,rax
+    call printf
+    mov QWORD [rbp - 144],rax
+    lea rax, [rbp - 152]
+    mov QWORD [rbp - 160], rax
+    mov byte [rbp - 152], '%'
+    mov byte [rbp - 151], 'd'
+    mov byte [rbp - 150], 0x0A
+    mov byte [rbp - 149], 0
+    mov rdi, QWORD [rbp - 160]
+    mov rax, [global_folded]
+    mov QWORD [rbp - 168], rax
+    mov rsi, QWORD [rbp - 168]
+    mov QWORD [rbp - 176], 0
+    xor rax,rax
+    call printf
+    mov QWORD [rbp - 176],rax
+    mov QWORD [rbp - 184], 42
+    mov rdi, QWORD [rbp - 184]
+    mov QWORD [rbp - 192], 0
+    xor rax,rax
+    call nested_conditions
+    mov QWORD [rbp - 192],rax
+    mov QWORD [rbp - 200], 3
+    mov rdi, QWORD [rbp - 200]
+    mov QWORD [rbp - 208], 0
+    xor rax,rax
+    call switch_demo
+    mov QWORD [rbp - 208],rax
+    mov QWORD [rbp - 216], 0
+    xor rax,rax
+    call nested_loops
+    mov QWORD [rbp - 216],rax
+    mov QWORD [rbp - 224], 0
+    xor rax,rax
+    call add_const
+    mov QWORD [rbp - 224],rax
+    mov rax, QWORD [rbp - 224]
+    mov QWORD [rbp - 232], rax
+    lea rax, [rbp - 240]
+    mov QWORD [rbp - 248], rax
+    mov byte [rbp - 240], '%'
+    mov byte [rbp - 239], 'd'
+    mov byte [rbp - 238], 0x0A
+    mov byte [rbp - 237], 0
+    mov rdi, QWORD [rbp - 248]
+    mov rax, QWORD [rbp - 232]
+    mov QWORD [rbp - 256], rax
+    mov rsi, QWORD [rbp - 256]
+    mov QWORD [rbp - 264], 0
+    xor rax,rax
+    call printf
+    mov QWORD [rbp - 264],rax
+    mov QWORD [rbp - 272], 0
+    xor rax,rax
+    call counter_test
+    mov QWORD [rbp - 272],rax
+    mov rax, QWORD [rbp - 272]
+    mov QWORD [rbp - 280], rax
+    lea rax, [rbp - 288]
+    mov QWORD [rbp - 296], rax
+    mov byte [rbp - 288], '%'
+    mov byte [rbp - 287], 'd'
+    mov byte [rbp - 286], 0x0A
+    mov byte [rbp - 285], 0
+    mov rdi, QWORD [rbp - 296]
+    mov rax, QWORD [rbp - 280]
+    mov QWORD [rbp - 304], rax
+    mov rsi, QWORD [rbp - 304]
+    mov QWORD [rbp - 312], 0
+    xor rax,rax
+    call printf
+    mov QWORD [rbp - 312],rax
+    mov QWORD [rbp - 320], 0
+    xor rax,rax
+    call literal_demo
+    mov QWORD [rbp - 320],rax
+    lea rax, [rbp - 328]
+    mov QWORD [rbp - 336], rax
+    mov byte [rbp - 328], '%'
+    mov byte [rbp - 327], 'd'
+    mov byte [rbp - 326], 0x0A
+    mov byte [rbp - 325], 0
+    mov rdi, QWORD [rbp - 336]
+    mov rax, QWORD [rbp - 40]
+    mov QWORD [rbp - 344], rax
+    mov rsi, QWORD [rbp - 344]
+    mov QWORD [rbp - 352], 0
+    xor rax,rax
+    call printf
+    mov QWORD [rbp - 352],rax
 
     xor rax, rax
     leave

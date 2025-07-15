@@ -57,7 +57,6 @@ bhau lakshat thev test_strings(){
     printf("%s\n",str2);
 }
 
-//WARN recursion does not work currently
 bhau lakshat thev mega_recursive(x){
     bhau jar(x <= 1){
         bhau parat de 1;
@@ -130,8 +129,9 @@ bhau lakshat thev test_all(){
     
     test_strings();
 
-    //printf("Mega Recursive 5: ");
-    //printf(mega_recursive(5));
+    printf("Mega Recursive 5: ");
+    bhau hai ahe mega_recursive_var = mega_recursive(5);
+    printf("%d\n",mega_recursive_var);
     nested_conditions(5);
     nested_conditions(-5);
     nested_conditions(100);

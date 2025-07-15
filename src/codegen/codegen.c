@@ -362,6 +362,7 @@ static void emitFunction(FILE* fp, SymbolTable* table,  SymbolTableList* slist,T
     int param_float_count = 0;
     int arg_call_norm_count = 0;
     int arg_call_float_count = 0;
+    int is_return_present = 0;
     bl_stack* reg_norm_stack = get_norm_reg_stack(arena);
     bl_stack* reg_float_stack = get_float_reg_stack(arena);
     while(instr->op != TAC_FUNC_END){
@@ -382,7 +383,10 @@ static void emitFunction(FILE* fp, SymbolTable* table,  SymbolTableList* slist,T
             }
             
             case TAC_RETURN: {
-                fprintf(fp,"    mov rax, QWORD [rbp - %d]\n",get_offset(slist,instr->arg1->val.sval,instr->arg1->scope_id));
+                fprintf(fp,"    mov rax, QWORD [rbp - %d]\n"
+                           "    leave\n"
+                           "    ret\n",get_offset(slist,instr->arg1->val.sval,instr->arg1->scope_id));
+                is_return_present = 1;
                 break;
             }
             
@@ -1423,7 +1427,11 @@ static void emitFunction(FILE* fp, SymbolTable* table,  SymbolTableList* slist,T
         instr = instr->next;
     }
     list->head = instr;
-    emitFuncFooter(fp);
+    if(!is_return_present){
+        emitFuncFooter(fp);
+    }else{
+        is_return_present = 0;
+    }
 }
 
 static void emitMain(FILE* fp, SymbolTable* table, SymbolTableList* slist,TACList* list){

@@ -86,10 +86,9 @@ bhau lakshat thev giant_exprs(){
     bhau parat de val3;
 }
 
-//WARN recursion does not work
 bhau lakshat thev recursive_deep(n){
     bhau jar(n <= 0){
-        bhau parat de 1;
+        bhau parat de 0;
     }
     bhau parat de n + recursive_deep(n - 1);
 }
@@ -115,17 +114,18 @@ bhau lakshat thev string_block(){
 
 bhau lakshat thev everything(val){
     bhau hai ahe temp = val;
-    //bhau hai ahe mid = recursive_deep(temp);
-    bhau hai ahe ops = math_ops(temp, 1, temp+1);
+    bhau hai ahe mid = recursive_deep(temp);
+    bhau hai ahe ops = math_ops(temp, mid, temp+1);
     bhau hai ahe longres = long_loop_chain();
     bhau hai ahe giant = giant_exprs();
 
     printf("temp: "); printf("%d\n",temp);
+    printf("mid: "); printf("%d\n",mid);
     printf("ops: "); printf("%d\n",ops);
     printf("longres: "); printf("%d\n",longres);
     printf("giant: "); printf("%d\n",giant);
 
-    bhau parat de temp + 1 + ops + longres + giant;
+    bhau parat de temp + mid + ops + longres + giant;
 }
 
 bhau lakshat thev branch_test(){

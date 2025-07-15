@@ -1,153 +1,134 @@
 hi bhau
 
+
 bhau baherun ghe printf;
-bhau baherun ghe strlen;
-bhau baherun ghe scanf;
 
-bhau hai ahe global = 99;
-bhau hai ahe pi = 3.14;
-bhau hai ahe name = "BhauLang Tester";
-bhau hai ahe x = y = z = 42;
 
-bhau lakshat thev complex(a, b, c){
-    bhau hai ahe result = 0;
-    bhau joparent(a < (b + c)){
-        bhau hai ahe i = 0;
-        bhau joparent(i < 5){
-            result = result + a * b - c + i;
-            i = i + 1;
-        }
-        a = a + 1;
+
+bhau hai ahe pi = 3.1415;
+bhau hai ahe e = 2.718;
+bhau hai ahe greeting = "Hello from BhauLang!";
+bhau hai ahe flag = 1;
+bhau hai ahe z = 10;
+bhau hai ahe folded = 2 + 3 * (4 - 1);
+bhau hai ahe x = 5;
+bhau hai ahe a = b = c = 42;
+
+
+
+
+bhau lakshat thev nested_conditions(n){
+    bhau jar (n == 0){
+        printf("Zero\n");
     }
-
-    bhau jar (result > 100) {
-        bhau parat de result;
-    }
-
-    bhau nahitar(result == 100){
-        bhau parat de result + 1;
-    }
-
-    bhau tar {
-        bhau parat de 0;
-    }
-}
-
-bhau lakshat thev deeply_nested(n){
-    bhau hai ahe temp = 1;
-    bhau joparent(n > 0){
-        bhau jar(n % 2 == 0){
-            temp = temp * 2;
-        }
-        bhau nahitar(n % 3 == 0){
-            temp = temp + 3;
-        }
-        bhau tar {
-            temp = temp + 1;
-        }
-        n = n - 1;
-    }
-    bhau parat de temp;
-}
-
-bhau lakshat thev test_strings(){
-    bhau hai ahe str1 = "Hello";
-    bhau hai ahe str2 = "BhauLang";
-    printf("Message: ");
-    printf("%s\n",str2);
-}
-
-//WARN recursion does not work currently
-bhau lakshat thev mega_recursive(x){
-    bhau jar(x <= 1){
-        bhau parat de 1;
-    }
-    bhau parat de x * mega_recursive(x - 1);
-}
-
-bhau lakshat thev nested_conditions(val){
-    bhau jar(val > 0){
-        bhau jar(val < 10){
-            printf("Single Digit Positive\n");
-        }
-        bhau nahitar(val < 100){
-            printf("Two Digit Positive\n");
-        }
-        bhau tar {
-            printf("Large Positive\n");
-        }
-    }
-    bhau nahitar(val < 0){
+    bhau nahitar(n < 0){
         printf("Negative\n");
     }
     bhau tar {
-        printf("Zero\n");
+        printf("Positive\n");
+        bhau jar (n > 100){
+            printf("Very large\n");
+        }
     }
 }
 
-bhau lakshat thev loop_fun(){
-    bhau hai ahe sum = 0;
-    bhau hai ahe i = 1;
-    bhau joparent(i <= 10){
-        sum = sum + i;
+
+bhau lakshat thev switch_demo(x){
+    bhau chunav(x) {
+        bhau nivad 1:
+            printf("One\n");
+        bhau nivad 2:
+            printf("Two\n");
+        bhau nivad 3:
+            printf("Three\n");
+        bhau rahudet:
+            printf("Other\n");
+    }
+}
+
+
+bhau lakshat thev nested_loops(){
+    bhau hai ahe i = 0;
+    bhau joparent(i < 5){
+        bhau hai ahe j = 0;
+        bhau joparent(j < 3){
+            printf("%d ",i);
+            printf("%d ",j);
+            j = j + 1;
+        }
+        printf("\n");
         i = i + 1;
     }
-    bhau parat de sum;
 }
 
-bhau lakshat thev test_scope_shadowing(){
-    bhau hai ahe val = 5;
-    bhau joparent(val < 10){
-        bhau hai ahe val = 20;
-        val = val + 1;
-        printf("%d\n",val);
-        bhau thamb;
+
+bhau lakshat thev add_const(){
+    bhau hai ahe a = 5;
+    bhau hai ahe b = 10;
+    bhau parat de a + b;
+}
+
+
+bhau lakshat thev counter_test(){
+    bhau hai ahe counter = 0;
+    bhau joparent(counter < 3){
+        printf("Counting");
+        printf(" %d ",counter);
+        counter = counter + 1;
     }
-    printf("%d\n",val);
+    printf("\n");
+    bhau parat de counter;
 }
 
-bhau lakshat thev test_big_exprs(){
-    bhau hai ahe a = 1 + 2 * 3 + 4 - 5 + 6 * (7 + 8);
-    bhau hai ahe b = a * a + a - (3 + 4 * (5 + 6));
-    bhau parat de b;
-}
 
-bhau lakshat thev empty_else(val){
-    bhau jar(val == 1){
-        printf("One\n");
+bhau lakshat thev power(x, n){
+    bhau jar (n == 0){
+        bhau parat de 1;
     }
-    bhau tar {
-    }
+    bhau parat de x * power(x, n - 1);
 }
 
-bhau lakshat thev test_all(){
-    printf("Complex: "); 
-    bhau hai ahe complex_var = complex(1,3,2);
-    printf("%d\n",complex_var);
-    bhau hai ahe deeply_nested_var = deeply_nested(10);
-    printf("Deep: "); 
-    printf("%d\n",deeply_nested_var);
-    
-    test_strings();
 
-    //printf("Mega Recursive 5: ");
-    //printf(mega_recursive(5));
-    nested_conditions(5);
-    nested_conditions(-5);
-    nested_conditions(100);
-    bhau hai ahe loop_fun_var = loop_fun();
-    printf("Loop Fun: "); 
-    printf("%d\n",loop_fun_var);
-    test_scope_shadowing();
-    printf("Big expr: "); 
-    bhau hai ahe test_big_exprs_var = test_big_exprs();
-    printf("%d\n",test_big_exprs_var);
-    empty_else(1);
+
+
+
+
+
+bhau lakshat thev dummy(a, b, c){
+    bhau parat de a + b + c;
 }
+
+
+bhau lakshat thev literal_demo(){
+    bhau hai ahe ch = 'b';
+    bhau hai ahe s = "string test";
+    bhau hai ahe pi_val = 3.14;
+    bhau hai ahe is_bhau = 1;
+    printf("%c\n",ch);
+    printf("%s\n",s);
+    printf("%.2f\n",pi_val);
+    printf("%d\n",is_bhau);
+}
+
+
 
 bhau ithun chalu {
-    printf("%s\n",name);
-    test_all();
+    
+    bhau hai ahe final = dummy(1,2,3);  
+    bhau hai ahe power = power(3,3);
+    printf("%s\n",greeting);
+    printf("Power : %d\n",power);
+    printf("%d\n",folded);
+    nested_conditions(42);
+    switch_demo(3);
+    nested_loops();
+    bhau hai ahe res = add_const();
+    printf("%d\n",res);
+    bhau hai ahe ct = counter_test();
+    printf("%d\n",ct);
+    literal_demo();
+    printf("%d\n",final);
+    
 }
 
 bye bhau
