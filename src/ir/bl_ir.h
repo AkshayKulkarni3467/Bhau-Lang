@@ -345,7 +345,7 @@ void tac_append(TACList* list, TACInstr* instr) {
 }
 
 DataContext* new_temp(bl_arena* arena) {
-    char buf[32];
+    char buf[64];
     snprintf(buf, sizeof(buf), "t%d", temp_counter++);
     char* tmp = (char*)arena_alloc(arena, strlen(buf) + 1);
     strcpy(tmp, buf);
@@ -357,7 +357,7 @@ DataContext* new_temp(bl_arena* arena) {
 }
 
 char* new_label(bl_arena* arena) {
-    char buf[32];
+    char buf[64];
     snprintf(buf, sizeof(buf), "L%d", label_counter++);
     char* lbl = (char*)arena_alloc(arena, strlen(buf) + 1);
     strcpy(lbl, buf);
@@ -372,7 +372,7 @@ bl_ir* generate_tac(AST_Node* ast, bl_arena* arena) {
     g_table->parent = NULL;
     g_table->symbol_count = 0;
     g_table->children_count = 0;
-    g_table->symbol_capacity = 128;
+    g_table->symbol_capacity = 1024;
     g_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*g_table->symbol_capacity);
     g_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
 
@@ -418,8 +418,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             SymbolTable* sw_table = (SymbolTable*)arena_alloc(arena,sizeof(SymbolTable));
             sw_table->parent = current_table;
             sw_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
-            sw_table->symbol_capacity = 128;
-            sw_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
+            sw_table->symbol_capacity = 1024;
+            sw_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*1024);
             sw_table->scope_id = ++scope_id_counter;
             sw_table->scope_name = "null";
             sw_table->symbol_count = 0;
@@ -450,8 +450,23 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
                     OperatorContext* op_ctx = (OperatorContext*)arena_alloc(arena,sizeof(OperatorContext));
                     op_ctx->operator_str = "==";
                     op_ctx->operator_type = BL_ISEQUALCOND;
-                    
-                    tac_append(prog, tac_create_instr(arena, TAC_IFGOTO, NULL, switch_val_data,sw_ctx, op_ctx, case_labels[i]));
+
+                    DataContext* result = new_temp(arena);
+                    result->type = TYPE_REF;
+                    result->acquired_type = TYPE_REF;
+                    result->scope = current_table;
+                    result->scope_id = current_table->scope_id;
+
+                    SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+                    entry->name = result->val.sval;
+                    entry->is_global = current_table->scope_id == 0 ? true : false;
+                    entry->type = TYPE_IDENTIFIER;
+
+                    current_table->entries[current_table->symbol_count++] = entry;
+
+
+                    tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,switch_val_data,NULL,NULL,NULL));
+                    tac_append(prog, tac_create_instr(arena, TAC_IFGOTO, NULL, result,sw_ctx, op_ctx, case_labels[i]));
                 }else if(type == AST_CHARLITERAL){
                     AST_CharLiteral* clit = (AST_CharLiteral*)((AST_Node*)case_node->value)->data;
                     DataContext* sw_ctx = (DataContext*)arena_alloc(arena,sizeof(DataContext));
@@ -465,7 +480,22 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
                     op_ctx->operator_str = "==";
                     op_ctx->operator_type = BL_ISEQUALCOND;
 
-                    tac_append(prog, tac_create_instr(arena, TAC_IFGOTO, NULL, switch_val_data,sw_ctx, op_ctx, case_labels[i]));
+                    DataContext* result = new_temp(arena);
+                    result->type = TYPE_REF;
+                    result->acquired_type = TYPE_REF;
+                    result->scope = current_table;
+                    result->scope_id = current_table->scope_id;
+
+                    SymbolEntry* entry = (SymbolEntry*)arena_alloc(arena,sizeof(SymbolEntry));
+                    entry->name = result->val.sval;
+                    entry->is_global = current_table->scope_id == 0 ? true : false;
+                    entry->type = TYPE_IDENTIFIER;
+
+                    current_table->entries[current_table->symbol_count++] = entry;
+
+
+                    tac_append(prog,tac_create_instr(arena,TAC_ASSIGNDECL,result,switch_val_data,NULL,NULL,NULL));
+                    tac_append(prog, tac_create_instr(arena, TAC_IFGOTO, NULL, result,sw_ctx, op_ctx, case_labels[i]));
                 }else{
                     fprintf(stderr,"Switch cannot be used with floats or strings");
                     exit(1);
@@ -1566,8 +1596,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             SymbolTable* main_table = (SymbolTable*)arena_alloc(arena,sizeof(SymbolTable));
             main_table->parent = current_table;
             main_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
-            main_table->symbol_capacity = 128;
-            main_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
+            main_table->symbol_capacity = 1024;
+            main_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*1024);
             main_table->scope_id = ++scope_id_counter;
             main_table->scope_name = "main";
             main_table->symbol_count = 0;
@@ -1638,8 +1668,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
                 SymbolTable* else_table = (SymbolTable*)arena_alloc(arena,sizeof(SymbolTable));
                 else_table->parent = current_table;
                 else_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
-                else_table->symbol_capacity = 128;
-                else_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
+                else_table->symbol_capacity = 1024;
+                else_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*1024);
                 else_table->scope_id = ++scope_id_counter;
                 else_table->scope_name = "null";
                 else_table->symbol_count = 0;
@@ -1658,8 +1688,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             SymbolTable* if_table = (SymbolTable*)arena_alloc(arena,sizeof(SymbolTable));
             if_table->parent = current_table;
             if_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
-            if_table->symbol_capacity = 128;
-            if_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
+            if_table->symbol_capacity = 1024;
+            if_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*1024);
             if_table->scope_id = ++scope_id_counter;
             if_table->scope_name = "null";
             if_table->symbol_count = 0;
@@ -1708,8 +1738,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             SymbolTable* loop_table = (SymbolTable*)arena_alloc(arena,sizeof(SymbolTable));
             loop_table->parent = current_table;
             loop_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
-            loop_table->symbol_capacity = 128;
-            loop_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
+            loop_table->symbol_capacity = 1024;
+            loop_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*1024);
             loop_table->scope_id = ++scope_id_counter;
             loop_table->scope_name = "null";
             loop_table->symbol_count = 0;
@@ -1756,8 +1786,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
             SymbolTable* func_table = (SymbolTable*)arena_alloc(arena,sizeof(SymbolTable));
             func_table->parent = current_table;
             func_table->children = (SymbolTable**)arena_alloc(arena,sizeof(SymbolTable*)*128);
-            func_table->symbol_capacity = 128;
-            func_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*128);
+            func_table->symbol_capacity = 1024;
+            func_table->entries = (SymbolEntry**)arena_alloc(arena,sizeof(SymbolEntry*)*1024);
             func_table->scope_id = ++scope_id_counter;
             func_table->scope_name = name->name;
             func_table->symbol_count = 0;
@@ -2769,7 +2799,7 @@ void tac_print(TACList* list,bl_arena* arena) {
 void symbol_table_list_init(SymbolTableList* list, bl_arena* arena) {
     list->arena = arena;
     list->table_count = 0;
-    list->table_capacity = 32;
+    list->table_capacity = 256;
     list->tables = (SymbolTable**)arena_alloc(arena, sizeof(SymbolTable*) * list->table_capacity);
 }
 

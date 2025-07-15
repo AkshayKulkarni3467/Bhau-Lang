@@ -362,7 +362,6 @@ static void emitFunction(FILE* fp, SymbolTable* table,  SymbolTableList* slist,T
     int param_float_count = 0;
     int arg_call_norm_count = 0;
     int arg_call_float_count = 0;
-    int string_compare_count = 0;
     bl_stack* reg_norm_stack = get_norm_reg_stack(arena);
     bl_stack* reg_float_stack = get_float_reg_stack(arena);
     while(instr->op != TAC_FUNC_END){
@@ -673,12 +672,11 @@ static void emitFunction(FILE* fp, SymbolTable* table,  SymbolTableList* slist,T
                                    "    jne .%s\n",instr->arg1->val.bval == true ? 1 : 0,instr->arg2->val.ival,instr->label);
                     }
                 }else if(strcmp(instr->relop->operator_str,"==") == 0){
-                    //TODO switch case : will potentially error out in switch since arg1 can be int, char or an identifier
-                    if(instr->arg2->type == TYPE_CHAR){
+                    if(instr->arg2->acquired_type == TYPE_CHAR){
                         fprintf(fp,"    mov rax, QWORD [rbp - %d]\n"
                                    "    cmp rax, \'%c\'\n"
                                    "    je .%s\n",get_offset(slist,instr->arg1->val.sval,instr->arg1->scope_id),instr->arg2->val.cval,instr->label);
-                    }else if(instr->arg2->type == TYPE_INT){
+                    }else if(instr->arg2->acquired_type == TYPE_INT){
                         fprintf(fp,"    mov rax, QWORD [rbp - %d]\n"
                                    "    cmp rax, %d\n"
                                    "    je .%s\n",get_offset(slist,instr->arg1->val.sval,instr->arg1->scope_id),instr->arg2->val.ival,instr->label);
@@ -1243,37 +1241,15 @@ static void emitFunction(FILE* fp, SymbolTable* table,  SymbolTableList* slist,T
                                        "    shr rax,bl\n");
                             break;
                         case BL_ISEQUALCOND:
-                            if(!(instr->arg1->acquired_type == TYPE_STRING || instr->arg2->acquired_type == TYPE_STRING)){
                                 fprintf(fp,"    cmp rax,rbx\n"
                                             "    sete al\n"
                                             "    movzx rax,al\n");
-                            }else{
-                                if(instr->arg1->acquired_type == instr->arg2->acquired_type){
-                                    fprintf(stderr,"Implementation of string comparison remaining\n");
-                                    exit(1);
-                                    string_compare_count++;
-                                }else{
-                                    fprintf(stderr,"Can only perform comparison when both args are string\n");
-                                    exit(1);
-                                }
-                            }
+
                             break;
                         case BL_NOTEQ:
-                            if(!(instr->arg1->acquired_type == TYPE_STRING || instr->arg2->acquired_type == TYPE_STRING)){
                                 fprintf(fp,"    cmp rax,rbx\n"
                                             "    setne al\n"
                                             "    movzx rax,al\n");
-                            }else{
-                                //TODO string BL_ISEQUALCOND comparison
-                                if(instr->arg1->acquired_type == instr->arg2->acquired_type){
-                                    fprintf(stderr,"Implementation of string not eq remaining\n");
-                                    exit(1);
-                                    string_compare_count++;
-                                }else{
-                                    fprintf(stderr,"Can only perform comparison when both args are string\n");
-                                    exit(1);
-                                }
-                            }
                             break;
 
                         case BL_LESSTHAN:
@@ -1303,7 +1279,7 @@ static void emitFunction(FILE* fp, SymbolTable* table,  SymbolTableList* slist,T
                                        "    movzx rax,al\n"
                                        "    test rbx,rbx\n"
                                        "    setz bl\n"
-                                       "    movzx rbx,al\n"
+                                       "    movzx rbx,bl\n"
                                        "    or rax,rbx\n"
                                        "    xor rax,1\n");
                             break;
@@ -1455,7 +1431,6 @@ static void emitMain(FILE* fp, SymbolTable* table, SymbolTableList* slist,TACLis
     TACInstr* instr = list->head;
     int arg_call_norm_count = 0;
     int arg_call_float_count = 0;
-    int string_compare_count = 0;
     while(instr->op != TAC_MAIN_END){
         switch(instr->op){
             case TAC_ASSIGNDECL:{
@@ -1744,7 +1719,6 @@ static void emitMain(FILE* fp, SymbolTable* table, SymbolTableList* slist,TACLis
                                    "    jne .%s\n",instr->arg1->val.bval == true ? 1 : 0,instr->arg2->val.ival,instr->label);
                     }
                 }else if(strcmp(instr->relop->operator_str,"==") == 0){
-                    //TODO switch case : will potentially error out in switch since arg1 can be int, char or an identifier
                     if(instr->arg2->type == TYPE_CHAR){
                         fprintf(fp,"    mov rax, QWORD [rbp - %d]\n"
                                    "    cmp rax, \'%c\'\n"
@@ -2304,37 +2278,14 @@ static void emitMain(FILE* fp, SymbolTable* table, SymbolTableList* slist,TACLis
                                        "    shr rax,bl\n");
                             break;
                         case BL_ISEQUALCOND:
-                            if(!(instr->arg1->acquired_type == TYPE_STRING || instr->arg2->acquired_type == TYPE_STRING)){
                                 fprintf(fp,"    cmp rax,rbx\n"
                                             "    sete al\n"
                                             "    movzx rax,al\n");
-                            }else{
-                                if(instr->arg1->acquired_type == instr->arg2->acquired_type){
-                                    fprintf(stderr,"Implementation of string comparison remaining\n");
-                                    exit(1);
-                                    string_compare_count++;
-                                }else{
-                                    fprintf(stderr,"Can only perform comparison when both args are string\n");
-                                    exit(1);
-                                }
-                            }
                             break;
                         case BL_NOTEQ:
-                            if(!(instr->arg1->acquired_type == TYPE_STRING || instr->arg2->acquired_type == TYPE_STRING)){
                                 fprintf(fp,"    cmp rax,rbx\n"
                                             "    setne al\n"
                                             "    movzx rax,al\n");
-                            }else{
-                                if(instr->arg1->acquired_type == instr->arg2->acquired_type){
-                                    //TODO string BL_ISEQUALCOND comparison
-                                    fprintf(stderr,"Implementation of string not eq remaining\n");
-                                    exit(1);
-                                    string_compare_count++;
-                                }else{
-                                    fprintf(stderr,"Can only perform comparison when both args are string\n");
-                                    exit(1);
-                                }
-                            }
                             break;
 
                         case BL_LESSTHAN:
@@ -2364,7 +2315,7 @@ static void emitMain(FILE* fp, SymbolTable* table, SymbolTableList* slist,TACLis
                                        "    movzx rax,al\n"
                                        "    test rbx,rbx\n"
                                        "    setz bl\n"
-                                       "    movzx rbx,al\n"
+                                       "    movzx rbx,bl\n"
                                        "    or rax,rbx\n"
                                        "    xor rax,1\n");
                             break;

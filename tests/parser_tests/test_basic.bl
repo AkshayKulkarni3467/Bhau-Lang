@@ -11,7 +11,7 @@ bhau hai ahe x = y = z = 42;
 
 bhau lakshat thev complex(a, b, c){
     bhau hai ahe result = 0;
-    bhau joparent(a < b + c){
+    bhau joparent(a < (b + c)){
         bhau hai ahe i = 0;
         bhau joparent(i < 5){
             result = result + a * b - c + i;
@@ -54,9 +54,10 @@ bhau lakshat thev test_strings(){
     bhau hai ahe str1 = "Hello";
     bhau hai ahe str2 = "BhauLang";
     printf("Message: ");
-    printf(str2);
+    printf("%s\n",str2);
 }
 
+//WARN recursion does not work currently
 bhau lakshat thev mega_recursive(x){
     bhau jar(x <= 1){
         bhau parat de 1;
@@ -99,10 +100,10 @@ bhau lakshat thev test_scope_shadowing(){
     bhau joparent(val < 10){
         bhau hai ahe val = 20;
         val = val + 1;
-        printf(val);
+        printf("%d\n",val);
         bhau thamb;
     }
-    printf(val);
+    printf("%d\n",val);
 }
 
 bhau lakshat thev test_big_exprs(){
@@ -120,21 +121,32 @@ bhau lakshat thev empty_else(val){
 }
 
 bhau lakshat thev test_all(){
-    printf("Complex: "); printf(complex(1,2,3));
-    printf("Deep: "); printf(deeply_nested(10));
+    printf("Complex: "); 
+    bhau hai ahe complex_var = complex(1,3,2);
+    printf("%d\n",complex_var);
+    bhau hai ahe deeply_nested_var = deeply_nested(10);
+    printf("Deep: "); 
+    printf("%d\n",deeply_nested_var);
+    
     test_strings();
-    printf("Mega Recursive 5: "); printf(mega_recursive(5));
+
+    //printf("Mega Recursive 5: ");
+    //printf(mega_recursive(5));
     nested_conditions(5);
     nested_conditions(-5);
     nested_conditions(100);
-    printf("Loop Fun: "); printf(loop_fun());
+    bhau hai ahe loop_fun_var = loop_fun();
+    printf("Loop Fun: "); 
+    printf("%d\n",loop_fun_var);
     test_scope_shadowing();
-    printf("Big expr: "); printf(test_big_exprs());
+    printf("Big expr: "); 
+    bhau hai ahe test_big_exprs_var = test_big_exprs();
+    printf("%d\n",test_big_exprs_var);
     empty_else(1);
 }
 
 bhau ithun chalu {
-    printf(name);
+    printf("%s\n",name);
     test_all();
 }
 

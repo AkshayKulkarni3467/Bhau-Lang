@@ -160,7 +160,7 @@ void parser_init(bl_parser* parser, bl_arena* arena, bl_token* tokens){
     parser->parse_point = 0;
     parser->line_number = 0;
     parser->line_offset = 0;
-    parser->var_store = assign_arr_type(parser,AST_Node,1024)
+    parser->var_store = assign_arr_type(parser,AST_Node,4096)
     parser->var_count = 0;
     parser->scope_id = 0;
     parser->current_scope = 0;
@@ -218,7 +218,7 @@ AST_Node* make_node(bl_parser* parser,void* ast,ASTNodeType type){
 AST_Node* parse_program(bl_parser* parser){
     bl_check_prolog(parser);
     parse_advance(parser);
-    AST_Node** stmts = assign_arr_type(parser,AST_Node,1024);
+    AST_Node** stmts = assign_arr_type(parser,AST_Node,4096);
     size_t stmt_count = 0;
     while(!(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BYE_BHAU))){
         AST_Node* stmt = parse_stmt(parser);
@@ -446,7 +446,7 @@ AST_Node* parse_switch(bl_parser* parser){
             parse_advance(parser);
             AST_Node* case_val = parse_expr(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_NIVAD,false,true);
             parse_step_n_expect(parser,BL_COLON,"Expected:",56);
-            AST_Node** stmts = assign_arr_type(parser,AST_Node,100);
+            AST_Node** stmts = assign_arr_type(parser,AST_Node,1024);
             size_t stmt_count = 0;
 
             parse_advance(parser);
@@ -467,7 +467,7 @@ AST_Node* parse_switch(bl_parser* parser){
             cases[case_count++] = case_node;  
         }else if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_RAHUDET)){
             parse_step_n_expect(parser,(enum KEYWORD_TYPES)BL_COLON,"Expected:",56);
-            AST_Node** stmts = assign_arr_type(parser,AST_Node,100);
+            AST_Node** stmts = assign_arr_type(parser,AST_Node,1024);
             size_t stmt_count = 0;
 
             parse_advance(parser);
@@ -997,7 +997,7 @@ AST_Node* parse_block(bl_parser* parser){
 
     AST_Block* block = assign_type(parser,AST_Block);
     
-    AST_Node** stmts = assign_arr_type(parser,AST_Node,1024);
+    AST_Node** stmts = assign_arr_type(parser,AST_Node,4096);
     parse_advance(parser);
     while(!parse_match(parser,BL_RBRACE)){
         AST_Node* stmt = parse_stmt(parser);

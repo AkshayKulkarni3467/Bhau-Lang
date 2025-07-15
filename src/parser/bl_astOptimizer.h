@@ -648,7 +648,7 @@ AST_Node* transform_undeclared_assigns(AST_Node* node, bl_arena* arena){
 
 bl_stack* scope_stack_init(bl_arena* arena){
     bl_stack* scope_stack = (bl_stack*)arena_alloc(arena,sizeof(bl_stack));
-    stack_init(scope_stack,arena,1000);
+    stack_init(scope_stack,arena,4096);
     return scope_stack;
 }
 

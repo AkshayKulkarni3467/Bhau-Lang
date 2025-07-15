@@ -23,7 +23,7 @@
 #define BHAU_LANG
 
 //WARN Taking maximum text file size as 64 KB
-#define TEXT_FILE_SIZE (1<<16) 
+#define TEXT_FILE_SIZE (1<<18) 
 // #define BL_LEXER_SELF_TEST   // ---------------Undefine for self testing
 #define BL_DEBUG
 // maybe bhai lang, bro lang later
