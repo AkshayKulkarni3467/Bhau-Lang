@@ -6,6 +6,7 @@ CFLAGS_PARSER = -Wall -Wextra -Isrc/lexer -Isrc/common -Isrc/keywords
 CFLAGS_OPTIMIZER = -Wall -Wextra -Isrc/lexer -Isrc/common -Isrc/keywords
 CFLAGS_IR = -Wall -Wextra -ggdb -Isrc/lexer -Isrc/common -Isrc/keywords -Isrc/parser
 CFLAGS_CODEGEN = -Wall -Wextra -O0 -ggdb -Isrc/lexer -Isrc/common -Isrc/keywords -Isrc/parser -Isrc/ir
+CFLAGS_MAIN = -Wall -Wextra -ggdb -Isrc/lexer -Isrc/common -Isrc/keywords -Isrc/parser -Isrc/ir -Isrc/codegen
 
 
 DYNARR = src/common/bl_dynarray.h
@@ -16,9 +17,18 @@ PARSER = src/parser/bl_parser.h
 OPTIMIZER = src/parser/bl_astOptimizer.h
 IR = src/ir/bl_ir.h
 LANGKEYS = src/keywords/bl_langkeywords.h
+CODEGEN = src/codegen/bl_codegen.h
 
 
 .phony : clean
+
+compile: $(CODEGEN)
+	@ mkdir -p __blcache__
+	@ $(CC) $(CFLAGS_MAIN) bl_compiler.c -o __blcache__/main
+	@ ./__blcache__/main $(INPUT) __blcache__/out.asm
+	@ nasm -f elf64 -o __blcache__/out.o __blcache__/out.asm
+	@ gcc -no-pie -ggdb -o $(basename $(notdir $(INPUT))) __blcache__/out.o
+	@ rm -rf __blcache__
 
 tokenize  : $(DYNARR) $(ARENA) $(TOKENIZE) src/lexer/test.c
 	$(CC) $(CFLAGS_TOKENIZER) src/lexer/test.c -o src/lexer/test
@@ -45,7 +55,7 @@ ir : $(OPTIMIZER)
 	./src/ir/ir
 
 codegen: $(IR)
-	$(CC) $(CFLAGS_CODEGEN) src/codegen/codegen.c -o src/codegen/codegen
+	$(CC) $(CFLAGS_CODEGEN) src/codegen/bl_codegen.c -o src/codegen/codegen
 	./src/codegen/codegen
 	nasm -f elf64 -o src/codegen/out.o src/codegen/out.asm
 	gcc -no-pie -ggdb -o src/codegen/out src/codegen/out.o

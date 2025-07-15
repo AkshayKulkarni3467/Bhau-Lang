@@ -1,5 +1,8 @@
 #include "bl_ir.h"
 
+
+// #define BL_CODEGEN_TEST
+
 static void mangleGlobal(char *out, const char *name);
 static int get_offset(SymbolTableList* slist,char* name,int scope_id);
 static SymbolTable* search_table_given_scopeid(SymbolTableList* slist,int scope_id);
@@ -23,29 +26,26 @@ static void emitFuncFooter(FILE *fp);
 static void emitMainFooter(FILE* fp);
 
 void generateAssembly(const char* outfile, SymbolTableList* slist, TACList* list,bl_arena* arena);
+static void bhaulang_compiler(char* filename,char* outfile);
+
+#ifdef BL_CODEGEN_TEST
 
 int main(){
-    char* filename = "src/codegen/one.bl";
-    bl_arena* arena = (bl_arena*)malloc(sizeof(bl_arena));
-    arena_init(arena);
-
-    bl_ir* ir = bhaulang_ir(filename,arena);
-    // print_all_symbol_tables(ir->slist);
-    // visualize_symbol_tables_ascii(ir->slist->tables[0]);
-    // tac_print(ir->list,arena);
-    generateAssembly("src/codegen/out.asm",ir->slist,ir->list,arena);
-    
-    // arena_stats(arena);
+    bhaulang_compiler("src/codegen/one.bl","src/codegen/out.asm");
 }
 
+#endif
+
+static void bhaulang_compiler(char* filename,char* outfile){
+    bl_arena* arena = (bl_arena*)malloc(sizeof(bl_arena));
+    arena_init(arena);
+    bl_ir* ir = bhaulang_ir(filename,arena);
+    generateAssembly(outfile,ir->slist,ir->list,arena);
+}
 
 static void mangleGlobal(char *out, const char *name){ 
     sprintf(out,"global_%s",name); 
 }
-// static void mangleLocal (char *out, const char* func_name, const char *name){ 
-//     sprintf(out,"%s_%s",func_name,  name); 
-// }
-
 
 static void emitProlog(FILE *fp, SymbolTableList* slist)
 {

@@ -1,7 +1,8 @@
 #ifndef INCLUDE_BL_TOKENIZER_H
 #define INCLUDE_BL_TOKENIZER_H
 
-
+//TODO : to tokenize `_BL_KW_BHAU_BAHERUN_GHE printf bol;` where (printf,bol) can be stored as externs and everytime `bol` is called it is replaced by printf
+//TODO : check all debug print and graphviz generator functions in each module
 /*-----------------------------------------------------------------Includes*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,7 +23,7 @@
 
 #define BHAU_LANG
 
-//WARN Taking maximum text file size as 64 KB
+//WARN Taking maximum text file size as 256 KB
 #define TEXT_FILE_SIZE (1<<18) 
 // #define BL_LEXER_SELF_TEST   // ---------------Undefine for self testing
 #define BL_DEBUG

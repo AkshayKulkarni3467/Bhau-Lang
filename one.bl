@@ -116,7 +116,7 @@ bhau ithun chalu {
     
     bhau hai ahe final = dummy(1,2,3);  
     bhau hai ahe power = power(3,3);
-    printf("%s\n",greeting);
+    printf("%s\n","Hello from akshay!");
     printf("Power : %d\n",power);
     printf("%d\n",folded);
     nested_conditions(42);

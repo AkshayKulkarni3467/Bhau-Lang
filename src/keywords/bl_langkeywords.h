@@ -10,6 +10,108 @@
 // #define BL_BRO_KEYWORDS
 // #define BL_CUSTOM_KEYWORDS
 
+//TODO a flag to main.c (to a yml or other file?) which includes the keywords, so that custom keywords can be easily defined
+
+#ifdef BL_CUSTOM_KEYWORDS
+
+#define _BL_KW_BHAU_HAI_AHE       ""               //variable assignment
+#define _BL_KW_BHAU_JAR           ""               //if (conditional)
+#define _BL_KW_BHAU_NAHITAR       ""               //else if (conditional)
+#define _BL_KW_BHAU_TAR           ""               //else (conditional)
+#define _BL_KW_BHAU_JOPARENT      ""               //loops (while)
+#define _BL_KW_BHAU_LAKSHAT_THEV  ""               //function
+#define _BL_KW_BHAU_PARAT_DE      ""               //return
+#define _BL_KW_HI_BHAU            ""               //entry
+#define _BL_KW_BYE_BHAU           ""               //exit
+#define _BL_KW_BHAU_CHUNAV        ""               //switch
+#define _BL_KW_BHAU_NIVAD         ""               //case
+#define _BL_KW_BHAU_THAMB         ""               //break
+#define _BL_KW_BHAU_CHALU_RHA     ""               //continue
+#define _BL_KW_BHAU_RAHUDET       ""               //default (switch)
+#define _BL_KW_BHAU_KHARA         ""               //true 
+#define _BL_KW_BHAU_KHOTA         ""               //false
+#define _BL_KW_BHAU_BAHERUN_GHE   ""               //extern
+#define _BL_KW_BHAU_MAIN          ""               //main 
+#define _BL_KW_BHAU_PTR           ""               //pointer
+#define _BL_KW_BHAU_REF           ""               //reference
+
+#endif
+
+
+#ifdef BL_BHAU_KEYWORDS
+
+#define _BL_KW_BHAU_HAI_AHE       "bhau hai ahe"
+#define _BL_KW_BHAU_JAR           "bhau jar"
+#define _BL_KW_BHAU_NAHITAR       "bhau nahitar"
+#define _BL_KW_BHAU_TAR           "bhau tar"
+#define _BL_KW_BHAU_JOPARENT      "bhau joparent"
+#define _BL_KW_BHAU_LAKSHAT_THEV  "bhau lakshat thev"
+#define _BL_KW_BHAU_PARAT_DE      "bhau parat de"
+#define _BL_KW_HI_BHAU            "hi bhau"
+#define _BL_KW_BYE_BHAU           "bye bhau"
+#define _BL_KW_BHAU_CHUNAV        "bhau chunav"
+#define _BL_KW_BHAU_NIVAD         "bhau nivad"
+#define _BL_KW_BHAU_THAMB         "bhau thamb"
+#define _BL_KW_BHAU_CHALU_RHA     "bhau chalu rha"
+#define _BL_KW_BHAU_RAHUDET       "bhau rahudet"
+#define _BL_KW_BHAU_KHARA         "khara"
+#define _BL_KW_BHAU_KHOTA         "khota"
+#define _BL_KW_BHAU_BAHERUN_GHE   "bhau baherun ghe"
+#define _BL_KW_BHAU_MAIN          "bhau ithun chalu"
+#define _BL_KW_BHAU_PTR           "ptr"
+#define _BL_KW_BHAU_REF           "ref"
+
+#endif
+
+#ifdef BL_BHAI_KEYWORDS
+
+#define _BL_KW_BHAU_HAI_AHE       "bhai ye hai"
+#define _BL_KW_BHAU_JAR           "agar bhai"
+#define _BL_KW_BHAU_NAHITAR       "nahi to bhai"
+#define _BL_KW_BHAU_TAR           "warna bhai"
+#define _BL_KW_BHAU_JOPARENT      "jab tak bhai"
+#define _BL_KW_BHAU_LAKSHAT_THEV  "bhai yaad rak"
+#define _BL_KW_BHAU_PARAT_DE      "bhai wapis kar"
+#define _BL_KW_HI_BHAU            "hi bhai"
+#define _BL_KW_BYE_BHAU           "bye bhai"
+#define _BL_KW_BHAU_CHUNAV        "bhai ek chun"
+#define _BL_KW_BHAU_NIVAD         "bhai chun"
+#define _BL_KW_BHAU_THAMB         "bas kar bhai"
+#define _BL_KW_BHAU_CHALU_RHA     "agla dekh bhai"
+#define _BL_KW_BHAU_RAHUDET       "bhai rehenede"
+#define _BL_KW_BHAU_KHARA         "ha bhai"
+#define _BL_KW_BHAU_KHOTA         "na bhai"
+#define _BL_KW_BHAU_BAHERUN_GHE   "bhai baharse le"
+#define _BL_KW_BHAU_MAIN          "bhai idharse chalu"
+#define _BL_KW_BHAU_PTR           "ptr"
+#define _BL_KW_BHAU_REF           "ref"
+
+#endif
+
+#ifdef BL_BRO_KEYWORDS
+
+#define _BL_KW_BHAU_HAI_AHE       "bro remember this"
+#define _BL_KW_BHAU_JAR           "bro if"
+#define _BL_KW_BHAU_NAHITAR       "bro otherwise"
+#define _BL_KW_BHAU_TAR           "bro whatever"
+#define _BL_KW_BHAU_JOPARENT      "bro when"
+#define _BL_KW_BHAU_LAKSHAT_THEV  "bro lemme create"
+#define _BL_KW_BHAU_PARAT_DE      "bro return this"
+#define _BL_KW_HI_BHAU            "hello bro"
+#define _BL_KW_BYE_BHAU           "bye bro"
+#define _BL_KW_BHAU_CHUNAV        "bro choice"
+#define _BL_KW_BHAU_NIVAD         "bro option"
+#define _BL_KW_BHAU_THAMB         "bro skip"
+#define _BL_KW_BHAU_CHALU_RHA     "bro keep running"
+#define _BL_KW_BHAU_RAHUDET       "bro cantdoanythingaboutit"
+#define _BL_KW_BHAU_KHARA         "real"
+#define _BL_KW_BHAU_KHOTA         "unreal"
+#define _BL_KW_BHAU_BAHERUN_GHE   "bro take out"
+#define _BL_KW_BHAU_MAIN          "bro start here"
+#define _BL_KW_BHAU_PTR           "ptr"
+#define _BL_KW_BHAU_REF           "ref"
+
+#endif
 
 typedef enum {
 
@@ -63,14 +165,9 @@ typedef enum {
     /*Pointers*/
     BL_KW_BHAU_PTR,
     BL_KW_BHAU_REF,
-    /*!TO IMPLEMENT : goto, data structs? */
 
 
 } LangKeywordType;
-
-/*Maybe keyword types of other langs too?*/
-/*Some definition above the file header or else by the extension of file, the parser can parse different langs to same ir*/
-
 
 
 static inline LangKeywordType get_keyword_type(char* keyword);
@@ -89,103 +186,26 @@ int main(){
 
 static inline LangKeywordType get_keyword_type(char* keyword){
 
-    #ifdef BL_BHAU_KEYWORDS
-
-    if(strcmp(keyword,"bhau hai ahe") == 0)      return BL_KW_BHAU_HAI_AHE;
-    if(strcmp(keyword,"bhau jar") == 0 )         return BL_KW_BHAU_JAR;
-    if(strcmp(keyword,"bhau tar") == 0)          return BL_KW_BHAU_TAR;
-    if(strcmp(keyword,"bhau nahitar") == 0)      return BL_KW_BHAU_NAHITAR;
-    if(strcmp(keyword,"bhau joparent") == 0)     return BL_KW_BHAU_JOPARENT;
-    if(strcmp(keyword,"bhau lakshat thev") == 0) return BL_KW_BHAU_LAKSHAT_THEV;
-    if(strcmp(keyword,"bhau parat de") == 0)     return BL_KW_BHAU_PARAT_DE;
-    if(strcmp(keyword,"hi bhau") == 0)           return BL_KW_HI_BHAU;
-    if(strcmp(keyword,"bye bhau") == 0)          return BL_KW_BYE_BHAU;
-    if(strcmp(keyword,"bhau chunav") == 0)       return BL_KW_BHAU_CHUNAV;
-    if(strcmp(keyword,"bhau thamb") == 0)        return BL_KW_BHAU_THAMB;
-    if(strcmp(keyword,"bhau chalu rha") == 0)    return BL_KW_BHAU_CHALU_RHA;
-    if(strcmp(keyword,"bhau rahudet") == 0)      return BL_KW_BHAU_RAHUDET;
-    if(strcmp(keyword,"khara") == 0)             return BL_KW_BHAU_KHARA;
-    if(strcmp(keyword,"khota") == 0)             return BL_KW_BHAU_KHOTA;
-    if(strcmp(keyword,"bhau baherun ghe") == 0)  return BL_KW_BHAU_BAHERUN_GHE;
-    if(strcmp(keyword,"bhau ithun chalu") == 0)  return BL_KW_BHAU_MAIN;
-    if(strcmp(keyword,"bhau nivad") == 0)        return BL_KW_BHAU_NIVAD;
-    if(strcmp(keyword,"ptr") == 0)               return BL_KW_BHAU_PTR;
-    if(strcmp(keyword,"ref") == 0)               return BL_KW_BHAU_REF;
-
-
-    #endif
-
-    #ifdef BL_BRO_KEYWORDS
-
-    if(strcmp(keyword,"bro remember this") == 0)            return BL_KW_BHAU_HAI_AHE;
-    if(strcmp(keyword,"bro if") == 0 )                      return BL_KW_BHAU_JAR;
-    if(strcmp(keyword,"bro whatever") == 0)                 return BL_KW_BHAU_TAR;
-    if(strcmp(keyword,"bro otherwise") == 0)                return BL_KW_BHAU_NAHITAR;
-    if(strcmp(keyword,"bro when") == 0)                     return BL_KW_BHAU_JOPARENT;
-    if(strcmp(keyword,"bro lemme create") == 0)             return BL_KW_BHAU_LAKSHAT_THEV;
-    if(strcmp(keyword,"bro return this") == 0)              return BL_KW_BHAU_PARAT_DE;
-    if(strcmp(keyword,"hello bro") == 0)                    return BL_KW_HI_BHAU;
-    if(strcmp(keyword,"bye bro") == 0)                      return BL_KW_BYE_BHAU;
-    if(strcmp(keyword,"bro choice") == 0)                   return BL_KW_BHAU_CHUNAV;
-    if(strcmp(keyword,"bro skip") == 0)                     return BL_KW_BHAU_THAMB;
-    if(strcmp(keyword,"bro keep running") == 0)             return BL_KW_BHAU_CHALU_RHA;
-    if(strcmp(keyword,"bro cantdoanythingaboutit") == 0)    return BL_KW_BHAU_RAHUDET;
-    if(strcmp(keyword,"real") == 0)                         return BL_KW_BHAU_KHARA;
-    if(strcmp(keyword,"unreal") == 0)                       return BL_KW_BHAU_KHOTA;
-    if(strcmp(keyword,"bro take out") == 0)                 return BL_KW_BHAU_BAHERUN_GHE;
-    if(strcmp(keyword,"bro main") == 0)                     return BL_KW_BHAU_MAIN;
-    if(strcmp(keyword,"bro option") == 0)                   return BL_KW_BHAU_NIVAD;
-    if(strcmp(keyword,"ptr") == 0)                          return BL_KW_BHAU_PTR;
-    if(strcmp(keyword,"ref") == 0)                          return BL_KW_BHAU_REF;
-
-    #endif
-
-    #ifdef BL_BHAI_KEYWORDS
-    if(strcmp(keyword,"bhai ye hai") == 0)        return BL_KW_BHAU_HAI_AHE;
-    if(strcmp(keyword,"agar bhai") == 0 )         return BL_KW_BHAU_JAR;
-    if(strcmp(keyword,"warna bhai") == 0)         return BL_KW_BHAU_TAR;
-    if(strcmp(keyword,"nahi to bhai") == 0)       return BL_KW_BHAU_NAHITAR;
-    if(strcmp(keyword,"jab tak bhai") == 0)       return BL_KW_BHAU_JOPARENT;
-    if(strcmp(keyword,"bhai yaad rak") == 0)      return BL_KW_BHAU_LAKSHAT_THEV;
-    if(strcmp(keyword,"bhai wapis kar") == 0)     return BL_KW_BHAU_PARAT_DE;
-    if(strcmp(keyword,"hi bhai") == 0)            return BL_KW_HI_BHAU;
-    if(strcmp(keyword,"bye bhai") == 0)           return BL_KW_BYE_BHAU;
-    if(strcmp(keyword,"bhai ek chun") == 0)       return BL_KW_BHAU_CHUNAV;
-    if(strcmp(keyword,"bas kar bhai") == 0)       return BL_KW_BHAU_THAMB;
-    if(strcmp(keyword,"agla dekh bhai") == 0)     return BL_KW_BHAU_CHALU_RHA;
-    if(strcmp(keyword,"bhai rehenede") == 0)      return BL_KW_BHAU_RAHUDET;
-    if(strcmp(keyword,"ha bhai") == 0)            return BL_KW_BHAU_KHARA;
-    if(strcmp(keyword,"na bhai") == 0)            return BL_KW_BHAU_KHOTA;
-    if(strcmp(keyword,"bhai baharse le") == 0)    return BL_KW_BHAU_BAHERUN_GHE;
-    if(strcmp(keyword,"bhai main") == 0)          return BL_KW_BHAU_MAIN;
-    if(strcmp(keyword,"bhai chun") == 0)          return BL_KW_BHAU_NIVAD;
-    if(strcmp(keyword,"ptr") == 0)                return BL_KW_BHAU_PTR;
-    if(strcmp(keyword,"ref") == 0)                return BL_KW_BHAU_REF;
-    #endif
-
-    #ifdef BL_CUSTOM_KEYWORDS
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_HAI_AHE;     //variable assignment
-    if(strcmp(keyword,"") == 0 )  return BL_KW_BHAU_JAR;         //if (conditional)
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_TAR;         //else (conditional)
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_NAHITAR;     //else if (conditional)
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_JOPARENT;    //loops (while)
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_LAKSHAT_THEV;//function
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_PARAT_DE;    //return
-    if(strcmp(keyword,"") == 0)   return BL_KW_HI_BHAU;          //entry
-    if(strcmp(keyword,"") == 0)   return BL_KW_BYE_BHAU;         //exit
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_CHUNAV;      //switch
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_THAMB;       //break
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_CHALU_RHA;   //continue
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_RAHUDET;     //default (switch)
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_KHARA;       //true
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_KHOTA;       //false
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_BAHERUN_GHE; //extern
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_MAIN;        //main 
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_NIVAD;       //case
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_PTR;         //pointer
-    if(strcmp(keyword,"") == 0)   return BL_KW_BHAU_REF;         //reference
-    #endif
-    
+    if(strcmp(keyword,_BL_KW_BHAU_HAI_AHE) == 0)        return BL_KW_BHAU_HAI_AHE;
+    if(strcmp(keyword,_BL_KW_BHAU_JAR) == 0 )           return BL_KW_BHAU_JAR;
+    if(strcmp(keyword,_BL_KW_BHAU_TAR) == 0)            return BL_KW_BHAU_TAR;
+    if(strcmp(keyword,_BL_KW_BHAU_NAHITAR) == 0)        return BL_KW_BHAU_NAHITAR;
+    if(strcmp(keyword,_BL_KW_BHAU_JOPARENT) == 0)       return BL_KW_BHAU_JOPARENT;
+    if(strcmp(keyword,_BL_KW_BHAU_LAKSHAT_THEV) == 0)   return BL_KW_BHAU_LAKSHAT_THEV;
+    if(strcmp(keyword,_BL_KW_BHAU_PARAT_DE) == 0)       return BL_KW_BHAU_PARAT_DE;
+    if(strcmp(keyword,_BL_KW_HI_BHAU) == 0)             return BL_KW_HI_BHAU;
+    if(strcmp(keyword,_BL_KW_BYE_BHAU) == 0)            return BL_KW_BYE_BHAU;
+    if(strcmp(keyword,_BL_KW_BHAU_CHUNAV) == 0)         return BL_KW_BHAU_CHUNAV;
+    if(strcmp(keyword,_BL_KW_BHAU_THAMB) == 0)          return BL_KW_BHAU_THAMB;
+    if(strcmp(keyword,_BL_KW_BHAU_CHALU_RHA) == 0)      return BL_KW_BHAU_CHALU_RHA;
+    if(strcmp(keyword,_BL_KW_BHAU_RAHUDET) == 0)        return BL_KW_BHAU_RAHUDET;
+    if(strcmp(keyword,_BL_KW_BHAU_KHARA) == 0)          return BL_KW_BHAU_KHARA;
+    if(strcmp(keyword,_BL_KW_BHAU_KHOTA) == 0)          return BL_KW_BHAU_KHOTA;
+    if(strcmp(keyword,_BL_KW_BHAU_BAHERUN_GHE) == 0)    return BL_KW_BHAU_BAHERUN_GHE;
+    if(strcmp(keyword,_BL_KW_BHAU_MAIN) == 0)           return BL_KW_BHAU_MAIN;
+    if(strcmp(keyword,_BL_KW_BHAU_NIVAD) == 0)          return BL_KW_BHAU_NIVAD;
+    if(strcmp(keyword,_BL_KW_BHAU_PTR) == 0)            return BL_KW_BHAU_PTR;
+    if(strcmp(keyword,_BL_KW_BHAU_REF) == 0)            return BL_KW_BHAU_REF;
     return -1;
 
 }
@@ -193,108 +213,26 @@ static inline LangKeywordType get_keyword_type(char* keyword){
 static inline char *keyword_to_string(LangKeywordType type) {
     switch (type) {
 
-
-        #ifdef BL_BHAU_KEYWORDS
-
-        case BL_KW_BHAU_HAI_AHE:       return "bhau hai ahe";
-        case BL_KW_BHAU_JAR:           return "bhau jar";
-        case BL_KW_BHAU_TAR:           return "bhau tar";
-        case BL_KW_BHAU_NAHITAR:       return "bhau nahitar";
-        case BL_KW_BHAU_JOPARENT:      return "bhau joparent";
-        case BL_KW_BHAU_LAKSHAT_THEV:  return "bhau lakshat thev";
-        case BL_KW_BHAU_PARAT_DE:      return "bhau parat de";
-        case BL_KW_HI_BHAU:            return "hi bhau";
-        case BL_KW_BYE_BHAU:           return "bye bhau";
-        case BL_KW_BHAU_CHUNAV:        return "bhau chunav";
-        case BL_KW_BHAU_THAMB:         return "bhau thamb";
-        case BL_KW_BHAU_CHALU_RHA:     return "bhau chalu rha";
-        case BL_KW_BHAU_RAHUDET:       return "bhau rahudet";
-        case BL_KW_BHAU_KHARA:         return "bhau khara";
-        case BL_KW_BHAU_KHOTA:         return "bhau khota";
-        case BL_KW_BHAU_BAHERUN_GHE:   return "bhau baherun ghe";
-        case BL_KW_BHAU_MAIN:          return "bhau ithun chalu";
-        case BL_KW_BHAU_NIVAD:         return "bhau nivad";
-        case BL_KW_BHAU_PTR:           return "ptr";
-        case BL_KW_BHAU_REF:           return "ref";
-
-        #endif
-
-        #ifdef BL_BRO_KEYWORDS
-
-        case BL_KW_BHAU_HAI_AHE:       return "bro remember this";
-        case BL_KW_BHAU_JAR:           return "bro if";
-        case BL_KW_BHAU_TAR:           return "bro whatever";
-        case BL_KW_BHAU_NAHITAR:       return "bro otherwise";
-        case BL_KW_BHAU_JOPARENT:      return "bro when";
-        case BL_KW_BHAU_LAKSHAT_THEV:  return "bro lemme create";
-        case BL_KW_BHAU_PARAT_DE:      return "bro return this";
-        case BL_KW_HI_BHAU:            return "hello bro";
-        case BL_KW_BYE_BHAU:           return "bye bro";
-        case BL_KW_BHAU_CHUNAV:        return "bro choice";
-        case BL_KW_BHAU_THAMB:         return "bro skip";
-        case BL_KW_BHAU_CHALU_RHA:     return "bro keep running";
-        case BL_KW_BHAU_RAHUDET:       return "bro cantdoanythingaboutit";
-        case BL_KW_BHAU_KHARA:         return "real";
-        case BL_KW_BHAU_KHOTA:         return "unreal";
-        case BL_KW_BHAU_BAHERUN_GHE:   return "bro take out";
-        case BL_KW_BHAU_MAIN:          return "bro main";
-        case BL_KW_BHAU_NIVAD:         return "bro option";
-        case BL_KW_BHAU_PTR:           return "ptr";
-        case BL_KW_BHAU_REF:           return "ref";
-
-        #endif
-
-
-        #ifdef BL_BHAI_KEYWORDS
-
-        case BL_KW_BHAU_HAI_AHE:       return "bhai ye hai";
-        case BL_KW_BHAU_JAR:           return "agar bhai";
-        case BL_KW_BHAU_TAR:           return "warna bhai";
-        case BL_KW_BHAU_NAHITAR:       return "nahi to bhai";
-        case BL_KW_BHAU_JOPARENT:      return "jab tak bhai";
-        case BL_KW_BHAU_LAKSHAT_THEV:  return "bhai yaad rak";
-        case BL_KW_BHAU_PARAT_DE:      return "bhai wapis kar";
-        case BL_KW_HI_BHAU:            return "hi bhai";
-        case BL_KW_BYE_BHAU:           return "bye bhai";
-        case BL_KW_BHAU_CHUNAV:        return "bhai ek chun";
-        case BL_KW_BHAU_THAMB:         return "bas kar bhai";
-        case BL_KW_BHAU_CHALU_RHA:     return "agla dekh bhai";
-        case BL_KW_BHAU_RAHUDET:       return "bhai rehenede";
-        case BL_KW_BHAU_KHARA:         return "ha bhai";
-        case BL_KW_BHAU_KHOTA:         return "na bhai";
-        case BL_KW_BHAU_BAHERUN_GHE:   return "bhai baharse le";
-        case BL_KW_BHAU_MAIN:          return "bhai main";
-        case BL_KW_BHAU_NIVAD:         return "bhai chun";
-        case BL_KW_BHAU_PTR:           return "ptr";
-        case BL_KW_BHAU_REF:           return "ref";
-
-        #endif
-
-        #ifdef BL_CUSTOM_KEYWORDS
-
-        case BL_KW_BHAU_HAI_AHE:       return "";
-        case BL_KW_BHAU_JAR:           return "";
-        case BL_KW_BHAU_TAR:           return "";
-        case BL_KW_BHAU_NAHITAR:       return "";
-        case BL_KW_BHAU_JOPARENT:      return "";
-        case BL_KW_BHAU_LAKSHAT_THEV:  return "";
-        case BL_KW_BHAU_PARAT_DE:      return "";
-        case BL_KW_HI_BHAU:            return "";
-        case BL_KW_BYE_BHAU:           return "";
-        case BL_KW_BHAU_CHUNAV:        return "";
-        case BL_KW_BHAU_THAMB:         return "";
-        case BL_KW_BHAU_CHALU_RHA:     return "";
-        case BL_KW_BHAU_RAHUDET:       return "";
-        case BL_KW_BHAU_KHARA:         return "";
-        case BL_KW_BHAU_KHOTA:         return "";
-        case BL_KW_BHAU_BAHERUN_GHE:   return "";
-        case BL_KW_BHAU_MAIN:          return "";
-        case BL_KW_BHAU_PTR:           return "";
-        case BL_KW_BHAU_REF:           return "";
-
-        #endif
-
-
+        case BL_KW_BHAU_HAI_AHE:       return _BL_KW_BHAU_HAI_AHE;
+        case BL_KW_BHAU_JAR:           return _BL_KW_BHAU_JAR;
+        case BL_KW_BHAU_TAR:           return _BL_KW_BHAU_TAR;
+        case BL_KW_BHAU_NAHITAR:       return _BL_KW_BHAU_NAHITAR;
+        case BL_KW_BHAU_JOPARENT:      return _BL_KW_BHAU_JOPARENT;
+        case BL_KW_BHAU_LAKSHAT_THEV:  return _BL_KW_BHAU_LAKSHAT_THEV;
+        case BL_KW_BHAU_PARAT_DE:      return _BL_KW_BHAU_PARAT_DE;
+        case BL_KW_HI_BHAU:            return _BL_KW_HI_BHAU;
+        case BL_KW_BYE_BHAU:           return _BL_KW_BYE_BHAU;
+        case BL_KW_BHAU_CHUNAV:        return _BL_KW_BHAU_CHUNAV;
+        case BL_KW_BHAU_THAMB:         return _BL_KW_BHAU_THAMB;
+        case BL_KW_BHAU_CHALU_RHA:     return _BL_KW_BHAU_CHALU_RHA;
+        case BL_KW_BHAU_RAHUDET:       return _BL_KW_BHAU_RAHUDET;
+        case BL_KW_BHAU_KHARA:         return _BL_KW_BHAU_KHARA;
+        case BL_KW_BHAU_KHOTA:         return _BL_KW_BHAU_KHOTA;
+        case BL_KW_BHAU_BAHERUN_GHE:   return _BL_KW_BHAU_BAHERUN_GHE;
+        case BL_KW_BHAU_MAIN:          return _BL_KW_BHAU_MAIN;
+        case BL_KW_BHAU_NIVAD:         return _BL_KW_BHAU_NIVAD;
+        case BL_KW_BHAU_PTR:           return _BL_KW_BHAU_PTR;
+        case BL_KW_BHAU_REF:           return _BL_KW_BHAU_REF;
         default:                       return "-1";
     }
 }
