@@ -1,0 +1,531 @@
+(null)└── PROGRAM
+(null)    ├── EXTERN
+(null)    │   └── IDENTIFIER: printf [global#1]
+(null)    ├── FUNCTION: star_de
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       └── FUNCTION CALL: printf
+(null)    │           └── STRING_LITERAL: "* "
+(null)    ├── FUNCTION: int_num_de
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: int_num_de
+(null)    │       └── IDENTIFIER: a [int_num_de#3]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       └── FUNCTION CALL: printf
+(null)    │           ├── STRING_LITERAL: "%d "
+(null)    │           └── IDENTIFIER: a [int_num_de#3]
+(null)    ├── FUNCTION: r_trig_stars
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: r_trig_stars
+(null)    │       └── IDENTIFIER: a [r_trig_stars#4]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [r_trig_stars#4]
+(null)    │       │   └── INT_LITERAL: 1
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_LESSEQ
+(null)    │           │   ├── IDENTIFIER: i [r_trig_stars#4]
+(null)    │           │   └── IDENTIFIER: a [r_trig_stars#4]
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#5]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── WHILE
+(null)    │               │   ├── EXPR
+(null)    │               │   ├── BINOP: BL_LESSEQ
+(null)    │               │   │   ├── IDENTIFIER: j [(null)#5]
+(null)    │               │   │   └── IDENTIFIER: i [(null)#5]
+(null)    │               │   └── BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       ├── FUNCTION CALL: star_de
+(null)    │               │       └── UNARYOP : BL_INC
+(null)    │               │           └── IDENTIFIER: j [(null)#6]
+(null)    │               ├── ASSIGN BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#5]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── FUNCTION CALL: printf
+(null)    │               │   └── STRING_LITERAL: "\n"
+(null)    │               └── UNARYOP : BL_INC
+(null)    │                   └── IDENTIFIER: i [(null)#5]
+(null)    ├── FUNCTION: inv_trig_stars
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: inv_trig_stars
+(null)    │       └── IDENTIFIER: a [inv_trig_stars#7]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [inv_trig_stars#7]
+(null)    │       │   └── IDENTIFIER: a [inv_trig_stars#7]
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_GRTEQ
+(null)    │           │   ├── IDENTIFIER: i [inv_trig_stars#7]
+(null)    │           │   └── INT_LITERAL: 1
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#8]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── WHILE
+(null)    │               │   ├── EXPR
+(null)    │               │   ├── BINOP: BL_LESSEQ
+(null)    │               │   │   ├── IDENTIFIER: j [(null)#8]
+(null)    │               │   │   └── IDENTIFIER: i [(null)#8]
+(null)    │               │   └── BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       ├── FUNCTION CALL: star_de
+(null)    │               │       └── UNARYOP : BL_INC
+(null)    │               │           └── IDENTIFIER: j [(null)#9]
+(null)    │               ├── ASSIGN BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#8]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── FUNCTION CALL: printf
+(null)    │               │   └── STRING_LITERAL: "\n"
+(null)    │               └── UNARYOP : BL_DEC
+(null)    │                   └── IDENTIFIER: i [(null)#8]
+(null)    ├── FUNCTION: r_trig_num
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: r_trig_num
+(null)    │       └── IDENTIFIER: a [r_trig_num#10]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [r_trig_num#10]
+(null)    │       │   └── INT_LITERAL: 1
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_LESSEQ
+(null)    │           │   ├── IDENTIFIER: i [r_trig_num#10]
+(null)    │           │   └── IDENTIFIER: a [r_trig_num#10]
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#11]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── WHILE
+(null)    │               │   ├── EXPR
+(null)    │               │   ├── BINOP: BL_LESSEQ
+(null)    │               │   │   ├── IDENTIFIER: j [(null)#11]
+(null)    │               │   │   └── IDENTIFIER: i [(null)#11]
+(null)    │               │   └── BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       ├── FUNCTION CALL: int_num_de
+(null)    │               │       │   └── IDENTIFIER: j [(null)#12]
+(null)    │               │       └── UNARYOP : BL_INC
+(null)    │               │           └── IDENTIFIER: j [(null)#12]
+(null)    │               ├── ASSIGN BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#11]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── FUNCTION CALL: printf
+(null)    │               │   └── STRING_LITERAL: "\n"
+(null)    │               └── UNARYOP : BL_INC
+(null)    │                   └── IDENTIFIER: i [(null)#11]
+(null)    ├── FUNCTION: r_trig_aligned
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: r_trig_aligned
+(null)    │       └── IDENTIFIER: a [r_trig_aligned#13]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [r_trig_aligned#13]
+(null)    │       │   └── INT_LITERAL: 1
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_LESSEQ
+(null)    │           │   ├── IDENTIFIER: i [r_trig_aligned#13]
+(null)    │           │   └── IDENTIFIER: a [r_trig_aligned#13]
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#14]
+(null)    │               │   └── IDENTIFIER: a [(null)#14]
+(null)    │               ├── WHILE
+(null)    │               │   ├── EXPR
+(null)    │               │   ├── BINOP: BL_GRTTHAN
+(null)    │               │   │   ├── IDENTIFIER: j [(null)#14]
+(null)    │               │   │   └── IDENTIFIER: i [(null)#14]
+(null)    │               │   └── BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       ├── FUNCTION CALL: printf
+(null)    │               │       │   └── STRING_LITERAL: " "
+(null)    │               │       └── UNARYOP : BL_DEC
+(null)    │               │           └── IDENTIFIER: j [(null)#15]
+(null)    │               ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: k [(null)#14]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── WHILE
+(null)    │               │   ├── EXPR
+(null)    │               │   ├── BINOP: BL_LESSEQ
+(null)    │               │   │   ├── IDENTIFIER: k [(null)#14]
+(null)    │               │   │   └── IDENTIFIER: i [(null)#14]
+(null)    │               │   └── BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       ├── FUNCTION CALL: printf
+(null)    │               │       │   └── STRING_LITERAL: "*"
+(null)    │               │       └── UNARYOP : BL_INC
+(null)    │               │           └── IDENTIFIER: k [(null)#16]
+(null)    │               ├── ASSIGN BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#14]
+(null)    │               │   └── IDENTIFIER: a [(null)#14]
+(null)    │               ├── ASSIGN BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: k [(null)#14]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── FUNCTION CALL: printf
+(null)    │               │   └── STRING_LITERAL: "\n"
+(null)    │               └── UNARYOP : BL_INC
+(null)    │                   └── IDENTIFIER: i [(null)#14]
+(null)    ├── FUNCTION: floyd_trig
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: floyd_trig
+(null)    │       └── IDENTIFIER: a [floyd_trig#17]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [floyd_trig#17]
+(null)    │       │   └── INT_LITERAL: 1
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: count [floyd_trig#17]
+(null)    │       │   └── INT_LITERAL: 1
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_LESSEQ
+(null)    │           │   ├── IDENTIFIER: i [floyd_trig#17]
+(null)    │           │   └── IDENTIFIER: a [floyd_trig#17]
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#18]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── WHILE
+(null)    │               │   ├── EXPR
+(null)    │               │   ├── BINOP: BL_LESSEQ
+(null)    │               │   │   ├── IDENTIFIER: j [(null)#18]
+(null)    │               │   │   └── IDENTIFIER: i [(null)#18]
+(null)    │               │   └── BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       ├── FUNCTION CALL: int_num_de
+(null)    │               │       │   └── IDENTIFIER: count [(null)#19]
+(null)    │               │       ├── UNARYOP : BL_INC
+(null)    │               │       │   └── IDENTIFIER: count [(null)#19]
+(null)    │               │       └── UNARYOP : BL_INC
+(null)    │               │           └── IDENTIFIER: j [(null)#19]
+(null)    │               ├── ASSIGN BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#18]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── FUNCTION CALL: printf
+(null)    │               │   └── STRING_LITERAL: "\n"
+(null)    │               └── UNARYOP : BL_INC
+(null)    │                   └── IDENTIFIER: i [(null)#18]
+(null)    ├── FUNCTION: bin_trig
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: bin_trig
+(null)    │       └── IDENTIFIER: a [bin_trig#20]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [bin_trig#20]
+(null)    │       │   └── INT_LITERAL: 1
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_LESSEQ
+(null)    │           │   ├── IDENTIFIER: i [bin_trig#20]
+(null)    │           │   └── IDENTIFIER: a [bin_trig#20]
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#21]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── WHILE
+(null)    │               │   ├── EXPR
+(null)    │               │   ├── BINOP: BL_LESSEQ
+(null)    │               │   │   ├── IDENTIFIER: j [(null)#21]
+(null)    │               │   │   └── IDENTIFIER: i [(null)#21]
+(null)    │               │   └── BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       ├── FUNCTION CALL: printf
+(null)    │               │       │   ├── STRING_LITERAL: "%d "
+(null)    │               │       │   └── BINOP: BL_MODBINOP
+(null)    │               │       │       ├── GROUP
+(null)    │               │       │       │   └── BINOP: BL_ADDBINOP
+(null)    │               │       │       │       ├── IDENTIFIER: i [(null)#22]
+(null)    │               │       │       │       └── IDENTIFIER: j [(null)#22]
+(null)    │               │       │       └── INT_LITERAL: 2
+(null)    │               │       └── UNARYOP : BL_INC
+(null)    │               │           └── IDENTIFIER: j [(null)#22]
+(null)    │               ├── ASSIGN BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#21]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── FUNCTION CALL: printf
+(null)    │               │   └── STRING_LITERAL: "\n"
+(null)    │               └── UNARYOP : BL_INC
+(null)    │                   └── IDENTIFIER: i [(null)#21]
+(null)    ├── FUNCTION: inv_num_trig
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: inv_num_trig
+(null)    │       └── IDENTIFIER: a [inv_num_trig#23]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [inv_num_trig#23]
+(null)    │       │   └── IDENTIFIER: a [inv_num_trig#23]
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_GRTEQ
+(null)    │           │   ├── IDENTIFIER: i [inv_num_trig#23]
+(null)    │           │   └── INT_LITERAL: 1
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#24]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── WHILE
+(null)    │               │   ├── EXPR
+(null)    │               │   ├── BINOP: BL_LESSEQ
+(null)    │               │   │   ├── IDENTIFIER: j [(null)#24]
+(null)    │               │   │   └── IDENTIFIER: i [(null)#24]
+(null)    │               │   └── BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       ├── FUNCTION CALL: int_num_de
+(null)    │               │       │   └── IDENTIFIER: j [(null)#25]
+(null)    │               │       └── UNARYOP : BL_INC
+(null)    │               │           └── IDENTIFIER: j [(null)#25]
+(null)    │               ├── ASSIGN BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#24]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── FUNCTION CALL: printf
+(null)    │               │   └── STRING_LITERAL: "\n"
+(null)    │               └── UNARYOP : BL_DEC
+(null)    │                   └── IDENTIFIER: i [(null)#24]
+(null)    ├── FUNCTION: pyramid
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: pyramid
+(null)    │       └── IDENTIFIER: a [pyramid#26]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [pyramid#26]
+(null)    │       │   └── INT_LITERAL: 1
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_LESSEQ
+(null)    │           │   ├── IDENTIFIER: i [pyramid#26]
+(null)    │           │   └── IDENTIFIER: a [pyramid#26]
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#27]
+(null)    │               │   └── IDENTIFIER: a [(null)#27]
+(null)    │               ├── WHILE
+(null)    │               │   ├── EXPR
+(null)    │               │   ├── BINOP: BL_GRTTHAN
+(null)    │               │   │   ├── IDENTIFIER: j [(null)#27]
+(null)    │               │   │   └── IDENTIFIER: i [(null)#27]
+(null)    │               │   └── BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       ├── FUNCTION CALL: printf
+(null)    │               │       │   └── STRING_LITERAL: " "
+(null)    │               │       └── UNARYOP : BL_DEC
+(null)    │               │           └── IDENTIFIER: j [(null)#28]
+(null)    │               ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: k [(null)#27]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── WHILE
+(null)    │               │   ├── EXPR
+(null)    │               │   ├── BINOP: BL_LESSEQ
+(null)    │               │   │   ├── IDENTIFIER: k [(null)#27]
+(null)    │               │   │   └── GROUP
+(null)    │               │   │       └── BINOP: BL_SUBBINOP
+(null)    │               │   │           ├── BINOP: BL_MULTBINOP
+(null)    │               │   │           │   ├── INT_LITERAL: 2
+(null)    │               │   │           │   └── IDENTIFIER: i [(null)#27]
+(null)    │               │   │           └── INT_LITERAL: 1
+(null)    │               │   └── BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       ├── FUNCTION CALL: printf
+(null)    │               │       │   └── STRING_LITERAL: "*"
+(null)    │               │       └── UNARYOP : BL_INC
+(null)    │               │           └── IDENTIFIER: k [(null)#29]
+(null)    │               ├── ASSIGN BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: k [(null)#27]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── ASSIGN BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#27]
+(null)    │               │   └── IDENTIFIER: a [(null)#27]
+(null)    │               ├── FUNCTION CALL: printf
+(null)    │               │   └── STRING_LITERAL: "\n"
+(null)    │               └── UNARYOP : BL_INC
+(null)    │                   └── IDENTIFIER: i [(null)#27]
+(null)    ├── FUNCTION: pascal_trig
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: pascal_trig
+(null)    │       └── IDENTIFIER: a [pascal_trig#30]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [pascal_trig#30]
+(null)    │       │   └── INT_LITERAL: 0
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_LESSTHAN
+(null)    │           │   ├── IDENTIFIER: i [pascal_trig#30]
+(null)    │           │   └── IDENTIFIER: a [pascal_trig#30]
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: coef [(null)#31]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: space [(null)#31]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── WHILE
+(null)    │               │   ├── EXPR
+(null)    │               │   ├── BINOP: BL_LESSEQ
+(null)    │               │   │   ├── IDENTIFIER: space [(null)#31]
+(null)    │               │   │   └── GROUP
+(null)    │               │   │       └── BINOP: BL_SUBBINOP
+(null)    │               │   │           ├── IDENTIFIER: a [(null)#31]
+(null)    │               │   │           └── IDENTIFIER: i [(null)#31]
+(null)    │               │   └── BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       ├── FUNCTION CALL: printf
+(null)    │               │       │   └── STRING_LITERAL: "  "
+(null)    │               │       └── UNARYOP : BL_INC
+(null)    │               │           └── IDENTIFIER: space [(null)#32]
+(null)    │               ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#31]
+(null)    │               │   └── INT_LITERAL: 0
+(null)    │               ├── WHILE
+(null)    │               │   ├── EXPR
+(null)    │               │   ├── BINOP: BL_LESSEQ
+(null)    │               │   │   ├── IDENTIFIER: j [(null)#31]
+(null)    │               │   │   └── IDENTIFIER: i [(null)#31]
+(null)    │               │   └── BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       ├── FUNCTION CALL: printf
+(null)    │               │       │   ├── STRING_LITERAL: "%4d"
+(null)    │               │       │   └── IDENTIFIER: coef [(null)#33]
+(null)    │               │       ├── ASSIGN BL_EQUAL
+(null)    │               │       │   ├── IDENTIFIER: coef [(null)#33]
+(null)    │               │       │   └── BINOP: BL_DIVBINOP
+(null)    │               │       │       ├── BINOP: BL_MULTBINOP
+(null)    │               │       │       │   ├── IDENTIFIER: coef [(null)#33]
+(null)    │               │       │       │   └── GROUP
+(null)    │               │       │       │       └── BINOP: BL_SUBBINOP
+(null)    │               │       │       │           ├── IDENTIFIER: i [(null)#33]
+(null)    │               │       │       │           └── IDENTIFIER: j [(null)#33]
+(null)    │               │       │       └── GROUP
+(null)    │               │       │           └── BINOP: BL_ADDBINOP
+(null)    │               │       │               ├── IDENTIFIER: j [(null)#33]
+(null)    │               │       │               └── INT_LITERAL: 1
+(null)    │               │       └── UNARYOP : BL_INC
+(null)    │               │           └── IDENTIFIER: j [(null)#33]
+(null)    │               ├── ASSIGN BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#31]
+(null)    │               │   └── INT_LITERAL: 0
+(null)    │               ├── ASSIGN BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: space [(null)#31]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── ASSIGN BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: coef [(null)#31]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── FUNCTION CALL: printf
+(null)    │               │   └── STRING_LITERAL: "\n"
+(null)    │               └── UNARYOP : BL_INC
+(null)    │                   └── IDENTIFIER: i [(null)#31]
+(null)    ├── FUNCTION: char_pattern
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: char_pattern
+(null)    │       └── IDENTIFIER: a [char_pattern#34]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: ch [char_pattern#34]
+(null)    │       │   └── CHAR_LITERAL: A
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [char_pattern#34]
+(null)    │       │   └── INT_LITERAL: 1
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_LESSEQ
+(null)    │           │   ├── IDENTIFIER: i [char_pattern#34]
+(null)    │           │   └── IDENTIFIER: a [char_pattern#34]
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#35]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── WHILE
+(null)    │               │   ├── EXPR
+(null)    │               │   ├── BINOP: BL_LESSEQ
+(null)    │               │   │   ├── IDENTIFIER: j [(null)#35]
+(null)    │               │   │   └── IDENTIFIER: i [(null)#35]
+(null)    │               │   └── BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       ├── FUNCTION CALL: printf
+(null)    │               │       │   ├── STRING_LITERAL: "%c "
+(null)    │               │       │   └── IDENTIFIER: ch [(null)#36]
+(null)    │               │       ├── UNARYOP : BL_INC
+(null)    │               │       │   └── IDENTIFIER: ch [(null)#36]
+(null)    │               │       └── UNARYOP : BL_INC
+(null)    │               │           └── IDENTIFIER: j [(null)#36]
+(null)    │               ├── ASSIGN BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: j [(null)#35]
+(null)    │               │   └── INT_LITERAL: 1
+(null)    │               ├── FUNCTION CALL: printf
+(null)    │               │   └── STRING_LITERAL: "\n"
+(null)    │               └── UNARYOP : BL_INC
+(null)    │                   └── IDENTIFIER: i [(null)#35]
+(null)    ├── FUNCTION: print_all_patterns
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: print_all_patterns
+(null)    │       └── IDENTIFIER: a [print_all_patterns#37]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── FUNCTION CALL: r_trig_stars
+(null)    │       │   └── IDENTIFIER: a [print_all_patterns#37]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: inv_trig_stars
+(null)    │       │   └── IDENTIFIER: a [print_all_patterns#37]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: r_trig_num
+(null)    │       │   └── IDENTIFIER: a [print_all_patterns#37]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: r_trig_aligned
+(null)    │       │   └── IDENTIFIER: a [print_all_patterns#37]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: floyd_trig
+(null)    │       │   └── IDENTIFIER: a [print_all_patterns#37]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: bin_trig
+(null)    │       │   └── IDENTIFIER: a [print_all_patterns#37]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: inv_num_trig
+(null)    │       │   └── IDENTIFIER: a [print_all_patterns#37]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: pyramid
+(null)    │       │   └── IDENTIFIER: a [print_all_patterns#37]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: pascal_trig
+(null)    │       │   └── IDENTIFIER: a [print_all_patterns#37]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       └── FUNCTION CALL: char_pattern
+(null)    │           └── IDENTIFIER: a [print_all_patterns#37]
+(null)    └── MAIN FUNCTION
+(null)        └── BLOCK
+(null)            └── FUNCTION CALL: print_all_patterns
+(null)                └── INT_LITERAL: 10
+

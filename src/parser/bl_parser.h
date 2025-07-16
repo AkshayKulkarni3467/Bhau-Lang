@@ -126,10 +126,15 @@ void null_error(void* ptr,bl_parser* parser,int _break,int err_code);
 
 #ifdef BL_PARSER_TEST
 
-int main(){
+int main(int argc, char** argv){
+    if(argc != 2){
+        fprintf(stderr, "Usage : ./prog <input_file>\n");
+        exit(1);
+    }
     bl_arena* arena = (bl_arena*)malloc(sizeof(bl_arena));
     arena_init(arena);
-    parse_file("src/parser/one.bl",arena);
+    parse_file(argv[argc-1],arena);
+    
     return 0;
 }
 
@@ -149,7 +154,7 @@ void parse_file(char* filename, bl_arena* arena){
     bl_parser* parser = (bl_parser*)arena_alloc(arena, sizeof(bl_parser));
     parser_init(parser,arena,da);
     AST_Node* ast = parse_program(parser);
-    print_ast_tree(ast,0,"");
+    generate_ast_dot(ast,"example.dot");
     printf("\n");
 }
 

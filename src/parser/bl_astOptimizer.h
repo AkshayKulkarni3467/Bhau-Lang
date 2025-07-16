@@ -91,16 +91,15 @@ AST_Node* bhaulang_optimizer(char* filename, bl_arena* arena);
 
 #ifdef BL_OPTIMIZER_TEST
 
-int main(){
+int main(int argc, char** argv){
+    if(argc != 2){
+        fprintf(stderr, "Usage : ./prog <input_file>\n");
+        exit(1);
+    }
     bl_arena* arena = (bl_arena*)malloc(sizeof(bl_arena));
     arena_init(arena);
 
-
-
-    AST_Node* op_ast = bhaulang_optimizer("src/ir/one.bl",arena);
-
-    print_ast_tree(op_ast,0,"");
-    arena_stats(arena);
+    bhaulang_optimizer(argv[argc-1],arena);
     return 0;
 }
 

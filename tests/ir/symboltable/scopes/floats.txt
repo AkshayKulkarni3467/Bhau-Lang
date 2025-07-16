@@ -1,0 +1,18 @@
+=== Symbol Table Tree (SCOPES) ===
+• global (id=0, symbols=1, offset=0)
+    • ret_float (id=1, symbols=3, offset=32)
+    • operator_add_float (id=2, symbols=6, offset=64)
+    • op_mult_div_float (id=3, symbols=20, offset=176)
+    • comparison_float (id=4, symbols=5, offset=224)
+        • null (id=5, symbols=4, offset=0)
+        • null (id=6, symbols=4, offset=0)
+    • type_mixing (id=7, symbols=6, offset=64)
+    • pre_inc_float (id=8, symbols=3, offset=32)
+    • loop_float (id=9, symbols=6, offset=160)
+        • null (id=10, symbols=6, offset=0)
+    • float_control_flow (id=11, symbols=6, offset=160)
+        • null (id=12, symbols=0, offset=0)
+        • null (id=13, symbols=0, offset=0)
+        • null (id=14, symbols=7, offset=0)
+    • main (id=15, symbols=52, offset=688)
+=================================

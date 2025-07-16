@@ -1,0 +1,16 @@
+=== Symbol Table Tree (SCOPES) ===
+• global (id=0, symbols=2, offset=0)
+    • print_global (id=1, symbols=3, offset=64)
+    • print_infunc (id=2, symbols=4, offset=96)
+    • print_inblock (id=3, symbols=1, offset=128)
+        • null (id=4, symbols=4, offset=0)
+    • print_access_from_outer_block (id=5, symbols=1, offset=112)
+        • null (id=6, symbols=3, offset=0)
+    • print_nestblocks (id=7, symbols=4, offset=256)
+        • null (id=8, symbols=4, offset=0)
+            • null (id=9, symbols=4, offset=0)
+    • print_funcvsblockscope (id=10, symbols=4, offset=208)
+        • null (id=11, symbols=4, offset=0)
+    • return_localvalue (id=12, symbols=2, offset=32)
+    • main (id=13, symbols=11, offset=144)
+=================================

@@ -35,24 +35,20 @@ tokenize  : $(DYNARR) $(ARENA)
 	./out $(INPUT)
 
 lexer : $(TOKENIZE) $(LANKEYS)
-	$(CC) $(CFLAGS_LEXER) src/lexer/bl_lexer.c -o src/lexer/lexer
-	./src/lexer/lexer
-
-test : $(LEXER)
-	$(CC) $(CFLAGS_TEST) src/lexer/test.c -o src/lexer/test
-	./src/lexer/test
+	@ $(CC) $(CFLAGS_LEXER) src/lexer/bl_lexer.c -o ./out
+	./out $(INPUT)
 
 parser : $(LEXER)
-	$(CC) $(CFLAGS_PARSER) src/parser/bl_parser.c -o src/parser/parser
-	./src/parser/parser
+	$(CC) $(CFLAGS_PARSER) src/parser/bl_parser.c -o ./out
+	./out $(INPUT)
 
 optimizer: $(PARSER)
-	$(CC) $(CFLAGS_OPTIMIZER) src/parser/bl_astOptimizer.c -o src/parser/astOptimizer
-	./src/parser/astOptimizer
+	$(CC) $(CFLAGS_OPTIMIZER) src/parser/bl_astOptimizer.c -o ./out
+	./out $(INPUT)
 
 ir : $(OPTIMIZER)
-	$(CC) $(CFLAGS_IR) src/ir/bl_ir.c -o src/ir/ir
-	./src/ir/ir
+	$(CC) $(CFLAGS_IR) src/ir/bl_ir.c -o ./out
+	./out $(INPUT)
 
 codegen: $(IR)
 	$(CC) $(CFLAGS_CODEGEN) src/codegen/bl_codegen.c -o src/codegen/codegen

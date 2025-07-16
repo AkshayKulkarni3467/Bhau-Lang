@@ -1,0 +1,367 @@
+(null)└── PROGRAM
+(null)    ├── EXTERN
+(null)    │   └── IDENTIFIER: printf [global#1]
+(null)    ├── FUNCTION: factorial
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: factorial
+(null)    │       └── IDENTIFIER: a [factorial#2]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── IF_ELSE
+(null)    │       │   ├── CONDITION
+(null)    │       │   ├── BINOP: BL_LESSEQ
+(null)    │       │   │   ├── IDENTIFIER: a [factorial#2]
+(null)    │       │   │   └── INT_LITERAL: 1
+(null)    │       │   ├── IF BLOCK
+(null)    │       │   ├── BLOCK
+(null)    │       │   │   └── RETURN
+(null)    │       │   │       └── INT_LITERAL: 1
+(null)    │       │   └── ELSE BLOCK
+(null)    │       │   └── (null node)
+(null)    │       └── RETURN
+(null)    │           └── BINOP: BL_MULTBINOP
+(null)    │               ├── IDENTIFIER: a [factorial#2]
+(null)    │               └── FUNCTION CALL: factorial
+(null)    │                   └── BINOP: BL_SUBBINOP
+(null)    │                       ├── IDENTIFIER: a [factorial#2]
+(null)    │                       └── INT_LITERAL: 1
+(null)    ├── FUNCTION: fibonacci
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: fibonacci
+(null)    │       └── IDENTIFIER: a [fibonacci#4]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── IF_ELSE
+(null)    │       │   ├── CONDITION
+(null)    │       │   ├── BINOP: BL_LESSEQ
+(null)    │       │   │   ├── IDENTIFIER: a [fibonacci#4]
+(null)    │       │   │   └── INT_LITERAL: 1
+(null)    │       │   ├── IF BLOCK
+(null)    │       │   ├── BLOCK
+(null)    │       │   │   └── RETURN
+(null)    │       │   │       └── IDENTIFIER: a [(null)#5]
+(null)    │       │   └── ELSE BLOCK
+(null)    │       │   └── (null node)
+(null)    │       └── RETURN
+(null)    │           └── BINOP: BL_ADDBINOP
+(null)    │               ├── FUNCTION CALL: fibonacci
+(null)    │               │   └── BINOP: BL_SUBBINOP
+(null)    │               │       ├── IDENTIFIER: a [fibonacci#4]
+(null)    │               │       └── INT_LITERAL: 1
+(null)    │               └── FUNCTION CALL: fibonacci
+(null)    │                   └── BINOP: BL_SUBBINOP
+(null)    │                       ├── IDENTIFIER: a [fibonacci#4]
+(null)    │                       └── INT_LITERAL: 2
+(null)    ├── FUNCTION: recurse_sum
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: recurse_sum
+(null)    │       └── IDENTIFIER: a [recurse_sum#6]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── IF_ELSE
+(null)    │       │   ├── CONDITION
+(null)    │       │   ├── BINOP: BL_ISEQUALCOND
+(null)    │       │   │   ├── IDENTIFIER: a [recurse_sum#6]
+(null)    │       │   │   └── INT_LITERAL: 0
+(null)    │       │   ├── IF BLOCK
+(null)    │       │   ├── BLOCK
+(null)    │       │   │   └── RETURN
+(null)    │       │   │       └── INT_LITERAL: 0
+(null)    │       │   └── ELSE BLOCK
+(null)    │       │   └── (null node)
+(null)    │       └── RETURN
+(null)    │           └── BINOP: BL_ADDBINOP
+(null)    │               ├── IDENTIFIER: a [recurse_sum#6]
+(null)    │               └── FUNCTION CALL: recurse_sum
+(null)    │                   └── BINOP: BL_SUBBINOP
+(null)    │                       ├── IDENTIFIER: a [recurse_sum#6]
+(null)    │                       └── INT_LITERAL: 1
+(null)    ├── FUNCTION: inv_digits
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: inv_digits
+(null)    │       └── IDENTIFIER: a [inv_digits#8]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── IF_ELSE
+(null)    │       │   ├── CONDITION
+(null)    │       │   ├── BINOP: BL_ISEQUALCOND
+(null)    │       │   │   ├── IDENTIFIER: a [inv_digits#8]
+(null)    │       │   │   └── INT_LITERAL: 0
+(null)    │       │   ├── IF BLOCK
+(null)    │       │   ├── BLOCK
+(null)    │       │   │   └── RETURN
+(null)    │       │   │       └── INT_LITERAL: 0
+(null)    │       │   └── ELSE BLOCK
+(null)    │       │   └── (null node)
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   ├── STRING_LITERAL: "%d "
+(null)    │       │   └── BINOP: BL_MODBINOP
+(null)    │       │       ├── IDENTIFIER: a [inv_digits#8]
+(null)    │       │       └── INT_LITERAL: 10
+(null)    │       └── RETURN
+(null)    │           └── FUNCTION CALL: inv_digits
+(null)    │               └── BINOP: BL_DIVBINOP
+(null)    │                   ├── IDENTIFIER: a [inv_digits#8]
+(null)    │                   └── INT_LITERAL: 10
+(null)    ├── FUNCTION: power
+(null)    │   ├── PARAMS
+(null)    │   ├── PARAM: power
+(null)    │   │   └── IDENTIFIER: base [power#10]
+(null)    │   └── PARAM: power
+(null)    │       └── IDENTIFIER: exp [power#10]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── IF_ELSE
+(null)    │       │   ├── CONDITION
+(null)    │       │   ├── BINOP: BL_ISEQUALCOND
+(null)    │       │   │   ├── IDENTIFIER: exp [power#10]
+(null)    │       │   │   └── INT_LITERAL: 0
+(null)    │       │   ├── IF BLOCK
+(null)    │       │   ├── BLOCK
+(null)    │       │   │   └── RETURN
+(null)    │       │   │       └── INT_LITERAL: 1
+(null)    │       │   └── ELSE BLOCK
+(null)    │       │   └── (null node)
+(null)    │       └── RETURN
+(null)    │           └── BINOP: BL_MULTBINOP
+(null)    │               ├── IDENTIFIER: base [power#10]
+(null)    │               └── FUNCTION CALL: power
+(null)    │                   ├── IDENTIFIER: base [power#10]
+(null)    │                   └── BINOP: BL_SUBBINOP
+(null)    │                       ├── IDENTIFIER: exp [power#10]
+(null)    │                       └── INT_LITERAL: 1
+(null)    ├── FUNCTION: reverse
+(null)    │   ├── PARAMS
+(null)    │   ├── PARAM: reverse
+(null)    │   │   └── IDENTIFIER: n [reverse#12]
+(null)    │   └── PARAM: reverse
+(null)    │       └── IDENTIFIER: rev [reverse#12]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── IF_ELSE
+(null)    │       │   ├── CONDITION
+(null)    │       │   ├── BINOP: BL_ISEQUALCOND
+(null)    │       │   │   ├── IDENTIFIER: n [reverse#12]
+(null)    │       │   │   └── INT_LITERAL: 0
+(null)    │       │   ├── IF BLOCK
+(null)    │       │   ├── BLOCK
+(null)    │       │   │   └── RETURN
+(null)    │       │   │       └── IDENTIFIER: rev [(null)#13]
+(null)    │       │   └── ELSE BLOCK
+(null)    │       │   └── (null node)
+(null)    │       └── RETURN
+(null)    │           └── FUNCTION CALL: reverse
+(null)    │               ├── BINOP: BL_DIVBINOP
+(null)    │               │   ├── IDENTIFIER: n [reverse#12]
+(null)    │               │   └── INT_LITERAL: 10
+(null)    │               └── BINOP: BL_ADDBINOP
+(null)    │                   ├── BINOP: BL_MULTBINOP
+(null)    │                   │   ├── IDENTIFIER: rev [reverse#12]
+(null)    │                   │   └── INT_LITERAL: 10
+(null)    │                   └── GROUP
+(null)    │                       └── BINOP: BL_MODBINOP
+(null)    │                           ├── IDENTIFIER: n [reverse#12]
+(null)    │                           └── INT_LITERAL: 10
+(null)    ├── FUNCTION: is_palindrome
+(null)    │   ├── PARAMS
+(null)    │   ├── PARAM: is_palindrome
+(null)    │   │   └── IDENTIFIER: n [is_palindrome#14]
+(null)    │   ├── PARAM: is_palindrome
+(null)    │   │   └── IDENTIFIER: rev [is_palindrome#14]
+(null)    │   └── PARAM: is_palindrome
+(null)    │       └── IDENTIFIER: orig [is_palindrome#14]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── IF_ELSE
+(null)    │       │   ├── CONDITION
+(null)    │       │   ├── BINOP: BL_ISEQUALCOND
+(null)    │       │   │   ├── IDENTIFIER: n [is_palindrome#14]
+(null)    │       │   │   └── INT_LITERAL: 0
+(null)    │       │   ├── IF BLOCK
+(null)    │       │   ├── BLOCK
+(null)    │       │   │   └── RETURN
+(null)    │       │   │       └── BINOP: BL_ISEQUALCOND
+(null)    │       │   │           ├── IDENTIFIER: rev [(null)#15]
+(null)    │       │   │           └── IDENTIFIER: orig [(null)#15]
+(null)    │       │   └── ELSE BLOCK
+(null)    │       │   └── (null node)
+(null)    │       └── RETURN
+(null)    │           └── FUNCTION CALL: is_palindrome
+(null)    │               ├── BINOP: BL_DIVBINOP
+(null)    │               │   ├── IDENTIFIER: n [is_palindrome#14]
+(null)    │               │   └── INT_LITERAL: 10
+(null)    │               ├── BINOP: BL_ADDBINOP
+(null)    │               │   ├── BINOP: BL_MULTBINOP
+(null)    │               │   │   ├── IDENTIFIER: rev [is_palindrome#14]
+(null)    │               │   │   └── INT_LITERAL: 10
+(null)    │               │   └── BINOP: BL_MODBINOP
+(null)    │               │       ├── IDENTIFIER: n [is_palindrome#14]
+(null)    │               │       └── INT_LITERAL: 10
+(null)    │               └── IDENTIFIER: orig [is_palindrome#14]
+(null)    ├── FUNCTION: gcd
+(null)    │   ├── PARAMS
+(null)    │   ├── PARAM: gcd
+(null)    │   │   └── IDENTIFIER: a [gcd#16]
+(null)    │   └── PARAM: gcd
+(null)    │       └── IDENTIFIER: b [gcd#16]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── IF_ELSE
+(null)    │       │   ├── CONDITION
+(null)    │       │   ├── BINOP: BL_ISEQUALCOND
+(null)    │       │   │   ├── IDENTIFIER: b [gcd#16]
+(null)    │       │   │   └── INT_LITERAL: 0
+(null)    │       │   ├── IF BLOCK
+(null)    │       │   ├── BLOCK
+(null)    │       │   │   └── RETURN
+(null)    │       │   │       └── IDENTIFIER: a [(null)#17]
+(null)    │       │   └── ELSE BLOCK
+(null)    │       │   └── (null node)
+(null)    │       └── RETURN
+(null)    │           └── FUNCTION CALL: gcd
+(null)    │               ├── IDENTIFIER: b [gcd#16]
+(null)    │               └── BINOP: BL_MODBINOP
+(null)    │                   ├── IDENTIFIER: a [gcd#16]
+(null)    │                   └── IDENTIFIER: b [gcd#16]
+(null)    ├── FUNCTION: print_stars
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: print_stars
+(null)    │       └── IDENTIFIER: n [print_stars#18]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── IF_ELSE
+(null)    │       │   ├── CONDITION
+(null)    │       │   ├── BINOP: BL_ISEQUALCOND
+(null)    │       │   │   ├── IDENTIFIER: n [print_stars#18]
+(null)    │       │   │   └── INT_LITERAL: 0
+(null)    │       │   ├── IF BLOCK
+(null)    │       │   ├── BLOCK
+(null)    │       │   │   ├── FUNCTION CALL: printf
+(null)    │       │   │   │   └── STRING_LITERAL: "\n"
+(null)    │       │   │   └── RETURN
+(null)    │       │   │       └── INT_LITERAL: 0
+(null)    │       │   └── ELSE BLOCK
+(null)    │       │   └── (null node)
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [print_stars#18]
+(null)    │       │   └── INT_LITERAL: 0
+(null)    │       ├── WHILE
+(null)    │       │   ├── EXPR
+(null)    │       │   ├── BINOP: BL_LESSTHAN
+(null)    │       │   │   ├── IDENTIFIER: i [print_stars#18]
+(null)    │       │   │   └── IDENTIFIER: n [print_stars#18]
+(null)    │       │   └── BLOCK
+(null)    │       │   └── BLOCK
+(null)    │       │       ├── FUNCTION CALL: printf
+(null)    │       │       │   └── STRING_LITERAL: "* "
+(null)    │       │       └── UNARYOP : BL_INC
+(null)    │       │           └── IDENTIFIER: i [(null)#20]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       └── RETURN
+(null)    │           └── FUNCTION CALL: print_stars
+(null)    │               └── BINOP: BL_SUBBINOP
+(null)    │                   ├── IDENTIFIER: n [print_stars#18]
+(null)    │                   └── INT_LITERAL: 1
+(null)    ├── FUNCTION: digit_sum
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: digit_sum
+(null)    │       └── IDENTIFIER: n [digit_sum#21]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── IF_ELSE
+(null)    │       │   ├── CONDITION
+(null)    │       │   ├── BINOP: BL_ISEQUALCOND
+(null)    │       │   │   ├── IDENTIFIER: n [digit_sum#21]
+(null)    │       │   │   └── INT_LITERAL: 0
+(null)    │       │   ├── IF BLOCK
+(null)    │       │   ├── BLOCK
+(null)    │       │   │   └── RETURN
+(null)    │       │   │       └── INT_LITERAL: 0
+(null)    │       │   └── ELSE BLOCK
+(null)    │       │   └── (null node)
+(null)    │       └── RETURN
+(null)    │           └── BINOP: BL_ADDBINOP
+(null)    │               ├── GROUP
+(null)    │               │   └── BINOP: BL_MODBINOP
+(null)    │               │       ├── IDENTIFIER: n [digit_sum#21]
+(null)    │               │       └── INT_LITERAL: 10
+(null)    │               └── FUNCTION CALL: digit_sum
+(null)    │                   └── BINOP: BL_DIVBINOP
+(null)    │                       ├── IDENTIFIER: n [digit_sum#21]
+(null)    │                       └── INT_LITERAL: 10
+(null)    ├── FUNCTION: print_recursion_tests
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: fac_var [print_recursion_tests#23]
+(null)    │       │   └── FUNCTION CALL: factorial
+(null)    │       │       └── INT_LITERAL: 5
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   ├── STRING_LITERAL: "Factorial : %d\n"
+(null)    │       │   └── IDENTIFIER: fac_var [print_recursion_tests#23]
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: fib_var [print_recursion_tests#23]
+(null)    │       │   └── FUNCTION CALL: fibonacci
+(null)    │       │       └── INT_LITERAL: 5
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   ├── STRING_LITERAL: "Fibonacci : %d\n"
+(null)    │       │   └── IDENTIFIER: fib_var [print_recursion_tests#23]
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: rsum_var [print_recursion_tests#23]
+(null)    │       │   └── FUNCTION CALL: recurse_sum
+(null)    │       │       └── INT_LITERAL: 5
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   ├── STRING_LITERAL: "Recurse sum : %d\n"
+(null)    │       │   └── IDENTIFIER: rsum_var [print_recursion_tests#23]
+(null)    │       ├── FUNCTION CALL: inv_digits
+(null)    │       │   └── INT_LITERAL: 5324
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: pow_var [print_recursion_tests#23]
+(null)    │       │   └── FUNCTION CALL: power
+(null)    │       │       ├── INT_LITERAL: 5
+(null)    │       │       └── INT_LITERAL: 2
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   ├── STRING_LITERAL: "Power : %d\n"
+(null)    │       │   └── IDENTIFIER: pow_var [print_recursion_tests#23]
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: reverse_var [print_recursion_tests#23]
+(null)    │       │   └── FUNCTION CALL: reverse
+(null)    │       │       ├── INT_LITERAL: 1234
+(null)    │       │       └── INT_LITERAL: 0
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   ├── STRING_LITERAL: "Reverse : %d\n"
+(null)    │       │   └── IDENTIFIER: reverse_var [print_recursion_tests#23]
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: is_palin [print_recursion_tests#23]
+(null)    │       │   └── FUNCTION CALL: is_palindrome
+(null)    │       │       ├── INT_LITERAL: 1221
+(null)    │       │       ├── INT_LITERAL: 0
+(null)    │       │       └── INT_LITERAL: 1221
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   ├── STRING_LITERAL: "Is palindrome : %d\n"
+(null)    │       │   └── IDENTIFIER: is_palin [print_recursion_tests#23]
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: gcd_var [print_recursion_tests#23]
+(null)    │       │   └── FUNCTION CALL: gcd
+(null)    │       │       ├── INT_LITERAL: 39
+(null)    │       │       └── INT_LITERAL: 26
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   ├── STRING_LITERAL: "GCD of 26 & 39 : %d\n"
+(null)    │       │   └── IDENTIFIER: gcd_var [print_recursion_tests#23]
+(null)    │       ├── FUNCTION CALL: print_stars
+(null)    │       │   └── INT_LITERAL: 10
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: dsum_var [print_recursion_tests#23]
+(null)    │       │   └── FUNCTION CALL: digit_sum
+(null)    │       │       └── INT_LITERAL: 1234
+(null)    │       └── FUNCTION CALL: printf
+(null)    │           ├── STRING_LITERAL: "Sum of digits : %d\n"
+(null)    │           └── IDENTIFIER: dsum_var [print_recursion_tests#23]
+(null)    └── MAIN FUNCTION
+(null)        └── BLOCK
+(null)            └── FUNCTION CALL: print_recursion_tests
+

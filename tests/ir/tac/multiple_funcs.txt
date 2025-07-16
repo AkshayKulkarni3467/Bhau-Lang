@@ -1,0 +1,378 @@
+[Extern] extern printf (extern) (0)
+[Declaration] pi (float) (0) = 3.1414999961853027 (float) (0)
+[Declaration] e (float) (0) = 2.7179999351501465 (float) (0)
+[Declaration] greeting (str) (0) = Hello from BhauLang! (str) (0)
+[Declaration] flag (int) (0) = 1 (int) (0)
+[Declaration] z (int) (0) = 10 (int) (0)
+[Declaration] folded (int) (0) = 11 (int) (0)
+[Declaration] x (int) (0) = 5 (int) (0)
+[Declaration] c (int) (0) = 42 (int) (0)
+[Declaration] b (int) (0) = 42 (int) (0)
+[Declaration] a (int) (0) = 42 (int) (0)
+[Function start] function nested_conditions begin:
+[Parameter] param n (idt) (1)
+[Declaration] t0 (bool) (1) = 0 (int) (1)
+[Declaration] t1 (idt) (1) = 0 (int) (1)
+[Assignment] t1 (idt) (1) = n (idt) (1)
+[Declaration] t2 (int) (1) = 0 (int) (1)
+[Assignment] t2 (int) (1) = 0 (int) (1)
+[Binary Op] t0 (bool) (1) = t1 (idt) (1) == t2 (int) (1) 
+[Conditional Jump] if t0 (bool) (1) != 0 (int) (1) goto L0
+[Declaration] t3 (bool) (2) = 0 (int) (2)
+[Declaration] t4 (idt) (2) = 0 (int) (2)
+[Assignment] t4 (idt) (2) = n (idt) (2)
+[Declaration] t5 (int) (2) = 0 (int) (2)
+[Assignment] t5 (int) (2) = 0 (int) (2)
+[Binary Op] t3 (bool) (2) = t4 (idt) (2) < t5 (int) (2) 
+[Conditional Jump] if t3 (bool) (2) != 0 (int) (2) goto L2
+[Declaration] t6 (str) (3) = Positive\n (str) (3)
+[Argument] arg t6 (str) (3)
+[Declaration] t7 (int) (3) = 0 (int) (3)
+[Function call] t7 (int) (3) = call printf (extern) (3), 1
+[Declaration] t8 (bool) (3) = 0 (int) (3)
+[Declaration] t9 (idt) (3) = 0 (int) (3)
+[Assignment] t9 (idt) (3) = n (idt) (3)
+[Declaration] t10 (int) (3) = 0 (int) (3)
+[Assignment] t10 (int) (3) = 100 (int) (3)
+[Binary Op] t8 (bool) (3) = t9 (idt) (3) > t10 (int) (3) 
+[Conditional Jump] if t8 (bool) (3) != 0 (int) (3) goto L4
+[Jump] goto L5
+
+[Label] L4:
+[Declaration] t11 (str) (4) = Very large\n (str) (4)
+[Argument] arg t11 (str) (4)
+[Declaration] t12 (int) (4) = 0 (int) (4)
+[Function call] t12 (int) (4) = call printf (extern) (4), 1
+
+[Label] L5:
+[Jump] goto L3
+
+[Label] L2:
+[Declaration] t13 (str) (5) = Negative\n (str) (5)
+[Argument] arg t13 (str) (5)
+[Declaration] t14 (int) (5) = 0 (int) (5)
+[Function call] t14 (int) (5) = call printf (extern) (5), 1
+
+[Label] L3:
+[Jump] goto L1
+
+[Label] L0:
+[Declaration] t15 (str) (6) = Zero\n (str) (6)
+[Argument] arg t15 (str) (6)
+[Declaration] t16 (int) (6) = 0 (int) (6)
+[Function call] t16 (int) (6) = call printf (extern) (6), 1
+
+[Label] L1:
+[Function end] function end
+[Function start] function switch_demo begin:
+[Parameter] param x (int) (7)
+[Declaration] t17 (int) (7) = x (int) (7)
+[Conditional Jump] if t17 (int) (7) == 1 (int) (8) goto L7
+[Declaration] t18 (int) (7) = x (int) (7)
+[Conditional Jump] if t18 (int) (7) == 2 (int) (8) goto L8
+[Declaration] t19 (int) (7) = x (int) (7)
+[Conditional Jump] if t19 (int) (7) == 3 (int) (8) goto L9
+[Jump] goto L10
+
+[Label] L7:
+[Declaration] t20 (str) (8) = One\n (str) (8)
+[Argument] arg t20 (str) (8)
+[Declaration] t21 (int) (8) = 0 (int) (8)
+[Function call] t21 (int) (8) = call printf (extern) (8), 1
+
+[Label] L8:
+[Declaration] t22 (str) (8) = Two\n (str) (8)
+[Argument] arg t22 (str) (8)
+[Declaration] t23 (int) (8) = 0 (int) (8)
+[Function call] t23 (int) (8) = call printf (extern) (8), 1
+
+[Label] L9:
+[Declaration] t24 (str) (8) = Three\n (str) (8)
+[Argument] arg t24 (str) (8)
+[Declaration] t25 (int) (8) = 0 (int) (8)
+[Function call] t25 (int) (8) = call printf (extern) (8), 1
+
+[Label] L10:
+[Declaration] t26 (str) (8) = Other\n (str) (8)
+[Argument] arg t26 (str) (8)
+[Declaration] t27 (int) (8) = 0 (int) (8)
+[Function call] t27 (int) (8) = call printf (extern) (8), 1
+
+[Label] L6:
+[Function end] function end
+[Function start] function nested_loops begin:
+[Declaration] i (int) (9) = 0 (int) (9)
+
+[Label] L11:
+[Declaration] t28 (bool) (9) = 0 (int) (9)
+[Declaration] t29 (int) (9) = 0 (int) (9)
+[Assignment] t29 (int) (9) = i (int) (9)
+[Declaration] t30 (int) (9) = 0 (int) (9)
+[Assignment] t30 (int) (9) = 5 (int) (9)
+[Binary Op] t28 (bool) (9) = t29 (int) (9) < t30 (int) (9) 
+[Conditional Jump] if t28 (bool) (9) != 0 (int) (9) goto L12
+[Jump] goto L13
+
+[Label] L12:
+[Declaration] j (int) (10) = 0 (int) (10)
+
+[Label] L14:
+[Declaration] t31 (bool) (10) = 0 (int) (10)
+[Declaration] t32 (int) (10) = 0 (int) (10)
+[Assignment] t32 (int) (10) = j (int) (10)
+[Declaration] t33 (int) (10) = 0 (int) (10)
+[Assignment] t33 (int) (10) = 3 (int) (10)
+[Binary Op] t31 (bool) (10) = t32 (int) (10) < t33 (int) (10) 
+[Conditional Jump] if t31 (bool) (10) != 0 (int) (10) goto L15
+[Jump] goto L16
+
+[Label] L15:
+[Declaration] t34 (str) (11) = %d  (str) (11)
+[Argument] arg t34 (str) (11)
+[Declaration] t35 (int) (11) = i (int) (11)
+[Argument] arg t35 (int) (11)
+[Declaration] t36 (int) (11) = 0 (int) (11)
+[Function call] t36 (int) (11) = call printf (extern) (11), 2
+[Declaration] t37 (str) (11) = %d  (str) (11)
+[Argument] arg t37 (str) (11)
+[Declaration] t38 (int) (11) = j (int) (11)
+[Argument] arg t38 (int) (11)
+[Declaration] t39 (int) (11) = 0 (int) (11)
+[Function call] t39 (int) (11) = call printf (extern) (11), 2
+[Declaration] t40 (int) (11) = 0 (int) (11)
+[Declaration] t41 (int) (11) = 0 (int) (11)
+[Assignment] t41 (int) (11) = j (int) (11)
+[Declaration] t42 (int) (11) = 0 (int) (11)
+[Assignment] t42 (int) (11) = 1 (int) (11)
+[Binary Op] t40 (int) (11) = t41 (int) (11) + t42 (int) (11) 
+[Assignment] j (int) (11) = t40 (int) (11)
+[Jump] goto L14
+
+[Label] L16:
+[Declaration] t43 (str) (10) = \n (str) (10)
+[Argument] arg t43 (str) (10)
+[Declaration] t44 (int) (10) = 0 (int) (10)
+[Function call] t44 (int) (10) = call printf (extern) (10), 1
+[Declaration] t45 (int) (10) = 0 (int) (10)
+[Declaration] t46 (int) (10) = 0 (int) (10)
+[Assignment] t46 (int) (10) = i (int) (10)
+[Declaration] t47 (int) (10) = 0 (int) (10)
+[Assignment] t47 (int) (10) = 1 (int) (10)
+[Binary Op] t45 (int) (10) = t46 (int) (10) + t47 (int) (10) 
+[Assignment] i (int) (10) = t45 (int) (10)
+[Jump] goto L11
+
+[Label] L13:
+[Function end] function end
+[Function start] function add_const begin:
+[Declaration] a (int) (12) = 5 (int) (12)
+[Declaration] b (int) (12) = 10 (int) (12)
+[Declaration] t48 (int) (12) = 0 (int) (12)
+[Declaration] t49 (int) (12) = 0 (int) (12)
+[Assignment] t49 (int) (12) = a (int) (12)
+[Declaration] t50 (int) (12) = 0 (int) (12)
+[Assignment] t50 (int) (12) = b (int) (12)
+[Binary Op] t48 (int) (12) = t49 (int) (12) + t50 (int) (12) 
+[Declaration] t51 (int) (12) = t48 (int) (12)
+[Return] return t51 (int) (12)
+[Function end] function end
+[Function start] function counter_test begin:
+[Declaration] counter (int) (13) = 0 (int) (13)
+
+[Label] L17:
+[Declaration] t52 (bool) (13) = 0 (int) (13)
+[Declaration] t53 (int) (13) = 0 (int) (13)
+[Assignment] t53 (int) (13) = counter (int) (13)
+[Declaration] t54 (int) (13) = 0 (int) (13)
+[Assignment] t54 (int) (13) = 3 (int) (13)
+[Binary Op] t52 (bool) (13) = t53 (int) (13) < t54 (int) (13) 
+[Conditional Jump] if t52 (bool) (13) != 0 (int) (13) goto L18
+[Jump] goto L19
+
+[Label] L18:
+[Declaration] t55 (str) (14) = Counting (str) (14)
+[Argument] arg t55 (str) (14)
+[Declaration] t56 (int) (14) = 0 (int) (14)
+[Function call] t56 (int) (14) = call printf (extern) (14), 1
+[Declaration] t57 (str) (14) =  %d  (str) (14)
+[Argument] arg t57 (str) (14)
+[Declaration] t58 (int) (14) = counter (int) (14)
+[Argument] arg t58 (int) (14)
+[Declaration] t59 (int) (14) = 0 (int) (14)
+[Function call] t59 (int) (14) = call printf (extern) (14), 2
+[Declaration] t60 (int) (14) = 0 (int) (14)
+[Declaration] t61 (int) (14) = 0 (int) (14)
+[Assignment] t61 (int) (14) = counter (int) (14)
+[Declaration] t62 (int) (14) = 0 (int) (14)
+[Assignment] t62 (int) (14) = 1 (int) (14)
+[Binary Op] t60 (int) (14) = t61 (int) (14) + t62 (int) (14) 
+[Assignment] counter (int) (14) = t60 (int) (14)
+[Jump] goto L17
+
+[Label] L19:
+[Declaration] t63 (str) (13) = \n (str) (13)
+[Argument] arg t63 (str) (13)
+[Declaration] t64 (int) (13) = 0 (int) (13)
+[Function call] t64 (int) (13) = call printf (extern) (13), 1
+[Declaration] t65 (int) (13) = counter (int) (13)
+[Return] return t65 (int) (13)
+[Function end] function end
+[Function start] function power begin:
+[Parameter] param x (int) (15)
+[Parameter] param n (idt) (15)
+[Declaration] t66 (bool) (15) = 0 (int) (15)
+[Declaration] t67 (idt) (15) = 0 (int) (15)
+[Assignment] t67 (idt) (15) = n (idt) (15)
+[Declaration] t68 (int) (15) = 0 (int) (15)
+[Assignment] t68 (int) (15) = 0 (int) (15)
+[Binary Op] t66 (bool) (15) = t67 (idt) (15) == t68 (int) (15) 
+[Conditional Jump] if t66 (bool) (15) != 0 (int) (15) goto L20
+[Jump] goto L21
+
+[Label] L20:
+[Declaration] t69 (int) (16) = 1 (int) (16)
+[Return] return t69 (int) (16)
+
+[Label] L21:
+[Declaration] t70 (int) (15) = x (int) (15)
+[Argument] arg t70 (int) (15)
+[Declaration] t72 (int) (15) = 0 (int) (15)
+[Declaration] t73 (idt) (15) = 0 (int) (15)
+[Assignment] t73 (idt) (15) = n (idt) (15)
+[Declaration] t74 (int) (15) = 0 (int) (15)
+[Assignment] t74 (int) (15) = 1 (int) (15)
+[Binary Op] t72 (int) (15) = t73 (idt) (15) - t74 (int) (15) 
+[Declaration] t71 (int) (15) = t72 (int) (15)
+[Argument] arg t71 (int) (15)
+[Declaration] t75 (int) (15) = 0 (int) (15)
+[Function call] t75 (int) (15) = call power (idt) (15), 2
+[Declaration] t76 (int) (15) = 0 (int) (15)
+[Declaration] t77 (int) (15) = 0 (int) (15)
+[Assignment] t77 (int) (15) = x (int) (15)
+[Declaration] t78 (int) (15) = 0 (int) (15)
+[Assignment] t78 (int) (15) = t75 (int) (15)
+[Binary Op] t76 (int) (15) = t77 (int) (15) * t78 (int) (15) 
+[Declaration] t79 (int) (15) = t76 (int) (15)
+[Return] return t79 (int) (15)
+[Function end] function end
+[Function start] function dummy begin:
+[Parameter] param a (int) (17)
+[Parameter] param b (int) (17)
+[Parameter] param c (int) (17)
+[Declaration] t80 (int) (17) = 0 (int) (17)
+[Declaration] t81 (int) (17) = 0 (int) (17)
+[Assignment] t81 (int) (17) = a (int) (17)
+[Declaration] t82 (int) (17) = 0 (int) (17)
+[Assignment] t82 (int) (17) = b (int) (17)
+[Binary Op] t80 (int) (17) = t81 (int) (17) + t82 (int) (17) 
+[Declaration] t83 (int) (17) = 0 (int) (17)
+[Declaration] t84 (int) (17) = 0 (int) (17)
+[Assignment] t84 (int) (17) = t80 (int) (17)
+[Declaration] t85 (int) (17) = 0 (int) (17)
+[Assignment] t85 (int) (17) = c (int) (17)
+[Binary Op] t83 (int) (17) = t84 (int) (17) + t85 (int) (17) 
+[Declaration] t86 (int) (17) = t83 (int) (17)
+[Return] return t86 (int) (17)
+[Function end] function end
+[Function start] function literal_demo begin:
+[Declaration] ch (int) (18) = b (int) (18)
+[Declaration] s (str) (18) = string test (str) (18)
+[Declaration] pi_val (float) (18) = 3.1400001049041748 (float) (18)
+[Declaration] is_bhau (int) (18) = 1 (int) (18)
+[Declaration] t87 (str) (18) = %c\n (str) (18)
+[Argument] arg t87 (str) (18)
+[Declaration] t88 (int) (18) = ch (int) (18)
+[Argument] arg t88 (int) (18)
+[Declaration] t89 (int) (18) = 0 (int) (18)
+[Function call] t89 (int) (18) = call printf (extern) (18), 2
+[Declaration] t90 (str) (18) = %s\n (str) (18)
+[Argument] arg t90 (str) (18)
+[Declaration] t91 (str) (18) = s (str) (18)
+[Argument] arg t91 (str) (18)
+[Declaration] t92 (int) (18) = 0 (int) (18)
+[Function call] t92 (int) (18) = call printf (extern) (18), 2
+[Declaration] t93 (str) (18) = %.2f\n (str) (18)
+[Argument] arg t93 (str) (18)
+[Declaration] t94 (float) (18) = pi_val (float) (18)
+[Argument] arg t94 (float) (18)
+[Declaration] t95 (int) (18) = 0 (int) (18)
+[Function call] t95 (int) (18) = call printf (extern) (18), 2
+[Declaration] t96 (str) (18) = %d\n (str) (18)
+[Argument] arg t96 (str) (18)
+[Declaration] t97 (int) (18) = is_bhau (int) (18)
+[Argument] arg t97 (int) (18)
+[Declaration] t98 (int) (18) = 0 (int) (18)
+[Function call] t98 (int) (18) = call printf (extern) (18), 2
+[Function end] function end
+[Main start] main begin:
+[Declaration] t99 (int) (19) = 1 (int) (19)
+[Argument] arg t99 (int) (19)
+[Declaration] t100 (int) (19) = 2 (int) (19)
+[Argument] arg t100 (int) (19)
+[Declaration] t101 (int) (19) = 3 (int) (19)
+[Argument] arg t101 (int) (19)
+[Declaration] t102 (int) (19) = 0 (int) (19)
+[Function call] t102 (int) (19) = call dummy (idt) (19), 3
+[Declaration] final (int) (19) = t102 (int) (19)
+[Declaration] t103 (int) (19) = 3 (int) (19)
+[Argument] arg t103 (int) (19)
+[Declaration] t104 (int) (19) = 3 (int) (19)
+[Argument] arg t104 (int) (19)
+[Declaration] t105 (int) (19) = 0 (int) (19)
+[Function call] t105 (int) (19) = call power (idt) (19), 2
+[Declaration] power (int) (19) = t105 (int) (19)
+[Declaration] t106 (str) (19) = %s\n (str) (19)
+[Argument] arg t106 (str) (19)
+[Declaration] t107 (str) (19) = greeting (str) (19)
+[Argument] arg t107 (str) (19)
+[Declaration] t108 (int) (19) = 0 (int) (19)
+[Function call] t108 (int) (19) = call printf (extern) (19), 2
+[Declaration] t109 (str) (19) = Power : %d\n (str) (19)
+[Argument] arg t109 (str) (19)
+[Declaration] t110 (int) (19) = power (int) (19)
+[Argument] arg t110 (int) (19)
+[Declaration] t111 (int) (19) = 0 (int) (19)
+[Function call] t111 (int) (19) = call printf (extern) (19), 2
+[Declaration] t112 (str) (19) = %d\n (str) (19)
+[Argument] arg t112 (str) (19)
+[Declaration] t113 (int) (19) = folded (int) (19)
+[Argument] arg t113 (int) (19)
+[Declaration] t114 (int) (19) = 0 (int) (19)
+[Function call] t114 (int) (19) = call printf (extern) (19), 2
+[Declaration] t115 (int) (19) = 42 (int) (19)
+[Argument] arg t115 (int) (19)
+[Declaration] t116 (int) (19) = 0 (int) (19)
+[Function call] t116 (int) (19) = call nested_conditions (idt) (19), 1
+[Declaration] t117 (int) (19) = 3 (int) (19)
+[Argument] arg t117 (int) (19)
+[Declaration] t118 (int) (19) = 0 (int) (19)
+[Function call] t118 (int) (19) = call switch_demo (idt) (19), 1
+[Declaration] t119 (int) (19) = 0 (int) (19)
+[Function call] t119 (int) (19) = call nested_loops (idt) (19), 0
+[Declaration] t120 (int) (19) = 0 (int) (19)
+[Function call] t120 (int) (19) = call add_const (idt) (19), 0
+[Declaration] res (int) (19) = t120 (int) (19)
+[Declaration] t121 (str) (19) = %d\n (str) (19)
+[Argument] arg t121 (str) (19)
+[Declaration] t122 (int) (19) = res (int) (19)
+[Argument] arg t122 (int) (19)
+[Declaration] t123 (int) (19) = 0 (int) (19)
+[Function call] t123 (int) (19) = call printf (extern) (19), 2
+[Declaration] t124 (int) (19) = 0 (int) (19)
+[Function call] t124 (int) (19) = call counter_test (idt) (19), 0
+[Declaration] ct (int) (19) = t124 (int) (19)
+[Declaration] t125 (str) (19) = %d\n (str) (19)
+[Argument] arg t125 (str) (19)
+[Declaration] t126 (int) (19) = ct (int) (19)
+[Argument] arg t126 (int) (19)
+[Declaration] t127 (int) (19) = 0 (int) (19)
+[Function call] t127 (int) (19) = call printf (extern) (19), 2
+[Declaration] t-128 (int) (19) = 0 (int) (19)
+[Function call] t-128 (int) (19) = call literal_demo (idt) (19), 0
+[Declaration] t-127 (str) (19) = %d\n (str) (19)
+[Argument] arg t-127 (str) (19)
+[Declaration] t-126 (int) (19) = final (int) (19)
+[Argument] arg t-126 (int) (19)
+[Declaration] t-125 (int) (19) = 0 (int) (19)
+[Function call] t-125 (int) (19) = call printf (extern) (19), 2
+[Main end] main end

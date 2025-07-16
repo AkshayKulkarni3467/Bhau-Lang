@@ -1,0 +1,149 @@
+(null)└── PROGRAM
+(null)    ├── EXTERN
+(null)    │   └── IDENTIFIER: printf [global#1]
+(null)    ├── ASSIGN DECL BL_EQUAL
+(null)    │   ├── IDENTIFIER: x [global#1]
+(null)    │   └── STRING_LITERAL: "declared in global"
+(null)    ├── FUNCTION: print_global
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       └── FUNCTION CALL: printf
+(null)    │           ├── STRING_LITERAL: "From print_global: %s\n"
+(null)    │           └── IDENTIFIER: x [print_global#2]
+(null)    ├── FUNCTION: print_infunc
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: x [print_infunc#3]
+(null)    │       │   └── STRING_LITERAL: "declared in function"
+(null)    │       └── FUNCTION CALL: printf
+(null)    │           ├── STRING_LITERAL: "From print_infunc: %s\n"
+(null)    │           └── IDENTIFIER: x [print_infunc#3]
+(null)    ├── FUNCTION: print_inblock
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: x [print_inblock#4]
+(null)    │       │   └── STRING_LITERAL: "declared in func scope"
+(null)    │       └── IF_ELSE
+(null)    │           ├── CONDITION
+(null)    │           ├── INT_LITERAL: 1
+(null)    │           ├── IF BLOCK
+(null)    │           ├── BLOCK
+(null)    │           │   ├── ASSIGN DECL BL_EQUAL
+(null)    │           │   │   ├── IDENTIFIER: x [(null)#5]
+(null)    │           │   │   └── STRING_LITERAL: "declared in block scope"
+(null)    │           │   └── FUNCTION CALL: printf
+(null)    │           │       ├── STRING_LITERAL: "From print_inblock: %s\n"
+(null)    │           │       └── IDENTIFIER: x [(null)#5]
+(null)    │           └── ELSE BLOCK
+(null)    │           └── (null node)
+(null)    ├── FUNCTION: print_access_from_outer_block
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: x [print_access_from_outer_block#6]
+(null)    │       │   └── STRING_LITERAL: "declard in outer block"
+(null)    │       └── IF_ELSE
+(null)    │           ├── CONDITION
+(null)    │           ├── INT_LITERAL: 1
+(null)    │           ├── IF BLOCK
+(null)    │           ├── BLOCK
+(null)    │           │   └── FUNCTION CALL: printf
+(null)    │           │       ├── STRING_LITERAL: "Frome print_access_from_outer_block: %s\n"
+(null)    │           │       └── IDENTIFIER: x [(null)#7]
+(null)    │           └── ELSE BLOCK
+(null)    │           └── (null node)
+(null)    ├── FUNCTION: print_nestblocks
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: x [print_nestblocks#8]
+(null)    │       │   └── STRING_LITERAL: "block 1"
+(null)    │       ├── IF_ELSE
+(null)    │       │   ├── CONDITION
+(null)    │       │   ├── INT_LITERAL: 1
+(null)    │       │   ├── IF BLOCK
+(null)    │       │   ├── BLOCK
+(null)    │       │   │   ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   │   │   ├── IDENTIFIER: x [(null)#9]
+(null)    │       │   │   │   └── STRING_LITERAL: "block 2"
+(null)    │       │   │   ├── IF_ELSE
+(null)    │       │   │   │   ├── CONDITION
+(null)    │       │   │   │   ├── INT_LITERAL: 1
+(null)    │       │   │   │   ├── IF BLOCK
+(null)    │       │   │   │   ├── BLOCK
+(null)    │       │   │   │   │   ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   │   │   │   │   ├── IDENTIFIER: x [(null)#10]
+(null)    │       │   │   │   │   │   └── STRING_LITERAL: "block 3"
+(null)    │       │   │   │   │   └── FUNCTION CALL: printf
+(null)    │       │   │   │   │       ├── STRING_LITERAL: "From print_nestblocks, Block 3 : %s\n"
+(null)    │       │   │   │   │       └── IDENTIFIER: x [(null)#10]
+(null)    │       │   │   │   └── ELSE BLOCK
+(null)    │       │   │   │   └── (null node)
+(null)    │       │   │   └── FUNCTION CALL: printf
+(null)    │       │   │       ├── STRING_LITERAL: "From print_nestblocks, Block 2 : %s\n"
+(null)    │       │   │       └── IDENTIFIER: x [(null)#9]
+(null)    │       │   └── ELSE BLOCK
+(null)    │       │   └── (null node)
+(null)    │       └── FUNCTION CALL: printf
+(null)    │           ├── STRING_LITERAL: "From print_nestblocks, Block 1 : %s\n"
+(null)    │           └── IDENTIFIER: x [print_nestblocks#8]
+(null)    ├── FUNCTION: print_funcvsblockscope
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── IF_ELSE
+(null)    │       │   ├── CONDITION
+(null)    │       │   ├── INT_LITERAL: 1
+(null)    │       │   ├── IF BLOCK
+(null)    │       │   ├── BLOCK
+(null)    │       │   │   ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   │   │   ├── IDENTIFIER: x [(null)#12]
+(null)    │       │   │   │   └── STRING_LITERAL: "block scope"
+(null)    │       │   │   └── FUNCTION CALL: printf
+(null)    │       │   │       ├── STRING_LITERAL: "From print_funcvsblockscope, Block scope : %s\n"
+(null)    │       │   │       └── IDENTIFIER: x [(null)#12]
+(null)    │       │   └── ELSE BLOCK
+(null)    │       │   └── (null node)
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: x [print_funcvsblockscope#11]
+(null)    │       │   └── STRING_LITERAL: "function scope"
+(null)    │       └── FUNCTION CALL: printf
+(null)    │           ├── STRING_LITERAL: "From print_funcvsblockscope,Function scope : %s\n"
+(null)    │           └── IDENTIFIER: x [print_funcvsblockscope#11]
+(null)    ├── FUNCTION: return_localvalue
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: x [return_localvalue#13]
+(null)    │       │   └── INT_LITERAL: 1
+(null)    │       └── RETURN
+(null)    │           └── IDENTIFIER: x [return_localvalue#13]
+(null)    ├── // COMMENT
+(null)    ├── UNKNOWN NODE TYPE (26), ((nil))
+(null)    ├── UNKNOWN NODE TYPE (26), ((nil))
+(null)    └── MAIN FUNCTION
+(null)        └── BLOCK
+(null)            ├── FUNCTION CALL: print_global
+(null)            ├── FUNCTION CALL: print_infunc
+(null)            ├── FUNCTION CALL: print_inblock
+(null)            ├── FUNCTION CALL: print_access_from_outer_block
+(null)            ├── FUNCTION CALL: print_nestblocks
+(null)            ├── FUNCTION CALL: print_funcvsblockscope
+(null)            ├── ASSIGN DECL BL_EQUAL
+(null)            │   ├── IDENTIFIER: x [main#14]
+(null)            │   └── FUNCTION CALL: return_localvalue
+(null)            ├── FUNCTION CALL: printf
+(null)            │   ├── STRING_LITERAL: "From return_localvalue, Value : %d\n"
+(null)            │   └── IDENTIFIER: x [main#14]
+(null)            ├── // COMMENT
+(null)            ├── // COMMENT
+(null)            └── // COMMENT
+

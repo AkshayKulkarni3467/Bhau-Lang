@@ -1,0 +1,65 @@
+>> Symbol Table for Scope: global 0x7fb37c36d770, Scope ID : 0, Parent Scope : TOP (nil)
+  [0] printf (extern) | is Global : 1 | Offset: 0
+  [1] x (str) | is Global : 1 | Offset: 0
+>> Symbol Table for Scope: print_global 0x7fb37c370508, Scope ID : 1, Parent Scope : global 0x7fb37c36d770
+  [0] t0 (arg) | is Global : 0 | Offset: 32
+  [1] t1 (arg) | is Global : 0 | Offset: 40
+  [2] t2 (idt) | is Global : 0 | Offset: 48
+>> Symbol Table for Scope: print_infunc 0x7fb37c372d10, Scope ID : 2, Parent Scope : global 0x7fb37c36d770
+  [0] x (str) | is Global : 0 | Offset: 32
+  [1] t3 (arg) | is Global : 0 | Offset: 64
+  [2] t4 (arg) | is Global : 0 | Offset: 72
+  [3] t5 (idt) | is Global : 0 | Offset: 80
+>> Symbol Table for Scope: print_inblock 0x7fb37c3755c0, Scope ID : 3, Parent Scope : global 0x7fb37c36d770
+  [0] x (str) | is Global : 0 | Offset: 32
+>> Symbol Table for Scope: null 0x7fb37c377c00, Scope ID : 4, Parent Scope : print_inblock 0x7fb37c3755c0
+  [0] x (str) | is Global : 0 | Offset: 64
+  [1] t6 (arg) | is Global : 0 | Offset: 104
+  [2] t7 (arg) | is Global : 0 | Offset: 112
+  [3] t8 (idt) | is Global : 0 | Offset: 120
+>> Symbol Table for Scope: print_access_from_outer_block 0x7fb37c37a4b0, Scope ID : 5, Parent Scope : global 0x7fb37c36d770
+  [0] x (str) | is Global : 0 | Offset: 32
+>> Symbol Table for Scope: null 0x7fb37c37caf0, Scope ID : 6, Parent Scope : print_access_from_outer_block 0x7fb37c37a4b0
+  [0] t9 (arg) | is Global : 0 | Offset: 88
+  [1] t10 (arg) | is Global : 0 | Offset: 96
+  [2] t11 (idt) | is Global : 0 | Offset: 104
+>> Symbol Table for Scope: print_nestblocks 0x7fb37c37f2f8, Scope ID : 7, Parent Scope : global 0x7fb37c36d770
+  [0] x (str) | is Global : 0 | Offset: 16
+  [1] t18 (arg) | is Global : 0 | Offset: 64
+  [2] t19 (arg) | is Global : 0 | Offset: 72
+  [3] t20 (idt) | is Global : 0 | Offset: 80
+>> Symbol Table for Scope: null 0x7fb37c381938, Scope ID : 8, Parent Scope : print_nestblocks 0x7fb37c37f2f8
+  [0] x (str) | is Global : 0 | Offset: 96
+  [1] t15 (arg) | is Global : 0 | Offset: 144
+  [2] t16 (arg) | is Global : 0 | Offset: 152
+  [3] t17 (idt) | is Global : 0 | Offset: 160
+>> Symbol Table for Scope: null 0x7fb37c383f38, Scope ID : 9, Parent Scope : null 0x7fb37c381938
+  [0] x (str) | is Global : 0 | Offset: 176
+  [1] t12 (arg) | is Global : 0 | Offset: 224
+  [2] t13 (arg) | is Global : 0 | Offset: 232
+  [3] t14 (idt) | is Global : 0 | Offset: 240
+>> Symbol Table for Scope: print_funcvsblockscope 0x7fb37c386ec8, Scope ID : 10, Parent Scope : global 0x7fb37c36d770
+  [0] x (str) | is Global : 0 | Offset: 24
+  [1] t24 (arg) | is Global : 0 | Offset: 88
+  [2] t25 (arg) | is Global : 0 | Offset: 96
+  [3] t26 (idt) | is Global : 0 | Offset: 104
+>> Symbol Table for Scope: null 0x7fb37c389460, Scope ID : 11, Parent Scope : print_funcvsblockscope 0x7fb37c386ec8
+  [0] x (str) | is Global : 0 | Offset: 128
+  [1] t21 (arg) | is Global : 0 | Offset: 184
+  [2] t22 (arg) | is Global : 0 | Offset: 192
+  [3] t23 (idt) | is Global : 0 | Offset: 200
+>> Symbol Table for Scope: return_localvalue 0x7fb37c38c108, Scope ID : 12, Parent Scope : global 0x7fb37c36d770
+  [0] x (int) | is Global : 0 | Offset: 8
+  [1] t27 (arg) | is Global : 0 | Offset: 16
+>> Symbol Table for Scope: main 0x7fb37c38e758, Scope ID : 13, Parent Scope : global 0x7fb37c36d770
+  [0] t28 (idt) | is Global : 0 | Offset: 8
+  [1] t29 (idt) | is Global : 0 | Offset: 16
+  [2] t30 (idt) | is Global : 0 | Offset: 24
+  [3] t31 (idt) | is Global : 0 | Offset: 32
+  [4] t32 (idt) | is Global : 0 | Offset: 40
+  [5] t33 (idt) | is Global : 0 | Offset: 48
+  [6] t34 (idt) | is Global : 0 | Offset: 56
+  [7] x (idt) | is Global : 0 | Offset: 64
+  [8] t35 (arg) | is Global : 0 | Offset: 112
+  [9] t36 (arg) | is Global : 0 | Offset: 120
+  [10] t37 (idt) | is Global : 0 | Offset: 128

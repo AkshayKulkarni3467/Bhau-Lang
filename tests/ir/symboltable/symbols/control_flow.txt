@@ -1,0 +1,375 @@
+>> Symbol Table for Scope: global 0x7fc06310eb60, Scope ID : 0, Parent Scope : TOP (nil)
+  [0] printf (extern) | is Global : 1 | Offset: 0
+>> Symbol Table for Scope: deep_nesting 0x7fc063111850, Scope ID : 1, Parent Scope : global 0x7fc06310eb60
+  [0] i (int) | is Global : 0 | Offset: 8
+  [1] t0 (idt) | is Global : 0 | Offset: 16
+  [2] t1 (idt) | is Global : 0 | Offset: 24
+  [3] t2 (idt) | is Global : 0 | Offset: 32
+>> Symbol Table for Scope: null 0x7fc063114210, Scope ID : 2, Parent Scope : deep_nesting 0x7fc063111850
+  [0] t3 (idt) | is Global : 0 | Offset: 40
+  [1] t4 (idt) | is Global : 0 | Offset: 48
+  [2] t5 (idt) | is Global : 0 | Offset: 56
+  [3] t6 (idt) | is Global : 0 | Offset: 64
+  [4] t7 (idt) | is Global : 0 | Offset: 72
+  [5] t8 (idt) | is Global : 0 | Offset: 80
+  [6] t29 (idt) | is Global : 0 | Offset: 88
+>> Symbol Table for Scope: null 0x7fc063116d28, Scope ID : 3, Parent Scope : null 0x7fc063114210
+  [0] t9 (arg) | is Global : 0 | Offset: 144
+  [1] t10 (arg) | is Global : 0 | Offset: 152
+  [2] t11 (idt) | is Global : 0 | Offset: 160
+>> Symbol Table for Scope: null 0x7fc063119530, Scope ID : 4, Parent Scope : null 0x7fc063114210
+  [0] j (idt) | is Global : 0 | Offset: 168
+  [1] t12 (idt) | is Global : 0 | Offset: 176
+  [2] t13 (idt) | is Global : 0 | Offset: 184
+  [3] t14 (idt) | is Global : 0 | Offset: 192
+>> Symbol Table for Scope: null 0x7fc06311beb0, Scope ID : 5, Parent Scope : null 0x7fc063119530
+  [0] t15 (idt) | is Global : 0 | Offset: 200
+  [1] t16 (idt) | is Global : 0 | Offset: 208
+  [2] t28 (idt) | is Global : 0 | Offset: 216
+>> Symbol Table for Scope: null 0x7fc06311e308, Scope ID : 6, Parent Scope : null 0x7fc06311beb0
+  [0] t17 (arg) | is Global : 0 | Offset: 280
+  [1] t18 (arg) | is Global : 0 | Offset: 288
+  [2] t19 (arg) | is Global : 0 | Offset: 296
+  [3] t20 (idt) | is Global : 0 | Offset: 304
+  [4] t21 (arg) | is Global : 0 | Offset: 368
+  [5] t22 (arg) | is Global : 0 | Offset: 376
+  [6] t23 (arg) | is Global : 0 | Offset: 384
+  [7] t24 (idt) | is Global : 0 | Offset: 392
+  [8] t25 (arg) | is Global : 0 | Offset: 456
+  [9] t26 (arg) | is Global : 0 | Offset: 464
+  [10] t27 (idt) | is Global : 0 | Offset: 472
+>> Symbol Table for Scope: while_if_while 0x7fc063121c18, Scope ID : 7, Parent Scope : global 0x7fc06310eb60
+  [0] x (int) | is Global : 0 | Offset: 8
+  [1] t30 (idt) | is Global : 0 | Offset: 16
+  [2] t31 (idt) | is Global : 0 | Offset: 24
+  [3] t32 (idt) | is Global : 0 | Offset: 32
+>> Symbol Table for Scope: null 0x7fc0631245d8, Scope ID : 8, Parent Scope : while_if_while 0x7fc063121c18
+  [0] t33 (idt) | is Global : 0 | Offset: 40
+  [1] t34 (idt) | is Global : 0 | Offset: 48
+  [2] t35 (idt) | is Global : 0 | Offset: 56
+  [3] t52 (idt) | is Global : 0 | Offset: 64
+>> Symbol Table for Scope: null 0x7fc063126e50, Scope ID : 9, Parent Scope : null 0x7fc0631245d8
+  [0] i (int) | is Global : 0 | Offset: 72
+  [1] t36 (idt) | is Global : 0 | Offset: 80
+  [2] t37 (idt) | is Global : 0 | Offset: 88
+  [3] t38 (idt) | is Global : 0 | Offset: 96
+>> Symbol Table for Scope: null 0x7fc0631297d0, Scope ID : 10, Parent Scope : null 0x7fc063126e50
+  [0] t39 (idt) | is Global : 0 | Offset: 104
+  [1] t40 (idt) | is Global : 0 | Offset: 112
+  [2] t41 (idt) | is Global : 0 | Offset: 120
+  [3] t51 (idt) | is Global : 0 | Offset: 128
+>> Symbol Table for Scope: null 0x7fc06312bc28, Scope ID : 11, Parent Scope : null 0x7fc0631297d0
+  [0] t42 (arg) | is Global : 0 | Offset: 176
+  [1] t43 (arg) | is Global : 0 | Offset: 184
+  [2] t44 (idt) | is Global : 0 | Offset: 192
+  [3] t45 (arg) | is Global : 0 | Offset: 240
+  [4] t46 (arg) | is Global : 0 | Offset: 248
+  [5] t47 (idt) | is Global : 0 | Offset: 256
+  [6] t48 (arg) | is Global : 0 | Offset: 304
+  [7] t49 (arg) | is Global : 0 | Offset: 312
+  [8] t50 (idt) | is Global : 0 | Offset: 320
+>> Symbol Table for Scope: if_in_switch 0x7fc06312f448, Scope ID : 12, Parent Scope : global 0x7fc06310eb60
+  [0] i (int) | is Global : 0 | Offset: 8
+  [1] t53 (idt) | is Global : 0 | Offset: 16
+  [2] t54 (idt) | is Global : 0 | Offset: 24
+  [3] t55 (idt) | is Global : 0 | Offset: 32
+>> Symbol Table for Scope: null 0x7fc063131e08, Scope ID : 13, Parent Scope : if_in_switch 0x7fc06312f448
+  [0] t56 (idt) | is Global : 0 | Offset: 40
+  [1] t57 (idt) | is Global : 0 | Offset: 48
+  [2] t58 (idt) | is Global : 0 | Offset: 56
+  [3] val (idt) | is Global : 0 | Offset: 64
+  [4] t59 (idt) | is Global : 0 | Offset: 72
+  [5] t60 (idt) | is Global : 0 | Offset: 80
+  [6] t61 (idt) | is Global : 0 | Offset: 88
+  [7] t83 (idt) | is Global : 0 | Offset: 96
+>> Symbol Table for Scope: null 0x7fc063134628, Scope ID : 14, Parent Scope : null 0x7fc063131e08
+  [0] t62 (idt) | is Global : 0 | Offset: 104
+  [1] t63 (idt) | is Global : 0 | Offset: 112
+  [2] t64 (idt) | is Global : 0 | Offset: 120
+  [3] t65 (idt) | is Global : 0 | Offset: 128
+  [4] t66 (idt) | is Global : 0 | Offset: 136
+  [5] t67 (idt) | is Global : 0 | Offset: 144
+  [6] t71 (idt) | is Global : 0 | Offset: 152
+  [7] t72 (idt) | is Global : 0 | Offset: 160
+  [8] t73 (idt) | is Global : 0 | Offset: 168
+  [9] t80 (arg) | is Global : 0 | Offset: 216
+  [10] t81 (arg) | is Global : 0 | Offset: 224
+  [11] t82 (idt) | is Global : 0 | Offset: 232
+>> Symbol Table for Scope: null 0x7fc063137598, Scope ID : 15, Parent Scope : null 0x7fc063134628
+  [0] t68 (arg) | is Global : 0 | Offset: 280
+  [1] t69 (arg) | is Global : 0 | Offset: 288
+  [2] t70 (idt) | is Global : 0 | Offset: 296
+>> Symbol Table for Scope: null 0x7fc06313a280, Scope ID : 16, Parent Scope : null 0x7fc063134628
+  [0] t74 (arg) | is Global : 0 | Offset: 344
+  [1] t75 (arg) | is Global : 0 | Offset: 352
+  [2] t76 (idt) | is Global : 0 | Offset: 360
+  [3] t77 (idt) | is Global : 0 | Offset: 368
+  [4] t78 (idt) | is Global : 0 | Offset: 376
+  [5] t79 (idt) | is Global : 0 | Offset: 384
+>> Symbol Table for Scope: switch_in_if 0x7fc06313d4e8, Scope ID : 17, Parent Scope : global 0x7fc06310eb60
+  [0] a (int) | is Global : 0 | Offset: 8
+  [1] t84 (idt) | is Global : 0 | Offset: 16
+  [2] t85 (idt) | is Global : 0 | Offset: 24
+  [3] t86 (idt) | is Global : 0 | Offset: 32
+>> Symbol Table for Scope: null 0x7fc06313fdc8, Scope ID : 18, Parent Scope : switch_in_if 0x7fc06313d4e8
+  [0] t87 (arg) | is Global : 0 | Offset: 80
+  [1] t88 (arg) | is Global : 0 | Offset: 88
+  [2] t89 (idt) | is Global : 0 | Offset: 96
+>> Symbol Table for Scope: null 0x7fc0631425d0, Scope ID : 19, Parent Scope : switch_in_if 0x7fc06313d4e8
+  [0] t90 (idt) | is Global : 0 | Offset: 104
+  [1] t91 (idt) | is Global : 0 | Offset: 112
+  [2] t92 (idt) | is Global : 0 | Offset: 120
+>> Symbol Table for Scope: null 0x7fc063144ea8, Scope ID : 20, Parent Scope : null 0x7fc0631425d0
+  [0] t93 (idt) | is Global : 0 | Offset: 128
+  [1] t94 (idt) | is Global : 0 | Offset: 136
+  [2] t95 (idt) | is Global : 0 | Offset: 144
+  [3] t105 (idt) | is Global : 0 | Offset: 152
+>> Symbol Table for Scope: null 0x7fc063147300, Scope ID : 21, Parent Scope : null 0x7fc063144ea8
+  [0] t96 (arg) | is Global : 0 | Offset: 200
+  [1] t97 (arg) | is Global : 0 | Offset: 208
+  [2] t98 (idt) | is Global : 0 | Offset: 216
+  [3] t99 (arg) | is Global : 0 | Offset: 264
+  [4] t100 (arg) | is Global : 0 | Offset: 272
+  [5] t101 (idt) | is Global : 0 | Offset: 280
+  [6] t102 (arg) | is Global : 0 | Offset: 328
+  [7] t103 (arg) | is Global : 0 | Offset: 336
+  [8] t104 (idt) | is Global : 0 | Offset: 344
+>> Symbol Table for Scope: reuse_loop_counters 0x7fc06314a930, Scope ID : 22, Parent Scope : global 0x7fc06310eb60
+  [0] i (int) | is Global : 0 | Offset: 8
+  [1] t106 (idt) | is Global : 0 | Offset: 16
+  [2] t107 (idt) | is Global : 0 | Offset: 24
+  [3] t108 (idt) | is Global : 0 | Offset: 32
+>> Symbol Table for Scope: null 0x7fc06314d2f0, Scope ID : 23, Parent Scope : reuse_loop_counters 0x7fc06314a930
+  [0] t109 (idt) | is Global : 0 | Offset: 40
+  [1] t110 (idt) | is Global : 0 | Offset: 48
+  [2] t111 (idt) | is Global : 0 | Offset: 56
+  [3] k (idt) | is Global : 0 | Offset: 64
+  [4] t112 (idt) | is Global : 0 | Offset: 72
+  [5] t113 (idt) | is Global : 0 | Offset: 80
+  [6] t114 (idt) | is Global : 0 | Offset: 88
+  [7] t-125 (idt) | is Global : 0 | Offset: 96
+>> Symbol Table for Scope: null 0x7fc06314ff90, Scope ID : 24, Parent Scope : null 0x7fc06314d2f0
+  [0] t115 (idt) | is Global : 0 | Offset: 104
+  [1] t116 (idt) | is Global : 0 | Offset: 112
+  [2] t117 (idt) | is Global : 0 | Offset: 120
+  [3] t118 (idt) | is Global : 0 | Offset: 128
+  [4] t119 (idt) | is Global : 0 | Offset: 136
+  [5] t120 (idt) | is Global : 0 | Offset: 144
+  [6] t-126 (idt) | is Global : 0 | Offset: 152
+>> Symbol Table for Scope: null 0x7fc063152aa8, Scope ID : 25, Parent Scope : null 0x7fc06314ff90
+  [0] t121 (arg) | is Global : 0 | Offset: 208
+  [1] t123 (idt) | is Global : 0 | Offset: 216
+  [2] t124 (idt) | is Global : 0 | Offset: 224
+  [3] t125 (idt) | is Global : 0 | Offset: 232
+  [4] t122 (arg) | is Global : 0 | Offset: 240
+  [5] t126 (idt) | is Global : 0 | Offset: 248
+>> Symbol Table for Scope: null 0x7fc0631555d0, Scope ID : 26, Parent Scope : null 0x7fc06314ff90
+  [0] t127 (arg) | is Global : 0 | Offset: 304
+  [1] t-128 (arg) | is Global : 0 | Offset: 312
+  [2] t-127 (idt) | is Global : 0 | Offset: 320
+>> Symbol Table for Scope: recursively_growing_blocks 0x7fc0631581b8, Scope ID : 27, Parent Scope : global 0x7fc06310eb60
+  [0] i (int) | is Global : 0 | Offset: 8
+  [1] t-124 (idt) | is Global : 0 | Offset: 16
+  [2] t-123 (idt) | is Global : 0 | Offset: 24
+  [3] t-122 (idt) | is Global : 0 | Offset: 32
+>> Symbol Table for Scope: null 0x7fc06315ab78, Scope ID : 28, Parent Scope : recursively_growing_blocks 0x7fc0631581b8
+  [0] t-121 (idt) | is Global : 0 | Offset: 40
+  [1] t-120 (idt) | is Global : 0 | Offset: 48
+  [2] t-119 (idt) | is Global : 0 | Offset: 56
+  [3] t-103 (idt) | is Global : 0 | Offset: 64
+>> Symbol Table for Scope: null 0x7fc06315d370, Scope ID : 29, Parent Scope : null 0x7fc06315ab78
+  [0] t-118 (arg) | is Global : 0 | Offset: 112
+  [1] t-117 (arg) | is Global : 0 | Offset: 120
+  [2] t-116 (idt) | is Global : 0 | Offset: 128
+>> Symbol Table for Scope: null 0x7fc06315fb78, Scope ID : 30, Parent Scope : null 0x7fc06315ab78
+  [0] j (int) | is Global : 0 | Offset: 136
+  [1] t-115 (idt) | is Global : 0 | Offset: 144
+  [2] t-114 (idt) | is Global : 0 | Offset: 152
+  [3] t-113 (idt) | is Global : 0 | Offset: 160
+>> Symbol Table for Scope: null 0x7fc0631624f8, Scope ID : 31, Parent Scope : null 0x7fc06315fb78
+  [0] t-112 (idt) | is Global : 0 | Offset: 168
+  [1] t-111 (idt) | is Global : 0 | Offset: 176
+  [2] t-104 (idt) | is Global : 0 | Offset: 184
+>> Symbol Table for Scope: null 0x7fc063164950, Scope ID : 32, Parent Scope : null 0x7fc0631624f8
+  [0] t-110 (arg) | is Global : 0 | Offset: 232
+  [1] t-109 (arg) | is Global : 0 | Offset: 240
+  [2] t-108 (idt) | is Global : 0 | Offset: 248
+  [3] t-107 (arg) | is Global : 0 | Offset: 296
+  [4] t-106 (arg) | is Global : 0 | Offset: 304
+  [5] t-105 (idt) | is Global : 0 | Offset: 312
+>> Symbol Table for Scope: mixed_control_flow 0x7fc063167c90, Scope ID : 33, Parent Scope : global 0x7fc06310eb60
+  [0] x (int) | is Global : 0 | Offset: 8
+  [1] t-102 (idt) | is Global : 0 | Offset: 16
+  [2] t-101 (idt) | is Global : 0 | Offset: 24
+  [3] t-100 (idt) | is Global : 0 | Offset: 32
+>> Symbol Table for Scope: null 0x7fc06316a650, Scope ID : 34, Parent Scope : mixed_control_flow 0x7fc063167c90
+  [0] t-99 (idt) | is Global : 0 | Offset: 40
+  [1] t-98 (idt) | is Global : 0 | Offset: 48
+  [2] t-97 (idt) | is Global : 0 | Offset: 56
+  [3] t-71 (idt) | is Global : 0 | Offset: 64
+>> Symbol Table for Scope: null 0x7fc06316ce48, Scope ID : 35, Parent Scope : null 0x7fc06316a650
+  [0] t-96 (idt) | is Global : 0 | Offset: 72
+  [1] t-95 (idt) | is Global : 0 | Offset: 80
+  [2] t-94 (idt) | is Global : 0 | Offset: 88
+>> Symbol Table for Scope: null 0x7fc06316f640, Scope ID : 36, Parent Scope : null 0x7fc06316ce48
+  [0] t-93 (arg) | is Global : 0 | Offset: 136
+  [1] t-92 (arg) | is Global : 0 | Offset: 144
+  [2] t-91 (idt) | is Global : 0 | Offset: 152
+>> Symbol Table for Scope: null 0x7fc063171e48, Scope ID : 37, Parent Scope : null 0x7fc06316ce48
+  [0] t-90 (arg) | is Global : 0 | Offset: 200
+  [1] t-89 (arg) | is Global : 0 | Offset: 208
+  [2] t-88 (idt) | is Global : 0 | Offset: 216
+>> Symbol Table for Scope: null 0x7fc063174690, Scope ID : 38, Parent Scope : null 0x7fc06316a650
+  [0] y (int) | is Global : 0 | Offset: 224
+  [1] t-87 (idt) | is Global : 0 | Offset: 232
+  [2] t-86 (idt) | is Global : 0 | Offset: 240
+  [3] t-85 (idt) | is Global : 0 | Offset: 248
+>> Symbol Table for Scope: null 0x7fc063177010, Scope ID : 39, Parent Scope : null 0x7fc063174690
+  [0] t-84 (idt) | is Global : 0 | Offset: 256
+  [1] t-83 (idt) | is Global : 0 | Offset: 264
+  [2] t-82 (idt) | is Global : 0 | Offset: 272
+  [3] t-72 (idt) | is Global : 0 | Offset: 280
+>> Symbol Table for Scope: null 0x7fc063179468, Scope ID : 40, Parent Scope : null 0x7fc063177010
+  [0] t-81 (arg) | is Global : 0 | Offset: 328
+  [1] t-80 (arg) | is Global : 0 | Offset: 336
+  [2] t-79 (idt) | is Global : 0 | Offset: 344
+  [3] t-78 (arg) | is Global : 0 | Offset: 392
+  [4] t-77 (arg) | is Global : 0 | Offset: 400
+  [5] t-76 (idt) | is Global : 0 | Offset: 408
+  [6] t-75 (arg) | is Global : 0 | Offset: 456
+  [7] t-74 (arg) | is Global : 0 | Offset: 464
+  [8] t-73 (idt) | is Global : 0 | Offset: 472
+>> Symbol Table for Scope: while_if_switch 0x7fc06317cc88, Scope ID : 41, Parent Scope : global 0x7fc06310eb60
+  [0] i (int) | is Global : 0 | Offset: 8
+  [1] t-70 (idt) | is Global : 0 | Offset: 16
+  [2] t-69 (idt) | is Global : 0 | Offset: 24
+  [3] t-68 (idt) | is Global : 0 | Offset: 32
+>> Symbol Table for Scope: null 0x7fc06317f648, Scope ID : 42, Parent Scope : while_if_switch 0x7fc06317cc88
+  [0] t-67 (idt) | is Global : 0 | Offset: 40
+  [1] t-66 (idt) | is Global : 0 | Offset: 48
+  [2] t-65 (idt) | is Global : 0 | Offset: 56
+  [3] t-64 (idt) | is Global : 0 | Offset: 64
+  [4] t-63 (idt) | is Global : 0 | Offset: 72
+  [5] t-62 (idt) | is Global : 0 | Offset: 80
+  [6] t-50 (idt) | is Global : 0 | Offset: 88
+>> Symbol Table for Scope: null 0x7fc063182160, Scope ID : 43, Parent Scope : null 0x7fc06317f648
+  [0] t-61 (arg) | is Global : 0 | Offset: 144
+  [1] t-60 (arg) | is Global : 0 | Offset: 152
+  [2] t-59 (idt) | is Global : 0 | Offset: 160
+>> Symbol Table for Scope: null 0x7fc063184968, Scope ID : 44, Parent Scope : null 0x7fc06317f648
+  [0] t-58 (idt) | is Global : 0 | Offset: 168
+  [1] t-57 (idt) | is Global : 0 | Offset: 176
+>> Symbol Table for Scope: null 0x7fc063186dc0, Scope ID : 45, Parent Scope : null 0x7fc063184968
+  [0] t-56 (arg) | is Global : 0 | Offset: 232
+  [1] t-55 (arg) | is Global : 0 | Offset: 240
+  [2] t-54 (idt) | is Global : 0 | Offset: 248
+  [3] t-53 (arg) | is Global : 0 | Offset: 304
+  [4] t-52 (arg) | is Global : 0 | Offset: 312
+  [5] t-51 (idt) | is Global : 0 | Offset: 320
+>> Symbol Table for Scope: while_switch_if 0x7fc063189f10, Scope ID : 46, Parent Scope : global 0x7fc06310eb60
+  [0] i (int) | is Global : 0 | Offset: 8
+  [1] t-49 (idt) | is Global : 0 | Offset: 16
+  [2] t-48 (idt) | is Global : 0 | Offset: 24
+  [3] t-47 (idt) | is Global : 0 | Offset: 32
+>> Symbol Table for Scope: null 0x7fc06318c8d0, Scope ID : 47, Parent Scope : while_switch_if 0x7fc063189f10
+  [0] t-46 (idt) | is Global : 0 | Offset: 40
+  [1] t-45 (idt) | is Global : 0 | Offset: 48
+  [2] t-44 (idt) | is Global : 0 | Offset: 56
+  [3] t-16 (idt) | is Global : 0 | Offset: 64
+>> Symbol Table for Scope: null 0x7fc06318ed28, Scope ID : 48, Parent Scope : null 0x7fc06318c8d0
+  [0] t-43 (idt) | is Global : 0 | Offset: 72
+  [1] t-42 (idt) | is Global : 0 | Offset: 80
+  [2] t-41 (idt) | is Global : 0 | Offset: 88
+  [3] t-40 (idt) | is Global : 0 | Offset: 96
+  [4] t-39 (idt) | is Global : 0 | Offset: 104
+  [5] t-38 (idt) | is Global : 0 | Offset: 112
+  [6] t-34 (idt) | is Global : 0 | Offset: 120
+  [7] t-33 (idt) | is Global : 0 | Offset: 128
+  [8] t-32 (idt) | is Global : 0 | Offset: 136
+  [9] t-31 (idt) | is Global : 0 | Offset: 144
+  [10] t-30 (idt) | is Global : 0 | Offset: 152
+  [11] t-29 (idt) | is Global : 0 | Offset: 160
+  [12] t-25 (idt) | is Global : 0 | Offset: 168
+  [13] t-24 (idt) | is Global : 0 | Offset: 176
+  [14] t-23 (idt) | is Global : 0 | Offset: 184
+  [15] t-22 (idt) | is Global : 0 | Offset: 192
+  [16] t-21 (idt) | is Global : 0 | Offset: 200
+  [17] t-20 (idt) | is Global : 0 | Offset: 208
+>> Symbol Table for Scope: null 0x7fc063191c98, Scope ID : 49, Parent Scope : null 0x7fc06318ed28
+  [0] t-37 (arg) | is Global : 0 | Offset: 256
+  [1] t-36 (arg) | is Global : 0 | Offset: 264
+  [2] t-35 (idt) | is Global : 0 | Offset: 272
+>> Symbol Table for Scope: null 0x7fc063194c40, Scope ID : 50, Parent Scope : null 0x7fc06318ed28
+  [0] t-28 (arg) | is Global : 0 | Offset: 320
+  [1] t-27 (arg) | is Global : 0 | Offset: 328
+  [2] t-26 (idt) | is Global : 0 | Offset: 336
+>> Symbol Table for Scope: null 0x7fc063197be8, Scope ID : 51, Parent Scope : null 0x7fc06318ed28
+  [0] t-19 (arg) | is Global : 0 | Offset: 384
+  [1] t-18 (arg) | is Global : 0 | Offset: 392
+  [2] t-17 (idt) | is Global : 0 | Offset: 400
+>> Symbol Table for Scope: while_if_while_switch 0x7fc06319a6a0, Scope ID : 52, Parent Scope : global 0x7fc06310eb60
+  [0] i (int) | is Global : 0 | Offset: 8
+  [1] t-15 (idt) | is Global : 0 | Offset: 16
+  [2] t-14 (idt) | is Global : 0 | Offset: 24
+  [3] t-13 (idt) | is Global : 0 | Offset: 32
+>> Symbol Table for Scope: null 0x7fc06319d060, Scope ID : 53, Parent Scope : while_if_while_switch 0x7fc06319a6a0
+  [0] t-12 (idt) | is Global : 0 | Offset: 40
+  [1] t-11 (idt) | is Global : 0 | Offset: 48
+  [2] t-10 (idt) | is Global : 0 | Offset: 56
+  [3] t-9 (idt) | is Global : 0 | Offset: 64
+  [4] t-8 (idt) | is Global : 0 | Offset: 72
+  [5] t-7 (idt) | is Global : 0 | Offset: 80
+  [6] t9 (idt) | is Global : 0 | Offset: 88
+>> Symbol Table for Scope: null 0x7fc06319fb78, Scope ID : 54, Parent Scope : null 0x7fc06319d060
+  [0] j (int) | is Global : 0 | Offset: 96
+  [1] t-6 (idt) | is Global : 0 | Offset: 104
+  [2] t-5 (idt) | is Global : 0 | Offset: 112
+  [3] t-4 (idt) | is Global : 0 | Offset: 120
+>> Symbol Table for Scope: null 0x7fc0631a24f8, Scope ID : 55, Parent Scope : null 0x7fc06319fb78
+  [0] t-3 (idt) | is Global : 0 | Offset: 128
+  [1] t-2 (idt) | is Global : 0 | Offset: 136
+  [2] t5 (idt) | is Global : 0 | Offset: 144
+>> Symbol Table for Scope: null 0x7fc0631a4950, Scope ID : 56, Parent Scope : null 0x7fc0631a24f8
+  [0] t-1 (arg) | is Global : 0 | Offset: 208
+  [1] t0 (arg) | is Global : 0 | Offset: 216
+  [2] t1 (idt) | is Global : 0 | Offset: 224
+  [3] t2 (arg) | is Global : 0 | Offset: 288
+  [4] t3 (arg) | is Global : 0 | Offset: 296
+  [5] t4 (idt) | is Global : 0 | Offset: 304
+>> Symbol Table for Scope: null 0x7fc0631a7aa0, Scope ID : 57, Parent Scope : null 0x7fc06319d060
+  [0] t6 (arg) | is Global : 0 | Offset: 360
+  [1] t7 (arg) | is Global : 0 | Offset: 368
+  [2] t8 (idt) | is Global : 0 | Offset: 376
+>> Symbol Table for Scope: print_control_flow 0x7fc0631aa498, Scope ID : 58, Parent Scope : global 0x7fc06310eb60
+  [0] t10 (idt) | is Global : 0 | Offset: 8
+  [1] t11 (arg) | is Global : 0 | Offset: 24
+  [2] t12 (idt) | is Global : 0 | Offset: 32
+  [3] t13 (idt) | is Global : 0 | Offset: 40
+  [4] t14 (arg) | is Global : 0 | Offset: 56
+  [5] t15 (idt) | is Global : 0 | Offset: 64
+  [6] t16 (idt) | is Global : 0 | Offset: 72
+  [7] t17 (arg) | is Global : 0 | Offset: 88
+  [8] t18 (idt) | is Global : 0 | Offset: 96
+  [9] t19 (idt) | is Global : 0 | Offset: 104
+  [10] t20 (arg) | is Global : 0 | Offset: 120
+  [11] t21 (idt) | is Global : 0 | Offset: 128
+  [12] t22 (idt) | is Global : 0 | Offset: 136
+  [13] t23 (arg) | is Global : 0 | Offset: 152
+  [14] t24 (idt) | is Global : 0 | Offset: 160
+  [15] t25 (idt) | is Global : 0 | Offset: 168
+  [16] t26 (arg) | is Global : 0 | Offset: 184
+  [17] t27 (idt) | is Global : 0 | Offset: 192
+  [18] t28 (idt) | is Global : 0 | Offset: 200
+  [19] t29 (arg) | is Global : 0 | Offset: 216
+  [20] t30 (idt) | is Global : 0 | Offset: 224
+  [21] t31 (idt) | is Global : 0 | Offset: 232
+  [22] t32 (arg) | is Global : 0 | Offset: 248
+  [23] t33 (idt) | is Global : 0 | Offset: 256
+  [24] t34 (idt) | is Global : 0 | Offset: 264
+  [25] t35 (arg) | is Global : 0 | Offset: 280
+  [26] t36 (idt) | is Global : 0 | Offset: 288
+  [27] t37 (idt) | is Global : 0 | Offset: 296
+  [28] t38 (arg) | is Global : 0 | Offset: 312
+  [29] t39 (idt) | is Global : 0 | Offset: 320
+>> Symbol Table for Scope: main 0x7fc0631ae9d0, Scope ID : 59, Parent Scope : global 0x7fc06310eb60
+  [0] t40 (idt) | is Global : 0 | Offset: 8

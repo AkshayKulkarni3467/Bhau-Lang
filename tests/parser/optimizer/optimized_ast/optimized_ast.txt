@@ -1,0 +1,1347 @@
+(null)└── PROGRAM
+(null)    ├── EXTERN
+(null)    │   └── IDENTIFIER: printf [global#1]
+(null)    ├── FUNCTION: deep_nesting
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [deep_nesting#2]
+(null)    │       │   └── INT_LITERAL: 1
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_LESSEQ
+(null)    │           │   ├── IDENTIFIER: i [deep_nesting#2]
+(null)    │           │   └── INT_LITERAL: 3
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── IF_ELSE
+(null)    │               │   ├── CONDITION
+(null)    │               │   ├── BINOP: BL_ISEQUALCOND
+(null)    │               │   │   ├── BINOP: BL_MODBINOP
+(null)    │               │   │   │   ├── IDENTIFIER: i [(null)#3]
+(null)    │               │   │   │   └── INT_LITERAL: 2
+(null)    │               │   │   └── INT_LITERAL: 0
+(null)    │               │   ├── IF BLOCK
+(null)    │               │   ├── BLOCK
+(null)    │               │   │   ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   │   │   ├── IDENTIFIER: j [(null)#4]
+(null)    │               │   │   │   └── IDENTIFIER: i [(null)#4]
+(null)    │               │   │   └── WHILE
+(null)    │               │   │       ├── EXPR
+(null)    │               │   │       ├── BINOP: BL_GRTTHAN
+(null)    │               │   │       │   ├── IDENTIFIER: j [(null)#4]
+(null)    │               │   │       │   └── INT_LITERAL: 0
+(null)    │               │   │       └── BLOCK
+(null)    │               │   │       └── BLOCK
+(null)    │               │   │           ├── SWITCH
+(null)    │               │   │           │   ├── EXPR
+(null)    │               │   │           │   ├── IDENTIFIER: j [(null)#6]
+(null)    │               │   │           │   ├── CASES
+(null)    │               │   │           │   ├── CASE
+(null)    │               │   │           │   │   ├── VALUE
+(null)    │               │   │           │   │   ├── INT_LITERAL: 1
+(null)    │               │   │           │   │   ├── FUNCTION CALL: printf
+(null)    │               │   │           │   │   │   ├── STRING_LITERAL: "From deep_nesting, choice = 1, when i = %d, j = %d\n"
+(null)    │               │   │           │   │   │   ├── IDENTIFIER: i [(null)#6]
+(null)    │               │   │           │   │   │   └── IDENTIFIER: j [(null)#6]
+(null)    │               │   │           │   │   └── BREAK
+(null)    │               │   │           │   └── CASE
+(null)    │               │   │           │       ├── VALUE
+(null)    │               │   │           │       ├── INT_LITERAL: 2
+(null)    │               │   │           │       ├── FUNCTION CALL: printf
+(null)    │               │   │           │       │   ├── STRING_LITERAL: "From deep_nesting, choice = 2, when i = %d,j = %d\n"
+(null)    │               │   │           │       │   ├── IDENTIFIER: i [(null)#6]
+(null)    │               │   │           │       │   └── IDENTIFIER: j [(null)#6]
+(null)    │               │   │           │       └── BREAK
+(null)    │               │   │           │   └── DEFAULT
+(null)    │               │   │           │   └── DEFAULT
+(null)    │               │   │           │       ├── FUNCTION CALL: printf
+(null)    │               │   │           │       │   ├── STRING_LITERAL: "From deep_nesting, choice = default, when i = %d\n"
+(null)    │               │   │           │       │   └── IDENTIFIER: i [(null)#6]
+(null)    │               │   │           │       └── BREAK
+(null)    │               │   │           └── UNARYOP : BL_DEC
+(null)    │               │   │               └── IDENTIFIER: j [(null)#5]
+(null)    │               │   └── ELSE BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       └── FUNCTION CALL: printf
+(null)    │               │           ├── STRING_LITERAL: "From deep_nesting, else block when i = %d\n"
+(null)    │               │           └── IDENTIFIER: i [(null)#7]
+(null)    │               └── UNARYOP : BL_INC
+(null)    │                   └── IDENTIFIER: i [(null)#3]
+(null)    ├── FUNCTION: while_if_while
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: x [while_if_while#8]
+(null)    │       │   └── INT_LITERAL: 1
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_LESSEQ
+(null)    │           │   ├── IDENTIFIER: x [while_if_while#8]
+(null)    │           │   └── INT_LITERAL: 2
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── IF_ELSE
+(null)    │               │   ├── CONDITION
+(null)    │               │   ├── BINOP: BL_ISEQUALCOND
+(null)    │               │   │   ├── IDENTIFIER: x [(null)#9]
+(null)    │               │   │   └── INT_LITERAL: 1
+(null)    │               │   ├── IF BLOCK
+(null)    │               │   ├── BLOCK
+(null)    │               │   │   ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   │   │   ├── IDENTIFIER: i [(null)#10]
+(null)    │               │   │   │   └── INT_LITERAL: 0
+(null)    │               │   │   └── WHILE
+(null)    │               │   │       ├── EXPR
+(null)    │               │   │       ├── BINOP: BL_LESSTHAN
+(null)    │               │   │       │   ├── IDENTIFIER: i [(null)#10]
+(null)    │               │   │       │   └── INT_LITERAL: 3
+(null)    │               │   │       └── BLOCK
+(null)    │               │   │       └── BLOCK
+(null)    │               │   │           ├── SWITCH
+(null)    │               │   │           │   ├── EXPR
+(null)    │               │   │           │   ├── IDENTIFIER: i [(null)#12]
+(null)    │               │   │           │   ├── CASES
+(null)    │               │   │           │   ├── CASE
+(null)    │               │   │           │   │   ├── VALUE
+(null)    │               │   │           │   │   ├── INT_LITERAL: 0
+(null)    │               │   │           │   │   ├── FUNCTION CALL: printf
+(null)    │               │   │           │   │   │   ├── STRING_LITERAL: "From while_if_while, i Value : %d\n"
+(null)    │               │   │           │   │   │   └── IDENTIFIER: i [(null)#12]
+(null)    │               │   │           │   │   └── BREAK
+(null)    │               │   │           │   ├── CASE
+(null)    │               │   │           │   │   ├── VALUE
+(null)    │               │   │           │   │   ├── INT_LITERAL: 1
+(null)    │               │   │           │   │   ├── FUNCTION CALL: printf
+(null)    │               │   │           │   │   │   ├── STRING_LITERAL: "From while_if_while, i Value : %d\n"
+(null)    │               │   │           │   │   │   └── IDENTIFIER: i [(null)#12]
+(null)    │               │   │           │   │   └── BREAK
+(null)    │               │   │           │   └── CASE
+(null)    │               │   │           │       ├── VALUE
+(null)    │               │   │           │       ├── INT_LITERAL: 2
+(null)    │               │   │           │       ├── FUNCTION CALL: printf
+(null)    │               │   │           │       │   ├── STRING_LITERAL: "From while_if_while, i Value : %d\n"
+(null)    │               │   │           │       │   └── IDENTIFIER: i [(null)#12]
+(null)    │               │   │           │       └── BREAK
+(null)    │               │   │           │   └── DEFAULT
+(null)    │               │   │           │   └── (null node)
+(null)    │               │   │           └── UNARYOP : BL_INC
+(null)    │               │   │               └── IDENTIFIER: i [(null)#11]
+(null)    │               │   └── ELSE BLOCK
+(null)    │               │   └── (null node)
+(null)    │               └── UNARYOP : BL_INC
+(null)    │                   └── IDENTIFIER: x [(null)#9]
+(null)    ├── FUNCTION: if_in_switch
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [if_in_switch#13]
+(null)    │       │   └── INT_LITERAL: 0
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_LESSTHAN
+(null)    │           │   ├── IDENTIFIER: i [if_in_switch#13]
+(null)    │           │   └── INT_LITERAL: 3
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: val [(null)#14]
+(null)    │               │   └── BINOP: BL_ADDBINOP
+(null)    │               │       ├── IDENTIFIER: i [(null)#14]
+(null)    │               │       └── INT_LITERAL: 1
+(null)    │               ├── SWITCH
+(null)    │               │   ├── EXPR
+(null)    │               │   ├── IDENTIFIER: val [(null)#15]
+(null)    │               │   ├── CASES
+(null)    │               │   ├── CASE
+(null)    │               │   │   ├── VALUE
+(null)    │               │   │   ├── INT_LITERAL: 1
+(null)    │               │   │   ├── IF_ELSE
+(null)    │               │   │   │   ├── CONDITION
+(null)    │               │   │   │   ├── BINOP: BL_ISEQUALCOND
+(null)    │               │   │   │   │   ├── BINOP: BL_MODBINOP
+(null)    │               │   │   │   │   │   ├── IDENTIFIER: val [(null)#15]
+(null)    │               │   │   │   │   │   └── INT_LITERAL: 2
+(null)    │               │   │   │   │   └── INT_LITERAL: 1
+(null)    │               │   │   │   ├── IF BLOCK
+(null)    │               │   │   │   ├── BLOCK
+(null)    │               │   │   │   │   └── FUNCTION CALL: printf
+(null)    │               │   │   │   │       ├── STRING_LITERAL: "From if_in_switch, i Value : %d\n"
+(null)    │               │   │   │   │       └── IDENTIFIER: i [(null)#16]
+(null)    │               │   │   │   └── ELSE BLOCK
+(null)    │               │   │   │   └── (null node)
+(null)    │               │   │   └── BREAK
+(null)    │               │   ├── CASE
+(null)    │               │   │   ├── VALUE
+(null)    │               │   │   ├── INT_LITERAL: 2
+(null)    │               │   │   ├── WHILE
+(null)    │               │   │   │   ├── EXPR
+(null)    │               │   │   │   ├── BINOP: BL_GRTTHAN
+(null)    │               │   │   │   │   ├── IDENTIFIER: val [(null)#15]
+(null)    │               │   │   │   │   └── INT_LITERAL: 0
+(null)    │               │   │   │   └── BLOCK
+(null)    │               │   │   │   └── BLOCK
+(null)    │               │   │   │       ├── FUNCTION CALL: printf
+(null)    │               │   │   │       │   ├── STRING_LITERAL: "From if_in_switch, i Value : %d\n"
+(null)    │               │   │   │       │   └── IDENTIFIER: i [(null)#17]
+(null)    │               │   │   │       └── ASSIGN BL_SUBEQ
+(null)    │               │   │   │           ├── IDENTIFIER: val [(null)#17]
+(null)    │               │   │   │           └── INT_LITERAL: 1
+(null)    │               │   │   └── BREAK
+(null)    │               │   └── CASE
+(null)    │               │       ├── VALUE
+(null)    │               │       ├── INT_LITERAL: 3
+(null)    │               │       ├── FUNCTION CALL: printf
+(null)    │               │       │   ├── STRING_LITERAL: "From if_in_switch, i Value : %d\n"
+(null)    │               │       │   └── IDENTIFIER: i [(null)#15]
+(null)    │               │       └── BREAK
+(null)    │               │   └── DEFAULT
+(null)    │               │   └── (null node)
+(null)    │               └── UNARYOP : BL_INC
+(null)    │                   └── IDENTIFIER: i [(null)#14]
+(null)    ├── FUNCTION: switch_in_if
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: a [switch_in_if#18]
+(null)    │       │   └── INT_LITERAL: 3
+(null)    │       └── IF_ELSE
+(null)    │           ├── CONDITION
+(null)    │           ├── BINOP: BL_GRTTHAN
+(null)    │           │   ├── IDENTIFIER: a [switch_in_if#18]
+(null)    │           │   └── INT_LITERAL: 0
+(null)    │           ├── IF BLOCK
+(null)    │           ├── BLOCK
+(null)    │           │   └── WHILE
+(null)    │           │       ├── EXPR
+(null)    │           │       ├── BINOP: BL_GRTTHAN
+(null)    │           │       │   ├── IDENTIFIER: a [(null)#19]
+(null)    │           │       │   └── INT_LITERAL: 0
+(null)    │           │       └── BLOCK
+(null)    │           │       └── BLOCK
+(null)    │           │           ├── SWITCH
+(null)    │           │           │   ├── EXPR
+(null)    │           │           │   ├── IDENTIFIER: a [(null)#21]
+(null)    │           │           │   ├── CASES
+(null)    │           │           │   ├── CASE
+(null)    │           │           │   │   ├── VALUE
+(null)    │           │           │   │   ├── INT_LITERAL: 1
+(null)    │           │           │   │   ├── FUNCTION CALL: printf
+(null)    │           │           │   │   │   ├── STRING_LITERAL: "From switch_in_if, a Value : %d\n"
+(null)    │           │           │   │   │   └── IDENTIFIER: a [(null)#21]
+(null)    │           │           │   │   └── BREAK
+(null)    │           │           │   ├── CASE
+(null)    │           │           │   │   ├── VALUE
+(null)    │           │           │   │   ├── INT_LITERAL: 2
+(null)    │           │           │   │   ├── FUNCTION CALL: printf
+(null)    │           │           │   │   │   ├── STRING_LITERAL: "From switch_in_if, a Value : %d\n"
+(null)    │           │           │   │   │   └── IDENTIFIER: a [(null)#21]
+(null)    │           │           │   │   └── BREAK
+(null)    │           │           │   └── CASE
+(null)    │           │           │       ├── VALUE
+(null)    │           │           │       ├── INT_LITERAL: 3
+(null)    │           │           │       ├── FUNCTION CALL: printf
+(null)    │           │           │       │   ├── STRING_LITERAL: "From switch_in_if, a Value : %d\n"
+(null)    │           │           │       │   └── IDENTIFIER: a [(null)#21]
+(null)    │           │           │       └── BREAK
+(null)    │           │           │   └── DEFAULT
+(null)    │           │           │   └── (null node)
+(null)    │           │           └── UNARYOP : BL_DEC
+(null)    │           │               └── IDENTIFIER: a [(null)#20]
+(null)    │           └── ELSE BLOCK
+(null)    │           └── BLOCK
+(null)    │               └── FUNCTION CALL: printf
+(null)    │                   ├── STRING_LITERAL: "From switch_in_if, a Value : %d\n"
+(null)    │                   └── IDENTIFIER: a [(null)#22]
+(null)    ├── FUNCTION: reuse_loop_counters
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [reuse_loop_counters#23]
+(null)    │       │   └── INT_LITERAL: 1
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_LESSEQ
+(null)    │           │   ├── IDENTIFIER: i [reuse_loop_counters#23]
+(null)    │           │   └── INT_LITERAL: 2
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   ├── IDENTIFIER: k [(null)#24]
+(null)    │               │   └── BINOP: BL_MULTBINOP
+(null)    │               │       ├── IDENTIFIER: i [(null)#24]
+(null)    │               │       └── INT_LITERAL: 2
+(null)    │               ├── WHILE
+(null)    │               │   ├── EXPR
+(null)    │               │   ├── BINOP: BL_GRTTHAN
+(null)    │               │   │   ├── IDENTIFIER: k [(null)#24]
+(null)    │               │   │   └── INT_LITERAL: 0
+(null)    │               │   └── BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       ├── IF_ELSE
+(null)    │               │       │   ├── CONDITION
+(null)    │               │       │   ├── BINOP: BL_ISEQUALCOND
+(null)    │               │       │   │   ├── BINOP: BL_MODBINOP
+(null)    │               │       │   │   │   ├── IDENTIFIER: k [(null)#25]
+(null)    │               │       │   │   │   └── INT_LITERAL: 2
+(null)    │               │       │   │   └── INT_LITERAL: 0
+(null)    │               │       │   ├── IF BLOCK
+(null)    │               │       │   ├── BLOCK
+(null)    │               │       │   │   └── FUNCTION CALL: printf
+(null)    │               │       │   │       ├── STRING_LITERAL: "From reuse_loop_counters, k Value : %d\n"
+(null)    │               │       │   │       └── IDENTIFIER: k [(null)#26]
+(null)    │               │       │   └── ELSE BLOCK
+(null)    │               │       │   └── BLOCK
+(null)    │               │       │       └── FUNCTION CALL: printf
+(null)    │               │       │           ├── STRING_LITERAL: "From reuse_loop_counters, k Value : %d\n"
+(null)    │               │       │           └── BINOP: BL_MULTBINOP
+(null)    │               │       │               ├── IDENTIFIER: k [(null)#27]
+(null)    │               │       │               └── INT_LITERAL: 10
+(null)    │               │       └── UNARYOP : BL_DEC
+(null)    │               │           └── IDENTIFIER: k [(null)#25]
+(null)    │               └── UNARYOP : BL_INC
+(null)    │                   └── IDENTIFIER: i [(null)#24]
+(null)    ├── FUNCTION: recursively_growing_blocks
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [recursively_growing_blocks#28]
+(null)    │       │   └── INT_LITERAL: 0
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_LESSTHAN
+(null)    │           │   ├── IDENTIFIER: i [recursively_growing_blocks#28]
+(null)    │           │   └── INT_LITERAL: 3
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── IF_ELSE
+(null)    │               │   ├── CONDITION
+(null)    │               │   ├── BINOP: BL_ISEQUALCOND
+(null)    │               │   │   ├── IDENTIFIER: i [(null)#29]
+(null)    │               │   │   └── INT_LITERAL: 1
+(null)    │               │   ├── IF BLOCK
+(null)    │               │   ├── BLOCK
+(null)    │               │   │   ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   │   │   ├── IDENTIFIER: j [(null)#30]
+(null)    │               │   │   │   └── INT_LITERAL: 0
+(null)    │               │   │   └── WHILE
+(null)    │               │   │       ├── EXPR
+(null)    │               │   │       ├── BINOP: BL_LESSEQ
+(null)    │               │   │       │   ├── IDENTIFIER: j [(null)#30]
+(null)    │               │   │       │   └── INT_LITERAL: 1
+(null)    │               │   │       └── BLOCK
+(null)    │               │   │       └── BLOCK
+(null)    │               │   │           ├── SWITCH
+(null)    │               │   │           │   ├── EXPR
+(null)    │               │   │           │   ├── IDENTIFIER: j [(null)#32]
+(null)    │               │   │           │   ├── CASES
+(null)    │               │   │           │   ├── CASE
+(null)    │               │   │           │   │   ├── VALUE
+(null)    │               │   │           │   │   ├── INT_LITERAL: 0
+(null)    │               │   │           │   │   ├── FUNCTION CALL: printf
+(null)    │               │   │           │   │   │   ├── STRING_LITERAL: "From growing_blocks, i Value : %d\n"
+(null)    │               │   │           │   │   │   └── IDENTIFIER: i [(null)#32]
+(null)    │               │   │           │   │   └── BREAK
+(null)    │               │   │           │   └── CASE
+(null)    │               │   │           │       ├── VALUE
+(null)    │               │   │           │       ├── INT_LITERAL: 1
+(null)    │               │   │           │       ├── FUNCTION CALL: printf
+(null)    │               │   │           │       │   ├── STRING_LITERAL: "From growing_blocks, i Value : %d\n"
+(null)    │               │   │           │       │   └── IDENTIFIER: i [(null)#32]
+(null)    │               │   │           │       └── BREAK
+(null)    │               │   │           │   └── DEFAULT
+(null)    │               │   │           │   └── (null node)
+(null)    │               │   │           └── UNARYOP : BL_INC
+(null)    │               │   │               └── IDENTIFIER: j [(null)#31]
+(null)    │               │   └── ELSE BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       └── FUNCTION CALL: printf
+(null)    │               │           ├── STRING_LITERAL: "From growing_blocks, i Value : %d\n"
+(null)    │               │           └── IDENTIFIER: i [(null)#33]
+(null)    │               └── UNARYOP : BL_INC
+(null)    │                   └── IDENTIFIER: i [(null)#29]
+(null)    ├── FUNCTION: mixed_control_flow
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: x [mixed_control_flow#34]
+(null)    │       │   └── INT_LITERAL: 1
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_LESSEQ
+(null)    │           │   ├── IDENTIFIER: x [mixed_control_flow#34]
+(null)    │           │   └── INT_LITERAL: 3
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── IF_ELSE
+(null)    │               │   ├── CONDITION
+(null)    │               │   ├── BINOP: BL_ISEQUALCOND
+(null)    │               │   │   ├── IDENTIFIER: x [(null)#35]
+(null)    │               │   │   └── INT_LITERAL: 2
+(null)    │               │   ├── IF BLOCK
+(null)    │               │   ├── BLOCK
+(null)    │               │   │   ├── ASSIGN DECL BL_EQUAL
+(null)    │               │   │   │   ├── IDENTIFIER: y [(null)#36]
+(null)    │               │   │   │   └── INT_LITERAL: 3
+(null)    │               │   │   └── WHILE
+(null)    │               │   │       ├── EXPR
+(null)    │               │   │       ├── BINOP: BL_GRTTHAN
+(null)    │               │   │       │   ├── IDENTIFIER: y [(null)#36]
+(null)    │               │   │       │   └── INT_LITERAL: 0
+(null)    │               │   │       └── BLOCK
+(null)    │               │   │       └── BLOCK
+(null)    │               │   │           ├── SWITCH
+(null)    │               │   │           │   ├── EXPR
+(null)    │               │   │           │   ├── IDENTIFIER: y [(null)#38]
+(null)    │               │   │           │   ├── CASES
+(null)    │               │   │           │   ├── CASE
+(null)    │               │   │           │   │   ├── VALUE
+(null)    │               │   │           │   │   ├── INT_LITERAL: 1
+(null)    │               │   │           │   │   ├── FUNCTION CALL: printf
+(null)    │               │   │           │   │   │   ├── STRING_LITERAL: "From mixed_control_flow, y Value : %d\n"
+(null)    │               │   │           │   │   │   └── IDENTIFIER: y [(null)#38]
+(null)    │               │   │           │   │   └── BREAK
+(null)    │               │   │           │   ├── CASE
+(null)    │               │   │           │   │   ├── VALUE
+(null)    │               │   │           │   │   ├── INT_LITERAL: 2
+(null)    │               │   │           │   │   ├── FUNCTION CALL: printf
+(null)    │               │   │           │   │   │   ├── STRING_LITERAL: "From mixed_control_flow, y Value : %d\n"
+(null)    │               │   │           │   │   │   └── IDENTIFIER: y [(null)#38]
+(null)    │               │   │           │   │   └── BREAK
+(null)    │               │   │           │   └── CASE
+(null)    │               │   │           │       ├── VALUE
+(null)    │               │   │           │       ├── INT_LITERAL: 3
+(null)    │               │   │           │       ├── FUNCTION CALL: printf
+(null)    │               │   │           │       │   ├── STRING_LITERAL: "From mixed_control_flow, y Value : %d\n"
+(null)    │               │   │           │       │   └── IDENTIFIER: y [(null)#38]
+(null)    │               │   │           │       └── BREAK
+(null)    │               │   │           │   └── DEFAULT
+(null)    │               │   │           │   └── (null node)
+(null)    │               │   │           └── UNARYOP : BL_DEC
+(null)    │               │   │               └── IDENTIFIER: y [(null)#37]
+(null)    │               │   └── ELSE BLOCK
+(null)    │               │   └── IF_ELSE
+(null)    │               │       ├── CONDITION
+(null)    │               │       ├── BINOP: BL_ISEQUALCOND
+(null)    │               │       │   ├── IDENTIFIER: x [(null)#35]
+(null)    │               │       │   └── INT_LITERAL: 1
+(null)    │               │       ├── IF BLOCK
+(null)    │               │       ├── BLOCK
+(null)    │               │       │   └── FUNCTION CALL: printf
+(null)    │               │       │       ├── STRING_LITERAL: "From mixed_control_flow, x Value : %d\n"
+(null)    │               │       │       └── IDENTIFIER: x [(null)#39]
+(null)    │               │       └── ELSE BLOCK
+(null)    │               │       └── BLOCK
+(null)    │               │           └── FUNCTION CALL: printf
+(null)    │               │               ├── STRING_LITERAL: "From mixed_control_flow, x Value : %d\n"
+(null)    │               │               └── IDENTIFIER: x [(null)#40]
+(null)    │               └── UNARYOP : BL_INC
+(null)    │                   └── IDENTIFIER: x [(null)#35]
+(null)    ├── FUNCTION: while_if_switch
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [while_if_switch#41]
+(null)    │       │   └── INT_LITERAL: 0
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_LESSTHAN
+(null)    │           │   ├── IDENTIFIER: i [while_if_switch#41]
+(null)    │           │   └── INT_LITERAL: 4
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── IF_ELSE
+(null)    │               │   ├── CONDITION
+(null)    │               │   ├── BINOP: BL_ISEQUALCOND
+(null)    │               │   │   ├── BINOP: BL_MODBINOP
+(null)    │               │   │   │   ├── IDENTIFIER: i [(null)#42]
+(null)    │               │   │   │   └── INT_LITERAL: 2
+(null)    │               │   │   └── INT_LITERAL: 0
+(null)    │               │   ├── IF BLOCK
+(null)    │               │   ├── BLOCK
+(null)    │               │   │   └── SWITCH
+(null)    │               │   │       ├── EXPR
+(null)    │               │   │       ├── IDENTIFIER: i [(null)#44]
+(null)    │               │   │       ├── CASES
+(null)    │               │   │       ├── CASE
+(null)    │               │   │       │   ├── VALUE
+(null)    │               │   │       │   ├── INT_LITERAL: 0
+(null)    │               │   │       │   ├── FUNCTION CALL: printf
+(null)    │               │   │       │   │   ├── STRING_LITERAL: "From while_if_switch <if>, i Value : %d\n"
+(null)    │               │   │       │   │   └── IDENTIFIER: i [(null)#44]
+(null)    │               │   │       │   └── BREAK
+(null)    │               │   │       └── CASE
+(null)    │               │   │           ├── VALUE
+(null)    │               │   │           ├── INT_LITERAL: 2
+(null)    │               │   │           ├── FUNCTION CALL: printf
+(null)    │               │   │           │   ├── STRING_LITERAL: "From while_if_switch <if>, i Value : %d\n"
+(null)    │               │   │           │   └── IDENTIFIER: i [(null)#44]
+(null)    │               │   │           └── BREAK
+(null)    │               │   │       └── DEFAULT
+(null)    │               │   │       └── (null node)
+(null)    │               │   └── ELSE BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       └── FUNCTION CALL: printf
+(null)    │               │           ├── STRING_LITERAL: "From while_if_switch <else>, i Value : %d\n"
+(null)    │               │           └── IDENTIFIER: i [(null)#45]
+(null)    │               └── UNARYOP : BL_INC
+(null)    │                   └── IDENTIFIER: i [(null)#42]
+(null)    ├── FUNCTION: while_switch_if
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [while_switch_if#46]
+(null)    │       │   └── INT_LITERAL: 1
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_LESSEQ
+(null)    │           │   ├── IDENTIFIER: i [while_switch_if#46]
+(null)    │           │   └── INT_LITERAL: 3
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── SWITCH
+(null)    │               │   ├── EXPR
+(null)    │               │   ├── IDENTIFIER: i [(null)#48]
+(null)    │               │   ├── CASES
+(null)    │               │   ├── CASE
+(null)    │               │   │   ├── VALUE
+(null)    │               │   │   ├── INT_LITERAL: 1
+(null)    │               │   │   ├── IF_ELSE
+(null)    │               │   │   │   ├── CONDITION
+(null)    │               │   │   │   ├── BINOP: BL_ISEQUALCOND
+(null)    │               │   │   │   │   ├── BINOP: BL_MODBINOP
+(null)    │               │   │   │   │   │   ├── IDENTIFIER: i [(null)#48]
+(null)    │               │   │   │   │   │   └── INT_LITERAL: 2
+(null)    │               │   │   │   │   └── INT_LITERAL: 1
+(null)    │               │   │   │   ├── IF BLOCK
+(null)    │               │   │   │   ├── BLOCK
+(null)    │               │   │   │   │   └── FUNCTION CALL: printf
+(null)    │               │   │   │   │       ├── STRING_LITERAL: "From while_switch_if, i Value : %d\n"
+(null)    │               │   │   │   │       └── IDENTIFIER: i [(null)#49]
+(null)    │               │   │   │   └── ELSE BLOCK
+(null)    │               │   │   │   └── (null node)
+(null)    │               │   │   └── BREAK
+(null)    │               │   ├── CASE
+(null)    │               │   │   ├── VALUE
+(null)    │               │   │   ├── INT_LITERAL: 2
+(null)    │               │   │   ├── IF_ELSE
+(null)    │               │   │   │   ├── CONDITION
+(null)    │               │   │   │   ├── BINOP: BL_ISEQUALCOND
+(null)    │               │   │   │   │   ├── BINOP: BL_MULTBINOP
+(null)    │               │   │   │   │   │   ├── IDENTIFIER: i [(null)#48]
+(null)    │               │   │   │   │   │   └── INT_LITERAL: 2
+(null)    │               │   │   │   │   └── INT_LITERAL: 4
+(null)    │               │   │   │   ├── IF BLOCK
+(null)    │               │   │   │   ├── BLOCK
+(null)    │               │   │   │   │   └── FUNCTION CALL: printf
+(null)    │               │   │   │   │       ├── STRING_LITERAL: "From while_switch_if, i Value : %d\n"
+(null)    │               │   │   │   │       └── IDENTIFIER: i [(null)#50]
+(null)    │               │   │   │   └── ELSE BLOCK
+(null)    │               │   │   │   └── (null node)
+(null)    │               │   │   └── BREAK
+(null)    │               │   └── CASE
+(null)    │               │       ├── VALUE
+(null)    │               │       ├── INT_LITERAL: 3
+(null)    │               │       ├── IF_ELSE
+(null)    │               │       │   ├── CONDITION
+(null)    │               │       │   ├── BINOP: BL_GRTTHAN
+(null)    │               │       │   │   ├── BINOP: BL_SUBBINOP
+(null)    │               │       │   │   │   ├── IDENTIFIER: i [(null)#48]
+(null)    │               │       │   │   │   └── INT_LITERAL: 1
+(null)    │               │       │   │   └── INT_LITERAL: 0
+(null)    │               │       │   ├── IF BLOCK
+(null)    │               │       │   ├── BLOCK
+(null)    │               │       │   │   └── FUNCTION CALL: printf
+(null)    │               │       │   │       ├── STRING_LITERAL: "From while_switch_if, i Value : %d\n"
+(null)    │               │       │   │       └── IDENTIFIER: i [(null)#51]
+(null)    │               │       │   └── ELSE BLOCK
+(null)    │               │       │   └── (null node)
+(null)    │               │       └── BREAK
+(null)    │               │   └── DEFAULT
+(null)    │               │   └── (null node)
+(null)    │               └── UNARYOP : BL_INC
+(null)    │                   └── IDENTIFIER: i [(null)#47]
+(null)    ├── FUNCTION: while_if_while_switch
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [while_if_while_switch#52]
+(null)    │       │   └── INT_LITERAL: 1
+(null)    │       └── WHILE
+(null)    │           ├── EXPR
+(null)    │           ├── BINOP: BL_LESSEQ
+(null)    │           │   ├── IDENTIFIER: i [while_if_while_switch#52]
+(null)    │           │   └── INT_LITERAL: 3
+(null)    │           └── BLOCK
+(null)    │           └── BLOCK
+(null)    │               ├── IF_ELSE
+(null)    │               │   ├── CONDITION
+(null)    │               │   ├── BINOP: BL_ISEQUALCOND
+(null)    │               │   │   ├── BINOP: BL_MODBINOP
+(null)    │               │   │   │   ├── IDENTIFIER: i [(null)#53]
+(null)    │               │   │   │   └── INT_LITERAL: 2
+(null)    │               │   │   └── INT_LITERAL: 0
+(null)    │               │   ├── IF BLOCK
+(null)    │               │   ├── BLOCK
+(null)    │               │   │   └── FUNCTION CALL: printf
+(null)    │               │   │       ├── STRING_LITERAL: "From while_if_while_switch <if>, i Value : %d\n"
+(null)    │               │   │       └── IDENTIFIER: i [(null)#54]
+(null)    │               │   └── ELSE BLOCK
+(null)    │               │   └── BLOCK
+(null)    │               │       ├── ASSIGN DECL BL_EQUAL
+(null)    │               │       │   ├── IDENTIFIER: j [(null)#55]
+(null)    │               │       │   └── INT_LITERAL: 0
+(null)    │               │       └── WHILE
+(null)    │               │           ├── EXPR
+(null)    │               │           ├── BINOP: BL_LESSTHAN
+(null)    │               │           │   ├── IDENTIFIER: j [(null)#55]
+(null)    │               │           │   └── INT_LITERAL: 1
+(null)    │               │           └── BLOCK
+(null)    │               │           └── BLOCK
+(null)    │               │               ├── SWITCH
+(null)    │               │               │   ├── EXPR
+(null)    │               │               │   ├── IDENTIFIER: i [(null)#57]
+(null)    │               │               │   ├── CASES
+(null)    │               │               │   ├── CASE
+(null)    │               │               │   │   ├── VALUE
+(null)    │               │               │   │   ├── INT_LITERAL: 1
+(null)    │               │               │   │   ├── FUNCTION CALL: printf
+(null)    │               │               │   │   │   ├── STRING_LITERAL: "From while_if_while_switch <else>, i Value : %d\n"
+(null)    │               │               │   │   │   └── IDENTIFIER: i [(null)#57]
+(null)    │               │               │   │   └── BREAK
+(null)    │               │               │   └── CASE
+(null)    │               │               │       ├── VALUE
+(null)    │               │               │       ├── INT_LITERAL: 3
+(null)    │               │               │       ├── FUNCTION CALL: printf
+(null)    │               │               │       │   ├── STRING_LITERAL: "From while_if_while_switch <else>, i Value : %d\n"
+(null)    │               │               │       │   └── IDENTIFIER: i [(null)#57]
+(null)    │               │               │       └── BREAK
+(null)    │               │               │   └── DEFAULT
+(null)    │               │               │   └── (null node)
+(null)    │               │               └── UNARYOP : BL_INC
+(null)    │               │                   └── IDENTIFIER: j [(null)#56]
+(null)    │               └── UNARYOP : BL_INC
+(null)    │                   └── IDENTIFIER: i [(null)#53]
+(null)    ├── FUNCTION: print_control_flow
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── FUNCTION CALL: deep_nesting
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: while_if_while
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: if_in_switch
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: switch_in_if
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: reuse_loop_counters
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: recursively_growing_blocks
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: mixed_control_flow
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: while_if_switch
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: while_switch_if
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: while_if_while_switch
+(null)    │       └── FUNCTION CALL: printf
+(null)    │           └── STRING_LITERAL: "\n"
+(null)    └── MAIN FUNCTION
+(null)        └── BLOCK
+(null)            └── FUNCTION CALL: print_control_flow
+(null)└── PROGRAM
+(null)    ├── EXTERN
+(null)    │   └── IDENTIFIER: printf [global#1]
+(null)    ├── EXTERN
+(null)    │   └── IDENTIFIER: scanf [global#1]
+(null)    ├── EXTERN
+(null)    │   └── IDENTIFIER: strlen [global#1]
+(null)    ├── ASSIGN DECL BL_EQUAL
+(null)    │   ├── IDENTIFIER: global_1 [global#1]
+(null)    │   └── INT_LITERAL: 100
+(null)    ├── ASSIGN DECL BL_EQUAL
+(null)    │   ├── IDENTIFIER: global_2 [global#1]
+(null)    │   └── INT_LITERAL: 200
+(null)    ├── ASSIGN DECL BL_EQUAL
+(null)    │   ├── IDENTIFIER: app_name [global#1]
+(null)    │   └── STRING_LITERAL: "Stress Tester"
+(null)    ├── FUNCTION: math_ops
+(null)    │   ├── PARAMS
+(null)    │   ├── PARAM: math_ops
+(null)    │   │   └── IDENTIFIER: a [math_ops#2]
+(null)    │   ├── PARAM: math_ops
+(null)    │   │   └── IDENTIFIER: b [math_ops#2]
+(null)    │   └── PARAM: math_ops
+(null)    │       └── IDENTIFIER: c [math_ops#2]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: result [math_ops#2]
+(null)    │       │   └── BINOP: BL_ADDBINOP
+(null)    │       │       ├── BINOP: BL_SUBBINOP
+(null)    │       │       │   ├── BINOP: BL_ADDBINOP
+(null)    │       │       │   │   ├── BINOP: BL_MULTBINOP
+(null)    │       │       │   │   │   ├── IDENTIFIER: a [math_ops#2]
+(null)    │       │       │   │   │   └── IDENTIFIER: b [math_ops#2]
+(null)    │       │       │   │   └── IDENTIFIER: c [math_ops#2]
+(null)    │       │       │   └── BINOP: BL_DIVBINOP
+(null)    │       │       │       ├── IDENTIFIER: a [math_ops#2]
+(null)    │       │       │       └── BINOP: BL_ADDBINOP
+(null)    │       │       │           ├── IDENTIFIER: b [math_ops#2]
+(null)    │       │       │           └── INT_LITERAL: 1
+(null)    │       │       └── BINOP: BL_MULTBINOP
+(null)    │       │           ├── BINOP: BL_ADDBINOP
+(null)    │       │           │   ├── IDENTIFIER: a [math_ops#2]
+(null)    │       │           │   └── IDENTIFIER: b [math_ops#2]
+(null)    │       │           └── BINOP: BL_SUBBINOP
+(null)    │       │               ├── IDENTIFIER: c [math_ops#2]
+(null)    │       │               └── INT_LITERAL: 2
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: alt [math_ops#2]
+(null)    │       │   └── BINOP: BL_ADDBINOP
+(null)    │       │       ├── BINOP: BL_MULTBINOP
+(null)    │       │       │   ├── BINOP: BL_ADDBINOP
+(null)    │       │       │   │   ├── BINOP: BL_SUBBINOP
+(null)    │       │       │   │   │   ├── BINOP: BL_ADDBINOP
+(null)    │       │       │   │   │   │   ├── BINOP: BL_MULTBINOP
+(null)    │       │       │   │   │   │   │   ├── IDENTIFIER: a [math_ops#2]
+(null)    │       │       │   │   │   │   │   └── IDENTIFIER: b [math_ops#2]
+(null)    │       │       │   │   │   │   └── IDENTIFIER: c [math_ops#2]
+(null)    │       │       │   │   │   └── BINOP: BL_DIVBINOP
+(null)    │       │       │   │   │       ├── IDENTIFIER: a [math_ops#2]
+(null)    │       │       │   │   │       └── BINOP: BL_ADDBINOP
+(null)    │       │       │   │   │           ├── IDENTIFIER: b [math_ops#2]
+(null)    │       │       │   │   │           └── INT_LITERAL: 1
+(null)    │       │       │   │   └── BINOP: BL_MULTBINOP
+(null)    │       │       │   │       ├── BINOP: BL_ADDBINOP
+(null)    │       │       │   │       │   ├── IDENTIFIER: a [math_ops#2]
+(null)    │       │       │   │       │   └── IDENTIFIER: b [math_ops#2]
+(null)    │       │       │   │       └── BINOP: BL_SUBBINOP
+(null)    │       │       │   │           ├── IDENTIFIER: c [math_ops#2]
+(null)    │       │       │   │           └── INT_LITERAL: 2
+(null)    │       │       │   └── INT_LITERAL: 2
+(null)    │       │       └── BINOP: BL_MODBINOP
+(null)    │       │           ├── BINOP: BL_ADDBINOP
+(null)    │       │           │   ├── BINOP: BL_SUBBINOP
+(null)    │       │           │   │   ├── IDENTIFIER: a [math_ops#2]
+(null)    │       │           │   │   └── IDENTIFIER: b [math_ops#2]
+(null)    │       │           │   └── BINOP: BL_MULTBINOP
+(null)    │       │           │       ├── IDENTIFIER: c [math_ops#2]
+(null)    │       │           │       └── INT_LITERAL: 10
+(null)    │       │           └── INT_LITERAL: 7
+(null)    │       └── RETURN
+(null)    │           └── BINOP: BL_ADDBINOP
+(null)    │               ├── BINOP: BL_ADDBINOP
+(null)    │               │   ├── BINOP: BL_SUBBINOP
+(null)    │               │   │   ├── BINOP: BL_ADDBINOP
+(null)    │               │   │   │   ├── BINOP: BL_MULTBINOP
+(null)    │               │   │   │   │   ├── IDENTIFIER: a [math_ops#2]
+(null)    │               │   │   │   │   └── IDENTIFIER: b [math_ops#2]
+(null)    │               │   │   │   └── IDENTIFIER: c [math_ops#2]
+(null)    │               │   │   └── BINOP: BL_DIVBINOP
+(null)    │               │   │       ├── IDENTIFIER: a [math_ops#2]
+(null)    │               │   │       └── BINOP: BL_ADDBINOP
+(null)    │               │   │           ├── IDENTIFIER: b [math_ops#2]
+(null)    │               │   │           └── INT_LITERAL: 1
+(null)    │               │   └── BINOP: BL_MULTBINOP
+(null)    │               │       ├── BINOP: BL_ADDBINOP
+(null)    │               │       │   ├── IDENTIFIER: a [math_ops#2]
+(null)    │               │       │   └── IDENTIFIER: b [math_ops#2]
+(null)    │               │       └── BINOP: BL_SUBBINOP
+(null)    │               │           ├── IDENTIFIER: c [math_ops#2]
+(null)    │               │           └── INT_LITERAL: 2
+(null)    │               └── BINOP: BL_ADDBINOP
+(null)    │                   ├── BINOP: BL_MULTBINOP
+(null)    │                   │   ├── BINOP: BL_ADDBINOP
+(null)    │                   │   │   ├── BINOP: BL_SUBBINOP
+(null)    │                   │   │   │   ├── BINOP: BL_ADDBINOP
+(null)    │                   │   │   │   │   ├── BINOP: BL_MULTBINOP
+(null)    │                   │   │   │   │   │   ├── IDENTIFIER: a [math_ops#2]
+(null)    │                   │   │   │   │   │   └── IDENTIFIER: b [math_ops#2]
+(null)    │                   │   │   │   │   └── IDENTIFIER: c [math_ops#2]
+(null)    │                   │   │   │   └── BINOP: BL_DIVBINOP
+(null)    │                   │   │   │       ├── IDENTIFIER: a [math_ops#2]
+(null)    │                   │   │   │       └── BINOP: BL_ADDBINOP
+(null)    │                   │   │   │           ├── IDENTIFIER: b [math_ops#2]
+(null)    │                   │   │   │           └── INT_LITERAL: 1
+(null)    │                   │   │   └── BINOP: BL_MULTBINOP
+(null)    │                   │   │       ├── BINOP: BL_ADDBINOP
+(null)    │                   │   │       │   ├── IDENTIFIER: a [math_ops#2]
+(null)    │                   │   │       │   └── IDENTIFIER: b [math_ops#2]
+(null)    │                   │   │       └── BINOP: BL_SUBBINOP
+(null)    │                   │   │           ├── IDENTIFIER: c [math_ops#2]
+(null)    │                   │   │           └── INT_LITERAL: 2
+(null)    │                   │   └── INT_LITERAL: 2
+(null)    │                   └── BINOP: BL_MODBINOP
+(null)    │                       ├── BINOP: BL_ADDBINOP
+(null)    │                       │   ├── BINOP: BL_SUBBINOP
+(null)    │                       │   │   ├── IDENTIFIER: a [math_ops#2]
+(null)    │                       │   │   └── IDENTIFIER: b [math_ops#2]
+(null)    │                       │   └── BINOP: BL_MULTBINOP
+(null)    │                       │       ├── IDENTIFIER: c [math_ops#2]
+(null)    │                       │       └── INT_LITERAL: 10
+(null)    │                       └── INT_LITERAL: 7
+(null)    ├── FUNCTION: level2
+(null)    │   ├── PARAMS
+(null)    │   ├── PARAM: level2
+(null)    │   │   └── IDENTIFIER: a [level2#3]
+(null)    │   └── PARAM: level2
+(null)    │       └── IDENTIFIER: b [level2#3]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: c [level2#3]
+(null)    │       │   └── BINOP: BL_MULTBINOP
+(null)    │       │       ├── IDENTIFIER: a [level2#3]
+(null)    │       │       └── IDENTIFIER: b [level2#3]
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: sum [level2#3]
+(null)    │       │   └── INT_LITERAL: 0
+(null)    │       ├── WHILE
+(null)    │       │   ├── EXPR
+(null)    │       │   ├── BINOP: BL_GRTTHAN
+(null)    │       │   │   ├── IDENTIFIER: c [level2#3]
+(null)    │       │   │   └── INT_LITERAL: 0
+(null)    │       │   └── BLOCK
+(null)    │       │   └── BLOCK
+(null)    │       │       ├── ASSIGN BL_EQUAL
+(null)    │       │       │   ├── IDENTIFIER: sum [(null)#4]
+(null)    │       │       │   └── BINOP: BL_ADDBINOP
+(null)    │       │       │       ├── IDENTIFIER: sum [(null)#4]
+(null)    │       │       │       └── IDENTIFIER: c [(null)#4]
+(null)    │       │       └── ASSIGN BL_EQUAL
+(null)    │       │           ├── IDENTIFIER: c [(null)#4]
+(null)    │       │           └── BINOP: BL_SUBBINOP
+(null)    │       │               ├── IDENTIFIER: c [(null)#4]
+(null)    │       │               └── INT_LITERAL: 1
+(null)    │       └── RETURN
+(null)    │           └── IDENTIFIER: sum [level2#3]
+(null)    ├── FUNCTION: level1
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: level1
+(null)    │       └── IDENTIFIER: x [level1#5]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: y [level1#5]
+(null)    │       │   └── BINOP: BL_ADDBINOP
+(null)    │       │       ├── IDENTIFIER: x [level1#5]
+(null)    │       │       └── INT_LITERAL: 1
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: z [level1#5]
+(null)    │       │   └── BINOP: BL_ADDBINOP
+(null)    │       │       ├── IDENTIFIER: y [level1#5]
+(null)    │       │       └── INT_LITERAL: 1
+(null)    │       └── RETURN
+(null)    │           └── FUNCTION CALL: level2
+(null)    │               ├── IDENTIFIER: y [level1#5]
+(null)    │               └── IDENTIFIER: z [level1#5]
+(null)    ├── FUNCTION: decision_tree
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: decision_tree
+(null)    │       └── IDENTIFIER: val [decision_tree#6]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       └── IF_ELSE
+(null)    │           ├── CONDITION
+(null)    │           ├── BINOP: BL_LESSTHAN
+(null)    │           │   ├── IDENTIFIER: val [decision_tree#6]
+(null)    │           │   └── INT_LITERAL: 0
+(null)    │           ├── IF BLOCK
+(null)    │           ├── BLOCK
+(null)    │           │   └── FUNCTION CALL: printf
+(null)    │           │       └── STRING_LITERAL: "Neg\n"
+(null)    │           └── ELSE BLOCK
+(null)    │           └── IF_ELSE
+(null)    │               ├── CONDITION
+(null)    │               ├── BINOP: BL_ISEQUALCOND
+(null)    │               │   ├── IDENTIFIER: val [decision_tree#6]
+(null)    │               │   └── INT_LITERAL: 0
+(null)    │               ├── IF BLOCK
+(null)    │               ├── BLOCK
+(null)    │               │   └── FUNCTION CALL: printf
+(null)    │               │       └── STRING_LITERAL: "Zero\n"
+(null)    │               └── ELSE BLOCK
+(null)    │               └── IF_ELSE
+(null)    │                   ├── CONDITION
+(null)    │                   ├── BINOP: BL_LOGAND
+(null)    │                   │   ├── BINOP: BL_GRTTHAN
+(null)    │                   │   │   ├── IDENTIFIER: val [decision_tree#6]
+(null)    │                   │   │   └── INT_LITERAL: 0
+(null)    │                   │   └── BINOP: BL_LESSTHAN
+(null)    │                   │       ├── IDENTIFIER: val [decision_tree#6]
+(null)    │                   │       └── INT_LITERAL: 10
+(null)    │                   ├── IF BLOCK
+(null)    │                   ├── BLOCK
+(null)    │                   │   └── FUNCTION CALL: printf
+(null)    │                   │       └── STRING_LITERAL: "Small\n"
+(null)    │                   └── ELSE BLOCK
+(null)    │                   └── IF_ELSE
+(null)    │                       ├── CONDITION
+(null)    │                       ├── BINOP: BL_LOGAND
+(null)    │                       │   ├── BINOP: BL_GRTEQ
+(null)    │                       │   │   ├── IDENTIFIER: val [decision_tree#6]
+(null)    │                       │   │   └── INT_LITERAL: 10
+(null)    │                       │   └── BINOP: BL_LESSTHAN
+(null)    │                       │       ├── IDENTIFIER: val [decision_tree#6]
+(null)    │                       │       └── INT_LITERAL: 100
+(null)    │                       ├── IF BLOCK
+(null)    │                       ├── BLOCK
+(null)    │                       │   └── FUNCTION CALL: printf
+(null)    │                       │       └── STRING_LITERAL: "Med\n"
+(null)    │                       └── ELSE BLOCK
+(null)    │                       └── BLOCK
+(null)    │                           └── FUNCTION CALL: printf
+(null)    │                               └── STRING_LITERAL: "Big\n"
+(null)    ├── FUNCTION: multiple_assigns
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── BLOCK
+(null)    │       │   ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   │   ├── IDENTIFIER: z [multiple_assigns#12]
+(null)    │       │   │   └── INT_LITERAL: 5
+(null)    │       │   ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   │   ├── IDENTIFIER: y [multiple_assigns#12]
+(null)    │       │   │   └── INT_LITERAL: 5
+(null)    │       │   └── ASSIGN DECL BL_EQUAL
+(null)    │       │       ├── IDENTIFIER: x [multiple_assigns#12]
+(null)    │       │       └── INT_LITERAL: 5
+(null)    │       ├── ASSIGN BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: x [multiple_assigns#12]
+(null)    │       │   └── BINOP: BL_ADDBINOP
+(null)    │       │       ├── IDENTIFIER: x [multiple_assigns#12]
+(null)    │       │       └── INT_LITERAL: 1
+(null)    │       ├── ASSIGN BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: y [multiple_assigns#12]
+(null)    │       │   └── BINOP: BL_MULTBINOP
+(null)    │       │       ├── IDENTIFIER: y [multiple_assigns#12]
+(null)    │       │       └── INT_LITERAL: 2
+(null)    │       ├── ASSIGN BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: z [multiple_assigns#12]
+(null)    │       │   └── BINOP: BL_SUBBINOP
+(null)    │       │       ├── IDENTIFIER: z [multiple_assigns#12]
+(null)    │       │       └── INT_LITERAL: 3
+(null)    │       └── RETURN
+(null)    │           └── BINOP: BL_ADDBINOP
+(null)    │               ├── BINOP: BL_ADDBINOP
+(null)    │               │   ├── IDENTIFIER: x [multiple_assigns#12]
+(null)    │               │   └── IDENTIFIER: y [multiple_assigns#12]
+(null)    │               └── IDENTIFIER: z [multiple_assigns#12]
+(null)    ├── FUNCTION: scope_depth_test
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [scope_depth_test#13]
+(null)    │       │   └── INT_LITERAL: 10
+(null)    │       ├── WHILE
+(null)    │       │   ├── EXPR
+(null)    │       │   ├── BINOP: BL_GRTTHAN
+(null)    │       │   │   ├── IDENTIFIER: i [scope_depth_test#13]
+(null)    │       │   │   └── INT_LITERAL: 0
+(null)    │       │   └── BLOCK
+(null)    │       │   └── BLOCK
+(null)    │       │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │       │   ├── IDENTIFIER: j [(null)#14]
+(null)    │       │       │   └── INT_LITERAL: 10
+(null)    │       │       ├── WHILE
+(null)    │       │       │   ├── EXPR
+(null)    │       │       │   ├── BINOP: BL_GRTTHAN
+(null)    │       │       │   │   ├── IDENTIFIER: j [(null)#14]
+(null)    │       │       │   │   └── INT_LITERAL: 5
+(null)    │       │       │   └── BLOCK
+(null)    │       │       │   └── BLOCK
+(null)    │       │       │       ├── FUNCTION CALL: printf
+(null)    │       │       │       │   └── STRING_LITERAL: "* "
+(null)    │       │       │       └── UNARYOP : BL_DEC
+(null)    │       │       │           └── IDENTIFIER: j [(null)#15]
+(null)    │       │       ├── FUNCTION CALL: printf
+(null)    │       │       │   └── STRING_LITERAL: "\n"
+(null)    │       │       └── ASSIGN BL_EQUAL
+(null)    │       │           ├── IDENTIFIER: i [(null)#14]
+(null)    │       │           └── BINOP: BL_SUBBINOP
+(null)    │       │               ├── IDENTIFIER: i [(null)#14]
+(null)    │       │               └── INT_LITERAL: 1
+(null)    │       └── FUNCTION CALL: printf
+(null)    │           └── STRING_LITERAL: "\n"
+(null)    ├── FUNCTION: call_chain
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: call_chain
+(null)    │       └── IDENTIFIER: a [call_chain#16]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       └── RETURN
+(null)    │           └── BINOP: BL_ADDBINOP
+(null)    │               ├── BINOP: BL_ADDBINOP
+(null)    │               │   ├── FUNCTION CALL: level1
+(null)    │               │   │   └── IDENTIFIER: a [call_chain#16]
+(null)    │               │   └── FUNCTION CALL: level2
+(null)    │               │       ├── IDENTIFIER: a [call_chain#16]
+(null)    │               │       └── BINOP: BL_ADDBINOP
+(null)    │               │           ├── IDENTIFIER: a [call_chain#16]
+(null)    │               │           └── INT_LITERAL: 1
+(null)    │               └── FUNCTION CALL: math_ops
+(null)    │                   ├── IDENTIFIER: a [call_chain#16]
+(null)    │                   ├── BINOP: BL_ADDBINOP
+(null)    │                   │   ├── IDENTIFIER: a [call_chain#16]
+(null)    │                   │   └── INT_LITERAL: 1
+(null)    │                   └── BINOP: BL_ADDBINOP
+(null)    │                       ├── IDENTIFIER: a [call_chain#16]
+(null)    │                       └── INT_LITERAL: 2
+(null)    ├── FUNCTION: giant_exprs
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │       │   └── INT_LITERAL: 1400
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: val2 [giant_exprs#17]
+(null)    │       │   └── BINOP: BL_ADDBINOP
+(null)    │       │       ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │       │       └── BINOP: BL_SUBBINOP
+(null)    │       │           ├── BINOP: BL_ADDBINOP
+(null)    │       │           │   ├── BINOP: BL_MULTBINOP
+(null)    │       │           │   │   ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │       │           │   │   └── INT_LITERAL: 2
+(null)    │       │           │   └── BINOP: BL_DIVBINOP
+(null)    │       │           │       ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │       │           │       └── INT_LITERAL: 3
+(null)    │       │           └── BINOP: BL_MODBINOP
+(null)    │       │               ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │       │               └── INT_LITERAL: 4
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: val3 [giant_exprs#17]
+(null)    │       │   └── BINOP: BL_ADDBINOP
+(null)    │       │       ├── BINOP: BL_DIVBINOP
+(null)    │       │       │   ├── BINOP: BL_ADDBINOP
+(null)    │       │       │   │   ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │       │       │   │   └── BINOP: BL_SUBBINOP
+(null)    │       │       │   │       ├── BINOP: BL_ADDBINOP
+(null)    │       │       │   │       │   ├── BINOP: BL_MULTBINOP
+(null)    │       │       │   │       │   │   ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │       │       │   │       │   │   └── INT_LITERAL: 2
+(null)    │       │       │   │       │   └── BINOP: BL_DIVBINOP
+(null)    │       │       │   │       │       ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │       │       │   │       │       └── INT_LITERAL: 3
+(null)    │       │       │   │       └── BINOP: BL_MODBINOP
+(null)    │       │       │   │           ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │       │       │   │           └── INT_LITERAL: 4
+(null)    │       │       │   └── INT_LITERAL: 3
+(null)    │       │       └── BINOP: BL_MODBINOP
+(null)    │       │           ├── BINOP: BL_ADDBINOP
+(null)    │       │           │   ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │       │           │   └── BINOP: BL_SUBBINOP
+(null)    │       │           │       ├── BINOP: BL_ADDBINOP
+(null)    │       │           │       │   ├── BINOP: BL_MULTBINOP
+(null)    │       │           │       │   │   ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │       │           │       │   │   └── INT_LITERAL: 2
+(null)    │       │           │       │   └── BINOP: BL_DIVBINOP
+(null)    │       │           │       │       ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │       │           │       │       └── INT_LITERAL: 3
+(null)    │       │           │       └── BINOP: BL_MODBINOP
+(null)    │       │           │           ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │       │           │           └── INT_LITERAL: 4
+(null)    │       │           └── INT_LITERAL: 7
+(null)    │       └── RETURN
+(null)    │           └── BINOP: BL_ADDBINOP
+(null)    │               ├── BINOP: BL_DIVBINOP
+(null)    │               │   ├── BINOP: BL_ADDBINOP
+(null)    │               │   │   ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │               │   │   └── BINOP: BL_SUBBINOP
+(null)    │               │   │       ├── BINOP: BL_ADDBINOP
+(null)    │               │   │       │   ├── BINOP: BL_MULTBINOP
+(null)    │               │   │       │   │   ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │               │   │       │   │   └── INT_LITERAL: 2
+(null)    │               │   │       │   └── BINOP: BL_DIVBINOP
+(null)    │               │   │       │       ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │               │   │       │       └── INT_LITERAL: 3
+(null)    │               │   │       └── BINOP: BL_MODBINOP
+(null)    │               │   │           ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │               │   │           └── INT_LITERAL: 4
+(null)    │               │   └── INT_LITERAL: 3
+(null)    │               └── BINOP: BL_MODBINOP
+(null)    │                   ├── BINOP: BL_ADDBINOP
+(null)    │                   │   ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │                   │   └── BINOP: BL_SUBBINOP
+(null)    │                   │       ├── BINOP: BL_ADDBINOP
+(null)    │                   │       │   ├── BINOP: BL_MULTBINOP
+(null)    │                   │       │   │   ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │                   │       │   │   └── INT_LITERAL: 2
+(null)    │                   │       │   └── BINOP: BL_DIVBINOP
+(null)    │                   │       │       ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │                   │       │       └── INT_LITERAL: 3
+(null)    │                   │       └── BINOP: BL_MODBINOP
+(null)    │                   │           ├── IDENTIFIER: val [giant_exprs#17]
+(null)    │                   │           └── INT_LITERAL: 4
+(null)    │                   └── INT_LITERAL: 7
+(null)    ├── FUNCTION: recursive_deep
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: recursive_deep
+(null)    │       └── IDENTIFIER: n [recursive_deep#18]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── IF_ELSE
+(null)    │       │   ├── CONDITION
+(null)    │       │   ├── BINOP: BL_LESSEQ
+(null)    │       │   │   ├── IDENTIFIER: n [recursive_deep#18]
+(null)    │       │   │   └── INT_LITERAL: 0
+(null)    │       │   ├── IF BLOCK
+(null)    │       │   ├── BLOCK
+(null)    │       │   │   └── RETURN
+(null)    │       │   │       └── INT_LITERAL: 0
+(null)    │       │   └── ELSE BLOCK
+(null)    │       │   └── (null node)
+(null)    │       └── RETURN
+(null)    │           └── BINOP: BL_ADDBINOP
+(null)    │               ├── IDENTIFIER: n [recursive_deep#18]
+(null)    │               └── FUNCTION CALL: recursive_deep
+(null)    │                   └── BINOP: BL_SUBBINOP
+(null)    │                       ├── IDENTIFIER: n [recursive_deep#18]
+(null)    │                       └── INT_LITERAL: 1
+(null)    ├── FUNCTION: long_loop_chain
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: acc [long_loop_chain#20]
+(null)    │       │   └── INT_LITERAL: 0
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: i [long_loop_chain#20]
+(null)    │       │   └── INT_LITERAL: 0
+(null)    │       ├── WHILE
+(null)    │       │   ├── EXPR
+(null)    │       │   ├── BINOP: BL_LESSTHAN
+(null)    │       │   │   ├── IDENTIFIER: i [long_loop_chain#20]
+(null)    │       │   │   └── INT_LITERAL: 100
+(null)    │       │   └── BLOCK
+(null)    │       │   └── BLOCK
+(null)    │       │       ├── IF_ELSE
+(null)    │       │       │   ├── CONDITION
+(null)    │       │       │   ├── BINOP: BL_ISEQUALCOND
+(null)    │       │       │   │   ├── BINOP: BL_MODBINOP
+(null)    │       │       │   │   │   ├── IDENTIFIER: i [(null)#21]
+(null)    │       │       │   │   │   └── INT_LITERAL: 10
+(null)    │       │       │   │   └── INT_LITERAL: 0
+(null)    │       │       │   ├── IF BLOCK
+(null)    │       │       │   ├── BLOCK
+(null)    │       │       │   │   ├── FUNCTION CALL: printf
+(null)    │       │       │   │   │   └── STRING_LITERAL: "Tens: "
+(null)    │       │       │   │   └── FUNCTION CALL: printf
+(null)    │       │       │   │       ├── STRING_LITERAL: "%d "
+(null)    │       │       │   │       └── IDENTIFIER: i [(null)#22]
+(null)    │       │       │   └── ELSE BLOCK
+(null)    │       │       │   └── (null node)
+(null)    │       │       ├── ASSIGN BL_EQUAL
+(null)    │       │       │   ├── IDENTIFIER: acc [(null)#21]
+(null)    │       │       │   └── BINOP: BL_ADDBINOP
+(null)    │       │       │       ├── IDENTIFIER: acc [(null)#21]
+(null)    │       │       │       └── IDENTIFIER: i [(null)#21]
+(null)    │       │       └── ASSIGN BL_EQUAL
+(null)    │       │           ├── IDENTIFIER: i [(null)#21]
+(null)    │       │           └── BINOP: BL_ADDBINOP
+(null)    │       │               ├── IDENTIFIER: i [(null)#21]
+(null)    │       │               └── INT_LITERAL: 1
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       └── RETURN
+(null)    │           └── IDENTIFIER: acc [long_loop_chain#20]
+(null)    ├── FUNCTION: string_block
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       └── ASSIGN DECL BL_EQUAL
+(null)    │           ├── IDENTIFIER: base [string_block#23]
+(null)    │           └── STRING_LITERAL: "BhauLang"
+(null)    ├── FUNCTION: everything
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: everything
+(null)    │       └── IDENTIFIER: val [everything#24]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: temp [everything#24]
+(null)    │       │   └── IDENTIFIER: val [everything#24]
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: mid [everything#24]
+(null)    │       │   └── FUNCTION CALL: recursive_deep
+(null)    │       │       └── IDENTIFIER: temp [everything#24]
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: ops [everything#24]
+(null)    │       │   └── FUNCTION CALL: math_ops
+(null)    │       │       ├── IDENTIFIER: temp [everything#24]
+(null)    │       │       ├── IDENTIFIER: mid [everything#24]
+(null)    │       │       └── BINOP: BL_ADDBINOP
+(null)    │       │           ├── IDENTIFIER: temp [everything#24]
+(null)    │       │           └── INT_LITERAL: 1
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: longres [everything#24]
+(null)    │       │   └── FUNCTION CALL: long_loop_chain
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: giant [everything#24]
+(null)    │       │   └── FUNCTION CALL: giant_exprs
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "temp: "
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   ├── STRING_LITERAL: "%d\n"
+(null)    │       │   └── IDENTIFIER: temp [everything#24]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "mid: "
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   ├── STRING_LITERAL: "%d\n"
+(null)    │       │   └── IDENTIFIER: mid [everything#24]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "ops: "
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   ├── STRING_LITERAL: "%d\n"
+(null)    │       │   └── IDENTIFIER: ops [everything#24]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "longres: "
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   ├── STRING_LITERAL: "%d\n"
+(null)    │       │   └── IDENTIFIER: longres [everything#24]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "giant: "
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   ├── STRING_LITERAL: "%d\n"
+(null)    │       │   └── IDENTIFIER: giant [everything#24]
+(null)    │       └── RETURN
+(null)    │           └── BINOP: BL_ADDBINOP
+(null)    │               ├── BINOP: BL_ADDBINOP
+(null)    │               │   ├── BINOP: BL_ADDBINOP
+(null)    │               │   │   ├── BINOP: BL_ADDBINOP
+(null)    │               │   │   │   ├── IDENTIFIER: temp [everything#24]
+(null)    │               │   │   │   └── FUNCTION CALL: recursive_deep
+(null)    │               │   │   │       └── IDENTIFIER: temp [everything#24]
+(null)    │               │   │   └── FUNCTION CALL: math_ops
+(null)    │               │   │       ├── IDENTIFIER: temp [everything#24]
+(null)    │               │   │       ├── IDENTIFIER: mid [everything#24]
+(null)    │               │   │       └── BINOP: BL_ADDBINOP
+(null)    │               │   │           ├── IDENTIFIER: temp [everything#24]
+(null)    │               │   │           └── INT_LITERAL: 1
+(null)    │               │   └── FUNCTION CALL: long_loop_chain
+(null)    │               └── FUNCTION CALL: giant_exprs
+(null)    ├── FUNCTION: branch_test
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: val [branch_test#25]
+(null)    │       │   └── INT_LITERAL: 5
+(null)    │       └── IF_ELSE
+(null)    │           ├── CONDITION
+(null)    │           ├── BINOP: BL_GRTTHAN
+(null)    │           │   ├── IDENTIFIER: val [branch_test#25]
+(null)    │           │   └── INT_LITERAL: 0
+(null)    │           ├── IF BLOCK
+(null)    │           ├── BLOCK
+(null)    │           │   └── IF_ELSE
+(null)    │           │       ├── CONDITION
+(null)    │           │       ├── BINOP: BL_LESSTHAN
+(null)    │           │       │   ├── IDENTIFIER: val [(null)#26]
+(null)    │           │       │   └── INT_LITERAL: 3
+(null)    │           │       ├── IF BLOCK
+(null)    │           │       ├── BLOCK
+(null)    │           │       │   └── FUNCTION CALL: printf
+(null)    │           │       │       └── STRING_LITERAL: "Tiny\n"
+(null)    │           │       └── ELSE BLOCK
+(null)    │           │       └── IF_ELSE
+(null)    │           │           ├── CONDITION
+(null)    │           │           ├── BINOP: BL_LESSTHAN
+(null)    │           │           │   ├── IDENTIFIER: val [(null)#26]
+(null)    │           │           │   └── INT_LITERAL: 6
+(null)    │           │           ├── IF BLOCK
+(null)    │           │           ├── BLOCK
+(null)    │           │           │   └── FUNCTION CALL: printf
+(null)    │           │           │       └── STRING_LITERAL: "Smallish\n"
+(null)    │           │           └── ELSE BLOCK
+(null)    │           │           └── BLOCK
+(null)    │           │               └── FUNCTION CALL: printf
+(null)    │           │                   └── STRING_LITERAL: "???\n"
+(null)    │           └── ELSE BLOCK
+(null)    │           └── BLOCK
+(null)    │               └── FUNCTION CALL: printf
+(null)    │                   └── STRING_LITERAL: "Negative or Zero\n"
+(null)    └── MAIN FUNCTION
+(null)        └── BLOCK
+(null)            ├── FUNCTION CALL: printf
+(null)            │   └── IDENTIFIER: app_name [main#31]
+(null)            ├── FUNCTION CALL: printf
+(null)            │   └── STRING_LITERAL: "==== Start Stress Test ====\n"
+(null)            ├── ASSIGN DECL BL_EQUAL
+(null)            │   ├── IDENTIFIER: res1 [main#31]
+(null)            │   └── FUNCTION CALL: math_ops
+(null)            │       ├── INT_LITERAL: 2
+(null)            │       ├── INT_LITERAL: 3
+(null)            │       └── INT_LITERAL: 4
+(null)            ├── ASSIGN DECL BL_EQUAL
+(null)            │   ├── IDENTIFIER: res2 [main#31]
+(null)            │   └── FUNCTION CALL: level1
+(null)            │       └── INT_LITERAL: 5
+(null)            ├── ASSIGN DECL BL_EQUAL
+(null)            │   ├── IDENTIFIER: res3 [main#31]
+(null)            │   └── FUNCTION CALL: call_chain
+(null)            │       └── INT_LITERAL: 3
+(null)            ├── ASSIGN DECL BL_EQUAL
+(null)            │   ├── IDENTIFIER: res4 [main#31]
+(null)            │   └── FUNCTION CALL: everything
+(null)            │       └── INT_LITERAL: 4
+(null)            ├── FUNCTION CALL: printf
+(null)            │   └── STRING_LITERAL: "MathOps: "
+(null)            ├── FUNCTION CALL: printf
+(null)            │   ├── STRING_LITERAL: "%d\n"
+(null)            │   └── IDENTIFIER: res1 [main#31]
+(null)            ├── FUNCTION CALL: printf
+(null)            │   └── STRING_LITERAL: "Level1: "
+(null)            ├── FUNCTION CALL: printf
+(null)            │   ├── STRING_LITERAL: "%d\n"
+(null)            │   └── IDENTIFIER: res2 [main#31]
+(null)            ├── FUNCTION CALL: printf
+(null)            │   └── STRING_LITERAL: "CallChain: "
+(null)            ├── FUNCTION CALL: printf
+(null)            │   ├── STRING_LITERAL: "%d\n"
+(null)            │   └── IDENTIFIER: res3 [main#31]
+(null)            ├── FUNCTION CALL: printf
+(null)            │   └── STRING_LITERAL: "Everything Combo: "
+(null)            ├── FUNCTION CALL: printf
+(null)            │   ├── STRING_LITERAL: "%d\n"
+(null)            │   └── IDENTIFIER: res4 [main#31]
+(null)            ├── FUNCTION CALL: decision_tree
+(null)            │   └── INT_LITERAL: -10
+(null)            ├── FUNCTION CALL: decision_tree
+(null)            │   └── INT_LITERAL: 0
+(null)            ├── FUNCTION CALL: decision_tree
+(null)            │   └── INT_LITERAL: 5
+(null)            ├── FUNCTION CALL: decision_tree
+(null)            │   └── INT_LITERAL: 50
+(null)            ├── FUNCTION CALL: decision_tree
+(null)            │   └── INT_LITERAL: 500
+(null)            ├── FUNCTION CALL: multiple_assigns
+(null)            ├── FUNCTION CALL: scope_depth_test
+(null)            ├── FUNCTION CALL: giant_exprs
+(null)            ├── FUNCTION CALL: long_loop_chain
+(null)            ├── FUNCTION CALL: string_block
+(null)            ├── FUNCTION CALL: branch_test
+(null)            └── FUNCTION CALL: printf
+(null)                └── STRING_LITERAL: "==== End Stress Test ===="

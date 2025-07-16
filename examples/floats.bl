@@ -1,0 +1,89 @@
+hi bhau
+
+bhau baherun ghe printf;
+
+
+bhau lakshat thev ret_float(a){
+    bhau hai ahe b = a;
+    bhau parat de b;
+}
+
+bhau lakshat thev operator_add_float(a,b){
+    bhau parat de a + b;
+}
+
+bhau lakshat thev op_mult_div_float(a,b){
+    bhau hai ahe x = a * b;
+    bhau hai ahe y = a / b;
+    bhau parat de x * y;
+}
+
+bhau lakshat thev comparison_float(a,b){
+    bhau jar(a < b){
+        printf("From comparison_float, %.2f is less than %.2f\n",a,b);
+    }bhau tar{
+        printf("From comparison_float, %.2f is greater than %.2f\n",a,b);
+    }
+}
+
+bhau lakshat thev type_mixing(a,b){
+    bhau parat de a*b;
+}
+
+bhau lakshat thev pre_inc_float(a){
+    bhau parat de ++a;
+}
+
+bhau lakshat thev loop_float(){
+    bhau hai ahe a = 0.0;
+    bhau joparent (a < 5.0){
+        printf("From loop_float, Value a : %.2f\n",a);
+        a+=1.5;
+    }
+    printf("\n");
+}
+
+
+bhau lakshat thev float_control_flow(){
+    bhau hai ahe y = 3.14;
+    bhau hai ahe x = 2.71;
+    bhau hai ahe z = 0.0;
+    bhau jar(x > y){
+        z = x - y;
+    }bhau tar{
+        z = x + y;
+    }
+    bhau jar(z > 5.0){
+        bhau hai ahe double_z = z*2.0;
+        printf("From float_control_flow, Value : %.2f\n",double_z);
+    }
+}
+
+
+
+bhau ithun chalu{
+    
+    bhau hai ahe ret_float_var = ret_float(3.14);
+    printf("From ret_float_var, Value : %.2f\n",ret_float_var);
+    printf("\n");
+    bhau hai ahe op_add_float_var = operator_add_float(6.9,6.9);
+    printf("From operator_add_float, Value : %.2f\n",op_add_float_var);
+    printf("\n");
+    bhau hai ahe op_mult_div_var = op_mult_div_float(10.0,2.5);
+    printf("From op_mult_div_float, Value : %.2f\n",op_mult_div_var);
+    printf("\n");
+    comparison_float(10.0,2.5);
+    printf("\n");
+    bhau hai ahe type_mix_var = type_mixing(10,2.5);
+    printf("From type_mixing, Value : %.2f\n",type_mix_var);
+    printf("\n");
+    bhau hai ahe pre_inc_var = pre_inc_float(3.23);
+    printf("From pre_inc_float, Value : %.2f\n",pre_inc_var);
+    printf("\n");
+    loop_float();
+    float_control_flow();
+    printf("\n");
+    
+}       
+
+bye bhau

@@ -23,11 +23,15 @@ static inline void reduce_identifiers(bl_token* arr, bl_token* temp_arr,bl_arena
 #ifdef BL_POSTPROCESS_TEST
 
 
-int main(){
+int main(int argc, char** argv){
+    if(argc != 2){
+        fprintf(stderr, "Usage : ./prog <input_file>\n");
+        exit(1);
+    }
     bl_arena* arena = (bl_arena*)malloc(sizeof(bl_arena));
     arena_init(arena);
 
-    bl_token* arr = bhaulang_lexer("src/lexer/one.bl",arena);
+    bl_token* arr = bhaulang_lexer(argv[argc-1],arena);
     bl_token_list_print(arr,(size_t)dynarray_length(arr));
 
     return 0;

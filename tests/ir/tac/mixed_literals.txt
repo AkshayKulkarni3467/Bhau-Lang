@@ -1,0 +1,410 @@
+[Extern] extern printf (extern) (0)
+[Function start] function mixed_conds begin:
+[Declaration] a (int) (1) = 10 (int) (1)
+[Declaration] b (float) (1) = 2.5000000000000000 (float) (1)
+[Declaration] c (char) (1) = A (char) (1)
+[Declaration] flag (bool) (1) = 1 (bool) (1)
+[Declaration] str1 (str) (1) = hello (str) (1)
+[Declaration] str2 (str) (1) = hello (str) (1)
+[Declaration] t0 (float) (1) = 0 (int) (1)
+[Declaration] t1 (int) (1) = 0 (int) (1)
+[Assignment] t1 (int) (1) = a (int) (1)
+[Declaration] t2 (float) (1) = 0 (int) (1)
+[Assignment] t2 (float) (1) = b (float) (1)
+[Binary Op] t0 (float) (1) = t1 (int) (1) + t2 (float) (1) 
+[Declaration] t3 (bool) (1) = 0 (int) (1)
+[Declaration] t4 (float) (1) = 0 (int) (1)
+[Assignment] t4 (float) (1) = t0 (float) (1)
+[Declaration] t5 (float) (1) = 0 (int) (1)
+[Assignment] t5 (float) (1) = 12.5000000000000000 (float) (1)
+[Binary Op] t3 (bool) (1) = t4 (float) (1) == t5 (float) (1) 
+[Declaration] t6 (bool) (1) = 0 (int) (1)
+[Declaration] t7 (char) (1) = 0 (int) (1)
+[Assignment] t7 (char) (1) = c (char) (1)
+[Declaration] t8 (char) (1) = 0 (int) (1)
+[Assignment] t8 (char) (1) = A (char) (1)
+[Binary Op] t6 (bool) (1) = t7 (char) (1) == t8 (char) (1) 
+[Declaration] t9 (bool) (1) = 0 (int) (1)
+[Declaration] t10 (bool) (1) = 0 (int) (1)
+[Assignment] t10 (bool) (1) = t3 (bool) (1)
+[Declaration] t11 (bool) (1) = 0 (int) (1)
+[Assignment] t11 (bool) (1) = t6 (bool) (1)
+[Binary Op] t9 (bool) (1) = t10 (bool) (1) && t11 (bool) (1) 
+[Declaration] t12 (bool) (1) = 0 (int) (1)
+[Declaration] t13 (bool) (1) = 0 (int) (1)
+[Assignment] t13 (bool) (1) = 1 (bool) (1)
+[Declaration] t14 (int) (1) = 0 (int) (1)
+[Assignment] t14 (int) (1) = 1 (int) (1)
+[Binary Op] t12 (bool) (1) = t13 (bool) (1) == t14 (int) (1) 
+[Declaration] t15 (bool) (1) = 0 (int) (1)
+[Declaration] t16 (bool) (1) = 0 (int) (1)
+[Assignment] t16 (bool) (1) = t9 (bool) (1)
+[Declaration] t17 (bool) (1) = 0 (int) (1)
+[Assignment] t17 (bool) (1) = t12 (bool) (1)
+[Binary Op] t15 (bool) (1) = t16 (bool) (1) && t17 (bool) (1) 
+[Declaration] t18 (bool) (1) = 0 (int) (1)
+[Declaration] t19 (bool) (1) = 0 (int) (1)
+[Assignment] t19 (bool) (1) = t15 (bool) (1)
+[Declaration] t20 (bool) (1) = 0 (int) (1)
+[Assignment] t20 (bool) (1) = 1 (bool) (1)
+[Binary Op] t18 (bool) (1) = t19 (bool) (1) && t20 (bool) (1) 
+[Conditional Jump] if t18 (bool) (1) != 0 (int) (1) goto L0
+[Declaration] t21 (str) (2) = From mixed_conds , Value : %d\n (str) (2)
+[Argument] arg t21 (str) (2)
+[Declaration] t22 (int) (2) = 0 (int) (2)
+[Argument] arg t22 (int) (2)
+[Declaration] t23 (int) (2) = 0 (int) (2)
+[Function call] t23 (int) (2) = call printf (extern) (2), 2
+[Jump] goto L1
+
+[Label] L0:
+[Declaration] t24 (str) (3) = From mixed_conds , value : %d\n (str) (3)
+[Argument] arg t24 (str) (3)
+[Declaration] t25 (int) (3) = 1 (int) (3)
+[Argument] arg t25 (int) (3)
+[Declaration] t26 (int) (3) = 0 (int) (3)
+[Function call] t26 (int) (3) = call printf (extern) (3), 2
+
+[Label] L1:
+[Function end] function end
+[Function start] function float_and_int begin:
+[Parameter] param a (idt) (4)
+[Parameter] param b (idt) (4)
+[Declaration] t27 (str) (4) = From float_and_int , value : %.2f\n (str) (4)
+[Argument] arg t27 (str) (4)
+[Declaration] t29 (idt) (4) = 0 (int) (4)
+[Declaration] t30 (idt) (4) = 0 (int) (4)
+[Assignment] t30 (idt) (4) = a (idt) (4)
+[Declaration] t31 (idt) (4) = 0 (int) (4)
+[Assignment] t31 (idt) (4) = b (idt) (4)
+[Binary Op] t29 (idt) (4) = t30 (idt) (4) + t31 (idt) (4) 
+[Declaration] t28 (idt) (4) = t29 (idt) (4)
+[Argument] arg t28 (idt) (4)
+[Declaration] t32 (int) (4) = 0 (int) (4)
+[Function call] t32 (int) (4) = call printf (extern) (4), 2
+[Function end] function end
+[Function start] function int_char_bool begin:
+[Parameter] param a (idt) (5)
+[Parameter] param b (idt) (5)
+[Parameter] param c (idt) (5)
+[Declaration] t33 (str) (5) = From int_char_bool , value : %d\n (str) (5)
+[Argument] arg t33 (str) (5)
+[Declaration] t35 (idt) (5) = 0 (int) (5)
+[Declaration] t36 (idt) (5) = 0 (int) (5)
+[Assignment] t36 (idt) (5) = a (idt) (5)
+[Declaration] t37 (idt) (5) = 0 (int) (5)
+[Assignment] t37 (idt) (5) = b (idt) (5)
+[Binary Op] t35 (idt) (5) = t36 (idt) (5) + t37 (idt) (5) 
+[Declaration] t38 (idt) (5) = 0 (int) (5)
+[Declaration] t39 (idt) (5) = 0 (int) (5)
+[Assignment] t39 (idt) (5) = t35 (idt) (5)
+[Declaration] t40 (idt) (5) = 0 (int) (5)
+[Assignment] t40 (idt) (5) = c (idt) (5)
+[Binary Op] t38 (idt) (5) = t39 (idt) (5) + t40 (idt) (5) 
+[Declaration] t34 (idt) (5) = t38 (idt) (5)
+[Argument] arg t34 (idt) (5)
+[Declaration] t41 (int) (5) = 0 (int) (5)
+[Function call] t41 (int) (5) = call printf (extern) (5), 2
+[Function end] function end
+[Function start] function char_float begin:
+[Parameter] param a (idt) (6)
+[Parameter] param b (idt) (6)
+[Declaration] t42 (str) (6) = From char_float , value : %.2f\n (str) (6)
+[Argument] arg t42 (str) (6)
+[Declaration] t44 (idt) (6) = 0 (int) (6)
+[Declaration] t45 (idt) (6) = 0 (int) (6)
+[Assignment] t45 (idt) (6) = a (idt) (6)
+[Declaration] t46 (idt) (6) = 0 (int) (6)
+[Assignment] t46 (idt) (6) = b (idt) (6)
+[Binary Op] t44 (idt) (6) = t45 (idt) (6) + t46 (idt) (6) 
+[Declaration] t43 (idt) (6) = t44 (idt) (6)
+[Argument] arg t43 (idt) (6)
+[Declaration] t47 (int) (6) = 0 (int) (6)
+[Function call] t47 (int) (6) = call printf (extern) (6), 2
+[Function end] function end
+[Function start] function bool_float begin:
+[Parameter] param a (idt) (7)
+[Parameter] param b (idt) (7)
+[Declaration] t48 (bool) (7) = 0 (int) (7)
+[Declaration] t49 (idt) (7) = 0 (int) (7)
+[Assignment] t49 (idt) (7) = b (idt) (7)
+[Declaration] t50 (float) (7) = 0 (int) (7)
+[Assignment] t50 (float) (7) = 4.9000000953674316 (float) (7)
+[Binary Op] t48 (bool) (7) = t49 (idt) (7) > t50 (float) (7) 
+[Declaration] t51 (bool) (7) = 0 (int) (7)
+[Declaration] t52 (idt) (7) = 0 (int) (7)
+[Assignment] t52 (idt) (7) = a (idt) (7)
+[Declaration] t53 (bool) (7) = 0 (int) (7)
+[Assignment] t53 (bool) (7) = t48 (bool) (7)
+[Binary Op] t51 (bool) (7) = t52 (idt) (7) && t53 (bool) (7) 
+[Conditional Jump] if t51 (bool) (7) != 0 (int) (7) goto L2
+[Declaration] t54 (str) (8) = From bool_float , value : %d\n (str) (8)
+[Argument] arg t54 (str) (8)
+[Declaration] t55 (int) (8) = 0 (int) (8)
+[Argument] arg t55 (int) (8)
+[Declaration] t56 (int) (8) = 0 (int) (8)
+[Function call] t56 (int) (8) = call printf (extern) (8), 2
+[Jump] goto L3
+
+[Label] L2:
+[Declaration] t57 (str) (9) = From bool_float , value : %d\n (str) (9)
+[Argument] arg t57 (str) (9)
+[Declaration] t58 (int) (9) = 1 (int) (9)
+[Argument] arg t58 (int) (9)
+[Declaration] t59 (int) (9) = 0 (int) (9)
+[Function call] t59 (int) (9) = call printf (extern) (9), 2
+
+[Label] L3:
+[Function end] function end
+[Function start] function char_comp_int begin:
+[Parameter] param a (idt) (10)
+[Parameter] param b (idt) (10)
+[Declaration] t60 (bool) (10) = 0 (int) (10)
+[Declaration] t61 (idt) (10) = 0 (int) (10)
+[Assignment] t61 (idt) (10) = a (idt) (10)
+[Declaration] t62 (idt) (10) = 0 (int) (10)
+[Assignment] t62 (idt) (10) = b (idt) (10)
+[Binary Op] t60 (bool) (10) = t61 (idt) (10) == t62 (idt) (10) 
+[Conditional Jump] if t60 (bool) (10) != 0 (int) (10) goto L4
+[Declaration] t63 (str) (11) = From char_comp_int , value : %d\n (str) (11)
+[Argument] arg t63 (str) (11)
+[Declaration] t64 (int) (11) = 0 (int) (11)
+[Argument] arg t64 (int) (11)
+[Declaration] t65 (int) (11) = 0 (int) (11)
+[Function call] t65 (int) (11) = call printf (extern) (11), 2
+[Jump] goto L5
+
+[Label] L4:
+[Declaration] t66 (str) (12) = From char_comp_int , value : %d\n (str) (12)
+[Argument] arg t66 (str) (12)
+[Declaration] t67 (int) (12) = 1 (int) (12)
+[Argument] arg t67 (int) (12)
+[Declaration] t68 (int) (12) = 0 (int) (12)
+[Function call] t68 (int) (12) = call printf (extern) (12), 2
+
+[Label] L5:
+[Function end] function end
+[Function start] function float_comp_int begin:
+[Parameter] param a (idt) (13)
+[Parameter] param b (idt) (13)
+[Declaration] t69 (bool) (13) = 0 (int) (13)
+[Declaration] t70 (idt) (13) = 0 (int) (13)
+[Assignment] t70 (idt) (13) = a (idt) (13)
+[Declaration] t71 (idt) (13) = 0 (int) (13)
+[Assignment] t71 (idt) (13) = b (idt) (13)
+[Binary Op] t69 (bool) (13) = t70 (idt) (13) == t71 (idt) (13) 
+[Conditional Jump] if t69 (bool) (13) != 0 (int) (13) goto L6
+[Declaration] t72 (str) (14) = From float_comp_int , value : %d\n (str) (14)
+[Argument] arg t72 (str) (14)
+[Declaration] t73 (int) (14) = 0 (int) (14)
+[Argument] arg t73 (int) (14)
+[Declaration] t74 (int) (14) = 0 (int) (14)
+[Function call] t74 (int) (14) = call printf (extern) (14), 2
+[Jump] goto L7
+
+[Label] L6:
+[Declaration] t75 (str) (15) = From float_comp_int , value : %d\n (str) (15)
+[Argument] arg t75 (str) (15)
+[Declaration] t76 (int) (15) = 1 (int) (15)
+[Argument] arg t76 (int) (15)
+[Declaration] t77 (int) (15) = 0 (int) (15)
+[Function call] t77 (int) (15) = call printf (extern) (15), 2
+
+[Label] L7:
+[Function end] function end
+[Function start] function mixed_sum begin:
+[Parameter] param a (idt) (16)
+[Parameter] param b (idt) (16)
+[Parameter] param c (idt) (16)
+[Parameter] param d (idt) (16)
+[Declaration] t78 (str) (16) = From mixed_sum , value : %.2f\n (str) (16)
+[Argument] arg t78 (str) (16)
+[Declaration] t80 (idt) (16) = 0 (int) (16)
+[Declaration] t81 (idt) (16) = 0 (int) (16)
+[Assignment] t81 (idt) (16) = a (idt) (16)
+[Declaration] t82 (idt) (16) = 0 (int) (16)
+[Assignment] t82 (idt) (16) = b (idt) (16)
+[Binary Op] t80 (idt) (16) = t81 (idt) (16) + t82 (idt) (16) 
+[Declaration] t83 (idt) (16) = 0 (int) (16)
+[Declaration] t84 (idt) (16) = 0 (int) (16)
+[Assignment] t84 (idt) (16) = t80 (idt) (16)
+[Declaration] t85 (idt) (16) = 0 (int) (16)
+[Assignment] t85 (idt) (16) = c (idt) (16)
+[Binary Op] t83 (idt) (16) = t84 (idt) (16) + t85 (idt) (16) 
+[Declaration] t86 (idt) (16) = 0 (int) (16)
+[Declaration] t87 (idt) (16) = 0 (int) (16)
+[Assignment] t87 (idt) (16) = t83 (idt) (16)
+[Declaration] t88 (idt) (16) = 0 (int) (16)
+[Assignment] t88 (idt) (16) = d (idt) (16)
+[Binary Op] t86 (idt) (16) = t87 (idt) (16) + t88 (idt) (16) 
+[Declaration] t79 (idt) (16) = t86 (idt) (16)
+[Argument] arg t79 (idt) (16)
+[Declaration] t89 (int) (16) = 0 (int) (16)
+[Function call] t89 (int) (16) = call printf (extern) (16), 2
+[Function end] function end
+[Function start] function mixed_control_flow begin:
+[Declaration] f (float) (17) = 3.2999999523162842 (float) (17)
+[Declaration] i (int) (17) = 3 (int) (17)
+[Declaration] c (char) (17) = c (char) (17)
+[Declaration] b (bool) (17) = 1 (bool) (17)
+[Declaration] s1 (str) (17) = test (str) (17)
+[Declaration] s2 (str) (17) = test (str) (17)
+[Declaration] t90 (bool) (17) = 0 (int) (17)
+[Declaration] t91 (char) (17) = 0 (int) (17)
+[Assignment] t91 (char) (17) = c (char) (17)
+[Declaration] t92 (char) (17) = 0 (int) (17)
+[Assignment] t92 (char) (17) = a (char) (17)
+[Binary Op] t90 (bool) (17) = t91 (char) (17) != t92 (char) (17) 
+[Declaration] t93 (bool) (17) = 0 (int) (17)
+[Declaration] t94 (bool) (17) = 0 (int) (17)
+[Assignment] t94 (bool) (17) = 1 (bool) (17)
+[Declaration] t95 (bool) (17) = 0 (int) (17)
+[Assignment] t95 (bool) (17) = t90 (bool) (17)
+[Binary Op] t93 (bool) (17) = t94 (bool) (17) && t95 (bool) (17) 
+[Declaration] t96 (bool) (17) = 0 (int) (17)
+[Declaration] t97 (bool) (17) = 0 (int) (17)
+[Assignment] t97 (bool) (17) = t93 (bool) (17)
+[Declaration] t98 (bool) (17) = 0 (int) (17)
+[Assignment] t98 (bool) (17) = b (bool) (17)
+[Binary Op] t96 (bool) (17) = t97 (bool) (17) && t98 (bool) (17) 
+[Declaration] t99 (bool) (17) = 0 (int) (17)
+[Declaration] t100 (bool) (17) = 0 (int) (17)
+[Assignment] t100 (bool) (17) = t96 (bool) (17)
+[Declaration] t101 (bool) (17) = 0 (int) (17)
+[Assignment] t101 (bool) (17) = 1 (bool) (17)
+[Binary Op] t99 (bool) (17) = t100 (bool) (17) && t101 (bool) (17) 
+[Conditional Jump] if t99 (bool) (17) != 0 (int) (17) goto L8
+[Declaration] t102 (str) (18) = From mixed_control_flow , value : %d\n (str) (18)
+[Argument] arg t102 (str) (18)
+[Declaration] t103 (int) (18) = 0 (int) (18)
+[Argument] arg t103 (int) (18)
+[Declaration] t104 (int) (18) = 0 (int) (18)
+[Function call] t104 (int) (18) = call printf (extern) (18), 2
+[Jump] goto L9
+
+[Label] L8:
+[Declaration] t105 (str) (19) = From mixed_control_flow , value : %d\n (str) (19)
+[Argument] arg t105 (str) (19)
+[Declaration] t106 (int) (19) = 1 (int) (19)
+[Argument] arg t106 (int) (19)
+[Declaration] t107 (int) (19) = 0 (int) (19)
+[Function call] t107 (int) (19) = call printf (extern) (19), 2
+
+[Label] L9:
+[Function end] function end
+[Function start] function to_fail_str_comp_char begin:
+[Parameter] param a (idt) (20)
+[Parameter] param b (idt) (20)
+[Declaration] t108 (str) (20) = From to_fail_str_comp_char , value : %d\n (str) (20)
+[Argument] arg t108 (str) (20)
+[Declaration] t110 (bool) (20) = 0 (int) (20)
+[Declaration] t111 (idt) (20) = 0 (int) (20)
+[Assignment] t111 (idt) (20) = a (idt) (20)
+[Declaration] t112 (idt) (20) = 0 (int) (20)
+[Assignment] t112 (idt) (20) = b (idt) (20)
+[Binary Op] t110 (bool) (20) = t111 (idt) (20) == t112 (idt) (20) 
+[Declaration] t109 (bool) (20) = t110 (bool) (20)
+[Argument] arg t109 (bool) (20)
+[Declaration] t113 (int) (20) = 0 (int) (20)
+[Function call] t113 (int) (20) = call printf (extern) (20), 2
+[Function end] function end
+[Main start] main begin:
+[Declaration] t114 (int) (21) = 0 (int) (21)
+[Function call] t114 (int) (21) = call mixed_conds (idt) (21), 0
+[Declaration] t115 (str) (21) = \n (str) (21)
+[Argument] arg t115 (str) (21)
+[Declaration] t116 (int) (21) = 0 (int) (21)
+[Function call] t116 (int) (21) = call printf (extern) (21), 1
+[Declaration] t117 (int) (21) = 2 (int) (21)
+[Argument] arg t117 (int) (21)
+[Declaration] t118 (float) (21) = 3.5000000000000000 (float) (21)
+[Argument] arg t118 (float) (21)
+[Declaration] t119 (float) (21) = 0.0000000000000000 (float) (21)
+[Function call] t119 (float) (21) = call float_and_int (idt) (21), 2
+[Declaration] t120 (str) (21) = \n (str) (21)
+[Argument] arg t120 (str) (21)
+[Declaration] t121 (int) (21) = 0 (int) (21)
+[Function call] t121 (int) (21) = call printf (extern) (21), 1
+[Declaration] t122 (char) (21) = a (char) (21)
+[Argument] arg t122 (char) (21)
+[Declaration] t123 (bool) (21) = 1 (bool) (21)
+[Argument] arg t123 (bool) (21)
+[Declaration] t124 (int) (21) = 11 (int) (21)
+[Argument] arg t124 (int) (21)
+[Declaration] t125 (int) (21) = 0 (int) (21)
+[Function call] t125 (int) (21) = call int_char_bool (idt) (21), 3
+[Declaration] t126 (str) (21) = \n (str) (21)
+[Argument] arg t126 (str) (21)
+[Declaration] t127 (int) (21) = 0 (int) (21)
+[Function call] t127 (int) (21) = call printf (extern) (21), 1
+[Declaration] t-128 (char) (21) = C (char) (21)
+[Argument] arg t-128 (char) (21)
+[Declaration] t-127 (float) (21) = 0.2800000011920929 (float) (21)
+[Argument] arg t-127 (float) (21)
+[Declaration] t-126 (float) (21) = 0.0000000000000000 (float) (21)
+[Function call] t-126 (float) (21) = call char_float (idt) (21), 2
+[Declaration] t-125 (str) (21) = \n (str) (21)
+[Argument] arg t-125 (str) (21)
+[Declaration] t-124 (int) (21) = 0 (int) (21)
+[Function call] t-124 (int) (21) = call printf (extern) (21), 1
+[Declaration] t-123 (int) (21) = 1 (int) (21)
+[Argument] arg t-123 (int) (21)
+[Declaration] t-122 (float) (21) = 5.0000000000000000 (float) (21)
+[Argument] arg t-122 (float) (21)
+[Declaration] t-121 (float) (21) = 0.0000000000000000 (float) (21)
+[Function call] t-121 (float) (21) = call bool_float (idt) (21), 2
+[Declaration] t-120 (str) (21) = \n (str) (21)
+[Argument] arg t-120 (str) (21)
+[Declaration] t-119 (int) (21) = 0 (int) (21)
+[Function call] t-119 (int) (21) = call printf (extern) (21), 1
+[Declaration] t-118 (char) (21) = B (char) (21)
+[Argument] arg t-118 (char) (21)
+[Declaration] t-117 (int) (21) = 66 (int) (21)
+[Argument] arg t-117 (int) (21)
+[Declaration] t-116 (int) (21) = 0 (int) (21)
+[Function call] t-116 (int) (21) = call char_comp_int (idt) (21), 2
+[Declaration] t-115 (str) (21) = \n (str) (21)
+[Argument] arg t-115 (str) (21)
+[Declaration] t-114 (int) (21) = 0 (int) (21)
+[Function call] t-114 (int) (21) = call printf (extern) (21), 1
+[Declaration] t-113 (int) (21) = 10 (int) (21)
+[Argument] arg t-113 (int) (21)
+[Declaration] t-112 (float) (21) = 10.0000000000000000 (float) (21)
+[Argument] arg t-112 (float) (21)
+[Declaration] t-111 (float) (21) = 0.0000000000000000 (float) (21)
+[Function call] t-111 (float) (21) = call float_comp_int (idt) (21), 2
+[Declaration] t-110 (str) (21) = \n (str) (21)
+[Argument] arg t-110 (str) (21)
+[Declaration] t-109 (int) (21) = 0 (int) (21)
+[Function call] t-109 (int) (21) = call printf (extern) (21), 1
+[Declaration] t-108 (char) (21) = a (char) (21)
+[Argument] arg t-108 (char) (21)
+[Declaration] t-107 (float) (21) = 2.3299999237060547 (float) (21)
+[Argument] arg t-107 (float) (21)
+[Declaration] t-106 (bool) (21) = 1 (bool) (21)
+[Argument] arg t-106 (bool) (21)
+[Declaration] t-105 (int) (21) = 7 (int) (21)
+[Argument] arg t-105 (int) (21)
+[Declaration] t-104 (float) (21) = 0.0000000000000000 (float) (21)
+[Function call] t-104 (float) (21) = call mixed_sum (idt) (21), 4
+[Declaration] t-103 (str) (21) = \n (str) (21)
+[Argument] arg t-103 (str) (21)
+[Declaration] t-102 (int) (21) = 0 (int) (21)
+[Function call] t-102 (int) (21) = call printf (extern) (21), 1
+[Declaration] t-101 (int) (21) = 0 (int) (21)
+[Function call] t-101 (int) (21) = call mixed_control_flow (idt) (21), 0
+[Declaration] t-100 (str) (21) = \n (str) (21)
+[Argument] arg t-100 (str) (21)
+[Declaration] t-99 (int) (21) = 0 (int) (21)
+[Function call] t-99 (int) (21) = call printf (extern) (21), 1
+[Declaration] t-98 (char) (21) = h (char) (21)
+[Argument] arg t-98 (char) (21)
+[Declaration] t-97 (str) (21) = h (str) (21)
+[Argument] arg t-97 (str) (21)
+[Declaration] t-96 (int) (21) = 0 (int) (21)
+[Function call] t-96 (int) (21) = call to_fail_str_comp_char (idt) (21), 2
+[Declaration] t-95 (str) (21) = \n (str) (21)
+[Argument] arg t-95 (str) (21)
+[Declaration] t-94 (int) (21) = 0 (int) (21)
+[Function call] t-94 (int) (21) = call printf (extern) (21), 1
+[Main end] main end

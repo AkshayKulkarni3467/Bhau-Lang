@@ -1,0 +1,283 @@
+[Extern] extern printf (extern) (0)
+[Function start] function ret_float begin:
+[Parameter] param a (idt) (1)
+[Declaration] b (idt) (1) = a (idt) (1)
+[Declaration] t0 (idt) (1) = b (idt) (1)
+[Return] return t0 (idt) (1)
+[Function end] function end
+[Function start] function operator_add_float begin:
+[Parameter] param a (idt) (2)
+[Parameter] param b (idt) (2)
+[Declaration] t1 (idt) (2) = 0 (int) (2)
+[Declaration] t2 (idt) (2) = 0 (int) (2)
+[Assignment] t2 (idt) (2) = a (idt) (2)
+[Declaration] t3 (idt) (2) = 0 (int) (2)
+[Assignment] t3 (idt) (2) = b (idt) (2)
+[Binary Op] t1 (idt) (2) = t2 (idt) (2) + t3 (idt) (2) 
+[Declaration] t4 (idt) (2) = t1 (idt) (2)
+[Return] return t4 (idt) (2)
+[Function end] function end
+[Function start] function op_mult_div_float begin:
+[Parameter] param a (idt) (3)
+[Parameter] param b (idt) (3)
+[Declaration] t5 (idt) (3) = 0 (int) (3)
+[Declaration] t6 (idt) (3) = 0 (int) (3)
+[Assignment] t6 (idt) (3) = a (idt) (3)
+[Declaration] t7 (idt) (3) = 0 (int) (3)
+[Assignment] t7 (idt) (3) = b (idt) (3)
+[Binary Op] t5 (idt) (3) = t6 (idt) (3) * t7 (idt) (3) 
+[Declaration] x (idt) (3) = t5 (idt) (3)
+[Declaration] t8 (idt) (3) = 0 (int) (3)
+[Declaration] t9 (idt) (3) = 0 (int) (3)
+[Assignment] t9 (idt) (3) = a (idt) (3)
+[Declaration] t10 (idt) (3) = 0 (int) (3)
+[Assignment] t10 (idt) (3) = b (idt) (3)
+[Binary Op] t8 (idt) (3) = t9 (idt) (3) / t10 (idt) (3) 
+[Declaration] y (idt) (3) = t8 (idt) (3)
+[Declaration] t11 (idt) (3) = 0 (int) (3)
+[Declaration] t12 (idt) (3) = 0 (int) (3)
+[Assignment] t12 (idt) (3) = a (idt) (3)
+[Declaration] t13 (idt) (3) = 0 (int) (3)
+[Assignment] t13 (idt) (3) = b (idt) (3)
+[Binary Op] t11 (idt) (3) = t12 (idt) (3) * t13 (idt) (3) 
+[Declaration] t14 (idt) (3) = 0 (int) (3)
+[Declaration] t15 (idt) (3) = 0 (int) (3)
+[Assignment] t15 (idt) (3) = a (idt) (3)
+[Declaration] t16 (idt) (3) = 0 (int) (3)
+[Assignment] t16 (idt) (3) = b (idt) (3)
+[Binary Op] t14 (idt) (3) = t15 (idt) (3) / t16 (idt) (3) 
+[Declaration] t17 (idt) (3) = 0 (int) (3)
+[Declaration] t18 (idt) (3) = 0 (int) (3)
+[Assignment] t18 (idt) (3) = t11 (idt) (3)
+[Declaration] t19 (idt) (3) = 0 (int) (3)
+[Assignment] t19 (idt) (3) = t14 (idt) (3)
+[Binary Op] t17 (idt) (3) = t18 (idt) (3) * t19 (idt) (3) 
+[Declaration] t20 (idt) (3) = t17 (idt) (3)
+[Return] return t20 (idt) (3)
+[Function end] function end
+[Function start] function comparison_float begin:
+[Parameter] param a (idt) (4)
+[Parameter] param b (idt) (4)
+[Declaration] t21 (bool) (4) = 0 (int) (4)
+[Declaration] t22 (idt) (4) = 0 (int) (4)
+[Assignment] t22 (idt) (4) = a (idt) (4)
+[Declaration] t23 (idt) (4) = 0 (int) (4)
+[Assignment] t23 (idt) (4) = b (idt) (4)
+[Binary Op] t21 (bool) (4) = t22 (idt) (4) < t23 (idt) (4) 
+[Conditional Jump] if t21 (bool) (4) != 0 (int) (4) goto L0
+[Declaration] t24 (str) (5) = From comparison_float, %.2f is greater than %.2f\n (str) (5)
+[Argument] arg t24 (str) (5)
+[Declaration] t25 (idt) (5) = a (idt) (5)
+[Argument] arg t25 (idt) (5)
+[Declaration] t26 (idt) (5) = b (idt) (5)
+[Argument] arg t26 (idt) (5)
+[Declaration] t27 (int) (5) = 0 (int) (5)
+[Function call] t27 (int) (5) = call printf (extern) (5), 3
+[Jump] goto L1
+
+[Label] L0:
+[Declaration] t28 (str) (6) = From comparison_float, %.2f is less than %.2f\n (str) (6)
+[Argument] arg t28 (str) (6)
+[Declaration] t29 (idt) (6) = a (idt) (6)
+[Argument] arg t29 (idt) (6)
+[Declaration] t30 (idt) (6) = b (idt) (6)
+[Argument] arg t30 (idt) (6)
+[Declaration] t31 (int) (6) = 0 (int) (6)
+[Function call] t31 (int) (6) = call printf (extern) (6), 3
+
+[Label] L1:
+[Function end] function end
+[Function start] function type_mixing begin:
+[Parameter] param a (idt) (7)
+[Parameter] param b (idt) (7)
+[Declaration] t32 (idt) (7) = 0 (int) (7)
+[Declaration] t33 (idt) (7) = 0 (int) (7)
+[Assignment] t33 (idt) (7) = a (idt) (7)
+[Declaration] t34 (idt) (7) = 0 (int) (7)
+[Assignment] t34 (idt) (7) = b (idt) (7)
+[Binary Op] t32 (idt) (7) = t33 (idt) (7) * t34 (idt) (7) 
+[Declaration] t35 (idt) (7) = t32 (idt) (7)
+[Return] return t35 (idt) (7)
+[Function end] function end
+[Function start] function pre_inc_float begin:
+[Parameter] param a (idt) (8)
+[Declaration] t36 (idt) (8) = 0 (int) (8)
+[Unary op] t36 (idt) (8) = ++a (idt) (8) 
+[Assignment] a (idt) (8) = t36 (idt) (8)
+[Declaration] t37 (idt) (8) = a (idt) (8)
+[Return] return t37 (idt) (8)
+[Function end] function end
+[Function start] function loop_float begin:
+[Declaration] a (float) (9) = 0.0000000000000000 (float) (9)
+
+[Label] L2:
+[Declaration] t38 (bool) (9) = 0 (int) (9)
+[Declaration] t39 (float) (9) = 0 (int) (9)
+[Assignment] t39 (float) (9) = a (float) (9)
+[Declaration] t40 (float) (9) = 0 (int) (9)
+[Assignment] t40 (float) (9) = 5.0000000000000000 (float) (9)
+[Binary Op] t38 (bool) (9) = t39 (float) (9) < t40 (float) (9) 
+[Conditional Jump] if t38 (bool) (9) != 0 (int) (9) goto L3
+[Jump] goto L4
+
+[Label] L3:
+[Declaration] t41 (str) (10) = From loop_float, Value a : %.2f\n (str) (10)
+[Argument] arg t41 (str) (10)
+[Declaration] t42 (float) (10) = a (float) (10)
+[Argument] arg t42 (float) (10)
+[Declaration] t43 (int) (10) = 0 (int) (10)
+[Function call] t43 (int) (10) = call printf (extern) (10), 2
+[Declaration] t44 (float) (10) = 0 (int) (10)
+[Declaration] t45 (float) (10) = 0 (int) (10)
+[Assignment] t45 (float) (10) = a (float) (10)
+[Declaration] t46 (float) (10) = 0 (int) (10)
+[Assignment] t46 (float) (10) = 1.5000000000000000 (float) (10)
+[Binary Op] t44 (float) (10) = t45 (float) (10) + t46 (float) (10) 
+[Assignment] a (float) (10) = t44 (float) (10)
+[Jump] goto L2
+
+[Label] L4:
+[Declaration] t47 (str) (9) = \n (str) (9)
+[Argument] arg t47 (str) (9)
+[Declaration] t48 (int) (9) = 0 (int) (9)
+[Function call] t48 (int) (9) = call printf (extern) (9), 1
+[Function end] function end
+[Function start] function float_control_flow begin:
+[Declaration] y (float) (11) = 3.1400001049041748 (float) (11)
+[Declaration] x (float) (11) = 2.7100000381469727 (float) (11)
+[Declaration] z (float) (11) = 0.0000000000000000 (float) (11)
+[Conditional Jump] if 0 (bool) (11) != 0 (int) (11) goto L5
+[Assignment] z (float) (12) = 5.8500003814697266 (float) (12)
+[Jump] goto L6
+
+[Label] L5:
+[Assignment] z (float) (13) = -0.4300000667572021 (float) (13)
+
+[Label] L6:
+[Declaration] t49 (bool) (11) = 0 (int) (11)
+[Declaration] t50 (float) (11) = 0 (int) (11)
+[Assignment] t50 (float) (11) = z (float) (11)
+[Declaration] t51 (float) (11) = 0 (int) (11)
+[Assignment] t51 (float) (11) = 5.0000000000000000 (float) (11)
+[Binary Op] t49 (bool) (11) = t50 (float) (11) > t51 (float) (11) 
+[Conditional Jump] if t49 (bool) (11) != 0 (int) (11) goto L7
+[Jump] goto L8
+
+[Label] L7:
+[Declaration] t52 (float) (14) = 0 (int) (14)
+[Declaration] t53 (float) (14) = 0 (int) (14)
+[Assignment] t53 (float) (14) = z (float) (14)
+[Declaration] t54 (float) (14) = 0 (int) (14)
+[Assignment] t54 (float) (14) = 2.0000000000000000 (float) (14)
+[Binary Op] t52 (float) (14) = t53 (float) (14) * t54 (float) (14) 
+[Declaration] double_z (float) (14) = t52 (float) (14)
+[Declaration] t55 (str) (14) = From float_control_flow, Value : %.2f\n (str) (14)
+[Argument] arg t55 (str) (14)
+[Declaration] t56 (float) (14) = double_z (float) (14)
+[Argument] arg t56 (float) (14)
+[Declaration] t57 (int) (14) = 0 (int) (14)
+[Function call] t57 (int) (14) = call printf (extern) (14), 2
+
+[Label] L8:
+[Function end] function end
+[Main start] main begin:
+[Declaration] t58 (float) (15) = 3.1400001049041748 (float) (15)
+[Argument] arg t58 (float) (15)
+[Declaration] t59 (float) (15) = 0.0000000000000000 (float) (15)
+[Function call] t59 (float) (15) = call ret_float (idt) (15), 1
+[Declaration] ret_float_var (float) (15) = t59 (float) (15)
+[Declaration] t60 (str) (15) = From ret_float_var, Value : %.2f\n (str) (15)
+[Argument] arg t60 (str) (15)
+[Declaration] t61 (float) (15) = ret_float_var (float) (15)
+[Argument] arg t61 (float) (15)
+[Declaration] t62 (int) (15) = 0 (int) (15)
+[Function call] t62 (int) (15) = call printf (extern) (15), 2
+[Declaration] t63 (str) (15) = \n (str) (15)
+[Argument] arg t63 (str) (15)
+[Declaration] t64 (int) (15) = 0 (int) (15)
+[Function call] t64 (int) (15) = call printf (extern) (15), 1
+[Declaration] t65 (float) (15) = 6.9000000953674316 (float) (15)
+[Argument] arg t65 (float) (15)
+[Declaration] t66 (float) (15) = 6.9000000953674316 (float) (15)
+[Argument] arg t66 (float) (15)
+[Declaration] t67 (float) (15) = 0.0000000000000000 (float) (15)
+[Function call] t67 (float) (15) = call operator_add_float (idt) (15), 2
+[Declaration] op_add_float_var (float) (15) = t67 (float) (15)
+[Declaration] t68 (str) (15) = From operator_add_float, Value : %.2f\n (str) (15)
+[Argument] arg t68 (str) (15)
+[Declaration] t69 (float) (15) = op_add_float_var (float) (15)
+[Argument] arg t69 (float) (15)
+[Declaration] t70 (int) (15) = 0 (int) (15)
+[Function call] t70 (int) (15) = call printf (extern) (15), 2
+[Declaration] t71 (str) (15) = \n (str) (15)
+[Argument] arg t71 (str) (15)
+[Declaration] t72 (int) (15) = 0 (int) (15)
+[Function call] t72 (int) (15) = call printf (extern) (15), 1
+[Declaration] t73 (float) (15) = 10.0000000000000000 (float) (15)
+[Argument] arg t73 (float) (15)
+[Declaration] t74 (float) (15) = 2.5000000000000000 (float) (15)
+[Argument] arg t74 (float) (15)
+[Declaration] t75 (float) (15) = 0.0000000000000000 (float) (15)
+[Function call] t75 (float) (15) = call op_mult_div_float (idt) (15), 2
+[Declaration] op_mult_div_var (float) (15) = t75 (float) (15)
+[Declaration] t76 (str) (15) = From op_mult_div_float, Value : %.2f\n (str) (15)
+[Argument] arg t76 (str) (15)
+[Declaration] t77 (float) (15) = op_mult_div_var (float) (15)
+[Argument] arg t77 (float) (15)
+[Declaration] t78 (int) (15) = 0 (int) (15)
+[Function call] t78 (int) (15) = call printf (extern) (15), 2
+[Declaration] t79 (str) (15) = \n (str) (15)
+[Argument] arg t79 (str) (15)
+[Declaration] t80 (int) (15) = 0 (int) (15)
+[Function call] t80 (int) (15) = call printf (extern) (15), 1
+[Declaration] t81 (float) (15) = 10.0000000000000000 (float) (15)
+[Argument] arg t81 (float) (15)
+[Declaration] t82 (float) (15) = 2.5000000000000000 (float) (15)
+[Argument] arg t82 (float) (15)
+[Declaration] t83 (float) (15) = 0.0000000000000000 (float) (15)
+[Function call] t83 (float) (15) = call comparison_float (idt) (15), 2
+[Declaration] t84 (str) (15) = \n (str) (15)
+[Argument] arg t84 (str) (15)
+[Declaration] t85 (int) (15) = 0 (int) (15)
+[Function call] t85 (int) (15) = call printf (extern) (15), 1
+[Declaration] t86 (int) (15) = 10 (int) (15)
+[Argument] arg t86 (int) (15)
+[Declaration] t87 (float) (15) = 2.5000000000000000 (float) (15)
+[Argument] arg t87 (float) (15)
+[Declaration] t88 (float) (15) = 0.0000000000000000 (float) (15)
+[Function call] t88 (float) (15) = call type_mixing (idt) (15), 2
+[Declaration] type_mix_var (float) (15) = t88 (float) (15)
+[Declaration] t89 (str) (15) = From type_mixing, Value : %.2f\n (str) (15)
+[Argument] arg t89 (str) (15)
+[Declaration] t90 (float) (15) = type_mix_var (float) (15)
+[Argument] arg t90 (float) (15)
+[Declaration] t91 (int) (15) = 0 (int) (15)
+[Function call] t91 (int) (15) = call printf (extern) (15), 2
+[Declaration] t92 (str) (15) = \n (str) (15)
+[Argument] arg t92 (str) (15)
+[Declaration] t93 (int) (15) = 0 (int) (15)
+[Function call] t93 (int) (15) = call printf (extern) (15), 1
+[Declaration] t94 (float) (15) = 3.2300000190734863 (float) (15)
+[Argument] arg t94 (float) (15)
+[Declaration] t95 (float) (15) = 0.0000000000000000 (float) (15)
+[Function call] t95 (float) (15) = call pre_inc_float (idt) (15), 1
+[Declaration] pre_inc_var (float) (15) = t95 (float) (15)
+[Declaration] t96 (str) (15) = From pre_inc_float, Value : %.2f\n (str) (15)
+[Argument] arg t96 (str) (15)
+[Declaration] t97 (float) (15) = pre_inc_var (float) (15)
+[Argument] arg t97 (float) (15)
+[Declaration] t98 (int) (15) = 0 (int) (15)
+[Function call] t98 (int) (15) = call printf (extern) (15), 2
+[Declaration] t99 (str) (15) = \n (str) (15)
+[Argument] arg t99 (str) (15)
+[Declaration] t100 (int) (15) = 0 (int) (15)
+[Function call] t100 (int) (15) = call printf (extern) (15), 1
+[Declaration] t101 (int) (15) = 0 (int) (15)
+[Function call] t101 (int) (15) = call loop_float (idt) (15), 0
+[Declaration] t102 (int) (15) = 0 (int) (15)
+[Function call] t102 (int) (15) = call float_control_flow (idt) (15), 0
+[Declaration] t103 (str) (15) = \n (str) (15)
+[Argument] arg t103 (str) (15)
+[Declaration] t104 (int) (15) = 0 (int) (15)
+[Function call] t104 (int) (15) = call printf (extern) (15), 1
+[Main end] main end

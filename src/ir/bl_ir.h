@@ -175,7 +175,6 @@ char* get_str_type(ValueType type);
 
 char* arena_strdup(bl_arena* arena, const char* s);
 void symbol_table_list_init(SymbolTableList* list, bl_arena* arena);
-SymbolTable* get_or_create_table(SymbolTableList* list, const char* scope_name);
 void allocate_offsets_for_func(SymbolTable* table,int *offset);
 void allocate_offsets_for_all_funcs(SymbolTableList* list);
 
@@ -186,22 +185,20 @@ void visualize_symbol_tables_dot(const SymbolTable *root);
 void print_table_dot(const SymbolTable *root);
 static void emit_dot_nodes(const SymbolTable *tbl);
 static void print_table_ascii(const SymbolTable *tbl, int depth);
+bl_ir* bhaulang_ir(char* filename, bl_arena* arena);
 
 
 #ifdef BL_IR_TEST
 
-int main(){
+int main(int argc, char** argv){
+    if(argc != 2){
+        fprintf(stderr, "Usage : ./prog <input_file>\n");
+        exit(1);
+    }
     bl_arena* arena = (bl_arena*)malloc(sizeof(bl_arena));
     arena_init(arena);
-    AST_Node* node = bhaulang_optimizer("src/ir/one.bl",arena);
 
-    bl_ir* ir_struct = generate_tac(node,arena);
-    allocate_offsets_for_all_funcs(ir_struct->slist);
-    visualize_symbol_tables_ascii(ir_struct->slist->tables[0]);
-    update_types_in_list(ir_struct->list);
-    print_all_symbol_tables(ir_struct->slist);
-    printf("\n");
-    tac_print(ir_struct->list,arena);
+    bhaulang_ir(argv[argc-1],arena);
     return 0;
 }
 
@@ -2656,16 +2653,14 @@ void print_table_dot(const SymbolTable *root)
 
 void visualize_symbol_tables_ascii(const SymbolTable *root)
 {
-    puts("=== Symbol Table Tree (ASCII) ===");
+    puts("=== Symbol Table Tree (SCOPES) ===");
     print_table_ascii(root, 0);
     puts("=================================");
 }
 
 void visualize_symbol_tables_dot(const SymbolTable *root)
 {
-    puts("=== Symbol Table Graph (DOT) ===");
     print_table_dot(root);
-    puts("================================");
 }
 
 

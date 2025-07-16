@@ -11,6 +11,8 @@
 #define C_LABEL   "\033[0;33m"
 #define C_VALUE   "\033[0;32m"
 
+#define PRINT_MONOCHROME
+
 int ast_id_counter = 0;
 
 typedef enum {
@@ -357,7 +359,14 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
 
     switch (node->type) {
         case AST_PROGRAM: {
+            #ifdef PRINT_IN_COLOR
             printf(C_NODE "PROGRAM" C_RESET "\n");
+            #endif
+            
+            #ifdef PRINT_MONOCHROME
+            printf("PROGRAM\n");
+            #endif
+
             ASTProgram* prog = (ASTProgram*)node->data;
             for (size_t i = 0; i < prog->count; ++i) {
                 print_ast_tree(prog->statements[i], next_prefix, i == prog->count - 1);
@@ -367,7 +376,14 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
 
         case AST_PARAM: {
             AST_Param* param = (AST_Param*)node->data;
+            #ifdef PRINT_IN_COLOR
             printf(C_NODE "PARAM: %s" C_RESET "\n",param->func_name);
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("PARAM: %s\n",param->func_name);
+            #endif
+
             print_ast_tree(param->ident,next_prefix,true);
             break;
         }
@@ -375,7 +391,14 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
         case AST_FUNCTION: {
             AST_Function* func = (AST_Function*)node->data;
             AST_Identifier* func_id = (AST_Identifier*)func->name->data;
+            #ifdef PRINT_IN_COLOR
             printf(C_NODE "FUNCTION: %s" C_RESET "\n", func_id->name);
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("FUNCTION: %s\n",func_id->name);
+            #endif
+
             print_indent(next_prefix, false); printf("PARAMS\n");
             for (size_t i = 0; i < func->param_count; ++i) {
                 print_ast_tree(func->params[i], next_prefix, i == func->param_count - 1);
@@ -386,14 +409,28 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
         }
 
         case AST_MAIN: {
+            #ifdef PRINT_IN_COLOR
             printf(C_NODE "MAIN FUNCTION" C_RESET "\n");
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("MAIN FUNCTION\n");
+            #endif
+
             AST_Main* main_func = (AST_Main*)node->data;
             print_ast_tree(main_func->block, next_prefix, true);
             break;
         }
 
         case AST_LOOP: {
+            #ifdef PRINT_IN_COLOR
             printf(C_NODE "WHILE" C_RESET "\n");
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("WHILE\n");
+            #endif
+
             AST_Loop* loop = (AST_Loop*)node->data;
             print_indent(next_prefix, false); printf("EXPR\n");
             print_ast_tree(loop->expr, next_prefix, false);
@@ -403,7 +440,14 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
         }
 
         case AST_SWITCH: {
+            #ifdef PRINT_IN_COLOR
             printf(C_NODE "SWITCH" C_RESET "\n");
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("SWITCH\n");
+            #endif
+
             AST_Switch* sw = (AST_Switch*)node->data;
             print_indent(next_prefix, false); printf("EXPR\n");
             print_ast_tree(sw->expr, next_prefix, false);
@@ -418,7 +462,14 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
 
         case AST_CASE: {
             AST_SwitchCase* _case = (AST_SwitchCase*)node->data;
+            #ifdef PRINT_IN_COLOR
             printf(C_NODE "CASE" C_RESET "\n");
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("CASE\n");
+            #endif
+
             print_indent(next_prefix, false); printf("VALUE\n");
             print_ast_tree(_case->value, next_prefix, false);
             for (int i = 0; i < (int)_case->body_count; ++i) {
@@ -429,7 +480,14 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
 
         case AST_DEFAULT: {
             AST_SwitchCase* def = (AST_SwitchCase*)node->data;
+            #ifdef PRINT_IN_COLOR
             printf(C_NODE "DEFAULT" C_RESET "\n");
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("DEFAULT\n");
+            #endif
+
             for (int i = 0; i < (int)def->body_count; ++i) {
                 print_ast_tree(def->body[i], next_prefix, i == (int)def->body_count - 1);
             }
@@ -437,7 +495,14 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
         }
 
         case AST_IFELSE: {
+            #ifdef PRINT_IN_COLOR
             printf(C_NODE "IF_ELSE" C_RESET "\n");
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("IF_ELSE\n");
+            #endif
+
             AST_Ifelse* ifs = (AST_Ifelse*)node->data;
             print_indent(next_prefix, false); printf("CONDITION\n");
             print_ast_tree(ifs->condition, next_prefix, false);
@@ -449,7 +514,14 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
         }
 
         case AST_RETURN: {
+            #ifdef PRINT_IN_COLOR
             printf(C_NODE "RETURN" C_RESET "\n");
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("RETURN\n");
+            #endif
+
             AST_Return* ret = (AST_Return*)node->data;
             print_ast_tree(ret->expr, next_prefix, true);
             break;
@@ -457,14 +529,28 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
 
         case AST_ASSIGN: {
             AST_Assign* asg = (AST_Assign*)node->data;
+            #ifdef PRINT_IN_COLOR
             printf(C_NODE "ASSIGN %s" C_RESET "\n",keyword_enum_to_str(asg->op));
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("ASSIGN %s\n",keyword_enum_to_str(asg->op));
+            #endif
+
             print_ast_tree(asg->lhs, next_prefix, false);
             print_ast_tree(asg->rhs, next_prefix, true);
             break;
         }
         case AST_ASSIGNDECL: {
             AST_Assign* asg = (AST_Assign*)node->data;
+            #ifdef PRINT_IN_COLOR
             printf(C_NODE "ASSIGN DECL %s" C_RESET "\n",keyword_enum_to_str(asg->op));
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("ASSIGN DECL %s\n",keyword_enum_to_str(asg->op));
+            #endif
+
             print_ast_tree(asg->lhs,next_prefix,false);
             print_ast_tree(asg->rhs,next_prefix,true);
             break;
@@ -473,7 +559,14 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
         case AST_FUNCTIONCALL: {
             AST_FunctionCall* call = (AST_FunctionCall*)node->data;
             AST_Identifier* name = (AST_Identifier*)call->name->data;
+            #ifdef PRINT_IN_COLOR
             printf(C_NODE "FUNCTION CALL: %s" C_RESET "\n", name->name);
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("FUNCTION CALL: %s\n",name->name);
+            #endif
+
             for (size_t i = 0; i < (size_t)call->args_count; ++i) {
                 print_ast_tree(call->args[i], next_prefix, i == (size_t)call->args_count - 1);
             }
@@ -481,7 +574,14 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
         }
 
         case AST_BLOCK: {
+            #ifdef PRINT_IN_COLOR
             printf(C_NODE "BLOCK" C_RESET "\n");
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("BLOCK\n");
+            #endif
+
             AST_Block* blk = (AST_Block*)node->data;
             for (size_t i = 0; i < blk->body_count; ++i) {
                 print_ast_tree(blk->body[i], next_prefix, i == blk->body_count - 1);
@@ -491,46 +591,95 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
 
         case AST_IDENTIFIER: {
             AST_Identifier* id = (AST_Identifier*)node->data;
+            #ifdef PRINT_IN_COLOR
             printf(C_LABEL "IDENTIFIER: %s" C_RESET " [" C_VALUE "%s#%d" C_RESET "]\n",
                    id->name ? id->name : "(null)",
                    id->scope_val ? id->scope_val->scope_name : "(null)",
                    id->scope_val ? id->scope_val->id : -1);
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("IDENTIFIER: %s [%s#%d]\n",id->name ? id->name : "(null)",id->scope_val ? id->scope_val->scope_name : "(null)",id->scope_val ? id->scope_val->id : -1);
+            #endif
+
             break;
         }
 
         case AST_INTLITERAL: {
             AST_IntLiteral* ilit = (AST_IntLiteral*)node->data;
+            #ifdef PRINT_IN_COLOR
             printf(C_LABEL "INT_LITERAL: " C_VALUE "%d" C_RESET "\n", ilit->value);
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("INT_LITERAL: %d\n",ilit->value);
+            #endif
+
             break;
         }
 
         case AST_FLOATLITERAL: {
             AST_FloatLiteral* flit = (AST_FloatLiteral*)node->data;
+            #ifdef PRINT_IN_COLOR
             printf(C_LABEL "FLOAT_LITERAL: " C_VALUE "%.2f" C_RESET "\n",flit->value);
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("FLOAT_LITERAL: %.2f\n",flit->value);
+            #endif
+
             break;
         }
 
         case AST_CHARLITERAL: {
             AST_CharLiteral* clit = (AST_CharLiteral*)node->data;
+            #ifdef PRINT_IN_COLOR
             printf(C_LABEL "CHAR_LITERAL: " C_VALUE "%c" C_RESET "\n",clit->value);
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("CHAR_LITERAL: %c\n",clit->value);
+            #endif
+
             break;
         }
 
         case AST_BOOLLITERAL: {
             AST_BoolLiteral* blit = (AST_BoolLiteral*)node->data;
+            #ifdef PRINT_IN_COLOR
             printf(C_LABEL "BOOL LITERAL: " C_VALUE "%s" C_RESET "\n",blit->value == true ? "true" : "false");
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("BOOL_LITERAL: %s\n",blit->value == true ? "true" : "false");
+            #endif
+
             break;
         }
 
         case AST_STRINGLITERAL: {
             AST_StringLiteral* slit = (AST_StringLiteral*)node->data;
+            #ifdef PRINT_IN_COLOR
             printf(C_LABEL "STRING_LITERAL: \"%s\"" C_RESET "\n", slit->value);
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("STRING_LITERAL: \"%s\"\n",slit->value);
+            #endif
+
             break;
         }
 
         case AST_BINOP: {
             AST_Binop* bop = (AST_Binop*)node->data;
+            #ifdef PRINT_IN_COLOR
             printf(C_LABEL "BINOP: " C_VALUE "%s" C_RESET "\n", keyword_enum_to_str(bop->op));
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("BINOP: %s\n",keyword_enum_to_str(bop->op));
+            #endif
+
             print_ast_tree(bop->lhs, next_prefix, false);
             print_ast_tree(bop->rhs, next_prefix, true);
             break;
@@ -538,30 +687,65 @@ void print_ast_tree(AST_Node* node, const char* prefix, bool is_last) {
 
         case AST_UNOP: {
             AST_Unop* uop = (AST_Unop*)node->data;
+            #ifdef PRINT_IN_COLOR
             printf(C_LABEL "UNARYOP: " C_VALUE "%s" C_RESET "\n", keyword_enum_to_str(uop->op));
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("UNARYOP : %s\n",keyword_enum_to_str(uop->op));
+            #endif
+
             print_ast_tree(uop->node, next_prefix, true);
             break;
         }
 
         case AST_EXTERN: {
+            #ifdef PRINT_IN_COLOR
             printf(C_NODE "EXTERN" C_RESET "\n");
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("EXTERN\n");
+            #endif
+
             AST_Extern* ext = (AST_Extern*)node->data;
             print_ast_tree(ext->ident, next_prefix, true);
             break;
         }
 
         case AST_BREAK: {
+            #ifdef PRINT_IN_COLOR
             printf(C_NODE "BREAK" C_RESET "\n");
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("BREAK\n");
+            #endif
+
             break;
         }
 
         case AST_COMMENT: {
+            #ifdef PRINT_IN_COLOR
             printf(C_LABEL "// COMMENT" C_RESET "\n");
+            #endif
+            
+            #ifdef PRINT_MONOCHROME
+            printf("// COMMENT\n");
+            #endif
+
             break;
         }
 
         case AST_GROUP: {
+            #ifdef PRINT_IN_COLOR
             printf(C_NODE "GROUP" C_RESET "\n");
+            #endif
+
+            #ifdef PRINT_MONOCHROME
+            printf("GROUP\n");
+            #endif
+
             AST_Group* group = (AST_Group*)node->data;
             print_ast_tree(group->expr, next_prefix, true);
             break;

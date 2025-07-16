@@ -1,0 +1,228 @@
+(null)└── PROGRAM
+(null)    ├── EXTERN
+(null)    │   └── IDENTIFIER: printf [global#1]
+(null)    ├── FUNCTION: char_decl
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: ch [char_decl#2]
+(null)    │       │   └── CHAR_LITERAL: A
+(null)    │       └── FUNCTION CALL: printf
+(null)    │           ├── STRING_LITERAL: "From char_decl, character : %c\n"
+(null)    │           └── IDENTIFIER: ch [char_decl#2]
+(null)    ├── FUNCTION: char_reassign
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: char_reassign
+(null)    │       └── IDENTIFIER: a [char_reassign#3]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: a [char_reassign#3]
+(null)    │       │   └── CHAR_LITERAL: B
+(null)    │       └── RETURN
+(null)    │           └── IDENTIFIER: a [char_reassign#3]
+(null)    ├── FUNCTION: char_arithmetic
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: char_arithmetic
+(null)    │       └── IDENTIFIER: a [char_arithmetic#4]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: b [char_arithmetic#4]
+(null)    │       │   └── BINOP: BL_ADDBINOP
+(null)    │       │       ├── IDENTIFIER: a [char_arithmetic#4]
+(null)    │       │       └── INT_LITERAL: 1
+(null)    │       └── RETURN
+(null)    │           └── IDENTIFIER: b [char_arithmetic#4]
+(null)    ├── FUNCTION: compare_char
+(null)    │   ├── PARAMS
+(null)    │   ├── PARAM: compare_char
+(null)    │   │   └── IDENTIFIER: a [compare_char#5]
+(null)    │   └── PARAM: compare_char
+(null)    │       └── IDENTIFIER: b [compare_char#5]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       └── RETURN
+(null)    │           └── BINOP: BL_ISEQUALCOND
+(null)    │               ├── IDENTIFIER: a [compare_char#5]
+(null)    │               └── IDENTIFIER: b [compare_char#5]
+(null)    ├── FUNCTION: switch_char
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: switch_char
+(null)    │       └── IDENTIFIER: a [switch_char#6]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       └── SWITCH
+(null)    │           ├── EXPR
+(null)    │           ├── IDENTIFIER: a [(null)#7]
+(null)    │           ├── CASES
+(null)    │           ├── CASE
+(null)    │           │   ├── VALUE
+(null)    │           │   ├── CHAR_LITERAL: A
+(null)    │           │   ├── FUNCTION CALL: printf
+(null)    │           │   │   ├── STRING_LITERAL: "From switch_char, Value = %c\n"
+(null)    │           │   │   └── IDENTIFIER: a [(null)#7]
+(null)    │           │   └── BREAK
+(null)    │           ├── CASE
+(null)    │           │   ├── VALUE
+(null)    │           │   ├── CHAR_LITERAL: B
+(null)    │           │   ├── FUNCTION CALL: printf
+(null)    │           │   │   ├── STRING_LITERAL: "From switch_char, Value = %c\n"
+(null)    │           │   │   └── IDENTIFIER: a [(null)#7]
+(null)    │           │   └── BREAK
+(null)    │           └── CASE
+(null)    │               ├── VALUE
+(null)    │               ├── CHAR_LITERAL: C
+(null)    │               ├── FUNCTION CALL: printf
+(null)    │               │   ├── STRING_LITERAL: "From switch_char, Value = %c\n"
+(null)    │               │   └── IDENTIFIER: a [(null)#7]
+(null)    │               └── BREAK
+(null)    │           └── DEFAULT
+(null)    │           └── (null node)
+(null)    ├── FUNCTION: loop_char
+(null)    │   ├── PARAMS
+(null)    │   └── PARAM: loop_char
+(null)    │       └── IDENTIFIER: a [loop_char#8]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: c [loop_char#8]
+(null)    │       │   └── CHAR_LITERAL: A
+(null)    │       ├── WHILE
+(null)    │       │   ├── EXPR
+(null)    │       │   ├── BINOP: BL_LESSTHAN
+(null)    │       │   │   ├── IDENTIFIER: c [loop_char#8]
+(null)    │       │   │   └── IDENTIFIER: a [loop_char#8]
+(null)    │       │   └── BLOCK
+(null)    │       │   └── BLOCK
+(null)    │       │       ├── FUNCTION CALL: printf
+(null)    │       │       │   ├── STRING_LITERAL: "%c "
+(null)    │       │       │   └── IDENTIFIER: c [(null)#9]
+(null)    │       │       └── UNARYOP : BL_INC
+(null)    │       │           └── IDENTIFIER: c [(null)#9]
+(null)    │       └── FUNCTION CALL: printf
+(null)    │           └── STRING_LITERAL: "\n"
+(null)    ├── FUNCTION: char_offset
+(null)    │   ├── PARAMS
+(null)    │   ├── PARAM: char_offset
+(null)    │   │   └── IDENTIFIER: a [char_offset#10]
+(null)    │   └── PARAM: char_offset
+(null)    │       └── IDENTIFIER: offset [char_offset#10]
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       └── RETURN
+(null)    │           └── BINOP: BL_ADDBINOP
+(null)    │               ├── IDENTIFIER: a [char_offset#10]
+(null)    │               └── IDENTIFIER: offset [char_offset#10]
+(null)    ├── FUNCTION: capital_vowels
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: ch [capital_vowels#11]
+(null)    │       │   └── CHAR_LITERAL: A
+(null)    │       ├── WHILE
+(null)    │       │   ├── EXPR
+(null)    │       │   ├── BINOP: BL_LESSEQ
+(null)    │       │   │   ├── IDENTIFIER: ch [capital_vowels#11]
+(null)    │       │   │   └── CHAR_LITERAL: Z
+(null)    │       │   └── BLOCK
+(null)    │       │   └── BLOCK
+(null)    │       │       ├── IF_ELSE
+(null)    │       │       │   ├── CONDITION
+(null)    │       │       │   ├── BINOP: BL_LOGOR
+(null)    │       │       │   │   ├── BINOP: BL_LOGOR
+(null)    │       │       │   │   │   ├── BINOP: BL_LOGOR
+(null)    │       │       │   │   │   │   ├── BINOP: BL_LOGOR
+(null)    │       │       │   │   │   │   │   ├── BINOP: BL_ISEQUALCOND
+(null)    │       │       │   │   │   │   │   │   ├── IDENTIFIER: ch [(null)#12]
+(null)    │       │       │   │   │   │   │   │   └── CHAR_LITERAL: A
+(null)    │       │       │   │   │   │   │   └── BINOP: BL_ISEQUALCOND
+(null)    │       │       │   │   │   │   │       ├── IDENTIFIER: ch [(null)#12]
+(null)    │       │       │   │   │   │   │       └── CHAR_LITERAL: E
+(null)    │       │       │   │   │   │   └── BINOP: BL_ISEQUALCOND
+(null)    │       │       │   │   │   │       ├── IDENTIFIER: ch [(null)#12]
+(null)    │       │       │   │   │   │       └── CHAR_LITERAL: I
+(null)    │       │       │   │   │   └── BINOP: BL_ISEQUALCOND
+(null)    │       │       │   │   │       ├── IDENTIFIER: ch [(null)#12]
+(null)    │       │       │   │   │       └── CHAR_LITERAL: O
+(null)    │       │       │   │   └── BINOP: BL_ISEQUALCOND
+(null)    │       │       │   │       ├── IDENTIFIER: ch [(null)#12]
+(null)    │       │       │   │       └── CHAR_LITERAL: U
+(null)    │       │       │   ├── IF BLOCK
+(null)    │       │       │   ├── BLOCK
+(null)    │       │       │   │   └── FUNCTION CALL: printf
+(null)    │       │       │   │       ├── STRING_LITERAL: "%c "
+(null)    │       │       │   │       └── IDENTIFIER: ch [(null)#13]
+(null)    │       │       │   └── ELSE BLOCK
+(null)    │       │       │   └── BLOCK
+(null)    │       │       │       └── FUNCTION CALL: printf
+(null)    │       │       │           ├── STRING_LITERAL: "%c "
+(null)    │       │       │           └── BINOP: BL_ADDBINOP
+(null)    │       │       │               ├── IDENTIFIER: ch [(null)#14]
+(null)    │       │       │               └── INT_LITERAL: 32
+(null)    │       │       └── UNARYOP : BL_INC
+(null)    │       │           └── IDENTIFIER: ch [(null)#12]
+(null)    │       └── FUNCTION CALL: printf
+(null)    │           └── STRING_LITERAL: "\n"
+(null)    ├── FUNCTION: print_characters
+(null)    │   ├── PARAMS
+(null)    │   └── BLOCK
+(null)    │   └── BLOCK
+(null)    │       ├── FUNCTION CALL: char_decl
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: ch_ra [print_characters#15]
+(null)    │       │   └── FUNCTION CALL: char_reassign
+(null)    │       │       └── CHAR_LITERAL: A
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   ├── STRING_LITERAL: "Reassigned char : %c\n"
+(null)    │       │   └── IDENTIFIER: ch_ra [print_characters#15]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: ch_arith [print_characters#15]
+(null)    │       │   └── FUNCTION CALL: char_arithmetic
+(null)    │       │       └── CHAR_LITERAL: A
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   ├── STRING_LITERAL: "Character arithmetic : A + 1 : %c\n"
+(null)    │       │   └── IDENTIFIER: ch_arith [print_characters#15]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: ch_comp [print_characters#15]
+(null)    │       │   └── FUNCTION CALL: compare_char
+(null)    │       │       ├── CHAR_LITERAL: A
+(null)    │       │       └── CHAR_LITERAL: A
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   ├── STRING_LITERAL: "Comparison between A,A : %d\n"
+(null)    │       │   └── IDENTIFIER: ch_comp [print_characters#15]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: switch_char
+(null)    │       │   └── CHAR_LITERAL: A
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: loop_char
+(null)    │       │   └── CHAR_LITERAL: G
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── ASSIGN DECL BL_EQUAL
+(null)    │       │   ├── IDENTIFIER: d_offset [print_characters#15]
+(null)    │       │   └── FUNCTION CALL: char_offset
+(null)    │       │       ├── CHAR_LITERAL: D
+(null)    │       │       └── INT_LITERAL: 3
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   ├── STRING_LITERAL: "Offset D by 3 : %c\n"
+(null)    │       │   └── IDENTIFIER: d_offset [print_characters#15]
+(null)    │       ├── FUNCTION CALL: printf
+(null)    │       │   └── STRING_LITERAL: "\n"
+(null)    │       ├── FUNCTION CALL: capital_vowels
+(null)    │       └── FUNCTION CALL: printf
+(null)    │           └── STRING_LITERAL: "\n"
+(null)    └── MAIN FUNCTION
+(null)        └── BLOCK
+(null)            └── FUNCTION CALL: print_characters
+
