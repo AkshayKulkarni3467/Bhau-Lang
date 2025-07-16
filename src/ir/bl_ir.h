@@ -157,8 +157,15 @@ void tac_colored_print(TACList* list,bl_arena* arena);
 void tac_export_dot(TACList* list, const char* filename,bl_arena* arena);
 
 bl_ir* generate_tac(AST_Node* ast, bl_arena* arena);
-TACList* update_list_types(TACList* list,bl_arena* arena);
 DataContext* gen_tac(AST_Node* node, TACList* prog, SymbolTableList* slist,SymbolTable* current_table,bl_arena* arena, LoopContext* loop_ctx);
+void update_types_in_list(TACList* list,bl_arena* arena);
+void update_tac_values(TACInstr* instr,DataContext* ctx,SymbolTable* table,ValueType temp_type,bl_arena* arena);
+bool is_binop_string(TACInstr* instr);
+bool is_binop_bool(TACInstr* instr);
+bool is_binop_char(TACInstr* instr);
+bool is_binop_int(TACInstr* instr);
+bool is_binop_float(TACInstr* instr);
+bool is_compare_type(TACInstr* instr);
 
 DataContext* new_temp(bl_arena* arena);
 char* get_binop_from_keyword(enum KEYWORD_TYPES type);
@@ -191,7 +198,7 @@ int main(){
     bl_ir* ir_struct = generate_tac(node,arena);
     allocate_offsets_for_all_funcs(ir_struct->slist);
     visualize_symbol_tables_ascii(ir_struct->slist->tables[0]);
-    ir_struct->list = update_list_types(ir_struct->list,arena);
+    update_types_in_list(ir_struct->list);
     print_all_symbol_tables(ir_struct->slist);
     printf("\n");
     tac_print(ir_struct->list,arena);
@@ -203,9 +210,8 @@ int main(){
 bl_ir* bhaulang_ir(char* filename, bl_arena* arena){
     AST_Node* node = bhaulang_optimizer(filename,arena);
     bl_ir* ir_struct = generate_tac(node,arena);
-    ir_struct->list = update_list_types(ir_struct->list,arena);
+    update_types_in_list(ir_struct->list,arena);
     allocate_offsets_for_all_funcs(ir_struct->slist);
-    // print_all_symbol_tables(ir_struct->slist);
     return ir_struct;
 }
 
@@ -1540,6 +1546,7 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
                 }else{
                     entry->type = TYPE_IDENTIFIER;
                 }
+
                 if(entry->is_global){
                     entry->type = rhs->type;
                     if(entry->type == TYPE_INT){
@@ -1555,6 +1562,19 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
                     }else{
                         fprintf(stderr,"Unknown declaration type in global scope; Declaration can only be int, float, char, string and bool\n");
                         exit(1);
+                    }
+                }else{
+                    entry->type = rhs->type;
+                    if(entry->type == TYPE_INT){
+                        entry->int_val = rhs->val.ival;
+                    }else if(entry->type == TYPE_FLOAT){
+                        entry->float_val = rhs->val.fval;
+                    }else if(entry->type == TYPE_CHAR){
+                        entry->char_val = rhs->val.cval;
+                    }else if(entry->type == TYPE_STRING){
+                        entry->string_val = rhs->val.sval;
+                    }else if(entry->type == TYPE_BOOL){
+                        entry->bool_val = rhs->val.bval;
                     }
                 }
 
@@ -1612,7 +1632,8 @@ DataContext* gen_tac(AST_Node* node, TACList* prog,SymbolTableList* slist,Symbol
         }
 
         case AST_BLOCK: {
-            AST_Block* blk = (AST_Block*)node->data;
+                AST_Block* blk = (AST_Block*)node->data;
+
             for (size_t i = 0; i < blk->body_count; ++i) {
                 gen_tac(blk->body[i], prog,slist,current_table, arena,loop_ctx);
             }
@@ -2225,485 +2246,207 @@ char* print_type_val(DataContext* context,bl_arena* arena){
     return NULL;
 }
 
-TACList* update_list_types(TACList* list1,bl_arena* arena){
-    int val = 0;
-    for(TACInstr* instr = list1->head;instr;instr = instr->next){
-        val++;
+bool is_compare_type(TACInstr* instr){
+    if(instr->relop->operator_type == BL_LESSTHAN    || 
+       instr->relop->operator_type == BL_GRTTHAN     || 
+       instr->relop->operator_type == BL_LESSEQ      || 
+       instr->relop->operator_type == BL_GRTEQ       || 
+       instr->relop->operator_type == BL_LOGAND      || 
+       instr->relop->operator_type == BL_LOGOR       || 
+       instr->relop->operator_type == BL_ISEQUALCOND || 
+       instr->relop->operator_type == BL_NOTEQ){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+bool is_binop_float(TACInstr* instr){
+    if(instr->arg1->acquired_type == TYPE_FLOAT || instr->arg2->acquired_type == TYPE_FLOAT){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+bool is_binop_int(TACInstr* instr){
+    if(instr->arg1->acquired_type == TYPE_INT || instr->arg2->acquired_type == TYPE_INT){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+bool is_binop_char(TACInstr* instr){
+    if(instr->arg1->acquired_type == TYPE_CHAR || instr->arg2->acquired_type == TYPE_CHAR){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+bool is_binop_bool(TACInstr* instr){
+    if(instr->arg1->acquired_type == TYPE_BOOL || instr->arg2->acquired_type == TYPE_BOOL){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+bool is_binop_string(TACInstr* instr){
+    if(instr->arg1->acquired_type == TYPE_STRING || instr->arg2->acquired_type == TYPE_STRING){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+void update_tac_values(TACInstr* instr,DataContext* ctx,SymbolTable* table,ValueType temp_type,bl_arena* arena){
+    if(!ctx){
+        return;
+    }
+    TACInstr* temp_ptr = instr;
+    while(instr){
+        if(instr->result){
+            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (table->scope_id == 0 || (instr->result->scope_id == table->scope_id))){
+                instr->result->acquired_type = temp_type;
+            }
+
+        }
+        if(instr->arg1){
+            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (table->scope_id == 0 || (instr->arg1->scope_id == table->scope_id))){
+                instr->arg1->acquired_type = temp_type;
+            }
+        }
+        if(instr->arg2){
+            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (table->scope_id == 0 || (instr->arg2->scope_id == table->scope_id))){
+                instr->arg2->acquired_type = temp_type;
+            }
+        }
+        instr = instr->next;
+    }
+    instr = temp_ptr;
+
+    for(int i = 0;i<table->children_count;i++){
+        update_tac_values(instr,ctx,table->children[i],temp_type,arena);
+    }
+}
+
+void update_types_in_list(TACList* list,bl_arena* arena){
+    TACInstr* instr = list->head;
+    while(instr){
         switch(instr->op){
             case TAC_EXTERN:{
                 instr->result->acquired_type = TYPE_EXTERN;
-
-                TACInstr* temp_ptr = instr;
                 DataContext* ctx = instr->result;
                 ValueType temp_type = instr->result->acquired_type;
-
-                while(instr){
-                    if(instr->result){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
-                            instr->result->acquired_type = temp_type;
-                        }
-
-                    }
-                    if(instr->arg1){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
-                            instr->arg1->acquired_type = temp_type;
-                        }
-                    }
-                    if(instr->arg2){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
-                            instr->arg2->acquired_type = temp_type;
-                        }
-                    }
-                    instr = instr->next;
-                }
-                instr = temp_ptr;  
-                break;
-            }
-            case TAC_ASSIGNDECL:{
-                if(instr->arg1){
-                    instr->result->acquired_type = instr->arg1->acquired_type;
-                    TACInstr* temp_ptr = instr;
-                    DataContext* ctx = instr->result;
-                    ValueType temp_type = instr->result->acquired_type;
-
-                    while(instr){
-                        
-                        if(instr->result){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
-                                instr->result->acquired_type = temp_type;
-                            }
-
-                        }
-                        if(instr->arg1){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
-                                instr->arg1->acquired_type = temp_type;
-                            }
-                        }
-                        if(instr->arg2){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
-                                instr->arg2->acquired_type = temp_type;
-                            }
-                        }
-                        instr = instr->next;
-                    }
-                    instr = temp_ptr;  
-                }else{
-                    instr->result->acquired_type = TYPE_IDENTIFIER;
-                    TACInstr* temp_ptr = instr;
-                    DataContext* ctx = instr->result;
-                    ValueType temp_type = instr->result->acquired_type;
-
-                    while(instr){
-                        
-                        if(instr->result){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
-                                instr->result->acquired_type = temp_type;
-                            }
-
-                        }
-                        if(instr->arg1){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
-                                instr->arg1->acquired_type = temp_type;
-                            }
-                        }
-                        if(instr->arg2){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
-                                instr->arg2->acquired_type = temp_type;
-                            }
-                        }
-                        instr = instr->next;
-                    }
-                    instr = temp_ptr;  
-                }
+                update_tac_values(instr,ctx,ctx->scope,temp_type,arena);
                 break;
             }
             case TAC_BINOP:{
-                if(instr->arg1->acquired_type == TYPE_FLOAT || instr->arg2->acquired_type == TYPE_FLOAT){
-                    instr->result->acquired_type = TYPE_FLOAT;
-                    TACInstr* temp_ptr = instr;
-                    DataContext* ctx = instr->result;
-                    ValueType temp_type = instr->result->acquired_type;
-                    if(instr->relop->operator_type == BL_LESSTHAN || instr->relop->operator_type == BL_GRTTHAN || instr->relop->operator_type == BL_LESSEQ || instr->relop->operator_type == BL_GRTEQ || instr->relop->operator_type == BL_LOGAND || instr->relop->operator_type == BL_LOGOR || instr->relop->operator_type == BL_ISEQUALCOND || instr->relop->operator_type == BL_NOTEQ){
-                        instr->result->acquired_type = TYPE_BOOL;
-                        temp_ptr = instr;
-                        ctx = instr->result;
-                        temp_type = instr->result->acquired_type;
-                    }
-                    while(instr){
-                        
-                        if(instr->result){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
-                                instr->result->acquired_type = temp_type;
-                            }
-
-                        }
-                        if(instr->arg1){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
-                                instr->arg1->acquired_type = temp_type;
-                            }
-                        }
-                        if(instr->arg2){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
-                                instr->arg2->acquired_type = temp_type;
-                            }
-                        }
-                        instr = instr->next;
-                    }
-                    instr = temp_ptr;  
-                    break;
-                }
-                if(instr->arg1->acquired_type == TYPE_INT || instr->arg2->acquired_type == TYPE_INT){
-                    instr->result->acquired_type = TYPE_INT;
-                    TACInstr* temp_ptr = instr;
-                    DataContext* ctx = instr->result;
-                    ValueType temp_type = instr->result->acquired_type;
-
-                    if(instr->relop->operator_type == BL_LESSTHAN || instr->relop->operator_type == BL_GRTTHAN || instr->relop->operator_type == BL_LESSEQ || instr->relop->operator_type == BL_GRTEQ || instr->relop->operator_type == BL_LOGAND || instr->relop->operator_type == BL_LOGOR ||instr->relop->operator_type == BL_ISEQUALCOND || instr->relop->operator_type == BL_NOTEQ){
-                        instr->result->acquired_type = TYPE_BOOL;
-                        temp_ptr = instr;
-                        ctx = instr->result;
-                        temp_type = instr->result->acquired_type;
-                    }
-                    while(instr){
-                        
-                        if(instr->result){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
-                                instr->result->acquired_type = temp_type;
-                            }
-
-                        }
-                        if(instr->arg1){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
-                                instr->arg1->acquired_type = temp_type;
-                            }
-                        }
-                        if(instr->arg2){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
-                                instr->arg2->acquired_type = temp_type;
-                            }
-                        }
-                        instr = instr->next;
-                    }
-                    instr = temp_ptr;  
-                    break;
-                }
-                if(instr->arg1->acquired_type == TYPE_CHAR || instr->arg2->acquired_type == TYPE_CHAR){
-                    instr->result->acquired_type = TYPE_CHAR;
-                    TACInstr* temp_ptr = instr;
-                    DataContext* ctx = instr->result;
-                    ValueType temp_type = instr->result->acquired_type;
-
-                    if(instr->relop->operator_type == BL_LESSTHAN || instr->relop->operator_type == BL_GRTTHAN || instr->relop->operator_type == BL_LESSEQ || instr->relop->operator_type == BL_GRTEQ || instr->relop->operator_type == BL_LOGAND || instr->relop->operator_type == BL_LOGOR || instr->relop->operator_type == BL_ISEQUALCOND || instr->relop->operator_type == BL_NOTEQ){
-                        instr->result->acquired_type = TYPE_BOOL;
-                        temp_ptr = instr;
-                        ctx = instr->result;
-                        temp_type = instr->result->acquired_type;
-                    }
-                    while(instr){
-                        
-                        if(instr->result){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
-                                instr->result->acquired_type = temp_type;
-                            }
-
-                        }
-                        if(instr->arg1){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
-                                instr->arg1->acquired_type = temp_type;
-                            }
-                        }
-                        if(instr->arg2){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
-                                instr->arg2->acquired_type = temp_type;
-                            }
-                        }
-                        instr = instr->next;
-                    }
-                    instr = temp_ptr;  
-                    break;
-                }
-                if(instr->arg1->acquired_type == TYPE_BOOL || instr->arg2->acquired_type == TYPE_BOOL){
+                if(is_compare_type(instr)){
                     instr->result->acquired_type = TYPE_BOOL;
-                    TACInstr* temp_ptr = instr;
                     DataContext* ctx = instr->result;
                     ValueType temp_type = instr->result->acquired_type;
-                    if(instr->relop->operator_type == BL_LESSTHAN || instr->relop->operator_type == BL_GRTTHAN || instr->relop->operator_type == BL_LESSEQ || instr->relop->operator_type == BL_GRTEQ || instr->relop->operator_type == BL_LOGAND || instr->relop->operator_type == BL_LOGOR || instr->relop->operator_type == BL_ISEQUALCOND || instr->relop->operator_type == BL_NOTEQ){
-                        instr->result->acquired_type = TYPE_BOOL;
-                        temp_ptr = instr;
-                        ctx = instr->result;
-                        temp_type = instr->result->acquired_type;
-                    }
-                    while(instr){
-                        
-                        if(instr->result){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
-                                instr->result->acquired_type = temp_type;
-                            }
-
-                        }
-                        if(instr->arg1){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
-                                instr->arg1->acquired_type = temp_type;
-                            }
-                        }
-                        if(instr->arg2){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
-                                instr->arg2->acquired_type = temp_type;
-                            }
-                        }
-                        instr = instr->next;
-                    }
-                    instr = temp_ptr;  
+                    update_tac_values(instr,ctx,ctx->scope,temp_type,arena);
                     break;
-                }
-                if(instr->arg1->acquired_type == TYPE_STRING || instr->arg2->acquired_type == TYPE_STRING){
-                    instr->result->acquired_type = TYPE_BOOL;
-                    TACInstr* temp_ptr = instr;
+                }else{
+                    if(is_binop_float(instr)){
+                        instr->result->acquired_type = TYPE_FLOAT;
+                        DataContext* ctx = instr->result;
+                        ValueType temp_type = instr->result->acquired_type;
+                        update_tac_values(instr,ctx,ctx->scope,temp_type,arena);
+                        break;
+                    }
+                    if(is_binop_int(instr)){
+                        instr->result->acquired_type = TYPE_INT;
+                        DataContext* ctx = instr->result;
+                        ValueType temp_type = instr->result->acquired_type;
+                        update_tac_values(instr,ctx,ctx->scope,temp_type,arena);
+                        break;
+                    }
+                    if(is_binop_char(instr)){
+                        instr->result->acquired_type = TYPE_CHAR;
+                        DataContext* ctx = instr->result;
+                        ValueType temp_type = instr->result->acquired_type;
+                        update_tac_values(instr,ctx,ctx->scope,temp_type,arena);
+                        break;
+                    }
+                    if(is_binop_bool(instr)){
+                        instr->result->acquired_type = TYPE_BOOL;
+                        DataContext* ctx = instr->result;
+                        ValueType temp_type = instr->result->acquired_type;
+                        update_tac_values(instr,ctx,ctx->scope,temp_type,arena);
+                        break;
+                    }
+                    if(is_binop_string(instr)){
+                        instr->result->acquired_type = TYPE_STRING;
+                        DataContext* ctx = instr->result;
+                        ValueType temp_type = instr->result->acquired_type;
+                        update_tac_values(instr,ctx,ctx->scope,temp_type,arena);
+                        break;
+                    }
+                    instr->result->acquired_type = TYPE_IDENTIFIER;
                     DataContext* ctx = instr->result;
                     ValueType temp_type = instr->result->acquired_type;
-                    if(instr->relop->operator_type == BL_ISEQUALCOND || instr->relop->operator_type == BL_NOTEQ){
-                        instr->result->acquired_type = TYPE_BOOL;
-                        temp_ptr = instr;
-                        ctx = instr->result;
-                        temp_type = instr->result->acquired_type;
-                    }
-                    while(instr){
-                        
-                        if(instr->result){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
-                                instr->result->acquired_type = temp_type;
-                            }
-
-                        }
-                        if(instr->arg1){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
-                                instr->arg1->acquired_type = temp_type;
-                            }
-                        }
-                        if(instr->arg2){
-                            if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
-                                instr->arg2->acquired_type = temp_type;
-                            }
-                        }
-                        instr = instr->next;
-                    }
-                    instr = temp_ptr;  
+                    update_tac_values(instr,ctx,ctx->scope,temp_type,arena);
                     break;
                 }
-                instr->result->acquired_type = TYPE_IDENTIFIER;
-                TACInstr* temp_ptr = instr;
-                DataContext* ctx = instr->result;
-                ValueType temp_type = instr->result->acquired_type;
-
-                while(instr){
-                    
-                    if(instr->result){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
-                            instr->result->acquired_type = temp_type;
-                        }
-
-                    }
-                    if(instr->arg1){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
-                            instr->arg1->acquired_type = temp_type;
-                        }
-                    }
-                    if(instr->arg2){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
-                            instr->arg2->acquired_type = temp_type;
-                        }
-                    }
-                    instr = instr->next;
-                }
-                instr = temp_ptr;  
-                break;
             }
-            case TAC_ASSIGN:{
-                instr->result->acquired_type = instr->arg1->acquired_type;
-                if((instr->result->acquired_type == TYPE_STRING) && (instr->arg1->acquired_type == TYPE_STRING)){
-                    fprintf(stderr,"Cannot assign or redeclare string literals. Found at `%s`\n",instr->result->val.sval);
-                    exit(1);
-                }
-                TACInstr* temp_ptr = instr;
-                DataContext* ctx = instr->result;
-                ValueType temp_type = instr->result->acquired_type;
-
-                while(instr){
-                    
-                    if(instr->result){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
-                            instr->result->acquired_type = temp_type;
-                        }
-
-                    }
-                    if(instr->arg1){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
-                            instr->arg1->acquired_type = temp_type;
-                        }
-                    }
-                    if(instr->arg2){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
-                            instr->arg2->acquired_type = temp_type;
-                        }
-                    }
-                    instr = instr->next;
-                }
-                instr = temp_ptr;  
-                break;
-            }
-            case TAC_FUNC_BEGIN:{
-                break;
-            }
-            case TAC_FUNC_END: {
-                break;
-            }
-            case TAC_MAIN_BEGIN:{
-                break;
-            }
-            case TAC_MAIN_END: {
-                break;
-            }
-
-            case TAC_PARAM:{
-                TACInstr* temp_ptr = instr;
-                DataContext* ctx = instr->arg1;
-                ValueType temp_type = instr->arg1->acquired_type;
-
-                while(instr){
-                    
-                    if(instr->result){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
-                            instr->result->acquired_type = temp_type;
-                        }
-
-                    }
-                    if(instr->arg1){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
-                            instr->arg1->acquired_type = temp_type;
-                        }
-                    }
-                    if(instr->arg2){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
-                            instr->arg2->acquired_type = temp_type;
-                        }
-                    }
-                    instr = instr->next;
-                }
-                instr = temp_ptr;  
-                break;
-            }
-            case TAC_IFGOTO: {
-                break;
-            }
-            case TAC_GOTO: {
-                break;
-            }
-            case TAC_ARG:{
-                break;
-            }
-            case TAC_LOAD_PTR: {
-                instr->result->acquired_type = instr->arg1->acquired_type;
-                TACInstr* temp_ptr = instr;
-                DataContext* ctx = instr->result;
-                ValueType temp_type = TYPE_PTR;
-
-                while(instr){
-                    
-                    if(instr->result){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
-                            instr->result->acquired_type = temp_type;
-                        }
-
-                    }
-                    if(instr->arg1){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
-                            instr->arg1->acquired_type = temp_type;
-                        }
-                    }
-                    if(instr->arg2){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
-                            instr->arg2->acquired_type = temp_type;
-                        }
-                    }
-                    instr = instr->next;
-                }
-                instr = temp_ptr;  
-                break;
-            }
+            case TAC_ASSIGNDECL:
+            case TAC_ASSIGN:
             case TAC_UNOP:{
-                instr->result->acquired_type = instr->arg1->acquired_type;
-                TACInstr* temp_ptr = instr;
-                DataContext* ctx = instr->result;
-                ValueType temp_type = instr->result->acquired_type;
-
-                while(instr){
-                    
-                    if(instr->result){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
-                            instr->result->acquired_type = temp_type;
-                        }
-
-                    }
-                    if(instr->arg1){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
-                            instr->arg1->acquired_type = temp_type;
-                        }
-                    }
-                    if(instr->arg2){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
-                            instr->arg2->acquired_type = temp_type;
-                        }
-                    }
-                    instr = instr->next;
+                if(instr->arg1){
+                    instr->result->acquired_type = instr->arg1->acquired_type;
+                    DataContext* ctx = instr->result;
+                    ValueType temp_type = instr->result->acquired_type;
+                    update_tac_values(instr,ctx,ctx->scope,temp_type,arena);
+                }else{
+                    instr->result->acquired_type = TYPE_IDENTIFIER;
+                    DataContext* ctx = instr->result;
+                    ValueType temp_type = TYPE_IDENTIFIER;
+                    update_tac_values(instr,ctx,ctx->scope,temp_type,arena);
                 }
-                instr = temp_ptr;  
                 break;
             }
-            case TAC_ADDR_OF: {
+            case TAC_LOAD_PTR:{
+                    instr->result->acquired_type = instr->arg1->acquired_type;
+                    DataContext* ctx = instr->result;
+                    ValueType temp_type = TYPE_PTR;
+                    update_tac_values(instr,ctx,ctx->scope,temp_type,arena);
+                    break;
+                }
+            case TAC_ADDR_OF:{
                 instr->result->acquired_type = instr->arg1->acquired_type;
-                TACInstr* temp_ptr = instr;
                 DataContext* ctx = instr->result;
                 ValueType temp_type = TYPE_REF;
-
-                while(instr){
-                    
-                    if(instr->result){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->result,arena)) == 0 && (ctx->scope_id == 0 || (instr->result->scope_id == ctx->scope_id))){
-                            instr->result->acquired_type = temp_type;
-                        }
-
-                    }
-                    if(instr->arg1){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg1,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg1->scope_id == ctx->scope_id))){
-                            instr->arg1->acquired_type = temp_type;
-                        }
-                    }
-                    if(instr->arg2){
-                        if(strcmp(print_type_val(ctx,arena),print_type_val(instr->arg2,arena)) == 0 && (ctx->scope_id == 0 || (instr->arg2->scope_id == ctx->scope_id))){
-                            instr->arg2->acquired_type = temp_type;
-                        }
-                    }
-                    instr = instr->next;
-                }
-                instr = temp_ptr;  
+                update_tac_values(instr,ctx,ctx->scope,temp_type,arena);
                 break;
             }
-            case TAC_LABEL:{
+            case TAC_PARAM:{
+                DataContext* ctx = instr->arg1;
+                ValueType temp_type = instr->arg1->acquired_type;
+                update_tac_values(instr,ctx,ctx->scope,temp_type,arena);
                 break;
             }
-            case TAC_NOP: {
-                break;
-            }
-            case TAC_RETURN: {
-
-                break;
-            }
+            case TAC_FUNC_BEGIN:
+            case TAC_FUNC_END:
+            case TAC_MAIN_BEGIN:
+            case TAC_MAIN_END:
+            case TAC_IFGOTO:
+            case TAC_GOTO:
+            case TAC_ARG:
+            case TAC_RETURN:
+            case TAC_NOP:
+            case TAC_LABEL:
             default:
                 break;
+            
         }
+        instr = instr->next;
     }
-    return list1;
 }
+
 
 void tac_print(TACList* list,bl_arena* arena) { 
     for (TACInstr* instr = list->head; instr; instr = instr->next) {

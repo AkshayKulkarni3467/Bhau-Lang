@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS_TOKENIZER = -Wall -Wextra -Isrc/common
+CFLAGS_TOKENIZER = -Wall -Wextra -Isrc/common -Isrc/keywords
 CFLAGS_LEXER = -Wall -Wextra -Isrc/keywords -Isrc/common
 CFLAGS_TEST = -Wall -Wextra -g -Isrc/common -Isrc/keywords
 CFLAGS_PARSER = -Wall -Wextra -Isrc/lexer -Isrc/common -Isrc/keywords
@@ -30,11 +30,11 @@ compile: $(CODEGEN)
 	@ gcc -no-pie -ggdb -o $(basename $(notdir $(INPUT))) __blcache__/out.o
 	@ rm -rf __blcache__
 
-tokenize  : $(DYNARR) $(ARENA) $(TOKENIZE) src/lexer/test.c
-	$(CC) $(CFLAGS_TOKENIZER) src/lexer/test.c -o src/lexer/test
-	./src/lexer/test
+tokenize  : $(DYNARR) $(ARENA) 
+	@ $(CC) $(CFLAGS_TOKENIZER) src/lexer/bl_tokenizer.c -o ./out
+	./out $(INPUT)
 
-lexer : $(TOKENIZE) $(LANKEYS) src/lexer/bl_lexer.c
+lexer : $(TOKENIZE) $(LANKEYS)
 	$(CC) $(CFLAGS_LEXER) src/lexer/bl_lexer.c -o src/lexer/lexer
 	./src/lexer/lexer
 
@@ -61,11 +61,11 @@ codegen: $(IR)
 	gcc -no-pie -ggdb -o src/codegen/out src/codegen/out.o
 	./src/codegen/out
 
-asm : src/codegen/out.asm
-	nasm -f elf64 -o src/codegen/out.o src/codegen/out.asm
-	gcc -no-pie -ggdb -o src/codegen/out src/codegen/out.o
-	./src/codegen/out
-
+asm : $(CODEGEN)
+	@ mkdir -p __blcache__
+	@ $(CC) $(CFLAGS_MAIN) bl_compiler.c -o __blcache__/main
+	@ ./__blcache__/main $(INPUT) $(basename $(notdir $(INPUT))).asm
+	@ rm -rf __blcache__
 	
 clean : 
-	rm -rf test reducer lexer parser src/lexer/reducer src/lexer/test src/lexer/lexer src/parser/parser src/parser/astOptimizer main
+	@ rm patterns low_stress_test high_stress_test recursion multiple_funcs scope_resolution one floats mixed_literals

@@ -3,6 +3,7 @@
 
 //TODO : to tokenize `_BL_KW_BHAU_BAHERUN_GHE printf bol;` where (printf,bol) can be stored as externs and everytime `bol` is called it is replaced by printf
 //TODO : check all debug print and graphviz generator functions in each module
+//TODO : support to tokenize chars '\n', '\r' ...
 /*-----------------------------------------------------------------Includes*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -211,13 +212,33 @@ static inline void bl_lexer_init(bl_lexer *lexer, bl_arena* arena,const char *in
 
 
 /*------------------------------------------------------Tokenize function*/
+bl_token *bl_tokenize(bl_lexer *lexer);
+
+
+#ifdef BL_LEXER_SELF_TEST
+
+
+int main(int argc, char** argv){
+
+   if(argc != 2){
+      fprintf(stderr, "Usage : ./prog <input_file>\n");
+      exit(1);
+   }
+   bl_arena* arena = (bl_arena*)malloc(sizeof(bl_arena));
+   arena_init(arena);
+   bl_token* tok_list = bl_tokenize_file(argv[argc - 1],arena);
+   bl_token_list_print(tok_list,dynarray_length(tok_list));
+}
+
+#endif
+
 bl_token *bl_tokenize(bl_lexer *lexer){
    char* character = &(lexer->input_stream[lexer->parse_point - lexer->input_stream]);
    bl_token *tok = (bl_token *)arena_alloc(lexer->arena, sizeof(bl_token));
 
   #ifdef BL_IDENTIFIERS
 
-   //WARN New addition, can result in bugs
+
   while(*character == ' ' || *character == '\n' || *character == '\r'){
    bl_forward(lexer,1);
    UPDATE_CHAR_PTR();
@@ -495,21 +516,6 @@ bl_token *bl_tokenize(bl_lexer *lexer){
    return tok;
 
 }
-
-
-#ifdef BL_LEXER_SELF_TEST
-
-
-int main(){
-
-   bl_arena* arena = (bl_arena*)malloc(sizeof(bl_arena));
-   arena_init(arena);
-
-   bl_tokenize_file("one.bl",arena);
-
-}
-
-#endif
 
 static int is_alpha(char c) {
     return (c >= 'A' && c <= 'Z') ||

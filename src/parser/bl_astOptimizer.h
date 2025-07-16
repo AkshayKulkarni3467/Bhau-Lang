@@ -113,8 +113,7 @@ AST_Node* bhaulang_optimizer(char* filename, bl_arena* arena){
 }
 
 AST_Node* perform_optimization(AST_Node* ast,bl_arena* arena){
-
-    bl_stack* scope_stack = scope_stack_init(arena);
+    bl_stack* scope_stack = scope_stack_init(arena);    
     bl_set* scope_set = set_create(arena);
     FunctionRegistry* reg = arena_alloc(arena, sizeof(FunctionRegistry));
     func_registry_init(reg, arena);
@@ -895,11 +894,6 @@ AST_Node* optimize_ast(AST_Node* node, bl_arena* arena) {
             ifs->then_block = optimize_ast(ifs->then_block, arena);
 
             ifs->else_block = optimize_ast(ifs->else_block, arena);
-            if (is_constant(ifs->condition)) {
-                AST_IntLiteral* lit = ifs->condition->data;
-                return lit->value ? ifs->then_block : ifs->else_block;
-            }
-
             return node;
         }
 
@@ -1329,12 +1323,6 @@ AST_Node* fold_constants_from_scope(AST_Node* node, bl_stack* stack, bl_set* non
         }
 
         case AST_FUNCTIONCALL: {
-            // AST_FunctionCall* fcall = node->data;
-            // for (int i = 0; i < fcall->args_count; ++i) {
-            //     if(fcall->args[i]->type != AST_UNOP){
-            //         fcall->args[i] = fold_constants_from_scope(fcall->args[i], stack, non_const_set, arena);
-            //     }
-            // }
             return node;
         }
 

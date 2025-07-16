@@ -69,7 +69,7 @@ void generateAssembly(const char* outfile, SymbolTableList* slist, TACList* list
             switch(instr->op){
                 case TAC_FUNC_BEGIN:{
                     if(is_function_called(instr->label,instr,arena)){
-                        list = update_list_types(list,arena);
+                        update_types_in_list(list,arena);
                         SymbolTable* table = symbol_table_values(slist,instr->label,arena);
                         list->head = instr->next;
                         emitFunction(fp,table,slist,list,arena);

@@ -1,134 +1,29 @@
 hi bhau
 
-
 bhau baherun ghe printf;
 
 
 
-bhau hai ahe pi = 3.1415;
-bhau hai ahe e = 2.718;
-bhau hai ahe greeting = "Hello from BhauLang!";
-bhau hai ahe flag = 1;
-bhau hai ahe z = 10;
-bhau hai ahe folded = 2 + 3 * (4 - 1);
-bhau hai ahe x = 5;
-bhau hai ahe a = b = c = 42;
-
-
-
-
-bhau lakshat thev nested_conditions(n){
-    bhau jar (n == 0){
-        printf("Zero\n");
+bhau lakshat thev float_control_flow(){
+    bhau hai ahe y = 3.14;
+    bhau hai ahe x = 2.71;
+    bhau hai ahe z = 0.0;
+    bhau jar(x > y){
+        z = x - y;
+    }bhau tar{
+        z = x + y;
     }
-    bhau nahitar(n < 0){
-        printf("Negative\n");
-    }
-    bhau tar {
-        printf("Positive\n");
-        bhau jar (n > 100){
-            printf("Very large\n");
-        }
+    bhau jar(z > 5.0){
+        bhau hai ahe double_z = z*2.0;
+        printf("From float_control_flow, Value : %.2f\n",double_z);
     }
 }
 
 
-bhau lakshat thev switch_demo(x){
-    bhau chunav(x) {
-        bhau nivad 1:
-            printf("One\n");
-        bhau nivad 2:
-            printf("Two\n");
-        bhau nivad 3:
-            printf("Three\n");
-        bhau rahudet:
-            printf("Other\n");
-    }
-}
 
-
-bhau lakshat thev nested_loops(){
-    bhau hai ahe i = 0;
-    bhau joparent(i < 5){
-        bhau hai ahe j = 0;
-        bhau joparent(j < 3){
-            printf("%d ",i);
-            printf("%d ",j);
-            j = j + 1;
-        }
-        printf("\n");
-        i = i + 1;
-    }
-}
-
-
-bhau lakshat thev add_const(){
-    bhau hai ahe a = 5;
-    bhau hai ahe b = 10;
-    bhau parat de a + b;
-}
-
-
-bhau lakshat thev counter_test(){
-    bhau hai ahe counter = 0;
-    bhau joparent(counter < 3){
-        printf("Counting");
-        printf(" %d ",counter);
-        counter = counter + 1;
-    }
-    printf("\n");
-    bhau parat de counter;
-}
-
-
-bhau lakshat thev power(x, n){
-    bhau jar (n == 0){
-        bhau parat de 1;
-    }
-    bhau parat de x * power(x, n - 1);
-}
-
-
-
-
-
-
-
-bhau lakshat thev dummy(a, b, c){
-    bhau parat de a + b + c;
-}
-
-
-bhau lakshat thev literal_demo(){
-    bhau hai ahe ch = 'b';
-    bhau hai ahe s = "string test";
-    bhau hai ahe pi_val = 3.14;
-    bhau hai ahe is_bhau = 1;
-    printf("%c\n",ch);
-    printf("%s\n",s);
-    printf("%.2f\n",pi_val);
-    printf("%d\n",is_bhau);
-}
-
-
-
-bhau ithun chalu {
+bhau ithun chalu{
+    float_control_flow();
     
-    bhau hai ahe final = dummy(1,2,3);  
-    bhau hai ahe power = power(3,3);
-    printf("%s\n","Hello from akshay!");
-    printf("Power : %d\n",power);
-    printf("%d\n",folded);
-    nested_conditions(42);
-    switch_demo(3);
-    nested_loops();
-    bhau hai ahe res = add_const();
-    printf("%d\n",res);
-    bhau hai ahe ct = counter_test();
-    printf("%d\n",ct);
-    literal_demo();
-    printf("%d\n",final);
-    
-}
+}       
 
 bye bhau
