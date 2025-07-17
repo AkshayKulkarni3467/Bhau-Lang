@@ -13,7 +13,7 @@
 
 #### [assign] -> \<let> [identifier] = [expr] | [identifier] = [expr]
 #### [return] -> \<return> [values] 
-#### [extern] -> \<extern> [identifier] 
+#### [extern] -> \<extern> [identifier] [identifier]
 
 ### Conditionals
 

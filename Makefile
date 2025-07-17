@@ -64,4 +64,4 @@ asm : $(CODEGEN)
 	@ rm -rf __blcache__
 	
 clean : 
-	@ rm patterns low_stress_test high_stress_test recursion multiple_funcs scope_resolution one floats mixed_literals
+	@ rm patterns control_flow low_stress_test high_stress_test recursion multiple_funcs scope_resolution one floats mixed_literals

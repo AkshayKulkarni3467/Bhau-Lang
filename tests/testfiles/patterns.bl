@@ -1,15 +1,15 @@
 hi bhau
 
-bhau baherun ghe printf;
+bhau baherun ghe printf bol;
 
 
 bhau lakshat thev star_de(){
-    printf("* ");
+    bol("* ");
 }
 
 
 bhau lakshat thev int_num_de(a){
-    printf("%d ",a);
+    bol("%d ",a);
 }
 
 
@@ -23,7 +23,7 @@ bhau lakshat thev r_trig_stars(a){
             ++j;
         }
         j = 1;
-        printf("\n");
+        bol("\n");
         ++i;
     }
 }
@@ -37,7 +37,7 @@ bhau lakshat thev inv_trig_stars(a){
             ++j;
         }
         j = 1;
-        printf("\n");
+        bol("\n");
         --i;
     }
 }
@@ -51,7 +51,7 @@ bhau lakshat thev r_trig_num(a){
             ++j;
         }
         j = 1;
-        printf("\n");
+        bol("\n");
         ++i;
     }
 }
@@ -61,17 +61,17 @@ bhau lakshat thev r_trig_aligned(a){
     bhau joparent(i <= a){
         bhau hai ahe j = a;
         bhau joparent(j > i){
-            printf(" ");
+            bol(" ");
             --j;
         }
         bhau hai ahe k = 1;
         bhau joparent(k <= i){
-            printf("*");
+            bol("*");
             ++k;
         }
         j = a;
         k = 1;
-        printf("\n");
+        bol("\n");
         ++i;
     }
 }
@@ -87,7 +87,7 @@ bhau lakshat thev floyd_trig(a){
             ++j;
         }
         j = 1;
-        printf("\n");
+        bol("\n");
         ++i;
     }
 }
@@ -97,11 +97,11 @@ bhau lakshat thev bin_trig(a){
     bhau joparent(i <= a){
         bhau hai ahe j = 1;
         bhau joparent(j <= i){
-            printf("%d ",(i+j) % 2);
+            bol("%d ",(i+j) % 2);
             ++j;
         }
         j = 1;
-        printf("\n");
+        bol("\n");
         ++i;
     }
 }
@@ -115,7 +115,7 @@ bhau lakshat thev inv_num_trig(a){
             ++j;
         }
         j = 1;
-        printf("\n");
+        bol("\n");
         --i;
     }
 }
@@ -125,17 +125,17 @@ bhau lakshat thev pyramid(a){
     bhau joparent(i <= a){
         bhau hai ahe j = a;
         bhau joparent(j > i){
-            printf(" ");
+            bol(" ");
             --j;
         }
         bhau hai ahe k = 1;
         bhau joparent(k <= (2*i - 1)){
-            printf("*");
+            bol("*");
             ++k;
         }
         k = 1;
         j = a;
-        printf("\n");
+        bol("\n");
         ++i;
     }
 }
@@ -146,19 +146,19 @@ bhau lakshat thev pascal_trig(a){
         bhau hai ahe coef = 1;
         bhau hai ahe space = 1;
         bhau joparent(space <= (a - i)){
-            printf("  ");
+            bol("  ");
             ++space;
         }
         bhau hai ahe j = 0;
         bhau joparent(j <= i){
-            printf("%4d",coef);
+            bol("%4d",coef);
             coef = coef * (i - j)/(j + 1);
             ++j;
         }
         j = 0;
         space = 1;
         coef = 1;
-        printf("\n");
+        bol("\n");
         ++i;
     }
 }
@@ -169,35 +169,35 @@ bhau lakshat thev char_pattern(a){
     bhau joparent(i <= a){
         bhau hai ahe j = 1;
         bhau joparent(j <= i){
-            printf("%c ",ch);
+            bol("%c ",ch);
             ++ch;
             ++j;
         }
         j = 1;
-        printf("\n");
+        bol("\n");
         ++i;
     }
 }
 
 bhau lakshat thev print_all_patterns(a){
     r_trig_stars(a);
-    printf("\n");
+    bol("\n");
     inv_trig_stars(a);
-    printf("\n");
+    bol("\n");
     r_trig_num(a);
-    printf("\n");
+    bol("\n");
     r_trig_aligned(a);
-    printf("\n");
+    bol("\n");
     floyd_trig(a);
-    printf("\n");
+    bol("\n");
     bin_trig(a);
-    printf("\n");
+    bol("\n");
     inv_num_trig(a);
-    printf("\n");
+    bol("\n");
     pyramid(a);
-    printf("\n");
+    bol("\n");
     pascal_trig(a);
-    printf("\n");
+    bol("\n");
     char_pattern(a);
 }
 

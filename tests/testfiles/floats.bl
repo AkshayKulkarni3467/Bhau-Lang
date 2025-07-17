@@ -1,6 +1,6 @@
 hi bhau
 
-bhau baherun ghe printf;
+bhau baherun ghe printf bole;
 
 
 bhau lakshat thev ret_float(a){
@@ -20,9 +20,9 @@ bhau lakshat thev op_mult_div_float(a,b){
 
 bhau lakshat thev comparison_float(a,b){
     bhau jar(a < b){
-        printf("From comparison_float, %.2f is less than %.2f\n",a,b);
+        bole("From comparison_float, %.2f is less than %.2f\n",a,b);
     }bhau tar{
-        printf("From comparison_float, %.2f is greater than %.2f\n",a,b);
+        bole("From comparison_float, %.2f is greater than %.2f\n",a,b);
     }
 }
 
@@ -37,10 +37,10 @@ bhau lakshat thev pre_inc_float(a){
 bhau lakshat thev loop_float(){
     bhau hai ahe a = 0.0;
     bhau joparent (a < 5.0){
-        printf("From loop_float, Value a : %.2f\n",a);
+        bole("From loop_float, Value a : %.2f\n",a);
         a+=1.5;
     }
-    printf("\n");
+    bole("\n");
 }
 
 
@@ -55,7 +55,7 @@ bhau lakshat thev float_control_flow(){
     }
     bhau jar(z > 5.0){
         bhau hai ahe double_z = z*2.0;
-        printf("From float_control_flow, Value : %.2f\n",double_z);
+        bole("From float_control_flow, Value : %.2f\n",double_z);
     }
 }
 
@@ -64,25 +64,25 @@ bhau lakshat thev float_control_flow(){
 bhau ithun chalu{
     
     bhau hai ahe ret_float_var = ret_float(3.14);
-    printf("From ret_float_var, Value : %.2f\n",ret_float_var);
-    printf("\n");
+    bole("From ret_float_var, Value : %.2f\n",ret_float_var);
+    bole("\n");
     bhau hai ahe op_add_float_var = operator_add_float(6.9,6.9);
-    printf("From operator_add_float, Value : %.2f\n",op_add_float_var);
-    printf("\n");
+    bole("From operator_add_float, Value : %.2f\n",op_add_float_var);
+    bole("\n");
     bhau hai ahe op_mult_div_var = op_mult_div_float(10.0,2.5);
-    printf("From op_mult_div_float, Value : %.2f\n",op_mult_div_var);
-    printf("\n");
+    bole("From op_mult_div_float, Value : %.2f\n",op_mult_div_var);
+    bole("\n");
     comparison_float(10.0,2.5);
-    printf("\n");
+    bole("\n");
     bhau hai ahe type_mix_var = type_mixing(10,2.5);
-    printf("From type_mixing, Value : %.2f\n",type_mix_var);
-    printf("\n");
+    bole("From type_mixing, Value : %.2f\n",type_mix_var);
+    bole("\n");
     bhau hai ahe pre_inc_var = pre_inc_float(3.23);
-    printf("From pre_inc_float, Value : %.2f\n",pre_inc_var);
-    printf("\n");
+    bole("From pre_inc_float, Value : %.2f\n",pre_inc_var);
+    bole("\n");
     loop_float();
     float_control_flow();
-    printf("\n");
+    bole("\n");
     
 }       
 

@@ -1,6 +1,6 @@
 hi bhau 
 
-bhau baherun ghe printf;
+bhau baherun ghe printf oraoraoroara;
 
 bhau lakshat thev mixed_conds(){
     bhau hai ahe a = 10;
@@ -11,50 +11,50 @@ bhau lakshat thev mixed_conds(){
     bhau hai ahe str2 = "hello";
 
     bhau jar(a + b == 12.5 && c == 'A' && flag == 1 && str1 == str2){
-        printf("From mixed_conds , value : %d\n",1);
+        oraoraoroara("From mixed_conds , value : %d\n",1);
     }bhau tar{
-        printf("From mixed_conds , Value : %d\n",0);
+        oraoraoroara("From mixed_conds , Value : %d\n",0);
     }
 }
 
 bhau lakshat thev float_and_int(a,b){
-    printf("From float_and_int , value : %.2f\n", a+b);
+    oraoraoroara("From float_and_int , value : %.2f\n", a+b);
 }
 
 bhau lakshat thev int_char_bool(a,b,c){
-    printf("From int_char_bool , value : %d\n",a + b + c);
+    oraoraoroara("From int_char_bool , value : %d\n",a + b + c);
 }
 
 bhau lakshat thev char_float(a,b){
-    printf("From char_float , value : %.2f\n",a + b);
+    oraoraoroara("From char_float , value : %.2f\n",a + b);
 }
 
 bhau lakshat thev bool_float(a,b){
     bhau jar(a && b > 4.9){
-        printf("From bool_float , value : %d\n",1);
+        oraoraoroara("From bool_float , value : %d\n",1);
     }bhau tar{
-        printf("From bool_float , value : %d\n",0);
+        oraoraoroara("From bool_float , value : %d\n",0);
     }
 }
 
 bhau lakshat thev char_comp_int(a,b){
     bhau jar(a == b){
-        printf("From char_comp_int , value : %d\n",1);
+        oraoraoroara("From char_comp_int , value : %d\n",1);
     }bhau tar{
-        printf("From char_comp_int , value : %d\n",0);
+        oraoraoroara("From char_comp_int , value : %d\n",0);
     }
 }
 
 bhau lakshat thev float_comp_int(a,b){
     bhau jar(a == b){
-        printf("From float_comp_int , value : %d\n",1);
+        oraoraoroara("From float_comp_int , value : %d\n",1);
     }bhau tar{
-        printf("From float_comp_int , value : %d\n",0);
+        oraoraoroara("From float_comp_int , value : %d\n",0);
     }
 }
 
 bhau lakshat thev mixed_sum(a,b,c,d){
-    printf("From mixed_sum , value : %.2f\n",a + b + c + d);
+    oraoraoroara("From mixed_sum , value : %.2f\n",a + b + c + d);
 }
 
 bhau lakshat thev mixed_control_flow(){
@@ -67,38 +67,38 @@ bhau lakshat thev mixed_control_flow(){
     bhau hai ahe s2 = "test";
 
     bhau jar((f + i > 6.299) && (c != 'a') && b && s1 == s2){
-        printf("From mixed_control_flow , value : %d\n",1);
+        oraoraoroara("From mixed_control_flow , value : %d\n",1);
     }bhau tar{
-        printf("From mixed_control_flow , value : %d\n",0);
+        oraoraoroara("From mixed_control_flow , value : %d\n",0);
     }
 }
 
 //----------need to return false-----------------//
 bhau lakshat thev to_fail_str_comp_char(a,b){
-    printf("From to_fail_str_comp_char , value : %d\n",a==b);
+    oraoraoroara("From to_fail_str_comp_char , value : %d\n",a==b);
 }
 
 bhau ithun chalu {
     mixed_conds();
-    printf("\n");
+    oraoraoroara("\n");
     float_and_int(2,3.5);
-    printf("\n");
+    oraoraoroara("\n");
     int_char_bool('a',khara,11);
-    printf("\n");
+    oraoraoroara("\n");
     char_float('C',0.28);
-    printf("\n");
+    oraoraoroara("\n");
     bool_float(1,5.0);
-    printf("\n");
+    oraoraoroara("\n");
     char_comp_int('B',66);
-    printf("\n");
+    oraoraoroara("\n");
     float_comp_int(10,10.0);
-    printf("\n");
+    oraoraoroara("\n");
     mixed_sum('a',2.33,khara,7);
-    printf("\n");
+    oraoraoroara("\n");
     mixed_control_flow();
-    printf("\n");
+    oraoraoroara("\n");
     to_fail_str_comp_char('h',"h");
-    printf("\n");
+    oraoraoroara("\n");
 }
 
 

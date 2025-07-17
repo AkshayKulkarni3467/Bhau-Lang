@@ -1,6 +1,6 @@
 hi bhau
 
-bhau baherun ghe printf;
+bhau baherun ghe printf print;
 
 bhau lakshat thev factorial(a){
     bhau jar(a <= 1){
@@ -27,7 +27,7 @@ bhau lakshat thev inv_digits(a){
     bhau jar(a == 0){
         bhau parat de 0;
     }
-    printf("%d ",a % 10);
+    print("%d ",a % 10);
     bhau parat de inv_digits(a/10);
 }
 
@@ -61,15 +61,15 @@ bhau lakshat thev gcd(a,b){
 
 bhau lakshat thev print_stars(n){
     bhau jar(n == 0){
-        printf("\n");
+        print("\n");
         bhau parat de 0;
     }
     bhau hai ahe i = 0;
     bhau joparent(i < n){
-        printf("* ");
+        print("* ");
         ++i;
     }
-    printf("\n");
+    print("\n");
     bhau parat de print_stars(n - 1);
 }
 
@@ -82,24 +82,24 @@ bhau lakshat thev digit_sum(n){
 
 bhau lakshat thev print_recursion_tests(){
     bhau hai ahe fac_var = factorial(5);
-    printf("Factorial : %d\n",fac_var);
+    print("Factorial : %d\n",fac_var);
     bhau hai ahe fib_var = fibonacci(5);
-    printf("Fibonacci : %d\n",fib_var);
+    print("Fibonacci : %d\n",fib_var);
     bhau hai ahe rsum_var = recurse_sum(5);
-    printf("Recurse sum : %d\n", rsum_var);
+    print("Recurse sum : %d\n", rsum_var);
     inv_digits(5324);
-    printf("\n");
+    print("\n");
     bhau hai ahe pow_var = power(5,2);
-    printf("Power : %d\n",pow_var);
+    print("Power : %d\n",pow_var);
     bhau hai ahe reverse_var = reverse(1234,0);
-    printf("Reverse : %d\n",reverse_var);
+    print("Reverse : %d\n",reverse_var);
     bhau hai ahe is_palin = is_palindrome(1221,0,1221);
-    printf("Is palindrome : %d\n",is_palin);
+    print("Is palindrome : %d\n",is_palin);
     bhau hai ahe gcd_var = gcd(39,26);
-    printf("GCD of 26 & 39 : %d\n",gcd_var);
+    print("GCD of 26 & 39 : %d\n",gcd_var);
     print_stars(10);
     bhau hai ahe dsum_var = digit_sum(1234);
-    printf("Sum of digits : %d\n",dsum_var);
+    print("Sum of digits : %d\n",dsum_var);
 }
 
 bhau ithun chalu {

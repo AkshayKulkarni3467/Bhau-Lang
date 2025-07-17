@@ -155,6 +155,7 @@ typedef struct {
 
 typedef struct {
     AST_Node* ident;
+    AST_Node* pseudoname;
     ASTNodeType type;
 } AST_Extern;
 
@@ -205,6 +206,11 @@ typedef struct {
     Scope* scope_val;
     ASTNodeType type;
 } AST_Identifier;
+
+typedef struct{
+    char* name;
+    char* pseudoname;
+} extern_pseudoname;
 
 
 

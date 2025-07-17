@@ -1,10 +1,10 @@
 hi bhau
 
-bhau baherun ghe printf;
+bhau baherun ghe printf bola;
 
 bhau lakshat thev char_decl(){
     bhau hai ahe ch = 'A';
-    printf("From char_decl, character : %c\n",ch);
+    bola("From char_decl, character : %c\n",ch);
 }
 
 bhau lakshat thev char_reassign(a){
@@ -23,19 +23,19 @@ bhau lakshat thev compare_char(a,b){
 
 bhau lakshat thev switch_char(a){
     bhau chunav(a){
-        bhau nivad 'A' : printf("From switch_char, Value = %c\n",a); bhau thamb;
-        bhau nivad 'B' : printf("From switch_char, Value = %c\n",a); bhau thamb;
-        bhau nivad 'C' : printf("From switch_char, Value = %c\n",a); bhau thamb;
+        bhau nivad 'A' : bola("From switch_char, Value = %c\n",a); bhau thamb;
+        bhau nivad 'B' : bola("From switch_char, Value = %c\n",a); bhau thamb;
+        bhau nivad 'C' : bola("From switch_char, Value = %c\n",a); bhau thamb;
     }
 }
 
 bhau lakshat thev loop_char(a){
     bhau hai ahe c = 'A';
     bhau joparent(c < a){
-        printf("%c ",c);
+        bola("%c ",c);
         ++c;
     }
-    printf("\n");
+    bola("\n");
 }
 
 bhau lakshat thev char_offset(a,offset){
@@ -46,36 +46,36 @@ bhau lakshat thev capital_vowels(){
     bhau hai ahe ch = 'A';
     bhau joparent(ch <= 'Z'){
         bhau jar(ch == 'A' || ch == 'E' || ch == 'I' || ch == 'O' || ch == 'U'){
-            printf("%c ",ch);
+            bola("%c ",ch);
         }bhau tar{
-            printf("%c ",ch + 32);
+            bola("%c ",ch + 32);
         }
         ++ch;
     }
-    printf("\n");
+    bola("\n");
 }
 
 bhau lakshat thev print_characters(){
     char_decl();
-    printf("\n");
+    bola("\n");
     bhau hai ahe ch_ra = char_reassign('A');
-    printf("Reassigned char : %c\n",ch_ra);
-    printf("\n");
+    bola("Reassigned char : %c\n",ch_ra);
+    bola("\n");
     bhau hai ahe ch_arith = char_arithmetic('A');
-    printf("Character arithmetic : A + 1 : %c\n",ch_arith);
-    printf("\n");
+    bola("Character arithmetic : A + 1 : %c\n",ch_arith);
+    bola("\n");
     bhau hai ahe ch_comp = compare_char('A','A');
-    printf("Comparison between A,A : %d\n",ch_comp);
-    printf("\n");
+    bola("Comparison between A,A : %d\n",ch_comp);
+    bola("\n");
     switch_char('A');
-    printf("\n");
+    bola("\n");
     loop_char('G');
-    printf("\n");
+    bola("\n");
     bhau hai ahe d_offset = char_offset('D',3);
-    printf("Offset D by 3 : %c\n",d_offset);
-    printf("\n");
+    bola("Offset D by 3 : %c\n",d_offset);
+    bola("\n");
     capital_vowels();
-    printf("\n");
+    bola("\n");
 }
 
 bhau ithun chalu{

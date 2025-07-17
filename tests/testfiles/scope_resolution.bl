@@ -1,31 +1,31 @@
 hi bhau 
 
-bhau baherun ghe printf;
+bhau baherun ghe printf f;
 
 bhau hai ahe x = "declared in global";
 
 
 bhau lakshat thev print_global(){
-    printf("From print_global: %s\n",x);
+    f("From print_global: %s\n",x);
 }
 
 bhau lakshat thev print_infunc(){
     bhau hai ahe x = "declared in function";
-    printf("From print_infunc: %s\n",x);
+    f("From print_infunc: %s\n",x);
 }
 
 bhau lakshat thev print_inblock(){
     bhau hai ahe x = "declared in func scope";
     bhau jar(1){
         bhau hai ahe x = "declared in block scope";
-        printf("From print_inblock: %s\n",x);
+        f("From print_inblock: %s\n",x);
     }
 }
 
 bhau lakshat thev print_access_from_outer_block(){
     bhau hai ahe x = "declard in outer block";
     bhau jar(1){
-        printf("Frome print_access_from_outer_block: %s\n",x);
+        f("Frome print_access_from_outer_block: %s\n",x);
     }
 }
 
@@ -36,20 +36,20 @@ bhau lakshat thev print_nestblocks(){
         bhau hai ahe x = "block 2";
         bhau jar(1){
             bhau hai ahe x = "block 3";
-            printf("From print_nestblocks, Block 3 : %s\n",x);
+            f("From print_nestblocks, Block 3 : %s\n",x);
         }
-        printf("From print_nestblocks, Block 2 : %s\n",x);
+        f("From print_nestblocks, Block 2 : %s\n",x);
     }
-    printf("From print_nestblocks, Block 1 : %s\n",x);
+    f("From print_nestblocks, Block 1 : %s\n",x);
 }
 
 bhau lakshat thev print_funcvsblockscope(){
     bhau jar(1){
         bhau hai ahe x = "block scope";
-        printf("From print_funcvsblockscope, Block scope : %s\n",x);
+        f("From print_funcvsblockscope, Block scope : %s\n",x);
     }
     bhau hai ahe x = "function scope";
-    printf("From print_funcvsblockscope,Function scope : %s\n",x);
+    f("From print_funcvsblockscope,Function scope : %s\n",x);
 }
 
 bhau lakshat thev return_localvalue(){
@@ -63,9 +63,9 @@ bhau lakshat thev return_localvalue(){
 bhau lakshat thev illegal_access_to_outer_scope(){
     bhau jar(1){
         bhau hai ahe y = 99;
-        printf("From illegal_access_to_outer_scope, From block scope : %d\n",y);
+        f("From illegal_access_to_outer_scope, From block scope : %d\n",y);
     }
-    printf("From illegal_access_to_outer_scope, From function scope : %d\n",y);
+    f("From illegal_access_to_outer_scope, From function scope : %d\n",y);
 }
 */
 
@@ -73,7 +73,7 @@ bhau lakshat thev illegal_access_to_outer_scope(){
 bhau lakshat thev illegal_redeclaration_in_same_scope(){
     bhau hai ahe x = "From illegal_redeclaration_in_same_scope, First declaration";
     bhau hai ahe x = "From illegal_redeclaration_in_same_scope, Second declaration";
-    printf("From illegal_redeclaration_in_same_scope, %s\n",x);
+    f("From illegal_redeclaration_in_same_scope, %s\n",x);
 }
 */
 
@@ -86,7 +86,7 @@ bhau ithun chalu{
     print_nestblocks();
     print_funcvsblockscope();
     bhau hai ahe x = return_localvalue();
-    printf("From return_localvalue, Value : %d\n",x);
+    f("From return_localvalue, Value : %d\n",x);
 
     //----------------INVALID TESTS (should error out)------------------//
     //illegal_access_to_outer_scope();
