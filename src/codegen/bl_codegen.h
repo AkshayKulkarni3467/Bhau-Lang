@@ -95,6 +95,8 @@ void generateAssembly(const char* outfile, SymbolTableList* slist, TACList* list
         }
     }
     emitEpilog(fp);
+    fflush(fp);
+    fclose(fp);
 }
 
 static bool check_in_global(char* name,SymbolTableList* slist){
