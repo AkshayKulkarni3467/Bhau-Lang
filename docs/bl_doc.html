@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BhauLang Documentation</title>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/devicons@1.8.0/css/devicons.min.css">
+  <link rel="stylesheet" href="dependencies/bl_doc.css">
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <h2><i class="devicons devicons-terminal"></i> BhauLang Docs</h2>
+      <nav>
+        <ul>
+          <li><a href="#" data-page="intro">Introduction</a></li>
+          <li><a href="#" data-page="syntax">Syntax</a></li>
+          <li><a href="#" data-page="examples">Examples</a></li>
+          <li><a href="#" data-page="customkeywords">Custom-Keywords</a></li>
+          <li><a href="#" data-page="extensions">Extensions</a></li>
+        </ul>
+      </nav>
+    </aside>
+    
+    <main class="content" id="content">
+      <section id="intro" class="page active">
+        <h1>Welcome to BhauLang</h1>
+        <p>BhauLang is a Marathi-English based hybrid programming language.</p>
+        <div class="points-block-generic">
+          <div class="point-item-generic">
+            <span class="point-icon-generic">•</span>
+            <p><strong>Complied but dynamic? :</strong> Designed to be a compiled programming language with dynamic typing.
+            </p>
+          </div>
+          <div class="point-item-generic">
+            <span class="point-icon-generic">•</span>
+            <p><strong>Keyword agnostic :</strong> Takes in a custom json file defining keywords and parses it in runtime.</p>
+          </div>
+          <div class="point-item-generic">
+            <span class="point-icon-generic">•</span>
+            <p><strong>Heavily optimized:</strong> Multiple passes during compilation for proper constant folding.</p>
+          </div>
+        </div>
+        <br>
+        <div class="points-block-req">
+          <div class="point-item-req">
+            <span class="point-icon-req">•</span>
+            <p><strong>Requirements :</strong> GCC and NASM.</p>
+          </div>
+          <div class="point-item-req">
+            <span class="point-icon-req">•</span>
+            <p><strong>How to use? :</strong> ./application/blc [-asm] &lt;input_file&gt; [--keywords=&lt;keyword_json&gt;]
+            </p>
+          </div>
+        </div>
+        <p><strong>Add alias in bash or zsh :</strong></p>
+        <pre><code class="language-c">
+alias blc = "/path_to_bhaulang/application/blc"
+                </code></pre>
+        <br>
+        <p><strong>Commands Description : </strong> </p>
+        <div class="command-block-generic">
+          blc &lt;input_file&gt;
+        </div>
+        <p>generates an ELF-64 executable</p>
+        <br>
+        <div class="command-block-generic">
+          blc -asm &lt;input_file&gt;
+        </div>
+        <p>generates a parsed nasm file for &lt;input_file&gt;</p>
+        <br>
+        <div class="command-block-generic">
+          blc &lt;input_file&gt; --keywords=&lt;keywords.json&gt;
+        </div>
+        <p>generates and executable using custom keywords. The json format is mentioned in `Custom-Keywords` section</p>
+        <br>
+        <div class="points-block-warn">
+          <div class="point-item-warn">
+            <span class="point-icon-warn">•</span>
+            <p><strong>Only supports linux (x86) architecture currently.</strong></p>
+          </div>
+          <div class="point-item-warn">
+            <span class="point-icon-warn">•</span>
+            <p><strong>Currently not implemented :</strong> postfix operators, function in function calls.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section id="syntax" class="page">
+        <h1>BhauLang Syntax</h1>
+      
+        <br>
+        <div class="syntax-block">
+          <p>Assignment</p>
+          <pre><code class="language-bl">bhau hai ahe a = 12;</code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>If Statement</p>
+          <pre><code class="language-bl">
+bhau jar(a < 10) {
+  bhau parat de "small";
+}
+          </code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>Else If Statement</p>
+          <pre><code class="language-bl">
+bhau jar(a < 10) {
+  bhau parat de "small";
+}
+bhau nahitar(a < 20) {
+  bhau parat de "medium";
+}
+          </code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>Else Statement</p>
+          <pre><code class="language-bl">
+bhau jar(a < 10) {
+  bhau parat de "small";
+}
+bhau tar {
+  bhau parat de "large";
+}
+          </code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>While Loop</p>
+          <pre><code class="language-bl">
+bhau joparent(a < 5) {
+  a = a + 1;
+}
+          </code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>Function Definition</p>
+          <pre><code class="language-bl">
+bhau lakshat thev fakt() {
+  bhau parat de 42;
+}
+          </code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>Return Statement</p>
+          <pre><code class="language-bl">
+bhau parat de "result";
+          </code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>Entry Point</p>
+          <pre><code class="language-bl">
+hi bhau
+          </code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>Exit Point</p>
+          <pre><code class="language-bl">
+bye bhau
+          </code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>Switch Statement</p>
+          <pre><code class="language-bl">
+bhau chunav(a) {
+  bhau nivad 1: 
+    bhau thamb;
+
+  bhau rahudet:
+    bhau thamb;
+}
+          </code></pre>
+        </div>
+
+        <div class="syntax-block">
+          <p>Case Statement</p>
+          <pre><code class="language-bl">
+bhau nivad 2 :
+  bhau parat de "two";
+          </code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>Break Statement</p>
+          <pre><code class="language-bl">
+bhau thamb;
+          </code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>Continue Statement</p>
+          <pre><code class="language-bl">
+bhau chalu rha;
+          </code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>Default Case</p>
+          <pre><code class="language-bl">
+bhau rahudet:
+  bhau thamb;
+
+          </code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>Boolean True</p>
+          <pre><code class="language-bl">
+bhau hai ahe flag = khara;
+          </code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>Boolean False</p>
+          <pre><code class="language-bl">
+bhau hai ahe flag = khota;
+          </code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>External Function</p>
+          <pre><code class="language-bl">
+bhau baherun ghe printf &lt;pseudo_name&gt;;
+          </code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>Main Function</p>
+          <pre><code class="language-bl">
+bhau ithun chalu() {
+  bhau hai ahe x = 12;
+}
+          </code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>Pointer Declaration</p>
+          <pre><code class="language-bl">
+bhau hai ahe a = ptr b;
+          </code></pre>
+        </div>
+      
+        <div class="syntax-block">
+          <p>Reference Declaration</p>
+          <pre><code class="language-bl">
+bhau hai ahe a = ref b;
+          </code></pre>
+        </div>
+      </section>
+      <section id="examples" class="page">
+        <h1>Examples</h1>
+        <p>-> control_flow.bl</p>
+        <pre><code class="language-bl">
+hi bhau
+
+bhau baherun ghe printf bolo;
+
+bhau lakshat thev deep_nesting(){
+  bhau hai ahe i = 1;
+  bhau joparent(i <= 3){
+      bhau jar(i % 2 == 0){
+          bhau hai ahe j = i;
+          bhau joparent(j > 0){
+              bhau chunav(j){
+                  bhau nivad 1:
+                      bolo("From deep_nesting, choice = 1, when i = %d, j = %d\n",i,j);
+                      bhau thamb;
+                  bhau nivad 2:
+                      bolo("From deep_nesting, choice = 2, when i = %d,j = %d\n",i,j);
+                      bhau thamb;
+                  bhau rahudet:
+                      bolo("From deep_nesting, choice = default, when i = %d\n",i);
+                      bhau thamb;
+              }
+              --j;
+          }
+      }bhau tar{
+              bolo("From deep_nesting, else block when i = %d\n",i);
+          }
+      ++i;
+  }
+}
+
+bhau ithun chalu{
+  deep_nesting();
+}
+
+bye bhau
+        </code></pre>
+
+        <p>-> mixed_literals.bl</p>
+        <pre><code class="language-bl">
+hi bhau
+
+bhau baherun ghe printf oraoraoroara;
+
+bhau lakshat thev mixed_conds(){
+  bhau hai ahe a = 10;
+  bhau hai ahe b = 2.5;
+  bhau hai ahe c = 'A';
+  bhau hai ahe flag = khara;
+  bhau hai ahe str1 = "hello";
+  bhau hai ahe str2 = "hello";
+
+  bhau jar(a + b == 12.5 && c == 'A' && flag == 1 && str1 == str2){
+      oraoraoroara("From mixed_conds , value : %d\n",1);
+  }bhau tar{
+      oraoraoroara("From mixed_conds , Value : %d\n",0);
+  }
+}
+
+bhau ithun chalu{
+  mixed_conds();
+}
+
+bye bhau
+        </code></pre>
+
+        <p>-> recursion.bl</p>
+        <pre><code class="language-bl">
+hi bhau
+
+bhau baherun ghe printf print;
+
+bhau lakshat thev factorial(a){
+    bhau jar(a <= 1){
+        bhau parat de 1;
+    }
+    bhau parat de a * factorial(a - 1);
+}
+
+bhau lakshat thev fibonacci(a){
+    bhau jar(a <= 1){
+        bhau parat de a;
+    }
+    bhau parat de fibonacci(a - 1) + fibonacci(a - 2);
+}
+
+bhau lakshat thev print_recursion_tests(){
+  bhau hai ahe fac_var = factorial(5);
+  print("Factorial : %d\n",fac_var);
+  bhau hai ahe fib_var = fibonacci(5);
+  print("Fibonacci : %d\n",fib_var);
+}
+
+  bhau ithun chalu {
+    print_recursion_tests();
+}
+
+
+bye bhau
+        </code></pre>
+      </section>
+
+      <section id="customkeywords" class="page">
+        <p>Keywords can be defined in a json file as follows: </p>
+        <pre><code class="language-json">
+{
+  "&lt;custom_assign_keyword&gt;"    : "assign",
+  "&lt;custom_if_keyword&gt;"        : "if",
+  "&lt;custom_elseif_keyword&gt;"    : "elseif",
+  "&lt;custom_else_keyword&gt;"      : "else",
+  "&lt;custom_while_keyword&gt;"     : "while",
+  "&lt;custom_func_keyword&gt;"      : "func",
+  "&lt;custom_return_keyword&gt;"    : "return",
+  "&lt;custom_entry_keyword&gt;"     : "entry",
+  "&lt;custom_exit_keyword&gt;"      : "exit",
+  "&lt;custom_switch_keyword&gt;"    : "switch",
+  "&lt;custom_case_keyword&gt;"      : "case",
+  "&lt;custom_break_keyword&gt;"     : "break",
+  "&lt;custom_continue_keyword&gt;"  : "continue",
+  "&lt;custom_default_keyword&gt;"   : "default",
+  "&lt;custom_true_keyword&gt;"      : "true",
+  "&lt;custom_false_keyword&gt;"     : "false",
+  "&lt;custom_extern_keyword&gt;"    : "extern",
+  "&lt;custom_main_keyword&gt;"      : "main",
+  "&lt;custom_ptr_keyword&gt;"       : "ptr",
+  "&lt;custom_ref_keyword&gt;"       : "ref"
+}   
+                  </code></pre>
+                  <p>Make sure the keywords follow this regex : </p>
+                  <div class="points-block-req">
+                  <p>[a-z|A-Z|_][a-z|A-Z|0-9|_|$]*</p>
+                  </div>
+                  <br>
+                  <p>Some custom keyword examples are given below:</p>
+                  <p>-> bhailang_keywords.json</p>
+                  <pre><code class="language-json">
+{
+  "bhai ye hai"         : "assign",
+  "agar bhai"           : "if",
+  "nahi to bhai"        : "elseif",
+  "warna bhai"          : "else",
+  "jab tak bhai"        : "while",
+  "bhai yaad rak"       : "func",
+  "bhai wapis kar"      : "return",
+  "hi bhai"             : "entry",
+  "bye bhai"            : "exit",
+  "bhai ek chun"        : "switch",
+  "bhai chun"           : "case",
+  "bas kar bhai"        : "break",
+  "agla dekh bhai"      : "continue",
+  "bhai rehenede"       : "default",
+  "ha bhai"             : "true",
+  "na bhai"             : "false",
+  "bhai baharse le"     : "extern",
+  "bhai idharse chalu"  : "main",
+  "ptr"                 : "ptr",
+  "ref"                 : "ref"
+}     
+</code></pre>
+
+<p>-> brolang_keywords.json</p>
+<pre><code class="language-json">
+{
+  "bro remember this"               : "assign",
+  "bro if"                          : "if",
+  "bro otherwise"                   : "elseif",
+  "bro whatever"                    : "else",
+  "bro when"                        : "while",
+  "bro lemme create"                : "func",
+  "bro return this"                 : "return",
+  "hello bro"                       : "entry",
+  "bye bro"                         : "exit",
+  "bro choice"                      : "switch",
+  "bro option"                      : "case",
+  "bro skip"                        : "break",
+  "bro keep running"                : "continue",
+  "bro cantdoanythingaboutit"       : "default",
+  "real"                            : "true",
+  "unreal"                          : "false",
+  "bro take out"                    : "extern",
+  "bro start here"                  : "main",
+  "ptr"                             : "ptr",
+  "ref"                             : "ref"
+}   
+</code></pre>
+
+                  <p>-> underscore_keywords.json</p>
+                  <pre><code class="language-json">
+{
+  "__"                       : "assign",
+  "___"                      : "if",
+  "____"                     : "elseif",
+  "_____"                    : "else",
+  "______"                   : "while",
+  "_______"                  : "func",
+  "________"                 : "return",
+  "_________"                : "entry",
+  "__________"               : "exit",
+  "___________"              : "switch",
+  "____________"             : "case",
+  "_____________"            : "break",
+  "______________"           : "continue",
+  "_______________"          : "default",
+  "________________"         : "true",
+  "_________________"        : "false",
+  "__________________"       : "extern",
+  "___________________"      : "main",
+  "____________________"     : "ptr",
+  "_____________________"    : "ref"
+}     
+                                      </code></pre>
+
+      </section>
+
+      <section id="extensions" class="page">
+        <p>-> Can be found at /path-to-bhaulang/extras/extensions/</p>
+        <div class="points-block-generic">
+          <div class="point-item-generic">
+            <span class="point-icon-generic">•</span>
+            <p><strong>VS code extension:</strong> Includes syntax highlighting and auto-completion.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="dependencies/bl_doc.js"></script>
+</body>
+</html>
