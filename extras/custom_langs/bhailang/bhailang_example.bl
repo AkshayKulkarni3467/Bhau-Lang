@@ -1,0 +1,97 @@
+hi bhai
+
+bhai baharse le printf bolo;
+
+bhai ye hai x = "declared in global";
+
+
+bhai yaad rak print_global(){
+    bolo("From print_global: %s\n",x);
+}
+
+bhai yaad rak print_infunc(){
+    bhai ye hai x = "declared in function";
+    bolo("From print_infunc: %s\n",x);
+}
+
+bhai yaad rak print_inblock(){
+    bhai ye hai x = "declared in func scope";
+    agar bhai(1){
+        bhai ye hai x = "declared in block scope";
+        bolo("From print_inblock: %s\n",x);
+    }
+}
+
+bhai yaad rak print_access_from_outer_block(){
+    bhai ye hai x = "declard in outer block";
+    agar bhai(1){
+        bolo("Frome print_access_from_outer_block: %s\n",x);
+    }
+}
+
+
+bhai yaad rak print_nestblocks(){
+    bhai ye hai x = "block 1";
+    agar bhai(1){
+        bhai ye hai x = "block 2";
+        agar bhai(1){
+            bhai ye hai x = "block 3";
+            bolo("From print_nestblocks, Block 3 : %s\n",x);
+        }
+        bolo("From print_nestblocks, Block 2 : %s\n",x);
+    }
+    bolo("From print_nestblocks, Block 1 : %s\n",x);
+}
+
+bhai yaad rak print_funcvsblockscope(){
+    agar bhai(1){
+        bhai ye hai x = "block scope";
+        bolo("From print_funcvsblockscope, Block scope : %s\n",x);
+    }
+    bhai ye hai x = "function scope";
+    bolo("From print_funcvsblockscope,Function scope : %s\n",x);
+}
+
+bhai yaad rak return_localvalue(){
+    bhai ye hai x = 1;
+    bhai wapis kar x;
+}
+
+//----------------INVALID TESTS (should error out)-----------------------//
+
+/*
+bhai yaad rak illegal_access_to_outer_scope(){
+    agar bhai(1){
+        bhai ye hai y = 99;
+        bolo("From illegal_access_to_outer_scope, From block scope : %d\n",y);
+    }
+    bolo("From illegal_access_to_outer_scope, From function scope : %d\n",y);
+}
+*/
+
+/*
+bhai yaad rak illegal_redeclaration_in_same_scope(){
+    bhai ye hai x = "From illegal_redeclaration_in_same_scope, First declaration";
+    bhai ye hai x = "From illegal_redeclaration_in_same_scope, Second declaration";
+    bolo("From illegal_redeclaration_in_same_scope, %s\n",x);
+}
+*/
+
+bhai idharse chalu{
+
+    print_global();
+    print_infunc();
+    print_inblock();
+    print_access_from_outer_block();
+    print_nestblocks();
+    print_funcvsblockscope();
+    bhai ye hai x = return_localvalue();
+    bolo("From return_localvalue, Value : %d\n",x);
+
+    //----------------INVALID TESTS (should error out)------------------//
+    //illegal_access_to_outer_scope();
+    //illegal_redeclaration_in_same_scope();
+
+}
+
+bye bhai

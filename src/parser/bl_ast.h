@@ -11,7 +11,8 @@
 #define C_LABEL   "\033[0;33m"
 #define C_VALUE   "\033[0;32m"
 
-#define PRINT_MONOCHROME
+// #define PRINT_MONOCHROME
+#define PRINT_IN_COLOR
 
 int ast_id_counter = 0;
 

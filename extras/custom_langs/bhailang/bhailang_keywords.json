@@ -1,0 +1,22 @@
+{
+    "bhai ye hai"         : "assign",
+    "agar bhai"           : "if",
+    "nahi to bhai"        : "elseif",
+    "warna bhai"          : "else",
+    "jab tak bhai"        : "while",
+    "bhai yaad rak"       : "func",
+    "bhai wapis kar"      : "return",
+    "hi bhai"             : "entry",
+    "bye bhai"            : "exit",
+    "bhai ek chun"        : "switch",
+    "bhai chun"           : "case",
+    "bas kar bhai"        : "break",
+    "agla dekh bhai"      : "continue",
+    "bhai rehenede"       : "default",
+    "ha bhai"             : "true",
+    "na bhai"             : "false",
+    "bhai baharse le"     : "extern",
+    "bhai idharse chalu"  : "main",
+    "ptr"                 : "ptr",
+    "ref"                 : "ref"
+}     

@@ -3,42 +3,10 @@
 
 #include <stdbool.h>
 #include <string.h>
+#include <ctype.h>
 
 // #define BL_KEYWORDS_SELF_TEST
-#define BL_BHAU_KEYWORDS
-// #define BL_BHAI_KEYWORDS
-// #define BL_BRO_KEYWORDS
-// #define BL_CUSTOM_KEYWORDS
 
-//TODO a flag to main.c (to a yml or other file?) which includes the keywords, so that custom keywords can be easily defined
-
-#ifdef BL_CUSTOM_KEYWORDS
-
-#define _BL_KW_BHAU_HAI_AHE       ""               //variable assignment
-#define _BL_KW_BHAU_JAR           ""               //if (conditional)
-#define _BL_KW_BHAU_NAHITAR       ""               //else if (conditional)
-#define _BL_KW_BHAU_TAR           ""               //else (conditional)
-#define _BL_KW_BHAU_JOPARENT      ""               //loops (while)
-#define _BL_KW_BHAU_LAKSHAT_THEV  ""               //function
-#define _BL_KW_BHAU_PARAT_DE      ""               //return
-#define _BL_KW_HI_BHAU            ""               //entry
-#define _BL_KW_BYE_BHAU           ""               //exit
-#define _BL_KW_BHAU_CHUNAV        ""               //switch
-#define _BL_KW_BHAU_NIVAD         ""               //case
-#define _BL_KW_BHAU_THAMB         ""               //break
-#define _BL_KW_BHAU_CHALU_RHA     ""               //continue
-#define _BL_KW_BHAU_RAHUDET       ""               //default (switch)
-#define _BL_KW_BHAU_KHARA         ""               //true 
-#define _BL_KW_BHAU_KHOTA         ""               //false
-#define _BL_KW_BHAU_BAHERUN_GHE   ""               //extern
-#define _BL_KW_BHAU_MAIN          ""               //main 
-#define _BL_KW_BHAU_PTR           ""               //pointer
-#define _BL_KW_BHAU_REF           ""               //reference
-
-#endif
-
-
-#ifdef BL_BHAU_KEYWORDS
 
 #define _BL_KW_BHAU_HAI_AHE       "bhau hai ahe"
 #define _BL_KW_BHAU_JAR           "bhau jar"
@@ -61,62 +29,35 @@
 #define _BL_KW_BHAU_PTR           "ptr"
 #define _BL_KW_BHAU_REF           "ref"
 
-#endif
 
-#ifdef BL_BHAI_KEYWORDS
 
-#define _BL_KW_BHAU_HAI_AHE       "bhai ye hai"
-#define _BL_KW_BHAU_JAR           "agar bhai"
-#define _BL_KW_BHAU_NAHITAR       "nahi to bhai"
-#define _BL_KW_BHAU_TAR           "warna bhai"
-#define _BL_KW_BHAU_JOPARENT      "jab tak bhai"
-#define _BL_KW_BHAU_LAKSHAT_THEV  "bhai yaad rak"
-#define _BL_KW_BHAU_PARAT_DE      "bhai wapis kar"
-#define _BL_KW_HI_BHAU            "hi bhai"
-#define _BL_KW_BYE_BHAU           "bye bhai"
-#define _BL_KW_BHAU_CHUNAV        "bhai ek chun"
-#define _BL_KW_BHAU_NIVAD         "bhai chun"
-#define _BL_KW_BHAU_THAMB         "bas kar bhai"
-#define _BL_KW_BHAU_CHALU_RHA     "agla dekh bhai"
-#define _BL_KW_BHAU_RAHUDET       "bhai rehenede"
-#define _BL_KW_BHAU_KHARA         "ha bhai"
-#define _BL_KW_BHAU_KHOTA         "na bhai"
-#define _BL_KW_BHAU_BAHERUN_GHE   "bhai baharse le"
-#define _BL_KW_BHAU_MAIN          "bhai idharse chalu"
-#define _BL_KW_BHAU_PTR           "ptr"
-#define _BL_KW_BHAU_REF           "ref"
-
-#endif
-
-#ifdef BL_BRO_KEYWORDS
-
-#define _BL_KW_BHAU_HAI_AHE       "bro remember this"
-#define _BL_KW_BHAU_JAR           "bro if"
-#define _BL_KW_BHAU_NAHITAR       "bro otherwise"
-#define _BL_KW_BHAU_TAR           "bro whatever"
-#define _BL_KW_BHAU_JOPARENT      "bro when"
-#define _BL_KW_BHAU_LAKSHAT_THEV  "bro lemme create"
-#define _BL_KW_BHAU_PARAT_DE      "bro return this"
-#define _BL_KW_HI_BHAU            "hello bro"
-#define _BL_KW_BYE_BHAU           "bye bro"
-#define _BL_KW_BHAU_CHUNAV        "bro choice"
-#define _BL_KW_BHAU_NIVAD         "bro option"
-#define _BL_KW_BHAU_THAMB         "bro skip"
-#define _BL_KW_BHAU_CHALU_RHA     "bro keep running"
-#define _BL_KW_BHAU_RAHUDET       "bro cantdoanythingaboutit"
-#define _BL_KW_BHAU_KHARA         "real"
-#define _BL_KW_BHAU_KHOTA         "unreal"
-#define _BL_KW_BHAU_BAHERUN_GHE   "bro take out"
-#define _BL_KW_BHAU_MAIN          "bro start here"
-#define _BL_KW_BHAU_PTR           "ptr"
-#define _BL_KW_BHAU_REF           "ref"
-
-#endif
+char* keywords_arr[20] = {
+    _BL_KW_BHAU_HAI_AHE,       
+    _BL_KW_BHAU_JAR,       
+    _BL_KW_BHAU_NAHITAR ,      
+    _BL_KW_BHAU_TAR,       
+    _BL_KW_BHAU_JOPARENT,      
+    _BL_KW_BHAU_LAKSHAT_THEV, 
+    _BL_KW_BHAU_PARAT_DE,     
+    _BL_KW_HI_BHAU,      
+    _BL_KW_BYE_BHAU,      
+    _BL_KW_BHAU_CHUNAV,      
+    _BL_KW_BHAU_NIVAD,      
+    _BL_KW_BHAU_THAMB,     
+    _BL_KW_BHAU_CHALU_RHA,    
+    _BL_KW_BHAU_RAHUDET,      
+    _BL_KW_BHAU_KHARA,
+    _BL_KW_BHAU_KHOTA,
+    _BL_KW_BHAU_BAHERUN_GHE, 
+    _BL_KW_BHAU_MAIN,      
+    _BL_KW_BHAU_PTR,         
+    _BL_KW_BHAU_REF      
+};
 
 typedef enum {
 
     /*Defining variables*/    
-    //WARN Need to be modified if KEYWORD_TYPES is modified in bl_tokenizer; Currently, BL_EOF is 300
+    //WARN Need to be modified if KEYWORD_TYPES is modified in bl_tokenizer; Currently, BL_EOF is 303
     BL_KW_BHAU_HAI_AHE = 304, 
 
     /*If-else control flow*/            
@@ -185,29 +126,12 @@ int main(){
 #endif //BL_KEYWORDS_SELF_TEST
 
 static inline LangKeywordType get_keyword_type(char* keyword){
-
-    if(strcmp(keyword,_BL_KW_BHAU_HAI_AHE) == 0)        return BL_KW_BHAU_HAI_AHE;
-    if(strcmp(keyword,_BL_KW_BHAU_JAR) == 0 )           return BL_KW_BHAU_JAR;
-    if(strcmp(keyword,_BL_KW_BHAU_TAR) == 0)            return BL_KW_BHAU_TAR;
-    if(strcmp(keyword,_BL_KW_BHAU_NAHITAR) == 0)        return BL_KW_BHAU_NAHITAR;
-    if(strcmp(keyword,_BL_KW_BHAU_JOPARENT) == 0)       return BL_KW_BHAU_JOPARENT;
-    if(strcmp(keyword,_BL_KW_BHAU_LAKSHAT_THEV) == 0)   return BL_KW_BHAU_LAKSHAT_THEV;
-    if(strcmp(keyword,_BL_KW_BHAU_PARAT_DE) == 0)       return BL_KW_BHAU_PARAT_DE;
-    if(strcmp(keyword,_BL_KW_HI_BHAU) == 0)             return BL_KW_HI_BHAU;
-    if(strcmp(keyword,_BL_KW_BYE_BHAU) == 0)            return BL_KW_BYE_BHAU;
-    if(strcmp(keyword,_BL_KW_BHAU_CHUNAV) == 0)         return BL_KW_BHAU_CHUNAV;
-    if(strcmp(keyword,_BL_KW_BHAU_THAMB) == 0)          return BL_KW_BHAU_THAMB;
-    if(strcmp(keyword,_BL_KW_BHAU_CHALU_RHA) == 0)      return BL_KW_BHAU_CHALU_RHA;
-    if(strcmp(keyword,_BL_KW_BHAU_RAHUDET) == 0)        return BL_KW_BHAU_RAHUDET;
-    if(strcmp(keyword,_BL_KW_BHAU_KHARA) == 0)          return BL_KW_BHAU_KHARA;
-    if(strcmp(keyword,_BL_KW_BHAU_KHOTA) == 0)          return BL_KW_BHAU_KHOTA;
-    if(strcmp(keyword,_BL_KW_BHAU_BAHERUN_GHE) == 0)    return BL_KW_BHAU_BAHERUN_GHE;
-    if(strcmp(keyword,_BL_KW_BHAU_MAIN) == 0)           return BL_KW_BHAU_MAIN;
-    if(strcmp(keyword,_BL_KW_BHAU_NIVAD) == 0)          return BL_KW_BHAU_NIVAD;
-    if(strcmp(keyword,_BL_KW_BHAU_PTR) == 0)            return BL_KW_BHAU_PTR;
-    if(strcmp(keyword,_BL_KW_BHAU_REF) == 0)            return BL_KW_BHAU_REF;
+    for(int i = 0; i < 20; ++i){
+        if(strcmp(keyword, keywords_arr[i]) == 0){
+            return (LangKeywordType)(304 + i); 
+        }
+    }
     return -1;
-
 }
 
 static inline char *keyword_to_string(LangKeywordType type) {
@@ -239,6 +163,28 @@ static inline char *keyword_to_string(LangKeywordType type) {
 
 static inline bool is_keyword(const char *str) {
     return (int)get_keyword_type((char *)str) != -1;
+}
+
+int max_words_in_keywords(char* keywords[], int count) {
+    int max_words = 0;
+    
+    for (int i = 0; i < count; ++i) {
+        int word_count = 0;
+        char* str = keywords[i];
+
+        for (int j = 0; str[j]; ++j) {
+            if ((j == 0 && !isspace(str[j])) || 
+                (j > 0 && isspace(str[j - 1]) && !isspace(str[j]))) {
+                word_count++;
+            }
+        }
+
+        if (word_count > max_words) {
+            max_words = word_count;
+        }
+    }
+
+    return max_words;
 }
 
 #endif //BL_LANGKEYWORDS_H

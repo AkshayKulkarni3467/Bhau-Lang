@@ -10,8 +10,7 @@
 
 #define STRBUF_SZ 256
 
-//REF Define max amount of your custom keywords here
-#define MAX_KEYWORDS_LEN 3
+#define MAX_KEYWORDS_LEN max_words_in_keywords(keywords_arr,20)
 // #define BL_POSTPROCESS_TEST
 
 static inline bl_token* bl_postprocess_token_list(bl_token* arr,bl_arena* arena);
@@ -48,7 +47,6 @@ static inline bl_token* bhaulang_lexer(char* filename,bl_arena* arena){
 
 
 static inline bl_token* bl_postprocess_token_list(bl_token* arr,bl_arena *arena){
-
     bl_token* temp_arr = bl_token_list_filter(arena,arr,dynarray_length(arr),BL_IDENTIFIER);
     bl_token* new_arr = bl_postprocess_identifiers(arr,temp_arr,arena);
 

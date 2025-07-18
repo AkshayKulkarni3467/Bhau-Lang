@@ -1,9 +1,7 @@
 #ifndef INCLUDE_BL_TOKENIZER_H
 #define INCLUDE_BL_TOKENIZER_H
 
-//TODO : to tokenize `_BL_KW_BHAU_BAHERUN_GHE printf bol;` where (printf,bol) can be stored as externs and everytime `bol` is called it is replaced by printf
-//TODO : check all debug print and graphviz generator functions in each module
-//TODO : support to tokenize chars '\n', '\r' ...
+
 /*-----------------------------------------------------------------Includes*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -336,21 +334,47 @@ bl_token *bl_tokenize(bl_lexer *lexer){
    (*character && *character == '\'')
    {
       tok->where_firstchar = lexer->parse_point;
-      bl_forward(lexer,3);
-      tok->where_lastchar = lexer->parse_point;
-      int str_len = 1;
+      char esc_char = bl_peek_token(lexer,1);
 
-      if(lexer->string_storage_len >= str_len+1){
-         memcpy(lexer->string_storage,(tok->where_firstchar+1),str_len);
-         lexer->string_storage[str_len] = '\0';
-         SET_STRING_TOKEN(BL_CHAR,lexer->string_storage,str_len);
+      switch(esc_char){
+         case '\\':{
+            bl_forward(lexer,4);
+            tok->where_lastchar = lexer->parse_point;
+            int str_len = 2;
 
-         lexer->string_storage += str_len +1;
-         lexer->string_storage_len -= str_len +1;
-      }else{
-         fprintf(stderr, "String storage buffer overflow\n");
-         tok->string = NULL;
-         tok->string_len = 0;
+            if(lexer->string_storage_len >= str_len+1){
+               memcpy(lexer->string_storage,(tok->where_firstchar+1),str_len);
+               lexer->string_storage[str_len] = '\0';
+               SET_STRING_TOKEN(BL_CHAR,lexer->string_storage,str_len);
+
+               lexer->string_storage += str_len +1;
+               lexer->string_storage_len -= str_len +1;
+            }else{
+               fprintf(stderr, "String storage buffer overflow\n");
+               tok->string = NULL;
+               tok->string_len = 0;
+            }
+            break;
+         }
+         default: {
+            bl_forward(lexer,3);
+            tok->where_lastchar = lexer->parse_point;
+            int str_len = 1;
+
+            if(lexer->string_storage_len >= str_len+1){
+               memcpy(lexer->string_storage,(tok->where_firstchar+1),str_len);
+               lexer->string_storage[str_len] = '\0';
+               SET_STRING_TOKEN(BL_CHAR,lexer->string_storage,str_len);
+
+               lexer->string_storage += str_len +1;
+               lexer->string_storage_len -= str_len +1;
+            }else{
+               fprintf(stderr, "String storage buffer overflow\n");
+               tok->string = NULL;
+               tok->string_len = 0;
+            }
+            break;
+         }
       }
    }
    else 

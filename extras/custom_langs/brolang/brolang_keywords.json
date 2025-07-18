@@ -1,0 +1,22 @@
+{
+    "bro remember this"               : "assign",
+    "bro if"                          : "if",
+    "bro otherwise"                   : "elseif",
+    "bro whatever"                    : "else",
+    "bro when"                        : "while",
+    "bro lemme create"                : "func",
+    "bro return this"                 : "return",
+    "hello bro"                       : "entry",
+    "bye bro"                         : "exit",
+    "bro choice"                      : "switch",
+    "bro option"                      : "case",
+    "bro skip"                        : "break",
+    "bro keep running"                : "continue",
+    "bro cantdoanythingaboutit"       : "default",
+    "real"                            : "true",
+    "unreal"                          : "false",
+    "bro take out"                    : "extern",
+    "bro start here"                  : "main",
+    "ptr"                             : "ptr",
+    "ref"                             : "ref"
+}     

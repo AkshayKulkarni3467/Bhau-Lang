@@ -12,6 +12,7 @@ static bool check_in_global(char* name,SymbolTableList* slist);
 static bool is_function_called(char* name, TACInstr* current,bl_arena* arena);
 bl_stack* get_float_reg_stack(bl_arena* arena);
 bl_stack* get_norm_reg_stack(bl_arena* arena);
+char* get_char_string(char c,bl_arena* arena);
 
 
 static void emitProlog(FILE *fp, SymbolTableList* slist);

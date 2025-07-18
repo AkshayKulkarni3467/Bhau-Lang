@@ -25,7 +25,7 @@ CODEGEN = src/codegen/bl_codegen.h
 compile: $(CODEGEN)
 	@ mkdir -p __blcache__
 	@ $(CC) $(CFLAGS_MAIN) bl_compiler.c -o __blcache__/main
-	@ ./__blcache__/main $(INPUT) __blcache__/out.asm
+	@ ./__blcache__/main $(INPUT) __blcache__/out.asm --keywords $(KEYWORDS)
 	@ nasm -f elf64 -o __blcache__/out.o __blcache__/out.asm
 	@ gcc -no-pie -ggdb -o $(basename $(notdir $(INPUT))) __blcache__/out.o
 	@ rm -rf __blcache__
