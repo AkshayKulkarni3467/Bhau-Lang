@@ -34,22 +34,22 @@ lexer : $(TOKENIZE) $(LANKEYS)
 	./out $(INPUT)
 
 parser : $(LEXER)
-	$(CC) $(CFLAGS_PARSER) src/parser/bl_parser.c -o ./out
+	@ $(CC) $(CFLAGS_PARSER) src/parser/bl_parser.c -o ./out
 	./out $(INPUT)
 
 optimizer: $(PARSER)
-	$(CC) $(CFLAGS_OPTIMIZER) src/parser/bl_astOptimizer.c -o ./out
+	@ $(CC) $(CFLAGS_OPTIMIZER) src/parser/bl_astOptimizer.c -o ./out
 	./out $(INPUT)
 
 ir : $(OPTIMIZER)
-	$(CC) $(CFLAGS_IR) src/ir/bl_ir.c -o ./out
+	@ $(CC) $(CFLAGS_IR) src/ir/bl_ir.c -o ./out
 	./out $(INPUT)
 
 codegen: $(IR)
-	$(CC) $(CFLAGS_CODEGEN) src/codegen/bl_codegen.c -o src/codegen/codegen
-	./src/codegen/codegen
-	nasm -f elf64 -o src/codegen/out.o src/codegen/out.asm
-	gcc -no-pie -ggdb -o src/codegen/out src/codegen/out.o
+	@ $(CC) $(CFLAGS_CODEGEN) src/codegen/bl_codegen.c -o src/codegen/codegen
+	@ ./src/codegen/codegen
+	@ nasm -f elf64 -o src/codegen/out.o src/codegen/out.asm
+	@ gcc -no-pie -ggdb -o src/codegen/out src/codegen/out.o
 	./src/codegen/out
 
 asm : $(CODEGEN)

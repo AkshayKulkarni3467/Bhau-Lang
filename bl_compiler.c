@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 #include "bl_codegen.h"
 #include "bl_custom_loader.h"
@@ -16,21 +15,12 @@ WARN Maximum text file size is set to 256 KB, can be updated in src/lexer/bl_tok
 WARN Postfix operations and escape characters not implemented
 WARN variable length is limited to 64 characters, can be updated in src/codegen/bl_codegen.h
 WARN using `system` in bl_compiler.c, exploitable command :)
+REF  The files included in src/* are header only files, and can be tested by defining BL_<FILENAME>_TEST, and changing the extension to <filename>.c
 */
 
 
-void cleanup_cache() {
-    system("rm -rf __blcache__");
-}
-
-void run_or_exit(const char* cmd) {
-    int code = system(cmd);
-    if (code != 0) {
-        fprintf(stderr, "Command failed: %s\n", cmd);
-        cleanup_cache();
-        exit(1);
-    }
-}
+void cleanup_cache();
+void run_or_exit(const char* cmd);
 
 int main(int argc, char** argv){
 
@@ -94,4 +84,17 @@ int main(int argc, char** argv){
     free(temp);
     cleanup_cache();
     return 0;
+}
+
+void cleanup_cache(){
+    system("rm -rf __blcache__");
+}
+
+void run_or_exit(const char* cmd) {
+    int code = system(cmd);
+    if (code != 0) {
+        fprintf(stderr, "Command failed: %s\n", cmd);
+        cleanup_cache();
+        exit(1);
+    }
 }
