@@ -56,36 +56,36 @@ void parser_init(bl_parser* parser, bl_arena* arena, bl_token* tokens);
 AST_Node* make_node(bl_parser* parser,void* ast, ASTNodeType type);
 
 AST_Node* parse_program(bl_parser* parser,bl_arena* arena);
-AST_Node* parse_stmt(extern_pseudoname* pseudoname_arr,bl_parser* parser);
-AST_Node* parse_assign_decl(extern_pseudoname* pseudoname_arr,bl_parser* parser);
-AST_Node* parse_assign(extern_pseudoname* pseudoname_arr,bl_parser* parser);
-AST_Node* parse_extern(extern_pseudoname* pseudoname_arr,bl_parser* parser);
+AST_Node* parse_stmt(extern_pseudonames* pseudoname_arr,bl_parser* parser);
+AST_Node* parse_assign_decl(extern_pseudonames* pseudoname_arr,bl_parser* parser);
+AST_Node* parse_assign(extern_pseudonames* pseudoname_arr,bl_parser* parser);
+AST_Node* parse_extern(extern_pseudonames* pseudoname_arr,bl_parser* parser);
 AST_Node* parse_identifier(bl_parser* parser,bool check,bool check_levels);
-AST_Node* parse_primary(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
-AST_Node* parse_factor(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
-AST_Node* parse_binops(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
-AST_Node* parse_shift(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
-AST_Node* parse_relational(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
-AST_Node* parse_equal(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
-AST_Node* parse_and(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
-AST_Node* parse_or(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
-AST_Node* parse_xor(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
-AST_Node* parse_logand(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
-AST_Node* parse_logor(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
-AST_Node* parse_assignment(extern_pseudoname* pseudoname_arr,bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels);
-AST_Node* parse_bitwise_assignment(extern_pseudoname* pseudoname_arr,bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels);
-AST_Node* parse_expr(extern_pseudoname* pseudoname_arr,bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels);
-AST_Node* parse_unops(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
-AST_Node* parse_block(extern_pseudoname* pseudoname_arr,bl_parser* parser);
-AST_Node* parse_ifelse(extern_pseudoname* pseudoname_arr,bl_parser* parser);
-AST_Node* parse_switch(extern_pseudoname* pseudoname_arr,bl_parser* parser);
+AST_Node* parse_primary(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_factor(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_binops(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_shift(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_relational(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_equal(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_and(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_or(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_xor(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_logand(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_logor(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_assignment(extern_pseudonames* pseudoname_arr,bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels);
+AST_Node* parse_bitwise_assignment(extern_pseudonames* pseudoname_arr,bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels);
+AST_Node* parse_expr(extern_pseudonames* pseudoname_arr,bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels);
+AST_Node* parse_unops(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels);
+AST_Node* parse_block(extern_pseudonames* pseudoname_arr,bl_parser* parser);
+AST_Node* parse_ifelse(extern_pseudonames* pseudoname_arr,bl_parser* parser);
+AST_Node* parse_switch(extern_pseudonames* pseudoname_arr,bl_parser* parser);
 AST_Node* parse_break(bl_parser* parser);
-AST_Node* parse_loop(extern_pseudoname* pseudoname_arr,bl_parser* parser);
+AST_Node* parse_loop(extern_pseudonames* pseudoname_arr,bl_parser* parser);
 AST_Node* parse_continue(bl_parser* parser);
-AST_Node* parse_return(extern_pseudoname* pseudoname_arr,bl_parser* parser);
-AST_Node* parse_function(extern_pseudoname* pseudoname_arr,bl_parser* parser);
-AST_Node* parse_param(extern_pseudoname* pseudoname_arr,bl_parser* parser,char* func_name);
-AST_Node* parse_main(extern_pseudoname* pseudoname_arr,bl_parser* parser);
+AST_Node* parse_return(extern_pseudonames* pseudoname_arr,bl_parser* parser);
+AST_Node* parse_function(extern_pseudonames* pseudoname_arr,bl_parser* parser);
+AST_Node* parse_param(extern_pseudonames* pseudoname_arr,bl_parser* parser,char* func_name);
+AST_Node* parse_main(extern_pseudonames* pseudoname_arr,bl_parser* parser);
 AST_Node* parse_intliteral(bl_parser* parser);
 AST_Node* parse_stringliteral(bl_parser* parser);
 AST_Node* parse_charliteral(bl_parser* parser);
@@ -109,8 +109,8 @@ bool parse_step_n_expect(bl_parser* parser, enum KEYWORD_TYPES type,char* errmsg
 bool check_in_var_store(bl_parser* parser, AST_Node* node,bool check_levels);
 bool uses_lhs_in_rhs(AST_Node* lhs, AST_Node* rhs);
 bool current_scope_has_name(bl_parser* parser);
-bool func_is_extern(extern_pseudoname* pseudoname_arr,char* name);
-AST_Node* get_extern_name(extern_pseudoname* pseudoname_arr,AST_Node* ident,bl_parser* parser);
+bool func_is_extern(extern_pseudonames* pseudoname_arr,char* name);
+AST_Node* get_extern_name(extern_pseudonames* pseudoname_arr,AST_Node* ident,bl_parser* parser);
 
 void bl_check_prolog(bl_parser* parser);
 void bl_check_epilog(bl_parser* parser);
@@ -228,10 +228,12 @@ AST_Node* parse_program(bl_parser* parser,bl_arena* arena){
     parse_advance(parser);
     AST_Node** stmts = assign_arr_type(parser,AST_Node,4096);
     size_t stmt_count = 0;
-    extern_pseudoname* pseudoname_arr = dynarray_create_arena(extern_pseudoname,arena);
+    extern_pseudonames* pseudonames_arr = (extern_pseudonames*)arena_alloc(arena,sizeof(extern_pseudonames));
+    pseudonames_arr->pseudonames = (extern_pseudoname**)arena_alloc(arena,sizeof(extern_pseudoname*)*1024);
+    pseudonames_arr->count = 0;
     
     while(!(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BYE_BHAU))){
-        AST_Node* stmt = parse_stmt(pseudoname_arr,parser);
+        AST_Node* stmt = parse_stmt(pseudonames_arr,parser);
         parse_advance(parser);
         if(!stmt){
             bl_parse_error(parser,"Error parsing statement",1,60);
@@ -251,7 +253,7 @@ AST_Node* parse_program(bl_parser* parser,bl_arena* arena){
     return node;
 }
 
-AST_Node* parse_stmt(extern_pseudoname* pseudoname_arr,bl_parser* parser) {
+AST_Node* parse_stmt(extern_pseudonames* pseudoname_arr,bl_parser* parser) {
     if(parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_HAI_AHE)){
         
         AST_Node* ast = parse_assign_decl(pseudoname_arr,parser);
@@ -305,20 +307,22 @@ AST_Node* parse_stmt(extern_pseudoname* pseudoname_arr,bl_parser* parser) {
     }
 }
 
-bool func_is_extern(extern_pseudoname* pseudoname_arr,char* name){
-    for(int i = 0;i<(int)dynarray_length(pseudoname_arr);i++){
-        if(strcmp(pseudoname_arr[i].pseudoname,name) == 0){
+bool func_is_extern(extern_pseudonames* pseudoname_arr,char* name){
+    for(int i = 0;i<pseudoname_arr->count;i++){
+        extern_pseudoname* xname = pseudoname_arr->pseudonames[i];
+        if(strcmp(xname->pseudoname,name) == 0){
             return 1;
         }
     }
     return 0;
 }
 
-AST_Node* get_extern_name(extern_pseudoname* pseudoname_arr,AST_Node* ident,bl_parser* parser){
-    for(int i = 0;i<(int)dynarray_length(pseudoname_arr);i++){
-        if(strcmp(pseudoname_arr[i].pseudoname,(((AST_Identifier*)ident->data)->name)) == 0){
+AST_Node* get_extern_name(extern_pseudonames* pseudoname_arr,AST_Node* ident,bl_parser* parser){
+    for(int i = 0;i<pseudoname_arr->count;i++){
+        extern_pseudoname* xname = pseudoname_arr->pseudonames[i];
+        if(strcmp(xname->pseudoname,(((AST_Identifier*)ident->data)->name)) == 0){
             AST_Identifier* tmp_ident = assign_type(parser,AST_Identifier);
-            tmp_ident->name = pseudoname_arr[i].name;
+            tmp_ident->name = xname->name;
             tmp_ident->scope_val = ((AST_Identifier*)ident->data)->scope_val;
             tmp_ident->type = AST_IDENTIFIER;
 
@@ -331,17 +335,19 @@ AST_Node* get_extern_name(extern_pseudoname* pseudoname_arr,AST_Node* ident,bl_p
     return NULL;
 }
 
-AST_Node* parse_extern(extern_pseudoname* pseudoname_arr,bl_parser* parser){
+AST_Node* parse_extern(extern_pseudonames* pseudoname_arr,bl_parser* parser){
     parse_step_n_expect(parser,BL_IDENTIFIER,"Expected",24);
     AST_Extern* ext = assign_type(parser,AST_Extern);
     AST_Node* name = parse_identifier(parser,true, false);
     if(parse_check_ahead(parser,BL_IDENTIFIER,1)){
         parse_advance(parser);
         AST_Node* pseudoname = parse_identifier(parser,true,false);
-        extern_pseudoname pseudo_struct = *assign_type(parser,extern_pseudoname);
-        pseudo_struct.name = ((AST_Identifier*)name->data)->name;
-        pseudo_struct.pseudoname = ((AST_Identifier*)pseudoname->data)->name;
-        dynarray_push(pseudoname_arr,pseudo_struct,extern_pseudoname);
+        extern_pseudoname* pseudo_struct = assign_type(parser,extern_pseudoname);
+        pseudo_struct->name = ((AST_Identifier*)name->data)->name;
+        pseudo_struct->pseudoname = ((AST_Identifier*)pseudoname->data)->name;
+        
+        
+        pseudoname_arr->pseudonames[pseudoname_arr->count++] = pseudo_struct;
         ext->ident = name;
         ext->pseudoname = pseudoname;
         ext->type = AST_EXTERN;
@@ -357,7 +363,7 @@ AST_Node* parse_extern(extern_pseudoname* pseudoname_arr,bl_parser* parser){
 }
 
 
-AST_Node* parse_assign(extern_pseudoname* pseudoname_arr,bl_parser* parser){
+AST_Node* parse_assign(extern_pseudonames* pseudoname_arr,bl_parser* parser){
     if(stack_size(parser->scope_stack) < 2){
         bl_parse_error(parser,"Assignment expressions cannot be used globally",1,60);
     }
@@ -369,7 +375,7 @@ AST_Node* parse_assign(extern_pseudoname* pseudoname_arr,bl_parser* parser){
 
 
 
-AST_Node* parse_assign_decl(extern_pseudoname* pseudoname_arr,bl_parser* parser){
+AST_Node* parse_assign_decl(extern_pseudonames* pseudoname_arr,bl_parser* parser){
     AST_Node* ast1 = assign_type(parser,AST_Node);
     parse_advance(parser);
     ast1 = parse_expr(pseudoname_arr,parser,(enum KEYWORD_TYPES)BL_KW_BHAU_HAI_AHE,true,false);
@@ -439,7 +445,7 @@ AST_Node* parse_continue(bl_parser* parser){
     return node;
 }
 
-AST_Node* parse_return(extern_pseudoname* pseudoname_arr,bl_parser* parser){
+AST_Node* parse_return(extern_pseudonames* pseudoname_arr,bl_parser* parser){
     if(stack_size(parser->scope_stack) < 2){
         bl_parse_error(parser,"Cannot return from global scope",1,70);
     }
@@ -471,7 +477,7 @@ void bl_decrease_scope(bl_parser* parser){
     parser->current_scope = stack_size(parser->scope_stack);
 }
 
-AST_Node* parse_switch(extern_pseudoname* pseudoname_arr,bl_parser* parser){
+AST_Node* parse_switch(extern_pseudonames* pseudoname_arr,bl_parser* parser){
     if(stack_size(parser->scope_stack)<2){
         bl_parse_error(parser,"Switch cannot be used globally",1,51);
     }
@@ -556,7 +562,7 @@ AST_Node* parse_switch(extern_pseudoname* pseudoname_arr,bl_parser* parser){
 }
 
 
-AST_Node* parse_expr(extern_pseudoname* pseudoname_arr,bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels){
+AST_Node* parse_expr(extern_pseudonames* pseudoname_arr,bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels){
     if(type == (enum KEYWORD_TYPES)BL_KW_BHAU_HAI_AHE){
         AST_Node* lhs = parse_bitwise_assignment(pseudoname_arr,parser,type,check,check_levels);
         parse_advance(parser);
@@ -581,7 +587,7 @@ AST_Node* parse_expr(extern_pseudoname* pseudoname_arr,bl_parser* parser,enum KE
     }
 }
 
-AST_Node* parse_bitwise_assignment(extern_pseudoname* pseudoname_arr,bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels){
+AST_Node* parse_bitwise_assignment(extern_pseudonames* pseudoname_arr,bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels){
     AST_Node* lhs = parse_assignment(pseudoname_arr,parser,type,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_XOREQ) || 
@@ -626,7 +632,7 @@ bool semicolon_up_ahead(bl_parser* parser){
 }
 
 
-AST_Node* parse_assignment(extern_pseudoname* pseudoname_arr,bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels){
+AST_Node* parse_assignment(extern_pseudonames* pseudoname_arr,bl_parser* parser,enum KEYWORD_TYPES type,bool check, bool check_levels){
     AST_Node* lhs = parse_logor(pseudoname_arr,parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,(enum KEYWORD_TYPES)BL_ADDEQ) || 
@@ -677,7 +683,7 @@ AST_Node* parse_assignment(extern_pseudoname* pseudoname_arr,bl_parser* parser,e
 }
 
 
-AST_Node* parse_logor(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
+AST_Node* parse_logor(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
     AST_Node* lhs = parse_logand(pseudoname_arr,parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_LOGOR)){
@@ -699,7 +705,7 @@ AST_Node* parse_logor(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool c
     return lhs;
 }
 
-AST_Node* parse_logand(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
+AST_Node* parse_logand(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
     AST_Node* lhs = parse_xor(pseudoname_arr,parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_LOGAND)){
@@ -721,7 +727,7 @@ AST_Node* parse_logand(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool 
     return lhs;
 }
 
-AST_Node* parse_xor(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
+AST_Node* parse_xor(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
     AST_Node* lhs = parse_or(pseudoname_arr,parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_XOR)){
@@ -743,7 +749,7 @@ AST_Node* parse_xor(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool che
     return lhs;
 }
 
-AST_Node* parse_or(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
+AST_Node* parse_or(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
     AST_Node* lhs = parse_and(pseudoname_arr,parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_OR)){
@@ -765,7 +771,7 @@ AST_Node* parse_or(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool chec
     return lhs;
 }
 
-AST_Node* parse_and(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
+AST_Node* parse_and(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
     AST_Node* lhs = parse_equal(pseudoname_arr,parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_AND)){
@@ -786,7 +792,7 @@ AST_Node* parse_and(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool che
     return lhs;
 }
 
-AST_Node* parse_equal(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
+AST_Node* parse_equal(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
     AST_Node* lhs = parse_relational(pseudoname_arr,parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_ISEQUALCOND) || parse_match(parser,BL_NOTEQ)){
@@ -808,7 +814,7 @@ AST_Node* parse_equal(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool c
     return lhs;
 }
 
-AST_Node* parse_relational(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
+AST_Node* parse_relational(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
     AST_Node* lhs = parse_shift(pseudoname_arr,parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_LESSEQ) || parse_match(parser,BL_LESSTHAN) || parse_match(parser,BL_GRTEQ) || parse_match(parser,BL_GRTTHAN)){
@@ -830,7 +836,7 @@ AST_Node* parse_relational(extern_pseudoname* pseudoname_arr,bl_parser* parser,b
     return lhs;
 }
 
-AST_Node* parse_shift(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
+AST_Node* parse_shift(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
     AST_Node* lhs = parse_binops(pseudoname_arr,parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_LSHIFT) || parse_match(parser,BL_RSHIFT)){
@@ -851,7 +857,7 @@ AST_Node* parse_shift(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool c
     return lhs;
 }
 
-AST_Node* parse_binops(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
+AST_Node* parse_binops(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
     AST_Node* lhs = parse_factor(pseudoname_arr,parser,check,check_levels);
     parse_advance(parser);
     while(parse_match(parser,BL_ADDBINOP) || parse_match(parser,BL_SUBBINOP)){
@@ -872,7 +878,7 @@ AST_Node* parse_binops(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool 
     return lhs;
 }
 
-AST_Node* parse_factor(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
+AST_Node* parse_factor(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
     AST_Node* lhs = parse_unops(pseudoname_arr,parser,check,check_levels);
     parse_advance(parser);
     while((parse_match(parser,BL_MULTBINOP)) || (parse_match(parser,BL_DIVBINOP)) || (parse_match(parser,BL_MODBINOP))){
@@ -895,7 +901,7 @@ AST_Node* parse_factor(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool 
 }
 
 //WARN Postfix operations not implemented
-AST_Node* parse_unops(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
+AST_Node* parse_unops(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels){
     if(stack_size(parser->scope_stack) < 2 && ((parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_PTR)) || (parse_match(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_REF)))){
         bl_parse_error(parser,"Variables cannot be referenced globally",1,60);
     }
@@ -916,7 +922,7 @@ AST_Node* parse_unops(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool c
     return parse_primary(pseudoname_arr,parser,check,check_levels);
 }
 
-AST_Node* parse_primary(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool check, bool check_levels) {
+AST_Node* parse_primary(extern_pseudonames* pseudoname_arr,bl_parser* parser,bool check, bool check_levels) {
     if (parse_match(parser, (enum KEYWORD_TYPES)BL_INT)) return parse_intliteral(parser);
     if (parse_match(parser, (enum KEYWORD_TYPES)BL_FLOAT)) return parse_floatliteral(parser);
     if (parse_match(parser, (enum KEYWORD_TYPES)BL_CHAR)) return parse_charliteral(parser);
@@ -976,7 +982,7 @@ AST_Node* parse_primary(extern_pseudoname* pseudoname_arr,bl_parser* parser,bool
     return NULL;
 }
 
-AST_Node* parse_main(extern_pseudoname* pseudoname_arr,bl_parser* parser){
+AST_Node* parse_main(extern_pseudonames* pseudoname_arr,bl_parser* parser){
     parse_expect(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_MAIN,"Expected:",35);
     if(stack_size(parser->scope_stack) > 1){
         bl_parse_error(parser,"Cannot declare function inside a scope",1,34);
@@ -998,7 +1004,7 @@ AST_Node* parse_main(extern_pseudoname* pseudoname_arr,bl_parser* parser){
 
 }
 
-AST_Node* parse_ifelse(extern_pseudoname* pseudoname_arr,bl_parser* parser){
+AST_Node* parse_ifelse(extern_pseudonames* pseudoname_arr,bl_parser* parser){
     if(stack_size(parser->scope_stack) < 2){
         bl_parse_error(parser,"Cannot run conditionals globally",1,39);
     }
@@ -1048,7 +1054,7 @@ AST_Node* parse_ifelse(extern_pseudoname* pseudoname_arr,bl_parser* parser){
 
 }
 
-AST_Node* parse_block(extern_pseudoname* pseudoname_arr,bl_parser* parser){
+AST_Node* parse_block(extern_pseudonames* pseudoname_arr,bl_parser* parser){
     parse_expect(parser,BL_LBRACE,"Expected :",31);
 
     AST_Block* block = assign_type(parser,AST_Block);
@@ -1077,7 +1083,7 @@ AST_Node* parse_block(extern_pseudoname* pseudoname_arr,bl_parser* parser){
     return NULL;
 }
 
-AST_Node* parse_loop(extern_pseudoname* pseudoname_arr,bl_parser* parser){
+AST_Node* parse_loop(extern_pseudonames* pseudoname_arr,bl_parser* parser){
     if(stack_size(parser->scope_stack) < 2){
         bl_parse_error(parser,"Loops cannot be declared globally",1,60);
     }
@@ -1101,7 +1107,7 @@ AST_Node* parse_loop(extern_pseudoname* pseudoname_arr,bl_parser* parser){
     return node;
 }
 
-AST_Node* parse_function(extern_pseudoname* pseudoname_arr,bl_parser* parser){
+AST_Node* parse_function(extern_pseudonames* pseudoname_arr,bl_parser* parser){
     parse_expect(parser,(enum KEYWORD_TYPES)BL_KW_BHAU_LAKSHAT_THEV,"Expected :",27);
     if(stack_size(parser->scope_stack) > 1){
         bl_parse_error(parser,"Cannot declare function inside a scope",1,34);
@@ -1141,7 +1147,7 @@ AST_Node* parse_function(extern_pseudoname* pseudoname_arr,bl_parser* parser){
     return ast;
 }
 
-AST_Node* parse_param(extern_pseudoname* pseudoname_arr,bl_parser* parser,char* func_name){
+AST_Node* parse_param(extern_pseudonames* pseudoname_arr,bl_parser* parser,char* func_name){
     AST_Param* param = assign_type(parser,AST_Param);
     AST_Node* ast = parse_expr(pseudoname_arr,parser,(enum KEYWORD_TYPES)BL_KW_BHAU_LAKSHAT_THEV,true,false);
     param->ident = ast;

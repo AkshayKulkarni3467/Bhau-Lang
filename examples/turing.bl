@@ -3,9 +3,9 @@ hi bhau
 bhau baherun ghe putchar;
 bhau baherun ghe printf;
 
-bhau hai ahe rule = 110;
-bhau hai ahe width = 64;
-bhau hai ahe steps = 63;
+bhau hai ahe rule = 22;
+bhau hai ahe width = 66;
+bhau hai ahe steps = 600;
 // base : 110,64,63
 // 22,69,35
 // 22,65,60
@@ -54,8 +54,7 @@ bhau lakshat thev update_state(rule,current,next,i)
     bhau parat de next;
 }
 
-bhau ithun chalu 
-{   
+bhau lakshat thev generate_automata(rule,width,steps){
     bhau hai ahe current = 1 << (width/2);
 
     bhau hai ahe step = 0;
@@ -72,6 +71,11 @@ bhau ithun chalu
         current = next;
         ++step;
     }
+}
+
+bhau ithun chalu 
+{   
+    generate_automata(rule,width,steps);
 }
 
 bye bhau

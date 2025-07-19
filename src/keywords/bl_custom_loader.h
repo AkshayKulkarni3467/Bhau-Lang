@@ -85,7 +85,6 @@ char* extract_string(const char** p) {
 }
 
 void load_custom_keywords(char* json_path){
-    printf("%s\n",json_path);
     FILE* f = fopen(json_path, "r");
     if (!f) {
         fprintf(stderr, "Failed to open custom keyword file: %s\n", json_path);

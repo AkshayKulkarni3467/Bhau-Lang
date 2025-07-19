@@ -213,6 +213,11 @@ typedef struct{
     char* pseudoname;
 } extern_pseudoname;
 
+typedef struct {
+    extern_pseudoname** pseudonames;
+    int count;
+} extern_pseudonames;
+
 
 
 void print_ast_node_summary(AST_Node* node) {
