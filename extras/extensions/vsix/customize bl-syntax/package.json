@@ -1,0 +1,41 @@
+{
+    "name": "bl-syntax",
+    "displayName": "bl Syntax Highlighting",
+    "description": "Syntax highlighting for the bl programming language",
+    "version": "0.0.1",
+    "publisher": "akshaykulkarni",
+    "engines": {
+      "vscode": "^1.50.0"
+    },
+    "categories": [
+      "Programming Languages"
+    ],
+    "contributes": {
+      "languages": [
+        {
+          "id": "bl",
+          "aliases": ["bl", "BL"],
+          "extensions": [".bl"],
+          "configuration": "./language-configuration.json",
+          "icon":{
+            "light": "./icon.png",
+            "dark" : "./icon.png"
+          }
+        }
+      ],
+      "grammars": [
+        {
+          "language": "bl",
+          "scopeName": "source.bl",
+          "path": "./syntaxes/bl.tmLanguage.json"
+        }
+      ],
+      "snippets":[
+        {
+          "language": "bl",
+          "path": "./snippets/bl.code-snippets"
+        }
+      ]
+    }
+  }
+  

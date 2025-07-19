@@ -57,7 +57,7 @@
           </div>
         </div>
         <p><strong>Add alias in bash or zsh :</strong></p>
-        <pre><code class="language-c">
+        <pre class="pre-gen"><code class="language-c">
 alias blc = "/path_to_bhaulang/application/blc"
                 </code></pre>
         <br>
@@ -84,23 +84,35 @@ alias blc = "/path_to_bhaulang/application/blc"
           </div>
           <div class="point-item-warn">
             <span class="point-icon-warn">•</span>
-            <p><strong>Currently not implemented :</strong> postfix operators, function in function calls.
-            </p>
+            <p><strong>Currently not implemented :</strong></p>
+          </div>
+          <div class="point-item-warn">
+            <!-- <span class="point-icon-warn">•</span> -->
+            <p><pre>Postfix increment operators: ( )++ , ( )--</pre></p>
+          </div>
+          <div class="point-item-warn">
+            <!-- <span class="point-icon-warn">•</span> -->
+            <p><pre>Function-in-function calls: func1(x, func2())</pre></p>
+          </div>
+          <div class="point-item-warn">
+            <!-- <span class="point-icon-warn">•</span> -->
+            <p><pre>Ternary operators: ( ) ? ( ) : ( )</pre></p>
           </div>
         </div>
       </section>
+      
       <section id="syntax" class="page">
         <h1>BhauLang Syntax</h1>
       
         <br>
         <div class="syntax-block">
           <p>Assignment</p>
-          <pre><code class="language-bl">bhau hai ahe a = 12;</code></pre>
+          <pre class="pre-gen"><code class="language-bl">bhau hai ahe a = 12;</code></pre>
         </div>
       
         <div class="syntax-block">
           <p>If Statement</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bhau jar(a < 10) {
   bhau parat de "small";
 }
@@ -109,7 +121,7 @@ bhau jar(a < 10) {
       
         <div class="syntax-block">
           <p>Else If Statement</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bhau jar(a < 10) {
   bhau parat de "small";
 }
@@ -121,7 +133,7 @@ bhau nahitar(a < 20) {
       
         <div class="syntax-block">
           <p>Else Statement</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bhau jar(a < 10) {
   bhau parat de "small";
 }
@@ -133,7 +145,7 @@ bhau tar {
       
         <div class="syntax-block">
           <p>While Loop</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bhau joparent(a < 5) {
   a = a + 1;
 }
@@ -142,7 +154,7 @@ bhau joparent(a < 5) {
       
         <div class="syntax-block">
           <p>Function Definition</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bhau lakshat thev fakt() {
   bhau parat de 42;
 }
@@ -151,28 +163,28 @@ bhau lakshat thev fakt() {
       
         <div class="syntax-block">
           <p>Return Statement</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bhau parat de "result";
           </code></pre>
         </div>
       
         <div class="syntax-block">
           <p>Entry Point</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 hi bhau
           </code></pre>
         </div>
       
         <div class="syntax-block">
           <p>Exit Point</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bye bhau
           </code></pre>
         </div>
       
         <div class="syntax-block">
           <p>Switch Statement</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bhau chunav(a) {
   bhau nivad 1: 
     bhau thamb;
@@ -185,7 +197,7 @@ bhau chunav(a) {
 
         <div class="syntax-block">
           <p>Case Statement</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bhau nivad 2 :
   bhau parat de "two";
           </code></pre>
@@ -193,21 +205,21 @@ bhau nivad 2 :
       
         <div class="syntax-block">
           <p>Break Statement</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bhau thamb;
           </code></pre>
         </div>
       
         <div class="syntax-block">
           <p>Continue Statement</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bhau chalu rha;
           </code></pre>
         </div>
       
         <div class="syntax-block">
           <p>Default Case</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bhau rahudet:
   bhau thamb;
 
@@ -216,28 +228,28 @@ bhau rahudet:
       
         <div class="syntax-block">
           <p>Boolean True</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bhau hai ahe flag = khara;
           </code></pre>
         </div>
       
         <div class="syntax-block">
           <p>Boolean False</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bhau hai ahe flag = khota;
           </code></pre>
         </div>
       
         <div class="syntax-block">
           <p>External Function</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bhau baherun ghe printf &lt;pseudo_name&gt;;
           </code></pre>
         </div>
       
         <div class="syntax-block">
           <p>Main Function</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bhau ithun chalu() {
   bhau hai ahe x = 12;
 }
@@ -246,22 +258,23 @@ bhau ithun chalu() {
       
         <div class="syntax-block">
           <p>Pointer Declaration</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bhau hai ahe a = ptr b;
           </code></pre>
         </div>
       
         <div class="syntax-block">
           <p>Reference Declaration</p>
-          <pre><code class="language-bl">
+          <pre class="pre-gen"><code class="language-bl">
 bhau hai ahe a = ref b;
           </code></pre>
         </div>
       </section>
+
       <section id="examples" class="page">
         <h1>Examples</h1>
         <p>-> control_flow.bl</p>
-        <pre><code class="language-bl">
+        <pre class="pre-gen"><code class="language-bl">
 hi bhau
 
 bhau baherun ghe printf bolo;
@@ -300,7 +313,7 @@ bye bhau
         </code></pre>
 
         <p>-> mixed_literals.bl</p>
-        <pre><code class="language-bl">
+        <pre class="pre-gen"><code class="language-bl">
 hi bhau
 
 bhau baherun ghe printf oraoraoroara;
@@ -328,7 +341,7 @@ bye bhau
         </code></pre>
 
         <p>-> recursion.bl</p>
-        <pre><code class="language-bl">
+        <pre class="pre-gen"><code class="language-bl">
 hi bhau
 
 bhau baherun ghe printf print;
@@ -365,7 +378,7 @@ bye bhau
 
       <section id="customkeywords" class="page">
         <p>Keywords can be defined in a json file as follows: </p>
-        <pre><code class="language-json">
+        <pre class="pre-gen"><code class="language-json">
 {
   "&lt;custom_assign_keyword&gt;"    : "assign",
   "&lt;custom_if_keyword&gt;"        : "if",
@@ -396,7 +409,7 @@ bye bhau
                   <br>
                   <p>Some custom keyword examples are given below:</p>
                   <p>-> bhailang_keywords.json</p>
-                  <pre><code class="language-json">
+                  <pre class="pre-gen"><code class="language-json">
 {
   "bhai ye hai"         : "assign",
   "agar bhai"           : "if",
@@ -422,7 +435,7 @@ bye bhau
 </code></pre>
 
 <p>-> brolang_keywords.json</p>
-<pre><code class="language-json">
+<pre class="pre-gen"><code class="language-json">
 {
   "bro remember this"               : "assign",
   "bro if"                          : "if",
@@ -448,7 +461,7 @@ bye bhau
 </code></pre>
 
                   <p>-> underscore_keywords.json</p>
-                  <pre><code class="language-json">
+                  <pre class="pre-gen"><code class="language-json">
 {
   "__"                       : "assign",
   "___"                      : "if",
@@ -483,6 +496,17 @@ bye bhau
             <p><strong>VS code extension:</strong> Includes syntax highlighting and auto-completion.</p>
           </div>
         </div>
+          <p>To update the extensions according to your keywords, check the `/path-to-bhaulang/extras/extensions/customize bl-syntax` folder</p>
+          <div class="points-block-req">
+            <div class="point-item-req">
+              <span class="point-icon-req">•</span>
+              <p>Update snippets/bl.code-snippets according to your need.</p>
+            </div>
+            <div class="point-item-req">
+              <span class="point-icon-req">•</span>
+              <p>Update syntaxes/bl.tmLanguage.json according to your need.</p>
+            </div>
+          </div>
       </section>
     </main>
   </div>

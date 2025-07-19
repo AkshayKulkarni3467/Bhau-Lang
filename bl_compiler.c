@@ -15,7 +15,7 @@ WARN Maximum text file size is set to 256 KB, can be updated in src/lexer/bl_tok
 WARN Postfix operations and escape characters not implemented
 WARN variable length is limited to 64 characters, can be updated in src/codegen/bl_codegen.h
 WARN using `system` in bl_compiler.c, exploitable command :)
-REF  The files included in src/* are header only files, and can be tested by defining BL_<FILENAME>_TEST, and changing the extension to <filename>.c
+REF  The files found under src care header only files, and can be tested by defining BL_<FILENAME>_TEST, and changing the extension to <filename>.c
 */
 
 

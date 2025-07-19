@@ -1,0 +1,60 @@
+{
+  "scopeName": "source.bl",
+  "name": "bl",
+  "patterns": [
+    {
+      "name": "keyword.control.bl",
+      "match": "\\b(bhau\\s+hai\\s+ahe|bhau\\s+jar|bhau\\s+tar|bhau\\s+nahitar|bhau\\s+joparent|bhau\\s+lakshat\\s+thev|bhau\\s+chunav|bhau\\s+nivad|bhau\\s+thamb|bhau\\s+chalu\\s+rha|bhau\\s+rahudet|bhau\\s+ithun\\s+chalu|hi\\s+bhau|bye\\s+bhau|bhau\\s+parat\\s+de|bhau\\s+baherun\\s+ghe)\\b"
+    },
+    {
+      "name": "storage.type.bl",
+      "match": "\\b(int|float|bool|char|string|void)\\b"
+    },
+    {
+      "name": "constant.language.bl",
+      "match": "\\b(khara|khota|ref|ptr)\\b"
+    },
+    {
+      "name": "comment.line.double-slash.bl",
+      "begin": "//",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.comment.bl" }
+      },
+      "end": "$\\n?",
+      "name": "comment.line.double-slash.bl"
+    },
+    {
+      "name": "string.quoted.double.bl",
+      "begin": "\"",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.string.begin.bl" }
+      },
+      "end": "\"",
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.string.end.bl" }
+      },
+      "patterns": [
+        {
+          "name": "constant.character.escape.bl",
+          "match": "\\\\."
+        }
+      ]
+    },
+    {
+      "name": "constant.numeric.bl",
+      "match": "\\b[0-9]+(\\.[0-9]+)?\\b"
+    },
+    {
+      "name": "entity.name.function.bl",
+      "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\s*(?=\\()"
+    },
+    {
+      "name": "variable.other.bl",
+      "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+    },
+    {
+      "name": "keyword.operator.bl",
+      "match": "(\\+\\+|--|==|!=|<=|>=|&&|\\|\\||[+\\-*/%<>=!&|])"
+    }
+  ]
+}

@@ -76,7 +76,7 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-pre {
+.pre-gen {
   background-color: #212121;
   padding: 1rem;
   border-radius: 8px;

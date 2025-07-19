@@ -1,0 +1,102 @@
+{
+    "assign": {
+      "prefix": "bhau hai ahe",
+      "body": ["bhau hai ahe ${1:var} = ${2:value};"],
+      "description": "Variable assignment"
+    },
+    "if": {
+      "prefix": "bhau jar",
+      "body": ["bhau jar (${1:condition}) \n{\n\t${2:block}\n}"],
+      "description": "If condition"
+    },
+    "elseif": {
+      "prefix": "bhau nahitar",
+      "body": ["bhau nahitar (${1:condition}) \n{\n\t${2:block}\n}"],
+      "description": "Else-if condition"
+    },
+    "else": {
+      "prefix": "bhau tar",
+      "body": ["bhau tar \n{\n\t${2:block}\n}"],
+      "description": "Else block"
+    },
+    "while": {
+      "prefix": "bhau joparent",
+      "body": ["bhau joparent (${1:condition}) \n{\n\t${2:block}\n}"],
+      "description": "While loop"
+    },
+    "function": {
+      "prefix": "bhau lakshat thev",
+      "body": ["bhau lakshat thev ${1:funcName}(${2:params}) \n{\n\t${3:block}\n}"],
+      "description": "Function definition"
+    },
+    "return": {
+      "prefix": "bhau parat de",
+      "body": ["bhau parat de ${1:value};"],
+      "description": "Return statement"
+    },
+    "entry": {
+      "prefix": "hi bhau",
+      "body": ["hi bhau"],
+      "description": "Program entry point"
+    },
+    "exit": {
+      "prefix": "bye bhau",
+      "body": ["bye bhau"],
+      "description": "Program exit"
+    },
+    "switch": {
+      "prefix": "bhau chunav",
+      "body": ["bhau chunav (${1:variable}) \n{\n\t${2:block}\n}"],
+      "description": "Switch statement"
+    },
+    "case": {
+      "prefix": "bhau nivad",
+      "body": ["bhau nivad ${1:value}:\n\t${2:block}\n"],
+      "description": "Case statement"
+    },
+    "break": {
+      "prefix": "bhau thamb",
+      "body": ["bhau thamb;"],
+      "description": "Break statement"
+    },
+    "continue": {
+      "prefix": "bhau chalu rha",
+      "body": ["bhau chalu rha;"],
+      "description": "Continue statement"
+    },
+    "default": {
+      "prefix": "bhau rahudet",
+      "body": ["bhau rahudet:\n\t${2:block}\n"],
+      "description": "Default case"
+    },
+    "extern": {
+      "prefix": "bhau baherun ghe",
+      "body": ["bhau baherun ghe ${1:name};"],
+      "description": "Extern declaration"
+    },
+    "main": {
+      "prefix": "bhau ithun chalu",
+      "body": ["bhau ithun chalu \n{\n\t${2:block}\n}"],
+      "description": "Main function"
+    },
+    "pointer": {
+      "prefix": "ptr",
+      "body": ["ptr ${1:name};"],
+      "description": "Pointer declaration"
+    },
+    "reference": {
+      "prefix": "ref",
+      "body": ["ref ${1:name};"],
+      "description": "Reference declaration"
+    },
+    "true": {
+      "prefix": "khara",
+      "body": ["khara"],
+      "description": "True literal"
+    },
+    "false": {
+      "prefix": "khota",
+      "body": ["khota"],
+      "description": "False literal"
+    }
+  }

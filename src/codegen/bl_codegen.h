@@ -1241,11 +1241,13 @@ static void emitFunction(FILE* fp, SymbolTable* table,  SymbolTableList* slist,T
                             break;
                         case BL_LSHIFT:
                             fprintf(fp,"    and rbx, 63\n"
-                                       "    shl rax, bl\n");
+                                       "    mov rcx, rbx\n"
+                                       "    shl rax, cl\n");
                             break;
                         case BL_RSHIFT:
                             fprintf(fp,"    and rbx, 63\n"
-                                       "    shr rax,bl\n");
+                                       "    mov rcx, rbx\n"
+                                       "    shr rax,cl\n");
                             break;
                         case BL_ISEQUALCOND:
                                 fprintf(fp,"    cmp rax,rbx\n"
@@ -2282,11 +2284,13 @@ static void emitMain(FILE* fp, SymbolTable* table, SymbolTableList* slist,TACLis
                             break;
                         case BL_LSHIFT:
                             fprintf(fp,"    and rbx, 63\n"
-                                       "    shl rax, bl\n");
+                                       "    mov rcx, rbx\n"
+                                       "    shl rax, cl\n");
                             break;
                         case BL_RSHIFT:
                             fprintf(fp,"    and rbx, 63\n"
-                                       "    shr rax,bl\n");
+                                       "    mov rcx, rbx\n"
+                                       "    shr rax,cl\n");
                             break;
                         case BL_ISEQUALCOND:
                                 fprintf(fp,"    cmp rax,rbx\n"
