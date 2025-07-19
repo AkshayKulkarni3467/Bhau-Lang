@@ -1,0 +1,77 @@
+hi bhau
+
+bhau baherun ghe putchar;
+bhau baherun ghe printf;
+
+bhau hai ahe rule = 110;
+bhau hai ahe width = 64;
+bhau hai ahe steps = 63;
+// base : 110,64,63
+// 22,69,35
+// 22,65,60
+// 22,65, 600
+// 18,125,60
+
+
+bhau lakshat thev print_state(state) 
+{   
+    bhau hai ahe i = width - 1;
+    bhau joparent (i>=0) 
+    {
+        bhau jar((state >> i) & 1){
+            putchar('*');
+        }bhau tar{
+            putchar(' ');
+        }
+        --i;
+    }
+    printf("\n");
+}
+
+bhau lakshat thev update_state(rule,current,next,i) 
+{
+    bhau hai ahe left;
+    bhau jar(i == width - 1){
+        left =  0;
+    }bhau tar{
+        left = current >> (i + 1) & 1;
+    }
+    bhau hai ahe center = (current >> i) & 1;
+    
+    bhau hai ahe right;
+    bhau jar(i == 0){
+        right = 0;
+    }bhau tar{
+        right = current >> (i - 1) &1;
+    }
+
+    bhau hai ahe pattern = (left << 2) | (center << 1) | right;
+    bhau hai ahe next_bit = (rule >> pattern) & 1;
+
+    bhau jar(next_bit){
+        next |= (1 << i);
+    }
+    bhau parat de next;
+}
+
+bhau ithun chalu 
+{   
+    bhau hai ahe current = 1 << (width/2);
+
+    bhau hai ahe step = 0;
+    bhau joparent (step < steps) 
+    {   
+        bhau hai ahe next = 0;
+        print_state(current);
+        bhau hai ahe i = 0;
+        bhau joparent (i < width) 
+        {
+            next = update_state(rule,current,next,i);
+            ++i;
+        }
+        current = next;
+        ++step;
+    }
+}
+
+bye bhau
