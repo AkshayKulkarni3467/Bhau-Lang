@@ -23,7 +23,7 @@ CODEGEN = src/codegen/bl_codegen.h
 .phony : clean
 
 compile: $(CODEGEN)
-	@ $(CC) $(CFLAGS_MAIN) src/compiler/bl_compiler.c -o blc
+	@ $(CC) $(CFLAGS_MAIN) src/compiler/bl_compiler.c -o application/blc
 
 tokenize  : $(DYNARR) $(ARENA) 
 	@ $(CC) $(CFLAGS_TOKENIZER) src/lexer/bl_tokenizer.c -o ./out
