@@ -1,0 +1,15 @@
+=== Symbol Table Tree (SCOPES) ===
+• global (id=0, symbols=11, offset=0)
+    • nested_conditions (id=1, symbols=4, offset=208)
+        • null (id=2, symbols=3, offset=0)
+            • null (id=3, symbols=5, offset=0)
+                • null (id=4, symbols=2, offset=0)
+            • null (id=5, symbols=2, offset=0)
+        • null (id=6, symbols=2, offset=0)
+    • switch_demo (id=7, symbols=4, offset=144)
+        • null (id=8, symbols=8, offset=0)
+    • nested_loops (id=9, symbols=4, offset=208)
+        • null (id=10, symbols=9, offset=0)
+            • null (id=11, symbols=9, offset=0)
+    • main (id=12, symbols=5, offset=48)
+=================================

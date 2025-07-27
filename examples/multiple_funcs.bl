@@ -61,74 +61,10 @@ bhau lakshat thev nested_loops(){
     }
 }
 
-
-bhau lakshat thev add_const(){
-    bhau hai ahe a = 5;
-    bhau hai ahe b = 10;
-    bhau parat de a + b;
-}
-
-
-bhau lakshat thev counter_test(){
-    bhau hai ahe counter = 0;
-    bhau joparent(counter < 3){
-        _("Counting");
-        _(" %d ",counter);
-        counter = counter + 1;
-    }
-    _("\n");
-    bhau parat de counter;
-}
-
-
-bhau lakshat thev power(x, n){
-    bhau jar (n == 0){
-        bhau parat de 1;
-    }
-    bhau parat de x * power(x, n - 1);
-}
-
-
-
-
-
-
-
-bhau lakshat thev dummy(a, b, c){
-    bhau parat de a + b + c;
-}
-
-
-bhau lakshat thev literal_demo(){
-    bhau hai ahe ch = 'b';
-    bhau hai ahe s = "string test";
-    bhau hai ahe pi_val = 3.14;
-    bhau hai ahe is_bhau = 1;
-    _("%c\n",ch);
-    _("%s\n",s);
-    _("%.2f\n",pi_val);
-    _("%d\n",is_bhau);
-}
-
-
-
-bhau ithun chalu {
-    
-    bhau hai ahe final = dummy(1,2,3);  
-    bhau hai ahe power = power(3,3);
-    _("%s\n",greeting);
-    _("Power : %d\n",power);
-    _("%d\n",folded);
+bhau ithun chalu { 
     nested_conditions(42);
     switch_demo(3);
-    nested_loops();
-    bhau hai ahe res = add_const();
-    _("%d\n",res);
-    bhau hai ahe ct = counter_test();
-    _("%d\n",ct);
-    literal_demo();
-    _("%d\n",final);
-    
+    nested_loops(); 
 }
 
 bye bhau

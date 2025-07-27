@@ -22,76 +22,11 @@ bhau lakshat thev print_inblock(){
     }
 }
 
-bhau lakshat thev print_access_from_outer_block(){
-    bhau hai ahe x = "declard in outer block";
-    bhau jar(1){
-        f("Frome print_access_from_outer_block: %s\n",x);
-    }
-}
-
-
-bhau lakshat thev print_nestblocks(){
-    bhau hai ahe x = "block 1";
-    bhau jar(1){
-        bhau hai ahe x = "block 2";
-        bhau jar(1){
-            bhau hai ahe x = "block 3";
-            f("From print_nestblocks, Block 3 : %s\n",x);
-        }
-        f("From print_nestblocks, Block 2 : %s\n",x);
-    }
-    f("From print_nestblocks, Block 1 : %s\n",x);
-}
-
-bhau lakshat thev print_funcvsblockscope(){
-    bhau jar(1){
-        bhau hai ahe x = "block scope";
-        f("From print_funcvsblockscope, Block scope : %s\n",x);
-    }
-    bhau hai ahe x = "function scope";
-    f("From print_funcvsblockscope,Function scope : %s\n",x);
-}
-
-bhau lakshat thev return_localvalue(){
-    bhau hai ahe x = 1;
-    bhau parat de x;
-}
-
-//----------------INVALID TESTS (should error out)-----------------------//
-
-/*
-bhau lakshat thev illegal_access_to_outer_scope(){
-    bhau jar(1){
-        bhau hai ahe y = 99;
-        f("From illegal_access_to_outer_scope, From block scope : %d\n",y);
-    }
-    f("From illegal_access_to_outer_scope, From function scope : %d\n",y);
-}
-*/
-
-/*
-bhau lakshat thev illegal_redeclaration_in_same_scope(){
-    bhau hai ahe x = "From illegal_redeclaration_in_same_scope, First declaration";
-    bhau hai ahe x = "From illegal_redeclaration_in_same_scope, Second declaration";
-    f("From illegal_redeclaration_in_same_scope, %s\n",x);
-}
-*/
 
 bhau ithun chalu{
-
     print_global();
     print_infunc();
     print_inblock();
-    print_access_from_outer_block();
-    print_nestblocks();
-    print_funcvsblockscope();
-    bhau hai ahe x = return_localvalue();
-    f("From return_localvalue, Value : %d\n",x);
-
-    //----------------INVALID TESTS (should error out)------------------//
-    //illegal_access_to_outer_scope();
-    //illegal_redeclaration_in_same_scope();
-
 }
 
 bye bhau

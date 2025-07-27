@@ -1,0 +1,109 @@
+[Extern] extern printf (extern) (0)
+[Function start] function factorial begin:
+[Parameter] param a (idt) (1)
+[Declaration] t0 (bool) (1) = 0 (int) (1)
+[Declaration] t1 (idt) (1) = 0 (int) (1)
+[Assignment] t1 (idt) (1) = a (idt) (1)
+[Declaration] t2 (int) (1) = 0 (int) (1)
+[Assignment] t2 (int) (1) = 1 (int) (1)
+[Binary Op] t0 (bool) (1) = t1 (idt) (1) <= t2 (int) (1) 
+[Conditional Jump] if t0 (bool) (1) != 0 (int) (1) goto L0
+[Jump] goto L1
+
+[Label] L0:
+[Declaration] t3 (int) (2) = 1 (int) (2)
+[Return] return t3 (int) (2)
+
+[Label] L1:
+[Declaration] t5 (int) (1) = 0 (int) (1)
+[Declaration] t6 (idt) (1) = 0 (int) (1)
+[Assignment] t6 (idt) (1) = a (idt) (1)
+[Declaration] t7 (int) (1) = 0 (int) (1)
+[Assignment] t7 (int) (1) = 1 (int) (1)
+[Binary Op] t5 (int) (1) = t6 (idt) (1) - t7 (int) (1) 
+[Declaration] t4 (int) (1) = t5 (int) (1)
+[Argument] arg t4 (int) (1)
+[Declaration] t8 (int) (1) = 0 (int) (1)
+[Function call] t8 (int) (1) = call factorial (idt) (1), 1
+[Declaration] t9 (int) (1) = 0 (int) (1)
+[Declaration] t10 (idt) (1) = 0 (int) (1)
+[Assignment] t10 (idt) (1) = a (idt) (1)
+[Declaration] t11 (int) (1) = 0 (int) (1)
+[Assignment] t11 (int) (1) = t8 (int) (1)
+[Binary Op] t9 (int) (1) = t10 (idt) (1) * t11 (int) (1) 
+[Declaration] t12 (int) (1) = t9 (int) (1)
+[Return] return t12 (int) (1)
+[Function end] function end
+[Function start] function fibonacci begin:
+[Parameter] param a (idt) (3)
+[Declaration] t13 (bool) (3) = 0 (int) (3)
+[Declaration] t14 (idt) (3) = 0 (int) (3)
+[Assignment] t14 (idt) (3) = a (idt) (3)
+[Declaration] t15 (int) (3) = 0 (int) (3)
+[Assignment] t15 (int) (3) = 1 (int) (3)
+[Binary Op] t13 (bool) (3) = t14 (idt) (3) <= t15 (int) (3) 
+[Conditional Jump] if t13 (bool) (3) != 0 (int) (3) goto L2
+[Jump] goto L3
+
+[Label] L2:
+[Declaration] t16 (idt) (4) = a (idt) (4)
+[Return] return t16 (idt) (4)
+
+[Label] L3:
+[Declaration] t18 (int) (3) = 0 (int) (3)
+[Declaration] t19 (idt) (3) = 0 (int) (3)
+[Assignment] t19 (idt) (3) = a (idt) (3)
+[Declaration] t20 (int) (3) = 0 (int) (3)
+[Assignment] t20 (int) (3) = 1 (int) (3)
+[Binary Op] t18 (int) (3) = t19 (idt) (3) - t20 (int) (3) 
+[Declaration] t17 (int) (3) = t18 (int) (3)
+[Argument] arg t17 (int) (3)
+[Declaration] t21 (int) (3) = 0 (int) (3)
+[Function call] t21 (int) (3) = call fibonacci (idt) (3), 1
+[Declaration] t23 (int) (3) = 0 (int) (3)
+[Declaration] t24 (idt) (3) = 0 (int) (3)
+[Assignment] t24 (idt) (3) = a (idt) (3)
+[Declaration] t25 (int) (3) = 0 (int) (3)
+[Assignment] t25 (int) (3) = 2 (int) (3)
+[Binary Op] t23 (int) (3) = t24 (idt) (3) - t25 (int) (3) 
+[Declaration] t22 (int) (3) = t23 (int) (3)
+[Argument] arg t22 (int) (3)
+[Declaration] t26 (int) (3) = 0 (int) (3)
+[Function call] t26 (int) (3) = call fibonacci (idt) (3), 1
+[Declaration] t27 (int) (3) = 0 (int) (3)
+[Declaration] t28 (int) (3) = 0 (int) (3)
+[Assignment] t28 (int) (3) = t21 (int) (3)
+[Declaration] t29 (int) (3) = 0 (int) (3)
+[Assignment] t29 (int) (3) = t26 (int) (3)
+[Binary Op] t27 (int) (3) = t28 (int) (3) + t29 (int) (3) 
+[Declaration] t30 (int) (3) = t27 (int) (3)
+[Return] return t30 (int) (3)
+[Function end] function end
+[Function start] function print_recursion_tests begin:
+[Declaration] t31 (int) (5) = 5 (int) (5)
+[Argument] arg t31 (int) (5)
+[Declaration] t32 (int) (5) = 0 (int) (5)
+[Function call] t32 (int) (5) = call factorial (idt) (5), 1
+[Declaration] fac_var (int) (5) = t32 (int) (5)
+[Declaration] t33 (str) (5) = Factorial : %d\n (str) (5)
+[Argument] arg t33 (str) (5)
+[Declaration] t34 (int) (5) = fac_var (int) (5)
+[Argument] arg t34 (int) (5)
+[Declaration] t35 (int) (5) = 0 (int) (5)
+[Function call] t35 (int) (5) = call printf (extern) (5), 2
+[Declaration] t36 (int) (5) = 5 (int) (5)
+[Argument] arg t36 (int) (5)
+[Declaration] t37 (int) (5) = 0 (int) (5)
+[Function call] t37 (int) (5) = call fibonacci (idt) (5), 1
+[Declaration] fib_var (int) (5) = t37 (int) (5)
+[Declaration] t38 (str) (5) = Fibonacci : %d\n (str) (5)
+[Argument] arg t38 (str) (5)
+[Declaration] t39 (int) (5) = fib_var (int) (5)
+[Argument] arg t39 (int) (5)
+[Declaration] t40 (int) (5) = 0 (int) (5)
+[Function call] t40 (int) (5) = call printf (extern) (5), 2
+[Function end] function end
+[Main start] main begin:
+[Declaration] t41 (int) (6) = 0 (int) (6)
+[Function call] t41 (int) (6) = call print_recursion_tests (idt) (6), 0
+[Main end] main end

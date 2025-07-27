@@ -1,0 +1,7 @@
+=== Symbol Table Tree (SCOPES) ===
+• global (id=0, symbols=1, offset=0)
+    • mixed_conds (id=1, symbols=18, offset=288)
+        • null (id=2, symbols=3, offset=0)
+        • null (id=3, symbols=3, offset=0)
+    • main (id=4, symbols=3, offset=48)
+=================================

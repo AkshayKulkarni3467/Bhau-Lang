@@ -17,87 +17,9 @@ bhau lakshat thev mixed_conds(){
     }
 }
 
-bhau lakshat thev float_and_int(a,b){
-    oraoraoroara("From float_and_int , value : %.2f\n", a+b);
-}
-
-bhau lakshat thev int_char_bool(a,b,c){
-    oraoraoroara("From int_char_bool , value : %d\n",a + b + c);
-}
-
-bhau lakshat thev char_float(a,b){
-    oraoraoroara("From char_float , value : %.2f\n",a + b);
-}
-
-bhau lakshat thev bool_float(a,b){
-    bhau jar(a && b > 4.9){
-        oraoraoroara("From bool_float , value : %d\n",1);
-    }bhau tar{
-        oraoraoroara("From bool_float , value : %d\n",0);
-    }
-}
-
-bhau lakshat thev char_comp_int(a,b){
-    bhau jar(a == b){
-        oraoraoroara("From char_comp_int , value : %d\n",1);
-    }bhau tar{
-        oraoraoroara("From char_comp_int , value : %d\n",0);
-    }
-}
-
-bhau lakshat thev float_comp_int(a,b){
-    bhau jar(a == b){
-        oraoraoroara("From float_comp_int , value : %d\n",1);
-    }bhau tar{
-        oraoraoroara("From float_comp_int , value : %d\n",0);
-    }
-}
-
-bhau lakshat thev mixed_sum(a,b,c,d){
-    oraoraoroara("From mixed_sum , value : %.2f\n",a + b + c + d);
-}
-
-bhau lakshat thev mixed_control_flow(){
-    bhau hai ahe f = 3.3;
-    bhau hai ahe i = 3;
-    bhau hai ahe c = 'c';
-    bhau hai ahe b = khara;
-    
-    bhau hai ahe s1 = "test";
-    bhau hai ahe s2 = "test";
-
-    bhau jar((f + i > 6.299) && (c != 'a') && b && s1 == s2){
-        oraoraoroara("From mixed_control_flow , value : %d\n",1);
-    }bhau tar{
-        oraoraoroara("From mixed_control_flow , value : %d\n",0);
-    }
-}
-
-//----------need to return false-----------------//
-bhau lakshat thev to_fail_str_comp_char(a,b){
-    oraoraoroara("From to_fail_str_comp_char , value : %d\n",a==b);
-}
 
 bhau ithun chalu {
     mixed_conds();
-    oraoraoroara("\n");
-    float_and_int(2,3.5);
-    oraoraoroara("\n");
-    int_char_bool('a',khara,11);
-    oraoraoroara("\n");
-    char_float('C',0.28);
-    oraoraoroara("\n");
-    bool_float(1,5.0);
-    oraoraoroara("\n");
-    char_comp_int('B',66);
-    oraoraoroara("\n");
-    float_comp_int(10,10.0);
-    oraoraoroara("\n");
-    mixed_sum('a',2.33,khara,7);
-    oraoraoroara("\n");
-    mixed_control_flow();
-    oraoraoroara("\n");
-    to_fail_str_comp_char('h',"h");
     oraoraoroara("\n");
 }
 

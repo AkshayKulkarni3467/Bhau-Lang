@@ -1,0 +1,54 @@
+>> Symbol Table for Scope: global 0x7fb811241068, Scope ID : 0, Parent Scope : TOP (nil)
+  [0] printf (extern) | is Global : 1 | Offset: 0
+>> Symbol Table for Scope: factorial 0x7fb811243d58, Scope ID : 1, Parent Scope : global 0x7fb811241068
+  [0] a (param) | is Global : 0 | Offset: 8
+  [1] t0 (idt) | is Global : 0 | Offset: 16
+  [2] t1 (idt) | is Global : 0 | Offset: 24
+  [3] t2 (idt) | is Global : 0 | Offset: 32
+  [4] t5 (idt) | is Global : 0 | Offset: 40
+  [5] t6 (idt) | is Global : 0 | Offset: 48
+  [6] t7 (idt) | is Global : 0 | Offset: 56
+  [7] t4 (arg) | is Global : 0 | Offset: 64
+  [8] t8 (idt) | is Global : 0 | Offset: 72
+  [9] t9 (idt) | is Global : 0 | Offset: 80
+  [10] t10 (idt) | is Global : 0 | Offset: 88
+  [11] t11 (idt) | is Global : 0 | Offset: 96
+  [12] t12 (arg) | is Global : 0 | Offset: 104
+>> Symbol Table for Scope: null 0x7fb811246698, Scope ID : 2, Parent Scope : factorial 0x7fb811243d58
+  [0] t3 (arg) | is Global : 0 | Offset: 112
+>> Symbol Table for Scope: fibonacci 0x7fb811249580, Scope ID : 3, Parent Scope : global 0x7fb811241068
+  [0] a (param) | is Global : 0 | Offset: 8
+  [1] t13 (idt) | is Global : 0 | Offset: 16
+  [2] t14 (idt) | is Global : 0 | Offset: 24
+  [3] t15 (idt) | is Global : 0 | Offset: 32
+  [4] t18 (idt) | is Global : 0 | Offset: 40
+  [5] t19 (idt) | is Global : 0 | Offset: 48
+  [6] t20 (idt) | is Global : 0 | Offset: 56
+  [7] t17 (arg) | is Global : 0 | Offset: 64
+  [8] t21 (idt) | is Global : 0 | Offset: 72
+  [9] t23 (idt) | is Global : 0 | Offset: 80
+  [10] t24 (idt) | is Global : 0 | Offset: 88
+  [11] t25 (idt) | is Global : 0 | Offset: 96
+  [12] t22 (arg) | is Global : 0 | Offset: 104
+  [13] t26 (idt) | is Global : 0 | Offset: 112
+  [14] t27 (idt) | is Global : 0 | Offset: 120
+  [15] t28 (idt) | is Global : 0 | Offset: 128
+  [16] t29 (idt) | is Global : 0 | Offset: 136
+  [17] t30 (arg) | is Global : 0 | Offset: 144
+>> Symbol Table for Scope: null 0x7fb81124bec0, Scope ID : 4, Parent Scope : fibonacci 0x7fb811249580
+  [0] t16 (arg) | is Global : 0 | Offset: 152
+>> Symbol Table for Scope: print_recursion_tests 0x7fb81124f2d8, Scope ID : 5, Parent Scope : global 0x7fb811241068
+  [0] t31 (arg) | is Global : 0 | Offset: 8
+  [1] t32 (idt) | is Global : 0 | Offset: 16
+  [2] fac_var (idt) | is Global : 0 | Offset: 24
+  [3] t33 (arg) | is Global : 0 | Offset: 56
+  [4] t34 (arg) | is Global : 0 | Offset: 64
+  [5] t35 (idt) | is Global : 0 | Offset: 72
+  [6] t36 (arg) | is Global : 0 | Offset: 80
+  [7] t37 (idt) | is Global : 0 | Offset: 88
+  [8] fib_var (idt) | is Global : 0 | Offset: 96
+  [9] t38 (arg) | is Global : 0 | Offset: 128
+  [10] t39 (arg) | is Global : 0 | Offset: 136
+  [11] t40 (idt) | is Global : 0 | Offset: 144
+>> Symbol Table for Scope: main 0x7fb8112523a0, Scope ID : 6, Parent Scope : global 0x7fb811241068
+  [0] t41 (idt) | is Global : 0 | Offset: 8

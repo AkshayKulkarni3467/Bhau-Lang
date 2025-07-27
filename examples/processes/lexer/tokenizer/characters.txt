@@ -1,0 +1,913 @@
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 1, offset 3
+   chars         : 'hi'
+   string value  : "hi" (len=2)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 1, offset 8
+   chars         : 'bhau'
+   string value  : "bhau" (len=4)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 3, offset 5
+   chars         : 'bhau'
+   string value  : "bhau" (len=4)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 3, offset 13
+   chars         : 'baherun'
+   string value  : "baherun" (len=7)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 3, offset 17
+   chars         : 'ghe'
+   string value  : "ghe" (len=3)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 3, offset 24
+   chars         : 'printf'
+   string value  : "printf" (len=6)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 3, offset 29
+   chars         : 'bola'
+   string value  : "bola" (len=4)
+}
+
+$ Token :BL_SEMICOLON:
+$ Token {
+   type          : 261
+   location      : line 3, offset 30
+   chars         : ';'
+   string value  : ";" (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 5, offset 5
+   chars         : 'bhau'
+   string value  : "bhau" (len=4)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 5, offset 13
+   chars         : 'lakshat'
+   string value  : "lakshat" (len=7)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 5, offset 18
+   chars         : 'thev'
+   string value  : "thev" (len=4)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 5, offset 33
+   chars         : 'capital_vowels'
+   string value  : "capital_vowels" (len=14)
+}
+
+$ Token :BL_LPAREN:
+$ Token {
+   type          : 263
+   location      : line 5, offset 34
+   chars         : '('
+   string value  : "(" (len=1)
+}
+
+$ Token :BL_RPAREN:
+$ Token {
+   type          : 264
+   location      : line 5, offset 35
+   chars         : ')'
+   string value  : ")" (len=1)
+}
+
+$ Token :BL_LBRACE:
+$ Token {
+   type          : 265
+   location      : line 5, offset 36
+   chars         : '{'
+   string value  : "{" (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 6, offset 9
+   chars         : 'bhau'
+   string value  : "bhau" (len=4)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 6, offset 13
+   chars         : 'hai'
+   string value  : "hai" (len=3)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 6, offset 17
+   chars         : 'ahe'
+   string value  : "ahe" (len=3)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 6, offset 20
+   chars         : 'ch'
+   string value  : "ch" (len=2)
+}
+
+$ Token :BL_EQUAL:
+$ Token {
+   type          : 270
+   location      : line 6, offset 22
+   chars         : '='
+   string value  : "=" (len=1)
+}
+
+$ Token :BL_CHAR:
+$ Token {
+   type          : 260
+   location      : line 6, offset 26
+   chars         : ''A''
+   string value  : "A" (len=1)
+}
+
+$ Token :BL_SEMICOLON:
+$ Token {
+   type          : 261
+   location      : line 6, offset 27
+   chars         : ';'
+   string value  : ";" (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 7, offset 9
+   chars         : 'bhau'
+   string value  : "bhau" (len=4)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 7, offset 18
+   chars         : 'joparent'
+   string value  : "joparent" (len=8)
+}
+
+$ Token :BL_LPAREN:
+$ Token {
+   type          : 263
+   location      : line 7, offset 19
+   chars         : '('
+   string value  : "(" (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 7, offset 21
+   chars         : 'ch'
+   string value  : "ch" (len=2)
+}
+
+$ Token :BL_LESSEQ:
+$ Token {
+   type          : 296
+   location      : line 7, offset 24
+   chars         : '<='
+   string value  : "<=" (len=2)
+}
+
+$ Token :BL_CHAR:
+$ Token {
+   type          : 260
+   location      : line 7, offset 28
+   chars         : ''Z''
+   string value  : "Z" (len=1)
+}
+
+$ Token :BL_RPAREN:
+$ Token {
+   type          : 264
+   location      : line 7, offset 29
+   chars         : ')'
+   string value  : ")" (len=1)
+}
+
+$ Token :BL_LBRACE:
+$ Token {
+   type          : 265
+   location      : line 7, offset 30
+   chars         : '{'
+   string value  : "{" (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 8, offset 13
+   chars         : 'bhau'
+   string value  : "bhau" (len=4)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 8, offset 17
+   chars         : 'jar'
+   string value  : "jar" (len=3)
+}
+
+$ Token :BL_LPAREN:
+$ Token {
+   type          : 263
+   location      : line 8, offset 18
+   chars         : '('
+   string value  : "(" (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 8, offset 20
+   chars         : 'ch'
+   string value  : "ch" (len=2)
+}
+
+$ Token :BL_ISEQUALCOND:
+$ Token {
+   type          : 271
+   location      : line 8, offset 23
+   chars         : '=='
+   string value  : "==" (len=2)
+}
+
+$ Token :BL_CHAR:
+$ Token {
+   type          : 260
+   location      : line 8, offset 27
+   chars         : ''A''
+   string value  : "A" (len=1)
+}
+
+$ Token :BL_LOGOR:
+$ Token {
+   type          : 299
+   location      : line 8, offset 30
+   chars         : '||'
+   string value  : "||" (len=2)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 8, offset 33
+   chars         : 'ch'
+   string value  : "ch" (len=2)
+}
+
+$ Token :BL_ISEQUALCOND:
+$ Token {
+   type          : 271
+   location      : line 8, offset 36
+   chars         : '=='
+   string value  : "==" (len=2)
+}
+
+$ Token :BL_CHAR:
+$ Token {
+   type          : 260
+   location      : line 8, offset 40
+   chars         : ''E''
+   string value  : "E" (len=1)
+}
+
+$ Token :BL_LOGOR:
+$ Token {
+   type          : 299
+   location      : line 8, offset 43
+   chars         : '||'
+   string value  : "||" (len=2)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 8, offset 46
+   chars         : 'ch'
+   string value  : "ch" (len=2)
+}
+
+$ Token :BL_ISEQUALCOND:
+$ Token {
+   type          : 271
+   location      : line 8, offset 49
+   chars         : '=='
+   string value  : "==" (len=2)
+}
+
+$ Token :BL_CHAR:
+$ Token {
+   type          : 260
+   location      : line 8, offset 53
+   chars         : ''I''
+   string value  : "I" (len=1)
+}
+
+$ Token :BL_LOGOR:
+$ Token {
+   type          : 299
+   location      : line 8, offset 56
+   chars         : '||'
+   string value  : "||" (len=2)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 8, offset 59
+   chars         : 'ch'
+   string value  : "ch" (len=2)
+}
+
+$ Token :BL_ISEQUALCOND:
+$ Token {
+   type          : 271
+   location      : line 8, offset 62
+   chars         : '=='
+   string value  : "==" (len=2)
+}
+
+$ Token :BL_CHAR:
+$ Token {
+   type          : 260
+   location      : line 8, offset 66
+   chars         : ''O''
+   string value  : "O" (len=1)
+}
+
+$ Token :BL_LOGOR:
+$ Token {
+   type          : 299
+   location      : line 8, offset 69
+   chars         : '||'
+   string value  : "||" (len=2)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 8, offset 72
+   chars         : 'ch'
+   string value  : "ch" (len=2)
+}
+
+$ Token :BL_ISEQUALCOND:
+$ Token {
+   type          : 271
+   location      : line 8, offset 75
+   chars         : '=='
+   string value  : "==" (len=2)
+}
+
+$ Token :BL_CHAR:
+$ Token {
+   type          : 260
+   location      : line 8, offset 79
+   chars         : ''U''
+   string value  : "U" (len=1)
+}
+
+$ Token :BL_RPAREN:
+$ Token {
+   type          : 264
+   location      : line 8, offset 80
+   chars         : ')'
+   string value  : ")" (len=1)
+}
+
+$ Token :BL_LBRACE:
+$ Token {
+   type          : 265
+   location      : line 8, offset 81
+   chars         : '{'
+   string value  : "{" (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 9, offset 17
+   chars         : 'bola'
+   string value  : "bola" (len=4)
+}
+
+$ Token :BL_LPAREN:
+$ Token {
+   type          : 263
+   location      : line 9, offset 18
+   chars         : '('
+   string value  : "(" (len=1)
+}
+
+$ Token :BL_STRING:
+$ Token {
+   type          : 259
+   location      : line 9, offset 23
+   chars         : '"%c "'
+   string value  : "%c " (len=3)
+}
+
+$ Token :BL_COMMA:
+$ Token {
+   type          : 269
+   location      : line 9, offset 24
+   chars         : ','
+   string value  : "," (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 9, offset 26
+   chars         : 'ch'
+   string value  : "ch" (len=2)
+}
+
+$ Token :BL_RPAREN:
+$ Token {
+   type          : 264
+   location      : line 9, offset 27
+   chars         : ')'
+   string value  : ")" (len=1)
+}
+
+$ Token :BL_SEMICOLON:
+$ Token {
+   type          : 261
+   location      : line 9, offset 28
+   chars         : ';'
+   string value  : ";" (len=1)
+}
+
+$ Token :BL_RBRACE:
+$ Token {
+   type          : 266
+   location      : line 10, offset 10
+   chars         : '}'
+   string value  : "}" (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 10, offset 14
+   chars         : 'bhau'
+   string value  : "bhau" (len=4)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 10, offset 18
+   chars         : 'tar'
+   string value  : "tar" (len=3)
+}
+
+$ Token :BL_LBRACE:
+$ Token {
+   type          : 265
+   location      : line 10, offset 19
+   chars         : '{'
+   string value  : "{" (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 11, offset 17
+   chars         : 'bola'
+   string value  : "bola" (len=4)
+}
+
+$ Token :BL_LPAREN:
+$ Token {
+   type          : 263
+   location      : line 11, offset 18
+   chars         : '('
+   string value  : "(" (len=1)
+}
+
+$ Token :BL_STRING:
+$ Token {
+   type          : 259
+   location      : line 11, offset 23
+   chars         : '"%c "'
+   string value  : "%c " (len=3)
+}
+
+$ Token :BL_COMMA:
+$ Token {
+   type          : 269
+   location      : line 11, offset 24
+   chars         : ','
+   string value  : "," (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 11, offset 26
+   chars         : 'ch'
+   string value  : "ch" (len=2)
+}
+
+$ Token :BL_ADDBINOP:
+$ Token {
+   type          : 273
+   location      : line 11, offset 28
+   chars         : '+'
+   string value  : "+" (len=1)
+}
+
+$ Token :BL_INT:
+$ Token {
+   type          : 257
+   location      : line 11, offset 31
+   chars         : '32'
+   string value  : "32" (len=2)
+   int value     : 32
+}
+
+$ Token :BL_RPAREN:
+$ Token {
+   type          : 264
+   location      : line 11, offset 32
+   chars         : ')'
+   string value  : ")" (len=1)
+}
+
+$ Token :BL_SEMICOLON:
+$ Token {
+   type          : 261
+   location      : line 11, offset 33
+   chars         : ';'
+   string value  : ";" (len=1)
+}
+
+$ Token :BL_RBRACE:
+$ Token {
+   type          : 266
+   location      : line 12, offset 10
+   chars         : '}'
+   string value  : "}" (len=1)
+}
+
+$ Token :BL_INC:
+$ Token {
+   type          : 282
+   location      : line 13, offset 11
+   chars         : '++'
+   string value  : "++" (len=2)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 13, offset 13
+   chars         : 'ch'
+   string value  : "ch" (len=2)
+}
+
+$ Token :BL_SEMICOLON:
+$ Token {
+   type          : 261
+   location      : line 13, offset 14
+   chars         : ';'
+   string value  : ";" (len=1)
+}
+
+$ Token :BL_RBRACE:
+$ Token {
+   type          : 266
+   location      : line 14, offset 6
+   chars         : '}'
+   string value  : "}" (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 15, offset 9
+   chars         : 'bola'
+   string value  : "bola" (len=4)
+}
+
+$ Token :BL_LPAREN:
+$ Token {
+   type          : 263
+   location      : line 15, offset 10
+   chars         : '('
+   string value  : "(" (len=1)
+}
+
+$ Token :BL_STRING:
+$ Token {
+   type          : 259
+   location      : line 15, offset 14
+   chars         : '"\n"'
+   string value  : "\n" (len=2)
+}
+
+$ Token :BL_RPAREN:
+$ Token {
+   type          : 264
+   location      : line 15, offset 15
+   chars         : ')'
+   string value  : ")" (len=1)
+}
+
+$ Token :BL_SEMICOLON:
+$ Token {
+   type          : 261
+   location      : line 15, offset 16
+   chars         : ';'
+   string value  : ";" (len=1)
+}
+
+$ Token :BL_RBRACE:
+$ Token {
+   type          : 266
+   location      : line 16, offset 2
+   chars         : '}'
+   string value  : "}" (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 18, offset 5
+   chars         : 'bhau'
+   string value  : "bhau" (len=4)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 18, offset 13
+   chars         : 'lakshat'
+   string value  : "lakshat" (len=7)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 18, offset 18
+   chars         : 'thev'
+   string value  : "thev" (len=4)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 18, offset 35
+   chars         : 'print_characters'
+   string value  : "print_characters" (len=16)
+}
+
+$ Token :BL_LPAREN:
+$ Token {
+   type          : 263
+   location      : line 18, offset 36
+   chars         : '('
+   string value  : "(" (len=1)
+}
+
+$ Token :BL_RPAREN:
+$ Token {
+   type          : 264
+   location      : line 18, offset 37
+   chars         : ')'
+   string value  : ")" (len=1)
+}
+
+$ Token :BL_LBRACE:
+$ Token {
+   type          : 265
+   location      : line 18, offset 38
+   chars         : '{'
+   string value  : "{" (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 19, offset 19
+   chars         : 'capital_vowels'
+   string value  : "capital_vowels" (len=14)
+}
+
+$ Token :BL_LPAREN:
+$ Token {
+   type          : 263
+   location      : line 19, offset 20
+   chars         : '('
+   string value  : "(" (len=1)
+}
+
+$ Token :BL_RPAREN:
+$ Token {
+   type          : 264
+   location      : line 19, offset 21
+   chars         : ')'
+   string value  : ")" (len=1)
+}
+
+$ Token :BL_SEMICOLON:
+$ Token {
+   type          : 261
+   location      : line 19, offset 22
+   chars         : ';'
+   string value  : ";" (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 20, offset 9
+   chars         : 'bola'
+   string value  : "bola" (len=4)
+}
+
+$ Token :BL_LPAREN:
+$ Token {
+   type          : 263
+   location      : line 20, offset 10
+   chars         : '('
+   string value  : "(" (len=1)
+}
+
+$ Token :BL_STRING:
+$ Token {
+   type          : 259
+   location      : line 20, offset 14
+   chars         : '"\n"'
+   string value  : "\n" (len=2)
+}
+
+$ Token :BL_RPAREN:
+$ Token {
+   type          : 264
+   location      : line 20, offset 15
+   chars         : ')'
+   string value  : ")" (len=1)
+}
+
+$ Token :BL_SEMICOLON:
+$ Token {
+   type          : 261
+   location      : line 20, offset 16
+   chars         : ';'
+   string value  : ";" (len=1)
+}
+
+$ Token :BL_RBRACE:
+$ Token {
+   type          : 266
+   location      : line 21, offset 2
+   chars         : '}'
+   string value  : "}" (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 23, offset 5
+   chars         : 'bhau'
+   string value  : "bhau" (len=4)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 23, offset 11
+   chars         : 'ithun'
+   string value  : "ithun" (len=5)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 23, offset 17
+   chars         : 'chalu'
+   string value  : "chalu" (len=5)
+}
+
+$ Token :BL_LBRACE:
+$ Token {
+   type          : 265
+   location      : line 23, offset 18
+   chars         : '{'
+   string value  : "{" (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 24, offset 21
+   chars         : 'print_characters'
+   string value  : "print_characters" (len=16)
+}
+
+$ Token :BL_LPAREN:
+$ Token {
+   type          : 263
+   location      : line 24, offset 22
+   chars         : '('
+   string value  : "(" (len=1)
+}
+
+$ Token :BL_RPAREN:
+$ Token {
+   type          : 264
+   location      : line 24, offset 23
+   chars         : ')'
+   string value  : ")" (len=1)
+}
+
+$ Token :BL_SEMICOLON:
+$ Token {
+   type          : 261
+   location      : line 24, offset 24
+   chars         : ';'
+   string value  : ";" (len=1)
+}
+
+$ Token :BL_RBRACE:
+$ Token {
+   type          : 266
+   location      : line 25, offset 2
+   chars         : '}'
+   string value  : "}" (len=1)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 27, offset 4
+   chars         : 'bye'
+   string value  : "bye" (len=3)
+}
+
+$ Token :BL_IDENTIFIER:
+$ Token {
+   type          : 256
+   location      : line 27, offset 9
+   chars         : 'bhau'
+   string value  : "bhau" (len=4)
+}
+
+$ Token :BL_EOF:
+$ Token {
+   type          : 303
+   location      : line 27, offset 10
+   chars         : ''
+   string value  : "" (len=1)
+}
+

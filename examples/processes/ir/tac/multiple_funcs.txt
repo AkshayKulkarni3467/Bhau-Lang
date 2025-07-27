@@ -1,0 +1,178 @@
+[Extern] extern printf (extern) (0)
+[Declaration] pi (float) (0) = 3.1414999961853027 (float) (0)
+[Declaration] e (float) (0) = 2.7179999351501465 (float) (0)
+[Declaration] greeting (str) (0) = Hello from BhauLang! (str) (0)
+[Declaration] flag (int) (0) = 1 (int) (0)
+[Declaration] z (int) (0) = 10 (int) (0)
+[Declaration] folded (int) (0) = 11 (int) (0)
+[Declaration] x (int) (0) = 5 (int) (0)
+[Declaration] c (int) (0) = 42 (int) (0)
+[Declaration] b (int) (0) = 42 (int) (0)
+[Declaration] a (int) (0) = 42 (int) (0)
+[Function start] function nested_conditions begin:
+[Parameter] param n (idt) (1)
+[Declaration] t0 (bool) (1) = 0 (int) (1)
+[Declaration] t1 (idt) (1) = 0 (int) (1)
+[Assignment] t1 (idt) (1) = n (idt) (1)
+[Declaration] t2 (int) (1) = 0 (int) (1)
+[Assignment] t2 (int) (1) = 0 (int) (1)
+[Binary Op] t0 (bool) (1) = t1 (idt) (1) == t2 (int) (1) 
+[Conditional Jump] if t0 (bool) (1) != 0 (int) (1) goto L0
+[Declaration] t3 (bool) (2) = 0 (int) (2)
+[Declaration] t4 (idt) (2) = 0 (int) (2)
+[Assignment] t4 (idt) (2) = n (idt) (2)
+[Declaration] t5 (int) (2) = 0 (int) (2)
+[Assignment] t5 (int) (2) = 0 (int) (2)
+[Binary Op] t3 (bool) (2) = t4 (idt) (2) < t5 (int) (2) 
+[Conditional Jump] if t3 (bool) (2) != 0 (int) (2) goto L2
+[Declaration] t6 (str) (3) = Positive\n (str) (3)
+[Argument] arg t6 (str) (3)
+[Declaration] t7 (int) (3) = 0 (int) (3)
+[Function call] t7 (int) (3) = call printf (extern) (3), 1
+[Declaration] t8 (bool) (3) = 0 (int) (3)
+[Declaration] t9 (idt) (3) = 0 (int) (3)
+[Assignment] t9 (idt) (3) = n (idt) (3)
+[Declaration] t10 (int) (3) = 0 (int) (3)
+[Assignment] t10 (int) (3) = 100 (int) (3)
+[Binary Op] t8 (bool) (3) = t9 (idt) (3) > t10 (int) (3) 
+[Conditional Jump] if t8 (bool) (3) != 0 (int) (3) goto L4
+[Jump] goto L5
+
+[Label] L4:
+[Declaration] t11 (str) (4) = Very large\n (str) (4)
+[Argument] arg t11 (str) (4)
+[Declaration] t12 (int) (4) = 0 (int) (4)
+[Function call] t12 (int) (4) = call printf (extern) (4), 1
+
+[Label] L5:
+[Jump] goto L3
+
+[Label] L2:
+[Declaration] t13 (str) (5) = Negative\n (str) (5)
+[Argument] arg t13 (str) (5)
+[Declaration] t14 (int) (5) = 0 (int) (5)
+[Function call] t14 (int) (5) = call printf (extern) (5), 1
+
+[Label] L3:
+[Jump] goto L1
+
+[Label] L0:
+[Declaration] t15 (str) (6) = Zero\n (str) (6)
+[Argument] arg t15 (str) (6)
+[Declaration] t16 (int) (6) = 0 (int) (6)
+[Function call] t16 (int) (6) = call printf (extern) (6), 1
+
+[Label] L1:
+[Function end] function end
+[Function start] function switch_demo begin:
+[Parameter] param x (int) (7)
+[Declaration] t17 (int) (7) = x (int) (7)
+[Conditional Jump] if t17 (int) (7) == 1 (int) (8) goto L7
+[Declaration] t18 (int) (7) = x (int) (7)
+[Conditional Jump] if t18 (int) (7) == 2 (int) (8) goto L8
+[Declaration] t19 (int) (7) = x (int) (7)
+[Conditional Jump] if t19 (int) (7) == 3 (int) (8) goto L9
+[Jump] goto L10
+
+[Label] L7:
+[Declaration] t20 (str) (8) = One\n (str) (8)
+[Argument] arg t20 (str) (8)
+[Declaration] t21 (int) (8) = 0 (int) (8)
+[Function call] t21 (int) (8) = call printf (extern) (8), 1
+
+[Label] L8:
+[Declaration] t22 (str) (8) = Two\n (str) (8)
+[Argument] arg t22 (str) (8)
+[Declaration] t23 (int) (8) = 0 (int) (8)
+[Function call] t23 (int) (8) = call printf (extern) (8), 1
+
+[Label] L9:
+[Declaration] t24 (str) (8) = Three\n (str) (8)
+[Argument] arg t24 (str) (8)
+[Declaration] t25 (int) (8) = 0 (int) (8)
+[Function call] t25 (int) (8) = call printf (extern) (8), 1
+
+[Label] L10:
+[Declaration] t26 (str) (8) = Other\n (str) (8)
+[Argument] arg t26 (str) (8)
+[Declaration] t27 (int) (8) = 0 (int) (8)
+[Function call] t27 (int) (8) = call printf (extern) (8), 1
+
+[Label] L6:
+[Function end] function end
+[Function start] function nested_loops begin:
+[Declaration] i (int) (9) = 0 (int) (9)
+
+[Label] L11:
+[Declaration] t28 (bool) (9) = 0 (int) (9)
+[Declaration] t29 (int) (9) = 0 (int) (9)
+[Assignment] t29 (int) (9) = i (int) (9)
+[Declaration] t30 (int) (9) = 0 (int) (9)
+[Assignment] t30 (int) (9) = 5 (int) (9)
+[Binary Op] t28 (bool) (9) = t29 (int) (9) < t30 (int) (9) 
+[Conditional Jump] if t28 (bool) (9) != 0 (int) (9) goto L12
+[Jump] goto L13
+
+[Label] L12:
+[Declaration] j (int) (10) = 0 (int) (10)
+
+[Label] L14:
+[Declaration] t31 (bool) (10) = 0 (int) (10)
+[Declaration] t32 (int) (10) = 0 (int) (10)
+[Assignment] t32 (int) (10) = j (int) (10)
+[Declaration] t33 (int) (10) = 0 (int) (10)
+[Assignment] t33 (int) (10) = 3 (int) (10)
+[Binary Op] t31 (bool) (10) = t32 (int) (10) < t33 (int) (10) 
+[Conditional Jump] if t31 (bool) (10) != 0 (int) (10) goto L15
+[Jump] goto L16
+
+[Label] L15:
+[Declaration] t34 (str) (11) = %d  (str) (11)
+[Argument] arg t34 (str) (11)
+[Declaration] t35 (int) (11) = i (int) (11)
+[Argument] arg t35 (int) (11)
+[Declaration] t36 (int) (11) = 0 (int) (11)
+[Function call] t36 (int) (11) = call printf (extern) (11), 2
+[Declaration] t37 (str) (11) = %d  (str) (11)
+[Argument] arg t37 (str) (11)
+[Declaration] t38 (int) (11) = j (int) (11)
+[Argument] arg t38 (int) (11)
+[Declaration] t39 (int) (11) = 0 (int) (11)
+[Function call] t39 (int) (11) = call printf (extern) (11), 2
+[Declaration] t40 (int) (11) = 0 (int) (11)
+[Declaration] t41 (int) (11) = 0 (int) (11)
+[Assignment] t41 (int) (11) = j (int) (11)
+[Declaration] t42 (int) (11) = 0 (int) (11)
+[Assignment] t42 (int) (11) = 1 (int) (11)
+[Binary Op] t40 (int) (11) = t41 (int) (11) + t42 (int) (11) 
+[Assignment] j (int) (11) = t40 (int) (11)
+[Jump] goto L14
+
+[Label] L16:
+[Declaration] t43 (str) (10) = \n (str) (10)
+[Argument] arg t43 (str) (10)
+[Declaration] t44 (int) (10) = 0 (int) (10)
+[Function call] t44 (int) (10) = call printf (extern) (10), 1
+[Declaration] t45 (int) (10) = 0 (int) (10)
+[Declaration] t46 (int) (10) = 0 (int) (10)
+[Assignment] t46 (int) (10) = i (int) (10)
+[Declaration] t47 (int) (10) = 0 (int) (10)
+[Assignment] t47 (int) (10) = 1 (int) (10)
+[Binary Op] t45 (int) (10) = t46 (int) (10) + t47 (int) (10) 
+[Assignment] i (int) (10) = t45 (int) (10)
+[Jump] goto L11
+
+[Label] L13:
+[Function end] function end
+[Main start] main begin:
+[Declaration] t48 (int) (12) = 42 (int) (12)
+[Argument] arg t48 (int) (12)
+[Declaration] t49 (int) (12) = 0 (int) (12)
+[Function call] t49 (int) (12) = call nested_conditions (idt) (12), 1
+[Declaration] t50 (int) (12) = 3 (int) (12)
+[Argument] arg t50 (int) (12)
+[Declaration] t51 (int) (12) = 0 (int) (12)
+[Function call] t51 (int) (12) = call switch_demo (idt) (12), 1
+[Declaration] t52 (int) (12) = 0 (int) (12)
+[Function call] t52 (int) (12) = call nested_loops (idt) (12), 0
+[Main end] main end

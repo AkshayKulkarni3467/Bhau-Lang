@@ -1,0 +1,58 @@
+├── PROGRAM
+│   ├── EXTERN
+│   │   └── IDENTIFIER: printf [global#1]
+│   ├── FUNCTION: float_control_flow
+│   │   ├── PARAMS
+│   │   └── BLOCK
+│   │   └── BLOCK
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: y [float_control_flow#2]
+│   │       │   └── FLOAT_LITERAL: 3.14
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: x [float_control_flow#2]
+│   │       │   └── FLOAT_LITERAL: 2.71
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: z [float_control_flow#2]
+│   │       │   └── FLOAT_LITERAL: 0.00
+│   │       ├── IF_ELSE
+│   │       │   ├── CONDITION
+│   │       │   ├── BINOP: BL_GRTTHAN
+│   │       │   │   ├── IDENTIFIER: x [float_control_flow#2]
+│   │       │   │   └── IDENTIFIER: y [float_control_flow#2]
+│   │       │   ├── IF BLOCK
+│   │       │   ├── BLOCK
+│   │       │   │   └── ASSIGN BL_EQUAL
+│   │       │   │       ├── IDENTIFIER: z [(null)#3]
+│   │       │   │       └── BINOP: BL_SUBBINOP
+│   │       │   │           ├── IDENTIFIER: x [(null)#3]
+│   │       │   │           └── IDENTIFIER: y [(null)#3]
+│   │       │   └── ELSE BLOCK
+│   │       │   └── BLOCK
+│   │       │       └── ASSIGN BL_EQUAL
+│   │       │           ├── IDENTIFIER: z [(null)#4]
+│   │       │           └── BINOP: BL_ADDBINOP
+│   │       │               ├── IDENTIFIER: x [(null)#4]
+│   │       │               └── IDENTIFIER: y [(null)#4]
+│   │       └── IF_ELSE
+│   │           ├── CONDITION
+│   │           ├── BINOP: BL_GRTTHAN
+│   │           │   ├── IDENTIFIER: z [float_control_flow#2]
+│   │           │   └── FLOAT_LITERAL: 5.00
+│   │           ├── IF BLOCK
+│   │           ├── BLOCK
+│   │           │   ├── ASSIGN DECL BL_EQUAL
+│   │           │   │   ├── IDENTIFIER: double_z [(null)#5]
+│   │           │   │   └── BINOP: BL_MULTBINOP
+│   │           │   │       ├── IDENTIFIER: z [(null)#5]
+│   │           │   │       └── FLOAT_LITERAL: 2.00
+│   │           │   └── FUNCTION CALL: printf
+│   │           │       ├── STRING_LITERAL: "From float_control_flow, Value : %.2f\n"
+│   │           │       └── IDENTIFIER: double_z [(null)#5]
+│   │           └── ELSE BLOCK
+│   │           └── (null node)
+│   └── MAIN FUNCTION
+│       └── BLOCK
+│           ├── FUNCTION CALL: float_control_flow
+│           └── FUNCTION CALL: printf
+│               └── STRING_LITERAL: "\n"
+

@@ -1,0 +1,9 @@
+=== Symbol Table Tree (SCOPES) ===
+• global (id=0, symbols=1, offset=0)
+    • capital_vowels (id=1, symbols=6, offset=384)
+        • null (id=2, symbols=28, offset=0)
+            • null (id=3, symbols=6, offset=0)
+            • null (id=4, symbols=3, offset=0)
+    • print_characters (id=5, symbols=3, offset=48)
+    • main (id=6, symbols=1, offset=16)
+=================================

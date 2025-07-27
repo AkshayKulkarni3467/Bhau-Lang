@@ -1,0 +1,225 @@
+├── PROGRAM
+│   ├── EXTERN
+│   │   └── IDENTIFIER: putchar [global#1]
+│   ├── EXTERN
+│   │   └── IDENTIFIER: printf [global#1]
+│   ├── ASSIGN DECL BL_EQUAL
+│   │   ├── IDENTIFIER: rule [global#1]
+│   │   └── INT_LITERAL: 137
+│   ├── ASSIGN DECL BL_EQUAL
+│   │   ├── IDENTIFIER: width [global#1]
+│   │   └── INT_LITERAL: 65
+│   ├── ASSIGN DECL BL_EQUAL
+│   │   ├── IDENTIFIER: steps [global#1]
+│   │   └── INT_LITERAL: 32
+│   ├── // COMMENT
+│   ├── // COMMENT
+│   ├── // COMMENT
+│   ├── // COMMENT
+│   ├── // COMMENT
+│   ├── FUNCTION: print_state
+│   │   ├── PARAMS
+│   │   └── PARAM: print_state
+│   │       └── IDENTIFIER: state [print_state#2]
+│   │   └── BLOCK
+│   │   └── BLOCK
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: i [print_state#2]
+│   │       │   └── BINOP: BL_SUBBINOP
+│   │       │       ├── IDENTIFIER: width [print_state#2]
+│   │       │       └── INT_LITERAL: 1
+│   │       ├── WHILE
+│   │       │   ├── EXPR
+│   │       │   ├── BINOP: BL_GRTEQ
+│   │       │   │   ├── IDENTIFIER: i [print_state#2]
+│   │       │   │   └── INT_LITERAL: 0
+│   │       │   └── BLOCK
+│   │       │   └── BLOCK
+│   │       │       ├── IF_ELSE
+│   │       │       │   ├── CONDITION
+│   │       │       │   ├── BINOP: BL_AND
+│   │       │       │   │   ├── GROUP
+│   │       │       │   │   │   └── BINOP: BL_RSHIFT
+│   │       │       │   │   │       ├── IDENTIFIER: state [(null)#3]
+│   │       │       │   │   │       └── IDENTIFIER: i [(null)#3]
+│   │       │       │   │   └── INT_LITERAL: 1
+│   │       │       │   ├── IF BLOCK
+│   │       │       │   ├── BLOCK
+│   │       │       │   │   └── FUNCTION CALL: putchar
+│   │       │       │   │       └── CHAR_LITERAL: *
+│   │       │       │   └── ELSE BLOCK
+│   │       │       │   └── BLOCK
+│   │       │       │       └── FUNCTION CALL: putchar
+│   │       │       │           └── CHAR_LITERAL:  
+│   │       │       └── UNARYOP : BL_DEC
+│   │       │           └── IDENTIFIER: i [(null)#3]
+│   │       └── FUNCTION CALL: printf
+│   │           └── STRING_LITERAL: "\n"
+│   ├── FUNCTION: update_state
+│   │   ├── PARAMS
+│   │   ├── PARAM: update_state
+│   │   │   └── IDENTIFIER: rule [update_state#6]
+│   │   ├── PARAM: update_state
+│   │   │   └── IDENTIFIER: current [update_state#6]
+│   │   ├── PARAM: update_state
+│   │   │   └── IDENTIFIER: next [update_state#6]
+│   │   └── PARAM: update_state
+│   │       └── IDENTIFIER: i [update_state#6]
+│   │   └── BLOCK
+│   │   └── BLOCK
+│   │       ├── IDENTIFIER: left [update_state#6]
+│   │       ├── IF_ELSE
+│   │       │   ├── CONDITION
+│   │       │   ├── BINOP: BL_ISEQUALCOND
+│   │       │   │   ├── IDENTIFIER: i [update_state#6]
+│   │       │   │   └── BINOP: BL_SUBBINOP
+│   │       │   │       ├── IDENTIFIER: width [update_state#6]
+│   │       │   │       └── INT_LITERAL: 1
+│   │       │   ├── IF BLOCK
+│   │       │   ├── BLOCK
+│   │       │   │   └── ASSIGN BL_EQUAL
+│   │       │   │       ├── IDENTIFIER: left [(null)#7]
+│   │       │   │       └── INT_LITERAL: 0
+│   │       │   └── ELSE BLOCK
+│   │       │   └── BLOCK
+│   │       │       └── ASSIGN BL_EQUAL
+│   │       │           ├── IDENTIFIER: left [(null)#8]
+│   │       │           └── BINOP: BL_AND
+│   │       │               ├── BINOP: BL_RSHIFT
+│   │       │               │   ├── IDENTIFIER: current [(null)#8]
+│   │       │               │   └── GROUP
+│   │       │               │       └── BINOP: BL_ADDBINOP
+│   │       │               │           ├── IDENTIFIER: i [(null)#8]
+│   │       │               │           └── INT_LITERAL: 1
+│   │       │               └── INT_LITERAL: 1
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: center [update_state#6]
+│   │       │   └── BINOP: BL_AND
+│   │       │       ├── GROUP
+│   │       │       │   └── BINOP: BL_RSHIFT
+│   │       │       │       ├── IDENTIFIER: current [update_state#6]
+│   │       │       │       └── IDENTIFIER: i [update_state#6]
+│   │       │       └── INT_LITERAL: 1
+│   │       ├── IDENTIFIER: right [update_state#6]
+│   │       ├── IF_ELSE
+│   │       │   ├── CONDITION
+│   │       │   ├── BINOP: BL_ISEQUALCOND
+│   │       │   │   ├── IDENTIFIER: i [update_state#6]
+│   │       │   │   └── INT_LITERAL: 0
+│   │       │   ├── IF BLOCK
+│   │       │   ├── BLOCK
+│   │       │   │   └── ASSIGN BL_EQUAL
+│   │       │   │       ├── IDENTIFIER: right [(null)#9]
+│   │       │   │       └── INT_LITERAL: 0
+│   │       │   └── ELSE BLOCK
+│   │       │   └── BLOCK
+│   │       │       └── ASSIGN BL_EQUAL
+│   │       │           ├── IDENTIFIER: right [(null)#10]
+│   │       │           └── BINOP: BL_AND
+│   │       │               ├── BINOP: BL_RSHIFT
+│   │       │               │   ├── IDENTIFIER: current [(null)#10]
+│   │       │               │   └── GROUP
+│   │       │               │       └── BINOP: BL_SUBBINOP
+│   │       │               │           ├── IDENTIFIER: i [(null)#10]
+│   │       │               │           └── INT_LITERAL: 1
+│   │       │               └── INT_LITERAL: 1
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: pattern [update_state#6]
+│   │       │   └── BINOP: BL_OR
+│   │       │       ├── BINOP: BL_OR
+│   │       │       │   ├── GROUP
+│   │       │       │   │   └── BINOP: BL_LSHIFT
+│   │       │       │   │       ├── IDENTIFIER: left [update_state#6]
+│   │       │       │   │       └── INT_LITERAL: 2
+│   │       │       │   └── GROUP
+│   │       │       │       └── BINOP: BL_LSHIFT
+│   │       │       │           ├── IDENTIFIER: center [update_state#6]
+│   │       │       │           └── INT_LITERAL: 1
+│   │       │       └── IDENTIFIER: right [update_state#6]
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: next_bit [update_state#6]
+│   │       │   └── BINOP: BL_AND
+│   │       │       ├── GROUP
+│   │       │       │   └── BINOP: BL_RSHIFT
+│   │       │       │       ├── IDENTIFIER: rule [update_state#6]
+│   │       │       │       └── IDENTIFIER: pattern [update_state#6]
+│   │       │       └── INT_LITERAL: 1
+│   │       ├── IF_ELSE
+│   │       │   ├── CONDITION
+│   │       │   ├── IDENTIFIER: next_bit [update_state#6]
+│   │       │   ├── IF BLOCK
+│   │       │   ├── BLOCK
+│   │       │   │   └── ASSIGN BL_OREQ
+│   │       │   │       ├── IDENTIFIER: next [(null)#11]
+│   │       │   │       └── GROUP
+│   │       │   │           └── BINOP: BL_LSHIFT
+│   │       │   │               ├── INT_LITERAL: 1
+│   │       │   │               └── IDENTIFIER: i [(null)#11]
+│   │       │   └── ELSE BLOCK
+│   │       │   └── (null node)
+│   │       └── RETURN
+│   │           └── IDENTIFIER: next [update_state#6]
+│   ├── FUNCTION: generate_automata
+│   │   ├── PARAMS
+│   │   ├── PARAM: generate_automata
+│   │   │   └── IDENTIFIER: rule [generate_automata#12]
+│   │   ├── PARAM: generate_automata
+│   │   │   └── IDENTIFIER: width [generate_automata#12]
+│   │   └── PARAM: generate_automata
+│   │       └── IDENTIFIER: steps [generate_automata#12]
+│   │   └── BLOCK
+│   │   └── BLOCK
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: current [generate_automata#12]
+│   │       │   └── BINOP: BL_LSHIFT
+│   │       │       ├── INT_LITERAL: 1
+│   │       │       └── GROUP
+│   │       │           └── BINOP: BL_DIVBINOP
+│   │       │               ├── IDENTIFIER: width [generate_automata#12]
+│   │       │               └── INT_LITERAL: 2
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: step [generate_automata#12]
+│   │       │   └── INT_LITERAL: 0
+│   │       └── WHILE
+│   │           ├── EXPR
+│   │           ├── BINOP: BL_LESSTHAN
+│   │           │   ├── IDENTIFIER: step [generate_automata#12]
+│   │           │   └── IDENTIFIER: steps [generate_automata#12]
+│   │           └── BLOCK
+│   │           └── BLOCK
+│   │               ├── ASSIGN DECL BL_EQUAL
+│   │               │   ├── IDENTIFIER: next [(null)#13]
+│   │               │   └── INT_LITERAL: 0
+│   │               ├── FUNCTION CALL: print_state
+│   │               │   └── IDENTIFIER: current [(null)#13]
+│   │               ├── ASSIGN DECL BL_EQUAL
+│   │               │   ├── IDENTIFIER: i [(null)#13]
+│   │               │   └── INT_LITERAL: 0
+│   │               ├── WHILE
+│   │               │   ├── EXPR
+│   │               │   ├── BINOP: BL_LESSTHAN
+│   │               │   │   ├── IDENTIFIER: i [(null)#13]
+│   │               │   │   └── IDENTIFIER: width [(null)#13]
+│   │               │   └── BLOCK
+│   │               │   └── BLOCK
+│   │               │       ├── ASSIGN BL_EQUAL
+│   │               │       │   ├── IDENTIFIER: next [(null)#14]
+│   │               │       │   └── FUNCTION CALL: update_state
+│   │               │       │       ├── IDENTIFIER: rule [(null)#14]
+│   │               │       │       ├── IDENTIFIER: current [(null)#14]
+│   │               │       │       ├── IDENTIFIER: next [(null)#14]
+│   │               │       │       └── IDENTIFIER: i [(null)#14]
+│   │               │       └── UNARYOP : BL_INC
+│   │               │           └── IDENTIFIER: i [(null)#14]
+│   │               ├── ASSIGN BL_EQUAL
+│   │               │   ├── IDENTIFIER: current [(null)#13]
+│   │               │   └── IDENTIFIER: next [(null)#13]
+│   │               └── UNARYOP : BL_INC
+│   │                   └── IDENTIFIER: step [(null)#13]
+│   └── MAIN FUNCTION
+│       └── BLOCK
+│           └── FUNCTION CALL: generate_automata
+│               ├── IDENTIFIER: rule [main#15]
+│               ├── IDENTIFIER: width [main#15]
+│               └── IDENTIFIER: steps [main#15]
+

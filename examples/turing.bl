@@ -3,9 +3,9 @@ hi bhau
 bhau baherun ghe putchar;
 bhau baherun ghe printf;
 
-bhau hai ahe rule = 22;
-bhau hai ahe width = 66;
-bhau hai ahe steps = 600;
+bhau hai ahe rule = 137;
+bhau hai ahe width = 65;
+bhau hai ahe steps = 32;
 // base : 110,64,63
 // 22,69,35
 // 22,65,60
@@ -32,6 +32,7 @@ bhau lakshat thev update_state(rule,current,next,i)
 {
     bhau hai ahe left;
     bhau jar(i == width - 1){
+        
         left =  0;
     }bhau tar{
         left = current >> (i + 1) & 1;

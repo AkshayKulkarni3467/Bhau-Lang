@@ -1,0 +1,16 @@
+=== Symbol Table Tree (SCOPES) ===
+• global (id=0, symbols=1, offset=0)
+    • star_de (id=1, symbols=2, offset=32)
+    • int_num_de (id=2, symbols=4, offset=48)
+    • r_trig_stars (id=3, symbols=5, offset=128)
+        • null (id=4, symbols=7, offset=0)
+            • null (id=5, symbols=2, offset=0)
+    • inv_trig_stars (id=6, symbols=5, offset=128)
+        • null (id=7, symbols=7, offset=0)
+            • null (id=8, symbols=2, offset=0)
+    • r_trig_num (id=9, symbols=5, offset=144)
+        • null (id=10, symbols=7, offset=0)
+            • null (id=11, symbols=3, offset=0)
+    • print_all_patterns (id=12, symbols=13, offset=144)
+    • main (id=13, symbols=2, offset=32)
+=================================

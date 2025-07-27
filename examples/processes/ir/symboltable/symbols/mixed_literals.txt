@@ -1,0 +1,33 @@
+>> Symbol Table for Scope: global 0x7f06b65750b0, Scope ID : 0, Parent Scope : TOP (nil)
+  [0] printf (extern) | is Global : 1 | Offset: 0
+>> Symbol Table for Scope: mixed_conds 0x7f06b6577da0, Scope ID : 1, Parent Scope : global 0x7f06b65750b0
+  [0] a (int) | is Global : 0 | Offset: 8
+  [1] b (float) | is Global : 0 | Offset: 16
+  [2] c (char) | is Global : 0 | Offset: 24
+  [3] flag (bool) | is Global : 0 | Offset: 32
+  [4] str1 (str) | is Global : 0 | Offset: 48
+  [5] str2 (str) | is Global : 0 | Offset: 64
+  [6] t0 (idt) | is Global : 0 | Offset: 72
+  [7] t1 (idt) | is Global : 0 | Offset: 80
+  [8] t2 (idt) | is Global : 0 | Offset: 88
+  [9] t3 (idt) | is Global : 0 | Offset: 96
+  [10] t4 (idt) | is Global : 0 | Offset: 104
+  [11] t5 (idt) | is Global : 0 | Offset: 112
+  [12] t6 (idt) | is Global : 0 | Offset: 120
+  [13] t7 (idt) | is Global : 0 | Offset: 128
+  [14] t8 (idt) | is Global : 0 | Offset: 136
+  [15] t9 (idt) | is Global : 0 | Offset: 144
+  [16] t10 (idt) | is Global : 0 | Offset: 152
+  [17] t11 (idt) | is Global : 0 | Offset: 160
+>> Symbol Table for Scope: null 0x7f06b657b328, Scope ID : 2, Parent Scope : mixed_conds 0x7f06b6577da0
+  [0] t12 (arg) | is Global : 0 | Offset: 200
+  [1] t13 (arg) | is Global : 0 | Offset: 208
+  [2] t14 (idt) | is Global : 0 | Offset: 216
+>> Symbol Table for Scope: null 0x7f06b657db30, Scope ID : 3, Parent Scope : mixed_conds 0x7f06b6577da0
+  [0] t15 (arg) | is Global : 0 | Offset: 256
+  [1] t16 (arg) | is Global : 0 | Offset: 264
+  [2] t17 (idt) | is Global : 0 | Offset: 272
+>> Symbol Table for Scope: main 0x7f06b6580338, Scope ID : 4, Parent Scope : global 0x7f06b65750b0
+  [0] t18 (idt) | is Global : 0 | Offset: 8
+  [1] t19 (arg) | is Global : 0 | Offset: 24
+  [2] t20 (idt) | is Global : 0 | Offset: 32

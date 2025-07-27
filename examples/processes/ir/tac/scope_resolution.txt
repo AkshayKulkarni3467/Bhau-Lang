@@ -1,0 +1,43 @@
+[Extern] extern printf (extern) (0)
+[Declaration] x (str) (0) = declared in global (str) (0)
+[Function start] function print_global begin:
+[Declaration] t0 (str) (1) = From print_global: %s\n (str) (1)
+[Argument] arg t0 (str) (1)
+[Declaration] t1 (str) (1) = x (str) (1)
+[Argument] arg t1 (str) (1)
+[Declaration] t2 (int) (1) = 0 (int) (1)
+[Function call] t2 (int) (1) = call printf (extern) (1), 2
+[Function end] function end
+[Function start] function print_infunc begin:
+[Declaration] x (str) (2) = declared in function (str) (2)
+[Declaration] t3 (str) (2) = From print_infunc: %s\n (str) (2)
+[Argument] arg t3 (str) (2)
+[Declaration] t4 (str) (2) = x (str) (2)
+[Argument] arg t4 (str) (2)
+[Declaration] t5 (int) (2) = 0 (int) (2)
+[Function call] t5 (int) (2) = call printf (extern) (2), 2
+[Function end] function end
+[Function start] function print_inblock begin:
+[Declaration] x (str) (3) = declared in func scope (str) (3)
+[Conditional Jump] if 1 (int) (3) != 0 (int) (3) goto L0
+[Jump] goto L1
+
+[Label] L0:
+[Declaration] x (str) (4) = declared in block scope (str) (4)
+[Declaration] t6 (str) (4) = From print_inblock: %s\n (str) (4)
+[Argument] arg t6 (str) (4)
+[Declaration] t7 (str) (4) = x (str) (4)
+[Argument] arg t7 (str) (4)
+[Declaration] t8 (int) (4) = 0 (int) (4)
+[Function call] t8 (int) (4) = call printf (extern) (4), 2
+
+[Label] L1:
+[Function end] function end
+[Main start] main begin:
+[Declaration] t9 (int) (5) = 0 (int) (5)
+[Function call] t9 (int) (5) = call print_global (idt) (5), 0
+[Declaration] t10 (int) (5) = 0 (int) (5)
+[Function call] t10 (int) (5) = call print_infunc (idt) (5), 0
+[Declaration] t11 (int) (5) = 0 (int) (5)
+[Function call] t11 (int) (5) = call print_inblock (idt) (5), 0
+[Main end] main end

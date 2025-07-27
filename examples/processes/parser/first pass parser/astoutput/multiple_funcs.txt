@@ -1,0 +1,157 @@
+├── PROGRAM
+│   ├── EXTERN
+│   │   └── IDENTIFIER: printf [global#1]
+│   ├── ASSIGN DECL BL_EQUAL
+│   │   ├── IDENTIFIER: pi [global#1]
+│   │   └── FLOAT_LITERAL: 3.14
+│   ├── ASSIGN DECL BL_EQUAL
+│   │   ├── IDENTIFIER: e [global#1]
+│   │   └── FLOAT_LITERAL: 2.72
+│   ├── ASSIGN DECL BL_EQUAL
+│   │   ├── IDENTIFIER: greeting [global#1]
+│   │   └── STRING_LITERAL: "Hello from BhauLang!"
+│   ├── ASSIGN DECL BL_EQUAL
+│   │   ├── IDENTIFIER: flag [global#1]
+│   │   └── INT_LITERAL: 1
+│   ├── ASSIGN DECL BL_EQUAL
+│   │   ├── IDENTIFIER: z [global#1]
+│   │   └── INT_LITERAL: 10
+│   ├── ASSIGN DECL BL_EQUAL
+│   │   ├── IDENTIFIER: folded [global#1]
+│   │   └── BINOP: BL_ADDBINOP
+│   │       ├── INT_LITERAL: 2
+│   │       └── BINOP: BL_MULTBINOP
+│   │           ├── INT_LITERAL: 3
+│   │           └── GROUP
+│   │               └── BINOP: BL_SUBBINOP
+│   │                   ├── INT_LITERAL: 4
+│   │                   └── INT_LITERAL: 1
+│   ├── ASSIGN DECL BL_EQUAL
+│   │   ├── IDENTIFIER: x [global#1]
+│   │   └── INT_LITERAL: 5
+│   ├── ASSIGN DECL BL_EQUAL
+│   │   ├── IDENTIFIER: a [global#1]
+│   │   └── ASSIGN DECL BL_EQUAL
+│   │       ├── IDENTIFIER: b [global#1]
+│   │       └── ASSIGN DECL BL_EQUAL
+│   │           ├── IDENTIFIER: c [global#1]
+│   │           └── INT_LITERAL: 42
+│   ├── FUNCTION: nested_conditions
+│   │   ├── PARAMS
+│   │   └── PARAM: nested_conditions
+│   │       └── IDENTIFIER: n [nested_conditions#2]
+│   │   └── BLOCK
+│   │   └── BLOCK
+│   │       └── IF_ELSE
+│   │           ├── CONDITION
+│   │           ├── BINOP: BL_ISEQUALCOND
+│   │           │   ├── IDENTIFIER: n [nested_conditions#2]
+│   │           │   └── INT_LITERAL: 0
+│   │           ├── IF BLOCK
+│   │           ├── BLOCK
+│   │           │   └── FUNCTION CALL: printf
+│   │           │       └── STRING_LITERAL: "Zero\n"
+│   │           └── ELSE BLOCK
+│   │           └── IF_ELSE
+│   │               ├── CONDITION
+│   │               ├── BINOP: BL_LESSTHAN
+│   │               │   ├── IDENTIFIER: n [nested_conditions#2]
+│   │               │   └── INT_LITERAL: 0
+│   │               ├── IF BLOCK
+│   │               ├── BLOCK
+│   │               │   └── FUNCTION CALL: printf
+│   │               │       └── STRING_LITERAL: "Negative\n"
+│   │               └── ELSE BLOCK
+│   │               └── BLOCK
+│   │                   ├── FUNCTION CALL: printf
+│   │                   │   └── STRING_LITERAL: "Positive\n"
+│   │                   └── IF_ELSE
+│   │                       ├── CONDITION
+│   │                       ├── BINOP: BL_GRTTHAN
+│   │                       │   ├── IDENTIFIER: n [(null)#5]
+│   │                       │   └── INT_LITERAL: 100
+│   │                       ├── IF BLOCK
+│   │                       ├── BLOCK
+│   │                       │   └── FUNCTION CALL: printf
+│   │                       │       └── STRING_LITERAL: "Very large\n"
+│   │                       └── ELSE BLOCK
+│   │                       └── (null node)
+│   ├── FUNCTION: switch_demo
+│   │   ├── PARAMS
+│   │   └── PARAM: switch_demo
+│   │       └── IDENTIFIER: x [switch_demo#7]
+│   │   └── BLOCK
+│   │   └── BLOCK
+│   │       └── SWITCH
+│   │           ├── EXPR
+│   │           ├── IDENTIFIER: x [(null)#8]
+│   │           ├── CASES
+│   │           ├── CASE
+│   │           │   ├── VALUE
+│   │           │   ├── INT_LITERAL: 1
+│   │           │   └── FUNCTION CALL: printf
+│   │           │       └── STRING_LITERAL: "One\n"
+│   │           ├── CASE
+│   │           │   ├── VALUE
+│   │           │   ├── INT_LITERAL: 2
+│   │           │   └── FUNCTION CALL: printf
+│   │           │       └── STRING_LITERAL: "Two\n"
+│   │           └── CASE
+│   │               ├── VALUE
+│   │               ├── INT_LITERAL: 3
+│   │               └── FUNCTION CALL: printf
+│   │                   └── STRING_LITERAL: "Three\n"
+│   │           └── DEFAULT
+│   │           └── DEFAULT
+│   │               └── FUNCTION CALL: printf
+│   │                   └── STRING_LITERAL: "Other\n"
+│   ├── FUNCTION: nested_loops
+│   │   ├── PARAMS
+│   │   └── BLOCK
+│   │   └── BLOCK
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: i [nested_loops#9]
+│   │       │   └── INT_LITERAL: 0
+│   │       └── WHILE
+│   │           ├── EXPR
+│   │           ├── BINOP: BL_LESSTHAN
+│   │           │   ├── IDENTIFIER: i [nested_loops#9]
+│   │           │   └── INT_LITERAL: 5
+│   │           └── BLOCK
+│   │           └── BLOCK
+│   │               ├── ASSIGN DECL BL_EQUAL
+│   │               │   ├── IDENTIFIER: j [(null)#10]
+│   │               │   └── INT_LITERAL: 0
+│   │               ├── WHILE
+│   │               │   ├── EXPR
+│   │               │   ├── BINOP: BL_LESSTHAN
+│   │               │   │   ├── IDENTIFIER: j [(null)#10]
+│   │               │   │   └── INT_LITERAL: 3
+│   │               │   └── BLOCK
+│   │               │   └── BLOCK
+│   │               │       ├── FUNCTION CALL: printf
+│   │               │       │   ├── STRING_LITERAL: "%d "
+│   │               │       │   └── IDENTIFIER: i [(null)#11]
+│   │               │       ├── FUNCTION CALL: printf
+│   │               │       │   ├── STRING_LITERAL: "%d "
+│   │               │       │   └── IDENTIFIER: j [(null)#11]
+│   │               │       └── ASSIGN BL_EQUAL
+│   │               │           ├── IDENTIFIER: j [(null)#11]
+│   │               │           └── BINOP: BL_ADDBINOP
+│   │               │               ├── IDENTIFIER: j [(null)#11]
+│   │               │               └── INT_LITERAL: 1
+│   │               ├── FUNCTION CALL: printf
+│   │               │   └── STRING_LITERAL: "\n"
+│   │               └── ASSIGN BL_EQUAL
+│   │                   ├── IDENTIFIER: i [(null)#10]
+│   │                   └── BINOP: BL_ADDBINOP
+│   │                       ├── IDENTIFIER: i [(null)#10]
+│   │                       └── INT_LITERAL: 1
+│   └── MAIN FUNCTION
+│       └── BLOCK
+│           ├── FUNCTION CALL: nested_conditions
+│           │   └── INT_LITERAL: 42
+│           ├── FUNCTION CALL: switch_demo
+│           │   └── INT_LITERAL: 3
+│           └── FUNCTION CALL: nested_loops
+

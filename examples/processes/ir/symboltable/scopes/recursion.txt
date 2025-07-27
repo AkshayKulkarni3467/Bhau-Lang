@@ -1,0 +1,9 @@
+=== Symbol Table Tree (SCOPES) ===
+• global (id=0, symbols=1, offset=0)
+    • factorial (id=1, symbols=13, offset=128)
+        • null (id=2, symbols=1, offset=0)
+    • fibonacci (id=3, symbols=18, offset=160)
+        • null (id=4, symbols=1, offset=0)
+    • print_recursion_tests (id=5, symbols=12, offset=160)
+    • main (id=6, symbols=1, offset=16)
+=================================

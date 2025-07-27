@@ -1,0 +1,13 @@
+=== Symbol Table Tree (SCOPES) ===
+• global (id=0, symbols=1, offset=0)
+    • mixed_control_flow (id=1, symbols=4, offset=480)
+        • null (id=2, symbols=4, offset=0)
+            • null (id=3, symbols=3, offset=0)
+                • null (id=4, symbols=3, offset=0)
+                • null (id=5, symbols=3, offset=0)
+            • null (id=6, symbols=4, offset=0)
+                • null (id=7, symbols=4, offset=0)
+                    • null (id=8, symbols=9, offset=0)
+    • print_control_flow (id=9, symbols=3, offset=48)
+    • main (id=10, symbols=1, offset=16)
+=================================

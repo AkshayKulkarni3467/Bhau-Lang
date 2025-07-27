@@ -1,0 +1,127 @@
+[Extern] extern printf (extern) (0)
+[Function start] function mixed_control_flow begin:
+[Declaration] x (int) (1) = 1 (int) (1)
+
+[Label] L0:
+[Declaration] t0 (bool) (1) = 0 (int) (1)
+[Declaration] t1 (int) (1) = 0 (int) (1)
+[Assignment] t1 (int) (1) = x (int) (1)
+[Declaration] t2 (int) (1) = 0 (int) (1)
+[Assignment] t2 (int) (1) = 3 (int) (1)
+[Binary Op] t0 (bool) (1) = t1 (int) (1) <= t2 (int) (1) 
+[Conditional Jump] if t0 (bool) (1) != 0 (int) (1) goto L1
+[Jump] goto L2
+
+[Label] L1:
+[Declaration] t3 (bool) (2) = 0 (int) (2)
+[Declaration] t4 (int) (2) = 0 (int) (2)
+[Assignment] t4 (int) (2) = x (int) (2)
+[Declaration] t5 (int) (2) = 0 (int) (2)
+[Assignment] t5 (int) (2) = 2 (int) (2)
+[Binary Op] t3 (bool) (2) = t4 (int) (2) == t5 (int) (2) 
+[Conditional Jump] if t3 (bool) (2) != 0 (int) (2) goto L3
+[Declaration] t6 (bool) (3) = 0 (int) (3)
+[Declaration] t7 (int) (3) = 0 (int) (3)
+[Assignment] t7 (int) (3) = x (int) (3)
+[Declaration] t8 (int) (3) = 0 (int) (3)
+[Assignment] t8 (int) (3) = 1 (int) (3)
+[Binary Op] t6 (bool) (3) = t7 (int) (3) == t8 (int) (3) 
+[Conditional Jump] if t6 (bool) (3) != 0 (int) (3) goto L5
+[Declaration] t9 (str) (4) = From mixed_control_flow, x Value : %d\n (str) (4)
+[Argument] arg t9 (str) (4)
+[Declaration] t10 (int) (4) = x (int) (4)
+[Argument] arg t10 (int) (4)
+[Declaration] t11 (int) (4) = 0 (int) (4)
+[Function call] t11 (int) (4) = call printf (extern) (4), 2
+[Jump] goto L6
+
+[Label] L5:
+[Declaration] t12 (str) (5) = From mixed_control_flow, x Value : %d\n (str) (5)
+[Argument] arg t12 (str) (5)
+[Declaration] t13 (int) (5) = x (int) (5)
+[Argument] arg t13 (int) (5)
+[Declaration] t14 (int) (5) = 0 (int) (5)
+[Function call] t14 (int) (5) = call printf (extern) (5), 2
+
+[Label] L6:
+[Jump] goto L4
+
+[Label] L3:
+[Declaration] y (int) (6) = 3 (int) (6)
+
+[Label] L7:
+[Declaration] t15 (bool) (6) = 0 (int) (6)
+[Declaration] t16 (int) (6) = 0 (int) (6)
+[Assignment] t16 (int) (6) = y (int) (6)
+[Declaration] t17 (int) (6) = 0 (int) (6)
+[Assignment] t17 (int) (6) = 0 (int) (6)
+[Binary Op] t15 (bool) (6) = t16 (int) (6) > t17 (int) (6) 
+[Conditional Jump] if t15 (bool) (6) != 0 (int) (6) goto L8
+[Jump] goto L9
+
+[Label] L8:
+[Declaration] t18 (int) (7) = y (int) (7)
+[Conditional Jump] if t18 (int) (7) == 1 (int) (8) goto L11
+[Declaration] t19 (int) (7) = y (int) (7)
+[Conditional Jump] if t19 (int) (7) == 2 (int) (8) goto L12
+[Declaration] t20 (int) (7) = y (int) (7)
+[Conditional Jump] if t20 (int) (7) == 3 (int) (8) goto L13
+[Jump] goto L14
+
+[Label] L11:
+[Declaration] t21 (str) (8) = From mixed_control_flow, y Value : %d\n (str) (8)
+[Argument] arg t21 (str) (8)
+[Declaration] t22 (int) (8) = y (int) (8)
+[Argument] arg t22 (int) (8)
+[Declaration] t23 (int) (8) = 0 (int) (8)
+[Function call] t23 (int) (8) = call printf (extern) (8), 2
+[Jump] goto L10
+
+[Label] L12:
+[Declaration] t24 (str) (8) = From mixed_control_flow, y Value : %d\n (str) (8)
+[Argument] arg t24 (str) (8)
+[Declaration] t25 (int) (8) = y (int) (8)
+[Argument] arg t25 (int) (8)
+[Declaration] t26 (int) (8) = 0 (int) (8)
+[Function call] t26 (int) (8) = call printf (extern) (8), 2
+[Jump] goto L10
+
+[Label] L13:
+[Declaration] t27 (str) (8) = From mixed_control_flow, y Value : %d\n (str) (8)
+[Argument] arg t27 (str) (8)
+[Declaration] t28 (int) (8) = y (int) (8)
+[Argument] arg t28 (int) (8)
+[Declaration] t29 (int) (8) = 0 (int) (8)
+[Function call] t29 (int) (8) = call printf (extern) (8), 2
+[Jump] goto L10
+
+[Label] L14:
+
+[Label] L10:
+[Declaration] t30 (int) (7) = 0 (int) (7)
+[Unary op] t30 (int) (7) = --y (int) (7) 
+[Assignment] y (int) (7) = t30 (int) (7)
+[Jump] goto L7
+
+[Label] L9:
+
+[Label] L4:
+[Declaration] t31 (int) (2) = 0 (int) (2)
+[Unary op] t31 (int) (2) = ++x (int) (2) 
+[Assignment] x (int) (2) = t31 (int) (2)
+[Jump] goto L0
+
+[Label] L2:
+[Function end] function end
+[Function start] function print_control_flow begin:
+[Declaration] t32 (int) (9) = 0 (int) (9)
+[Function call] t32 (int) (9) = call mixed_control_flow (idt) (9), 0
+[Declaration] t33 (str) (9) = \n (str) (9)
+[Argument] arg t33 (str) (9)
+[Declaration] t34 (int) (9) = 0 (int) (9)
+[Function call] t34 (int) (9) = call printf (extern) (9), 1
+[Function end] function end
+[Main start] main begin:
+[Declaration] t35 (int) (10) = 0 (int) (10)
+[Function call] t35 (int) (10) = call print_control_flow (idt) (10), 0
+[Main end] main end

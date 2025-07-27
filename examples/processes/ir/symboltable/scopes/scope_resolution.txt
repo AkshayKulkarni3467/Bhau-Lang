@@ -1,0 +1,8 @@
+=== Symbol Table Tree (SCOPES) ===
+• global (id=0, symbols=2, offset=0)
+    • print_global (id=1, symbols=3, offset=64)
+    • print_infunc (id=2, symbols=4, offset=96)
+    • print_inblock (id=3, symbols=1, offset=128)
+        • null (id=4, symbols=4, offset=0)
+    • main (id=5, symbols=3, offset=32)
+=================================

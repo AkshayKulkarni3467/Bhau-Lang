@@ -1,0 +1,49 @@
+├── PROGRAM
+│   ├── EXTERN
+│   │   └── IDENTIFIER: printf [global#1]
+│   ├── ASSIGN DECL BL_EQUAL
+│   │   ├── IDENTIFIER: x [global#1]
+│   │   └── STRING_LITERAL: "declared in global"
+│   ├── FUNCTION: print_global
+│   │   ├── PARAMS
+│   │   └── BLOCK
+│   │   └── BLOCK
+│   │       └── FUNCTION CALL: printf
+│   │           ├── STRING_LITERAL: "From print_global: %s\n"
+│   │           └── IDENTIFIER: x [print_global#2]
+│   ├── FUNCTION: print_infunc
+│   │   ├── PARAMS
+│   │   └── BLOCK
+│   │   └── BLOCK
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: x [print_infunc#3]
+│   │       │   └── STRING_LITERAL: "declared in function"
+│   │       └── FUNCTION CALL: printf
+│   │           ├── STRING_LITERAL: "From print_infunc: %s\n"
+│   │           └── IDENTIFIER: x [print_infunc#3]
+│   ├── FUNCTION: print_inblock
+│   │   ├── PARAMS
+│   │   └── BLOCK
+│   │   └── BLOCK
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: x [print_inblock#4]
+│   │       │   └── STRING_LITERAL: "declared in func scope"
+│   │       └── IF_ELSE
+│   │           ├── CONDITION
+│   │           ├── INT_LITERAL: 1
+│   │           ├── IF BLOCK
+│   │           ├── BLOCK
+│   │           │   ├── ASSIGN DECL BL_EQUAL
+│   │           │   │   ├── IDENTIFIER: x [(null)#5]
+│   │           │   │   └── STRING_LITERAL: "declared in block scope"
+│   │           │   └── FUNCTION CALL: printf
+│   │           │       ├── STRING_LITERAL: "From print_inblock: %s\n"
+│   │           │       └── IDENTIFIER: x [(null)#5]
+│   │           └── ELSE BLOCK
+│   │           └── (null node)
+│   └── MAIN FUNCTION
+│       └── BLOCK
+│           ├── FUNCTION CALL: print_global
+│           ├── FUNCTION CALL: print_infunc
+│           └── FUNCTION CALL: print_inblock
+

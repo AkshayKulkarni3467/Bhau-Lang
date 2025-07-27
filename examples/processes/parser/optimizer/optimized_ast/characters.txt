@@ -1,0 +1,64 @@
+├── PROGRAM
+│   ├── EXTERN
+│   │   └── IDENTIFIER: printf [global#1]
+│   ├── FUNCTION: capital_vowels
+│   │   ├── PARAMS
+│   │   └── BLOCK
+│   │   └── BLOCK
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: ch [capital_vowels#2]
+│   │       │   └── CHAR_LITERAL: A
+│   │       ├── WHILE
+│   │       │   ├── EXPR
+│   │       │   ├── BINOP: BL_LESSEQ
+│   │       │   │   ├── IDENTIFIER: ch [capital_vowels#2]
+│   │       │   │   └── CHAR_LITERAL: Z
+│   │       │   └── BLOCK
+│   │       │   └── BLOCK
+│   │       │       ├── IF_ELSE
+│   │       │       │   ├── CONDITION
+│   │       │       │   ├── BINOP: BL_LOGOR
+│   │       │       │   │   ├── BINOP: BL_LOGOR
+│   │       │       │   │   │   ├── BINOP: BL_LOGOR
+│   │       │       │   │   │   │   ├── BINOP: BL_LOGOR
+│   │       │       │   │   │   │   │   ├── BINOP: BL_ISEQUALCOND
+│   │       │       │   │   │   │   │   │   ├── IDENTIFIER: ch [(null)#3]
+│   │       │       │   │   │   │   │   │   └── CHAR_LITERAL: A
+│   │       │       │   │   │   │   │   └── BINOP: BL_ISEQUALCOND
+│   │       │       │   │   │   │   │       ├── IDENTIFIER: ch [(null)#3]
+│   │       │       │   │   │   │   │       └── CHAR_LITERAL: E
+│   │       │       │   │   │   │   └── BINOP: BL_ISEQUALCOND
+│   │       │       │   │   │   │       ├── IDENTIFIER: ch [(null)#3]
+│   │       │       │   │   │   │       └── CHAR_LITERAL: I
+│   │       │       │   │   │   └── BINOP: BL_ISEQUALCOND
+│   │       │       │   │   │       ├── IDENTIFIER: ch [(null)#3]
+│   │       │       │   │   │       └── CHAR_LITERAL: O
+│   │       │       │   │   └── BINOP: BL_ISEQUALCOND
+│   │       │       │   │       ├── IDENTIFIER: ch [(null)#3]
+│   │       │       │   │       └── CHAR_LITERAL: U
+│   │       │       │   ├── IF BLOCK
+│   │       │       │   ├── BLOCK
+│   │       │       │   │   └── FUNCTION CALL: printf
+│   │       │       │   │       ├── STRING_LITERAL: "%c "
+│   │       │       │   │       └── IDENTIFIER: ch [(null)#4]
+│   │       │       │   └── ELSE BLOCK
+│   │       │       │   └── BLOCK
+│   │       │       │       └── FUNCTION CALL: printf
+│   │       │       │           ├── STRING_LITERAL: "%c "
+│   │       │       │           └── BINOP: BL_ADDBINOP
+│   │       │       │               ├── IDENTIFIER: ch [(null)#5]
+│   │       │       │               └── INT_LITERAL: 32
+│   │       │       └── UNARYOP : BL_INC
+│   │       │           └── IDENTIFIER: ch [(null)#3]
+│   │       └── FUNCTION CALL: printf
+│   │           └── STRING_LITERAL: "\n"
+│   ├── FUNCTION: print_characters
+│   │   ├── PARAMS
+│   │   └── BLOCK
+│   │   └── BLOCK
+│   │       ├── FUNCTION CALL: capital_vowels
+│   │       └── FUNCTION CALL: printf
+│   │           └── STRING_LITERAL: "\n"
+│   └── MAIN FUNCTION
+│       └── BLOCK
+│           └── FUNCTION CALL: print_characters

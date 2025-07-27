@@ -1,0 +1,116 @@
+[Extern] extern printf (extern) (0)
+[Function start] function capital_vowels begin:
+[Declaration] ch (char) (1) = A (char) (1)
+
+[Label] L0:
+[Declaration] t0 (bool) (1) = 0 (int) (1)
+[Declaration] t1 (char) (1) = 0 (int) (1)
+[Assignment] t1 (char) (1) = ch (char) (1)
+[Declaration] t2 (char) (1) = 0 (int) (1)
+[Assignment] t2 (char) (1) = Z (char) (1)
+[Binary Op] t0 (bool) (1) = t1 (char) (1) <= t2 (char) (1) 
+[Conditional Jump] if t0 (bool) (1) != 0 (int) (1) goto L1
+[Jump] goto L2
+
+[Label] L1:
+[Declaration] t3 (bool) (2) = 0 (int) (2)
+[Declaration] t4 (char) (2) = 0 (int) (2)
+[Assignment] t4 (char) (2) = ch (char) (2)
+[Declaration] t5 (char) (2) = 0 (int) (2)
+[Assignment] t5 (char) (2) = A (char) (2)
+[Binary Op] t3 (bool) (2) = t4 (char) (2) == t5 (char) (2) 
+[Declaration] t6 (bool) (2) = 0 (int) (2)
+[Declaration] t7 (char) (2) = 0 (int) (2)
+[Assignment] t7 (char) (2) = ch (char) (2)
+[Declaration] t8 (char) (2) = 0 (int) (2)
+[Assignment] t8 (char) (2) = E (char) (2)
+[Binary Op] t6 (bool) (2) = t7 (char) (2) == t8 (char) (2) 
+[Declaration] t9 (bool) (2) = 0 (int) (2)
+[Declaration] t10 (bool) (2) = 0 (int) (2)
+[Assignment] t10 (bool) (2) = t3 (bool) (2)
+[Declaration] t11 (bool) (2) = 0 (int) (2)
+[Assignment] t11 (bool) (2) = t6 (bool) (2)
+[Binary Op] t9 (bool) (2) = t10 (bool) (2) || t11 (bool) (2) 
+[Declaration] t12 (bool) (2) = 0 (int) (2)
+[Declaration] t13 (char) (2) = 0 (int) (2)
+[Assignment] t13 (char) (2) = ch (char) (2)
+[Declaration] t14 (char) (2) = 0 (int) (2)
+[Assignment] t14 (char) (2) = I (char) (2)
+[Binary Op] t12 (bool) (2) = t13 (char) (2) == t14 (char) (2) 
+[Declaration] t15 (bool) (2) = 0 (int) (2)
+[Declaration] t16 (bool) (2) = 0 (int) (2)
+[Assignment] t16 (bool) (2) = t9 (bool) (2)
+[Declaration] t17 (bool) (2) = 0 (int) (2)
+[Assignment] t17 (bool) (2) = t12 (bool) (2)
+[Binary Op] t15 (bool) (2) = t16 (bool) (2) || t17 (bool) (2) 
+[Declaration] t18 (bool) (2) = 0 (int) (2)
+[Declaration] t19 (char) (2) = 0 (int) (2)
+[Assignment] t19 (char) (2) = ch (char) (2)
+[Declaration] t20 (char) (2) = 0 (int) (2)
+[Assignment] t20 (char) (2) = O (char) (2)
+[Binary Op] t18 (bool) (2) = t19 (char) (2) == t20 (char) (2) 
+[Declaration] t21 (bool) (2) = 0 (int) (2)
+[Declaration] t22 (bool) (2) = 0 (int) (2)
+[Assignment] t22 (bool) (2) = t15 (bool) (2)
+[Declaration] t23 (bool) (2) = 0 (int) (2)
+[Assignment] t23 (bool) (2) = t18 (bool) (2)
+[Binary Op] t21 (bool) (2) = t22 (bool) (2) || t23 (bool) (2) 
+[Declaration] t24 (bool) (2) = 0 (int) (2)
+[Declaration] t25 (char) (2) = 0 (int) (2)
+[Assignment] t25 (char) (2) = ch (char) (2)
+[Declaration] t26 (char) (2) = 0 (int) (2)
+[Assignment] t26 (char) (2) = U (char) (2)
+[Binary Op] t24 (bool) (2) = t25 (char) (2) == t26 (char) (2) 
+[Declaration] t27 (bool) (2) = 0 (int) (2)
+[Declaration] t28 (bool) (2) = 0 (int) (2)
+[Assignment] t28 (bool) (2) = t21 (bool) (2)
+[Declaration] t29 (bool) (2) = 0 (int) (2)
+[Assignment] t29 (bool) (2) = t24 (bool) (2)
+[Binary Op] t27 (bool) (2) = t28 (bool) (2) || t29 (bool) (2) 
+[Conditional Jump] if t27 (bool) (2) != 0 (int) (2) goto L3
+[Declaration] t30 (str) (3) = %c  (str) (3)
+[Argument] arg t30 (str) (3)
+[Declaration] t32 (int) (3) = 0 (int) (3)
+[Declaration] t33 (char) (3) = 0 (int) (3)
+[Assignment] t33 (char) (3) = ch (char) (3)
+[Declaration] t34 (int) (3) = 0 (int) (3)
+[Assignment] t34 (int) (3) = 32 (int) (3)
+[Binary Op] t32 (int) (3) = t33 (char) (3) + t34 (int) (3) 
+[Declaration] t31 (int) (3) = t32 (int) (3)
+[Argument] arg t31 (int) (3)
+[Declaration] t35 (int) (3) = 0 (int) (3)
+[Function call] t35 (int) (3) = call printf (extern) (3), 2
+[Jump] goto L4
+
+[Label] L3:
+[Declaration] t36 (str) (4) = %c  (str) (4)
+[Argument] arg t36 (str) (4)
+[Declaration] t37 (char) (4) = ch (char) (4)
+[Argument] arg t37 (char) (4)
+[Declaration] t38 (int) (4) = 0 (int) (4)
+[Function call] t38 (int) (4) = call printf (extern) (4), 2
+
+[Label] L4:
+[Declaration] t39 (char) (2) = 0 (int) (2)
+[Unary op] t39 (char) (2) = ++ch (char) (2) 
+[Assignment] ch (char) (2) = t39 (char) (2)
+[Jump] goto L0
+
+[Label] L2:
+[Declaration] t40 (str) (1) = \n (str) (1)
+[Argument] arg t40 (str) (1)
+[Declaration] t41 (int) (1) = 0 (int) (1)
+[Function call] t41 (int) (1) = call printf (extern) (1), 1
+[Function end] function end
+[Function start] function print_characters begin:
+[Declaration] t42 (int) (5) = 0 (int) (5)
+[Function call] t42 (int) (5) = call capital_vowels (idt) (5), 0
+[Declaration] t43 (str) (5) = \n (str) (5)
+[Argument] arg t43 (str) (5)
+[Declaration] t44 (int) (5) = 0 (int) (5)
+[Function call] t44 (int) (5) = call printf (extern) (5), 1
+[Function end] function end
+[Main start] main begin:
+[Declaration] t45 (int) (6) = 0 (int) (6)
+[Function call] t45 (int) (6) = call print_characters (idt) (6), 0
+[Main end] main end

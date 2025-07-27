@@ -1,0 +1,59 @@
+[Extern] extern printf (extern) (0)
+[Function start] function mixed_conds begin:
+[Declaration] a (int) (1) = 10 (int) (1)
+[Declaration] b (float) (1) = 2.5000000000000000 (float) (1)
+[Declaration] c (char) (1) = A (char) (1)
+[Declaration] flag (bool) (1) = 1 (bool) (1)
+[Declaration] str1 (str) (1) = hello (str) (1)
+[Declaration] str2 (str) (1) = hello (str) (1)
+[Declaration] t0 (bool) (1) = 0 (int) (1)
+[Declaration] t1 (bool) (1) = 0 (int) (1)
+[Assignment] t1 (bool) (1) = 1 (bool) (1)
+[Declaration] t2 (bool) (1) = 0 (int) (1)
+[Assignment] t2 (bool) (1) = 1 (bool) (1)
+[Binary Op] t0 (bool) (1) = t1 (bool) (1) && t2 (bool) (1) 
+[Declaration] t3 (bool) (1) = 0 (int) (1)
+[Declaration] t4 (bool) (1) = 0 (int) (1)
+[Assignment] t4 (bool) (1) = 1 (bool) (1)
+[Declaration] t5 (int) (1) = 0 (int) (1)
+[Assignment] t5 (int) (1) = 1 (int) (1)
+[Binary Op] t3 (bool) (1) = t4 (bool) (1) == t5 (int) (1) 
+[Declaration] t6 (bool) (1) = 0 (int) (1)
+[Declaration] t7 (bool) (1) = 0 (int) (1)
+[Assignment] t7 (bool) (1) = t0 (bool) (1)
+[Declaration] t8 (bool) (1) = 0 (int) (1)
+[Assignment] t8 (bool) (1) = t3 (bool) (1)
+[Binary Op] t6 (bool) (1) = t7 (bool) (1) && t8 (bool) (1) 
+[Declaration] t9 (bool) (1) = 0 (int) (1)
+[Declaration] t10 (bool) (1) = 0 (int) (1)
+[Assignment] t10 (bool) (1) = t6 (bool) (1)
+[Declaration] t11 (bool) (1) = 0 (int) (1)
+[Assignment] t11 (bool) (1) = 1 (bool) (1)
+[Binary Op] t9 (bool) (1) = t10 (bool) (1) && t11 (bool) (1) 
+[Conditional Jump] if t9 (bool) (1) != 0 (int) (1) goto L0
+[Declaration] t12 (str) (2) = From mixed_conds , Value : %d\n (str) (2)
+[Argument] arg t12 (str) (2)
+[Declaration] t13 (int) (2) = 0 (int) (2)
+[Argument] arg t13 (int) (2)
+[Declaration] t14 (int) (2) = 0 (int) (2)
+[Function call] t14 (int) (2) = call printf (extern) (2), 2
+[Jump] goto L1
+
+[Label] L0:
+[Declaration] t15 (str) (3) = From mixed_conds , value : %d\n (str) (3)
+[Argument] arg t15 (str) (3)
+[Declaration] t16 (int) (3) = 1 (int) (3)
+[Argument] arg t16 (int) (3)
+[Declaration] t17 (int) (3) = 0 (int) (3)
+[Function call] t17 (int) (3) = call printf (extern) (3), 2
+
+[Label] L1:
+[Function end] function end
+[Main start] main begin:
+[Declaration] t18 (int) (4) = 0 (int) (4)
+[Function call] t18 (int) (4) = call mixed_conds (idt) (4), 0
+[Declaration] t19 (str) (4) = \n (str) (4)
+[Argument] arg t19 (str) (4)
+[Declaration] t20 (int) (4) = 0 (int) (4)
+[Function call] t20 (int) (4) = call printf (extern) (4), 1
+[Main end] main end

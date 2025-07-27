@@ -2,46 +2,6 @@ hi bhau
 
 bhau baherun ghe printf bola;
 
-bhau lakshat thev char_decl(){
-    bhau hai ahe ch = 'A';
-    bola("From char_decl, character : %c\n",ch);
-}
-
-bhau lakshat thev char_reassign(a){
-    a = 'B';
-    bhau parat de a;
-}
-
-bhau lakshat thev char_arithmetic(a){
-    bhau hai ahe b = a + 1;
-    bhau parat de b;
-}
-
-bhau lakshat thev compare_char(a,b){
-    bhau parat de a == b;
-}
-
-bhau lakshat thev switch_char(a){
-    bhau chunav(a){
-        bhau nivad 'A' : bola("From switch_char, Value = %c\n",a); bhau thamb;
-        bhau nivad 'B' : bola("From switch_char, Value = %c\n",a); bhau thamb;
-        bhau nivad 'C' : bola("From switch_char, Value = %c\n",a); bhau thamb;
-    }
-}
-
-bhau lakshat thev loop_char(a){
-    bhau hai ahe c = 'A';
-    bhau joparent(c < a){
-        bola("%c ",c);
-        ++c;
-    }
-    bola("\n");
-}
-
-bhau lakshat thev char_offset(a,offset){
-    bhau parat de a + offset;
-}
-
 bhau lakshat thev capital_vowels(){
     bhau hai ahe ch = 'A';
     bhau joparent(ch <= 'Z'){
@@ -56,24 +16,6 @@ bhau lakshat thev capital_vowels(){
 }
 
 bhau lakshat thev print_characters(){
-    char_decl();
-    bola("\n");
-    bhau hai ahe ch_ra = char_reassign('A');
-    bola("Reassigned char : %c\n",ch_ra);
-    bola("\n");
-    bhau hai ahe ch_arith = char_arithmetic('A');
-    bola("Character arithmetic : A + 1 : %c\n",ch_arith);
-    bola("\n");
-    bhau hai ahe ch_comp = compare_char('A','A');
-    bola("Comparison between A,A : %d\n",ch_comp);
-    bola("\n");
-    switch_char('A');
-    bola("\n");
-    loop_char('G');
-    bola("\n");
-    bhau hai ahe d_offset = char_offset('D',3);
-    bola("Offset D by 3 : %c\n",d_offset);
-    bola("\n");
     capital_vowels();
     bola("\n");
 }

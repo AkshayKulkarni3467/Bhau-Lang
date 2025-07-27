@@ -1,0 +1,50 @@
+>> Symbol Table for Scope: global 0x7fc436b93178, Scope ID : 0, Parent Scope : TOP (nil)
+  [0] printf (extern) | is Global : 1 | Offset: 0
+>> Symbol Table for Scope: mixed_control_flow 0x7fc436b95e68, Scope ID : 1, Parent Scope : global 0x7fc436b93178
+  [0] x (int) | is Global : 0 | Offset: 8
+  [1] t0 (idt) | is Global : 0 | Offset: 16
+  [2] t1 (idt) | is Global : 0 | Offset: 24
+  [3] t2 (idt) | is Global : 0 | Offset: 32
+>> Symbol Table for Scope: null 0x7fc436b98828, Scope ID : 2, Parent Scope : mixed_control_flow 0x7fc436b95e68
+  [0] t3 (idt) | is Global : 0 | Offset: 40
+  [1] t4 (idt) | is Global : 0 | Offset: 48
+  [2] t5 (idt) | is Global : 0 | Offset: 56
+  [3] t31 (idt) | is Global : 0 | Offset: 64
+>> Symbol Table for Scope: null 0x7fc436b9b020, Scope ID : 3, Parent Scope : null 0x7fc436b98828
+  [0] t6 (idt) | is Global : 0 | Offset: 72
+  [1] t7 (idt) | is Global : 0 | Offset: 80
+  [2] t8 (idt) | is Global : 0 | Offset: 88
+>> Symbol Table for Scope: null 0x7fc436b9d818, Scope ID : 4, Parent Scope : null 0x7fc436b9b020
+  [0] t9 (arg) | is Global : 0 | Offset: 136
+  [1] t10 (arg) | is Global : 0 | Offset: 144
+  [2] t11 (idt) | is Global : 0 | Offset: 152
+>> Symbol Table for Scope: null 0x7fc436ba0020, Scope ID : 5, Parent Scope : null 0x7fc436b9b020
+  [0] t12 (arg) | is Global : 0 | Offset: 200
+  [1] t13 (arg) | is Global : 0 | Offset: 208
+  [2] t14 (idt) | is Global : 0 | Offset: 216
+>> Symbol Table for Scope: null 0x7fc436ba2868, Scope ID : 6, Parent Scope : null 0x7fc436b98828
+  [0] y (int) | is Global : 0 | Offset: 224
+  [1] t15 (idt) | is Global : 0 | Offset: 232
+  [2] t16 (idt) | is Global : 0 | Offset: 240
+  [3] t17 (idt) | is Global : 0 | Offset: 248
+>> Symbol Table for Scope: null 0x7fc436ba51e8, Scope ID : 7, Parent Scope : null 0x7fc436ba2868
+  [0] t18 (idt) | is Global : 0 | Offset: 256
+  [1] t19 (idt) | is Global : 0 | Offset: 264
+  [2] t20 (idt) | is Global : 0 | Offset: 272
+  [3] t30 (idt) | is Global : 0 | Offset: 280
+>> Symbol Table for Scope: null 0x7fc436ba7640, Scope ID : 8, Parent Scope : null 0x7fc436ba51e8
+  [0] t21 (arg) | is Global : 0 | Offset: 328
+  [1] t22 (arg) | is Global : 0 | Offset: 336
+  [2] t23 (idt) | is Global : 0 | Offset: 344
+  [3] t24 (arg) | is Global : 0 | Offset: 392
+  [4] t25 (arg) | is Global : 0 | Offset: 400
+  [5] t26 (idt) | is Global : 0 | Offset: 408
+  [6] t27 (arg) | is Global : 0 | Offset: 456
+  [7] t28 (arg) | is Global : 0 | Offset: 464
+  [8] t29 (idt) | is Global : 0 | Offset: 472
+>> Symbol Table for Scope: print_control_flow 0x7fc436baae60, Scope ID : 9, Parent Scope : global 0x7fc436b93178
+  [0] t32 (idt) | is Global : 0 | Offset: 8
+  [1] t33 (arg) | is Global : 0 | Offset: 24
+  [2] t34 (idt) | is Global : 0 | Offset: 32
+>> Symbol Table for Scope: main 0x7fc436bad658, Scope ID : 10, Parent Scope : global 0x7fc436b93178
+  [0] t35 (idt) | is Global : 0 | Offset: 8

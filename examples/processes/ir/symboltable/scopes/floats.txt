@@ -1,0 +1,8 @@
+=== Symbol Table Tree (SCOPES) ===
+• global (id=0, symbols=1, offset=0)
+    • float_control_flow (id=1, symbols=6, offset=160)
+        • null (id=2, symbols=0, offset=0)
+        • null (id=3, symbols=0, offset=0)
+        • null (id=4, symbols=7, offset=0)
+    • main (id=5, symbols=3, offset=48)
+=================================

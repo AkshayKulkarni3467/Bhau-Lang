@@ -1,0 +1,60 @@
+├── PROGRAM
+│   ├── EXTERN
+│   │   └── IDENTIFIER: printf [global#1]
+│   ├── FUNCTION: mixed_conds
+│   │   ├── PARAMS
+│   │   └── BLOCK
+│   │   └── BLOCK
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: a [mixed_conds#2]
+│   │       │   └── INT_LITERAL: 10
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: b [mixed_conds#2]
+│   │       │   └── FLOAT_LITERAL: 2.50
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: c [mixed_conds#2]
+│   │       │   └── CHAR_LITERAL: A
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: flag [mixed_conds#2]
+│   │       │   └── BOOL_LITERAL: true
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: str1 [mixed_conds#2]
+│   │       │   └── STRING_LITERAL: "hello"
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: str2 [mixed_conds#2]
+│   │       │   └── STRING_LITERAL: "hello"
+│   │       └── IF_ELSE
+│   │           ├── CONDITION
+│   │           ├── BINOP: BL_LOGAND
+│   │           │   ├── BINOP: BL_LOGAND
+│   │           │   │   ├── BINOP: BL_LOGAND
+│   │           │   │   │   ├── BINOP: BL_ISEQUALCOND
+│   │           │   │   │   │   ├── BINOP: BL_ADDBINOP
+│   │           │   │   │   │   │   ├── IDENTIFIER: a [mixed_conds#2]
+│   │           │   │   │   │   │   └── IDENTIFIER: b [mixed_conds#2]
+│   │           │   │   │   │   └── FLOAT_LITERAL: 12.50
+│   │           │   │   │   └── BINOP: BL_ISEQUALCOND
+│   │           │   │   │       ├── IDENTIFIER: c [mixed_conds#2]
+│   │           │   │   │       └── CHAR_LITERAL: A
+│   │           │   │   └── BINOP: BL_ISEQUALCOND
+│   │           │   │       ├── IDENTIFIER: flag [mixed_conds#2]
+│   │           │   │       └── INT_LITERAL: 1
+│   │           │   └── BINOP: BL_ISEQUALCOND
+│   │           │       ├── IDENTIFIER: str1 [mixed_conds#2]
+│   │           │       └── IDENTIFIER: str2 [mixed_conds#2]
+│   │           ├── IF BLOCK
+│   │           ├── BLOCK
+│   │           │   └── FUNCTION CALL: printf
+│   │           │       ├── STRING_LITERAL: "From mixed_conds , value : %d\n"
+│   │           │       └── INT_LITERAL: 1
+│   │           └── ELSE BLOCK
+│   │           └── BLOCK
+│   │               └── FUNCTION CALL: printf
+│   │                   ├── STRING_LITERAL: "From mixed_conds , Value : %d\n"
+│   │                   └── INT_LITERAL: 0
+│   └── MAIN FUNCTION
+│       └── BLOCK
+│           ├── FUNCTION CALL: mixed_conds
+│           └── FUNCTION CALL: printf
+│               └── STRING_LITERAL: "\n"
+

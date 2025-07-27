@@ -56,128 +56,7 @@ bhau lakshat thev r_trig_num(a){
     }
 }
 
-bhau lakshat thev r_trig_aligned(a){
-    bhau hai ahe i = 1;
-    bhau joparent(i <= a){
-        bhau hai ahe j = a;
-        bhau joparent(j > i){
-            bol(" ");
-            --j;
-        }
-        bhau hai ahe k = 1;
-        bhau joparent(k <= i){
-            bol("*");
-            ++k;
-        }
-        j = a;
-        k = 1;
-        bol("\n");
-        ++i;
-    }
-}
 
-bhau lakshat thev floyd_trig(a){
-    bhau hai ahe i = 1;
-    bhau hai ahe count = 1;
-    bhau joparent(i <= a){
-        bhau hai ahe j = 1;
-        bhau joparent(j <= i){
-            int_num_de(count);
-            ++count;
-            ++j;
-        }
-        j = 1;
-        bol("\n");
-        ++i;
-    }
-}
-
-bhau lakshat thev bin_trig(a){
-    bhau hai ahe i = 1;
-    bhau joparent(i <= a){
-        bhau hai ahe j = 1;
-        bhau joparent(j <= i){
-            bol("%d ",(i+j) % 2);
-            ++j;
-        }
-        j = 1;
-        bol("\n");
-        ++i;
-    }
-}
-
-bhau lakshat thev inv_num_trig(a){
-    bhau hai ahe i = a;
-    bhau joparent(i >= 1){
-        bhau hai ahe j = 1;
-        bhau joparent(j <= i){
-            int_num_de(j);
-            ++j;
-        }
-        j = 1;
-        bol("\n");
-        --i;
-    }
-}
-
-bhau lakshat thev pyramid(a){
-    bhau hai ahe i = 1;
-    bhau joparent(i <= a){
-        bhau hai ahe j = a;
-        bhau joparent(j > i){
-            bol(" ");
-            --j;
-        }
-        bhau hai ahe k = 1;
-        bhau joparent(k <= (2*i - 1)){
-            bol("*");
-            ++k;
-        }
-        k = 1;
-        j = a;
-        bol("\n");
-        ++i;
-    }
-}
-
-bhau lakshat thev pascal_trig(a){
-    bhau hai ahe i = 0;
-    bhau joparent(i < a){
-        bhau hai ahe coef = 1;
-        bhau hai ahe space = 1;
-        bhau joparent(space <= (a - i)){
-            bol("  ");
-            ++space;
-        }
-        bhau hai ahe j = 0;
-        bhau joparent(j <= i){
-            bol("%4d",coef);
-            coef = coef * (i - j)/(j + 1);
-            ++j;
-        }
-        j = 0;
-        space = 1;
-        coef = 1;
-        bol("\n");
-        ++i;
-    }
-}
-
-bhau lakshat thev char_pattern(a){
-    bhau hai ahe ch = 'A';
-    bhau hai ahe i = 1;
-    bhau joparent(i <= a){
-        bhau hai ahe j = 1;
-        bhau joparent(j <= i){
-            bol("%c ",ch);
-            ++ch;
-            ++j;
-        }
-        j = 1;
-        bol("\n");
-        ++i;
-    }
-}
 
 bhau lakshat thev print_all_patterns(a){
     r_trig_stars(a);
@@ -186,19 +65,6 @@ bhau lakshat thev print_all_patterns(a){
     bol("\n");
     r_trig_num(a);
     bol("\n");
-    r_trig_aligned(a);
-    bol("\n");
-    floyd_trig(a);
-    bol("\n");
-    bin_trig(a);
-    bol("\n");
-    inv_num_trig(a);
-    bol("\n");
-    pyramid(a);
-    bol("\n");
-    pascal_trig(a);
-    bol("\n");
-    char_pattern(a);
 }
 
 

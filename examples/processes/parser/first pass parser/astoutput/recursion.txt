@@ -1,0 +1,76 @@
+├── PROGRAM
+│   ├── EXTERN
+│   │   └── IDENTIFIER: printf [global#1]
+│   ├── FUNCTION: factorial
+│   │   ├── PARAMS
+│   │   └── PARAM: factorial
+│   │       └── IDENTIFIER: a [factorial#2]
+│   │   └── BLOCK
+│   │   └── BLOCK
+│   │       ├── IF_ELSE
+│   │       │   ├── CONDITION
+│   │       │   ├── BINOP: BL_LESSEQ
+│   │       │   │   ├── IDENTIFIER: a [factorial#2]
+│   │       │   │   └── INT_LITERAL: 1
+│   │       │   ├── IF BLOCK
+│   │       │   ├── BLOCK
+│   │       │   │   └── RETURN
+│   │       │   │       └── INT_LITERAL: 1
+│   │       │   └── ELSE BLOCK
+│   │       │   └── (null node)
+│   │       └── RETURN
+│   │           └── BINOP: BL_MULTBINOP
+│   │               ├── IDENTIFIER: a [factorial#2]
+│   │               └── FUNCTION CALL: factorial
+│   │                   └── BINOP: BL_SUBBINOP
+│   │                       ├── IDENTIFIER: a [factorial#2]
+│   │                       └── INT_LITERAL: 1
+│   ├── FUNCTION: fibonacci
+│   │   ├── PARAMS
+│   │   └── PARAM: fibonacci
+│   │       └── IDENTIFIER: a [fibonacci#4]
+│   │   └── BLOCK
+│   │   └── BLOCK
+│   │       ├── IF_ELSE
+│   │       │   ├── CONDITION
+│   │       │   ├── BINOP: BL_LESSEQ
+│   │       │   │   ├── IDENTIFIER: a [fibonacci#4]
+│   │       │   │   └── INT_LITERAL: 1
+│   │       │   ├── IF BLOCK
+│   │       │   ├── BLOCK
+│   │       │   │   └── RETURN
+│   │       │   │       └── IDENTIFIER: a [(null)#5]
+│   │       │   └── ELSE BLOCK
+│   │       │   └── (null node)
+│   │       └── RETURN
+│   │           └── BINOP: BL_ADDBINOP
+│   │               ├── FUNCTION CALL: fibonacci
+│   │               │   └── BINOP: BL_SUBBINOP
+│   │               │       ├── IDENTIFIER: a [fibonacci#4]
+│   │               │       └── INT_LITERAL: 1
+│   │               └── FUNCTION CALL: fibonacci
+│   │                   └── BINOP: BL_SUBBINOP
+│   │                       ├── IDENTIFIER: a [fibonacci#4]
+│   │                       └── INT_LITERAL: 2
+│   ├── FUNCTION: print_recursion_tests
+│   │   ├── PARAMS
+│   │   └── BLOCK
+│   │   └── BLOCK
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: fac_var [print_recursion_tests#6]
+│   │       │   └── FUNCTION CALL: factorial
+│   │       │       └── INT_LITERAL: 5
+│   │       ├── FUNCTION CALL: printf
+│   │       │   ├── STRING_LITERAL: "Factorial : %d\n"
+│   │       │   └── IDENTIFIER: fac_var [print_recursion_tests#6]
+│   │       ├── ASSIGN DECL BL_EQUAL
+│   │       │   ├── IDENTIFIER: fib_var [print_recursion_tests#6]
+│   │       │   └── FUNCTION CALL: fibonacci
+│   │       │       └── INT_LITERAL: 5
+│   │       └── FUNCTION CALL: printf
+│   │           ├── STRING_LITERAL: "Fibonacci : %d\n"
+│   │           └── IDENTIFIER: fib_var [print_recursion_tests#6]
+│   └── MAIN FUNCTION
+│       └── BLOCK
+│           └── FUNCTION CALL: print_recursion_tests
+
